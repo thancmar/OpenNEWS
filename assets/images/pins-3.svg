@@ -1,0 +1,26 @@
+<svg width="56" height="57" viewBox="0 0 56 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_921_3548)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M33.9972 43.1726C43.2327 40.5618 50 32.0712 50 22C50 9.84974 40.1503 0 28 0C15.8497 0 6 9.84974 6 22C6 32.0712 12.7673 40.5618 22.0028 43.1726L27.6516 48.6614C27.8456 48.85 28.1544 48.85 28.3484 48.6614L33.9972 43.1726Z" fill="white"/>
+</g>
+<g clip-path="url(#clip0_921_3548)">
+<circle cx="28" cy="22.11" r="18" fill="#0A438A"/>
+<rect x="10" y="12.11" width="36" height="28" fill="white"/>
+<path d="M32.2778 29.8263C31.9041 31.7879 31.5874 33.4536 31.4645 34.1007H45.9999V29.8263H32.2778ZM10.001 29.8652V34.1396H24.4332L23.4702 29.8652H10.001Z" fill="#E05F0C"/>
+<path d="M17.0919 20.0644L16.0415 15.6426H25.0038L27.9063 28.3357H28.0302L29.8587 20.2047C30.7801 16.5129 31.1282 15.6426 36.321 15.6426H40.0558C40.0558 15.6426 39.3013 19.0457 38.3624 22.7386C38.0051 24.1473 34.8866 23.9805 35.0422 22.6649C35.0586 22.5277 35.206 21.5377 35.3228 20.8333C35.4927 19.8197 34.3102 19.6928 34.0973 20.6961C33.9457 21.4148 33.2608 24.9817 32.6209 28.3357H46V10.11H10V28.3357H23.0648L21.2035 20.0706L17.0919 20.0644V20.0644Z" fill="#0A438A"/>
+</g>
+<defs>
+<filter id="filter0_d_921_3548" x="2" y="0" width="52" height="56.8028" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_921_3548"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_921_3548" result="shape"/>
+</filter>
+<clipPath id="clip0_921_3548">
+<rect x="10" y="4.10999" width="36" height="36" rx="18" fill="white"/>
+</clipPath>
+</defs>
+</svg>

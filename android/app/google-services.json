@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "67186045229",
+    "project_id": "sharemagazines-flutter",
+    "storage_bucket": "sharemagazines-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67186045229:android:a8f65f9f36cc7e921963a4",
+        "android_client_info": {
+          "package_name": "com.example.sharemagazines_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67186045229-a1p6ds6ibh6i7a4tffc5lj73t7ljuh16.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyMtHcSrgSzY2iVlJ7Fs3lQ7yJUrYICtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67186045229-a1p6ds6ibh6i7a4tffc5lj73t7ljuh16.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
