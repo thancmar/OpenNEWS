@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:sharemagazines_flutter/src/blocs/search_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash_bloc.dart';
 
 class SplashScreenWidget extends StatefulWidget {
@@ -12,8 +13,8 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
   @override
   void initState() {
     super.initState();
-    this._dispatchEvent(
-        context); // This will dispatch the navigateToHomeScreen event.
+
+    this._dispatchEvent(context); // This will dispatch the navigateToHomeScreen event.
   }
 
   @override
@@ -23,17 +24,19 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
         child: Stack(
           children: <Widget>[
             Positioned.fill(
-              child: new SvgPicture.asset(
-                "assets/images/background_webreader.svg",
+              child: Image.asset(
+                "assets/images/Background.png",
                 fit: BoxFit.fill,
-                allowDrawingOutsideViewBox: true,
+                // allowDrawingOutsideViewBox: true,
               ),
             ),
             Positioned.fill(
-              child: new Image.asset(
-                "assets/images/logo@2x.png",
-                //fit: BoxFit.fill,
-              ),
+              child: const Image(image: AssetImage('assets/images/logo.png')),
+              // child: new Image.asset(
+              //   image: "assets/images/logo.png",
+              //
+              //   //fit: BoxFit.fill,
+              // ),
             )
           ],
         ),

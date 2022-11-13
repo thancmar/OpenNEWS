@@ -16,10 +16,10 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
   Widget build(BuildContext context) {
     return ListView(
       // shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(20, 25, 20, 30),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 30, 0, 25),
+          padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
           child: AnimatedSize(
             // vsync: this,
 

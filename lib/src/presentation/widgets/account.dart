@@ -8,11 +8,15 @@ class Account extends StatefulWidget {
   State<Account> createState() => _AccountState();
 }
 
-class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
+class _AccountState extends State<Account> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Account> {
   double widget1Opacity = 0.0;
   //Count the amount of time the Hero animation
   AnimationController? controller;
   // Generating some dummy data
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -39,15 +43,8 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // return ListView.separated(
-    //   itemCount: 25,
-    //   separatorBuilder: (BuildContext context, int index) => Divider(),
-    //   itemBuilder: (BuildContext context, int index) {
-    //     return ListTile(
-    //       title: Text('item $index'),
-    //     );
-    //   },
-    // );
+    super.build(context);
+
     return Container(
       child: AccountPageWidgets(),
       // child: ListView(

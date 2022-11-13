@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,24 +13,26 @@ import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:sharemagazines_flutter/src/blocs/map_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/navbar_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/place_map.dart';
 
-class MapsBlocWidget extends StatelessWidget {
-  MapBloc _bloc = MapBloc(
-    hotspotRepository: HotspotRepository(),
-  );
-  @override
-  Widget build(BuildContext context) {
-    // Future<HotspotsGetAllActive>hp = RepositoryProvider.of<HotspotRepository>(context);
-    return BlocProvider.value(
-      value: _bloc,
-      child: Maps(),
-    );
-  }
-}
+// class MapsBlocWidget extends StatelessWidget {
+//   MapBloc _bloc = MapBloc(
+//     hotspotRepository: HotspotRepository(),
+//   );
+//   @override
+//   Widget build(BuildContext context) {
+//     // Future<HotspotsGetAllActive>hp = RepositoryProvider.of<HotspotRepository>(context);
+//     return BlocProvider.value(
+//       value: _bloc,
+//       child: Maps(),
+//     );
+//   }
+// }
 
 class Maps extends StatefulWidget {
   const Maps({Key? key}) : super(key: key);
@@ -38,10 +41,10 @@ class Maps extends StatefulWidget {
   State<Maps> createState() => _MapsState();
 }
 
-class _MapsState extends State<Maps> {
+class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   late GoogleMapController mapController;
-  var repo = HotspotRepository();
-  late Future<HotspotsGetAllActive> hp;
+  // var repo = HotspotRepository();
+  late Future<HotspotsGetAllActive> hotspotList;
   // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   late List<Place>? hpList = [];
   Set<Marker> markers = Set(); //markers for google map
@@ -52,90 +55,104 @@ class _MapsState extends State<Maps> {
   late bool showlocationdetail = false;
   late Place locationmarker;
 
+  Timer? _timer;
+  late double _progress;
   final LatLng _center = const LatLng(51.1657, 10.4515);
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+  @override
+  bool get wantKeepAlive => true;
 
-    // var markerIdVal = MyWayToGenerateId();
-    // final MarkerId markerId = MarkerId(markerIdVal);
-
-    // creating a new MARKER
-
-    // final Marker marker = Marker(
-    //   markerId: MarkerId('place_name'),
-    //   position: LatLng(
-    //     53.5511,
-    //     9.9937,
-    //   ),
-    //   infoWindow: InfoWindow(title: "markerIdVal", snippet: '*'),
-    //   // onTap: () {
-    //   //   _onMarkerTapped(markerId);
-    //   // },
-    // );
-
-    // hp.then((data) {
-    //   print("hp");
-    //   var len = data.response?.length;
-    //   for (int i = 0; i < len!; i++) {
-    //     // final temp = HotspotforMap(
-    //     //   data.response![i].id!,
-    //     //   data.response![i].nameApp!,
-    //     //   data.response![i].type!,
-    //     //   data.response![i].addressCity!,
-    //     //   data.response![i].addressHouseNr!,
-    //     //   data.response![i].addressZip!,
-    //     //   data.response![i].addressZip!,
-    //     //   data.response![i].latitude!,
-    //     //   data.response![i].longitude!,
-    //     // );
-    //     final temp = Place(
-    //         id: data.response![i].id!,
-    //         nameApp: data.response![i].nameApp!,
-    //         type: data.response![i].type!,
-    //         addressStreet: data.response![i].addressCity!,
-    //         addressHouseNr: data.response![i].addressHouseNr!,
-    //         addressZip: data.response![i].addressZip!,
-    //         addressCity: data.response![i].addressCity!,
-    //         latitude: data.response![i].latitude!,
-    //         longitude: data.response![i].longitude!);
-    //     hpList?.add(temp);
-    //
-    //     print("mark");
-    //   }
-    //   print("something");
-    //   // adding a new marker to map
-    //   // markers[MarkerId('place_name')] = marker;
-    //   hpList?.forEach((element) {
-    //     myMarkers.add(Marker(
-    //         markerId: MarkerId(element.nameApp),
-    //         position: LatLng(element.latitude, element.longitude),
-    //         infoWindow: InfoWindow(title: element.nameApp)));
-    //     print("finished");
-    //   });
-    //   print("done");
-    //
-    //   setState(() {});
-    //
-    //   // print(markers);
-    //   // print(hpList);
-    // }, onError: (e) {
-    //   print("fsadfs");
-    //   print(e);
-    // });
-  }
+  // void _onMapCreated(GoogleMapController controller) {
+  //   // mapController = controller;
+  //   //
+  //   // var markerIdVal = MyWayToGenerateId();
+  //   // final MarkerId markerId = MarkerId(markerIdVal);
+  //
+  //   // creating a new MARKER
+  //
+  //   // final Marker marker = Marker(
+  //   //   markerId: MarkerId('place_name'),
+  //   //   position: LatLng(
+  //   //     53.5511,
+  //   //     9.9937,
+  //   //   ),
+  //   //   infoWindow: InfoWindow(title: "markerIdVal", snippet: '*'),
+  //   //   // onTap: () {
+  //   //   //   _onMarkerTapped(markerId);
+  //   //   // },
+  //   // );
+  //
+  //   // hp.then((data) {
+  //   //   print("hp");
+  //   //   var len = data.response?.length;
+  //   //   for (int i = 0; i < len!; i++) {
+  //   //     // final temp = HotspotforMap(
+  //   //     //   data.response![i].id!,
+  //   //     //   data.response![i].nameApp!,
+  //   //     //   data.response![i].type!,
+  //   //     //   data.response![i].addressCity!,
+  //   //     //   data.response![i].addressHouseNr!,
+  //   //     //   data.response![i].addressZip!,
+  //   //     //   data.response![i].addressZip!,
+  //   //     //   data.response![i].latitude!,
+  //   //     //   data.response![i].longitude!,
+  //   //     // );
+  //   //     final temp = Place(
+  //   //         id: data.response![i].id!,
+  //   //         nameApp: data.response![i].nameApp!,
+  //   //         type: data.response![i].type!,
+  //   //         addressStreet: data.response![i].addressCity!,
+  //   //         addressHouseNr: data.response![i].addressHouseNr!,
+  //   //         addressZip: data.response![i].addressZip!,
+  //   //         addressCity: data.response![i].addressCity!,
+  //   //         latitude: data.response![i].latitude!,
+  //   //         longitude: data.response![i].longitude!);
+  //   //     hpList?.add(temp);
+  //   //
+  //   //     print("mark");
+  //   //   }
+  //   //   print("something");
+  //   //   // adding a new marker to map
+  //   //   // markers[MarkerId('place_name')] = marker;
+  //   //   hpList?.forEach((element) {
+  //   //     myMarkers.add(Marker(
+  //   //         markerId: MarkerId(element.nameApp),
+  //   //         position: LatLng(element.latitude, element.longitude),
+  //   //         infoWindow: InfoWindow(title: element.nameApp)));
+  //   //     print("finished");
+  //   //   });
+  //   //   print("done");
+  //   //
+  //   //   setState(() {});
+  //   //
+  //   //   // print(markers);
+  //   //   // print(hpList);
+  //   // }, onError: (e) {
+  //   //   print("fsadfs");
+  //   //   print(e);
+  //   // });
+  // }
 
   @override
   void initState() {
     // TODO: implement initState
-
-    // _bloc = BlocProvider.of<MapBloc>(context);
-    BlocProvider.of<MapBloc>(context).add(Initialize());
-    hp = RepositoryProvider.of<HotspotRepository>(context)
-        .GetAllActiveHotspots();
-
-    hp.then((data) {
-      print("hp");
+    // EasyLoading.addStatusCallback((status) {
+    //   print('EasyLoading Status $status');
+    //   if (status == EasyLoadingStatus.dismiss) {
+    //     _timer?.cancel();
+    //   }
+    // });
+    // _progress = 0;
+    // _timer?.cancel();
+    // EasyLoading.show(
+    //   status: 'loading...',
+    //   maskType: EasyLoadingMaskType.black,
+    // );
+    // BlocProvider.of<MapBloc>(context).add(Initialize());
+    // hotspotList = RepositoryProvider.of<HotspotRepository>(context).GetAllActiveHotspots();
+    print("hotspotList");
+    BlocProvider.of<NavbarBloc>(context).hotspotList.then((data) async {
+      print("hotspotList");
       var len = data.response?.length;
       for (int i = 0; i < len!; i++) {
         // final temp = HotspotforMap(
@@ -167,10 +184,7 @@ class _MapsState extends State<Maps> {
       // adding a new marker to map
       // markers[MarkerId('place_name')] = marker;
       hpList?.forEach((element) {
-        myMarkers.add(Marker(
-            markerId: MarkerId(element.nameApp),
-            position: LatLng(element.latitude, element.longitude),
-            infoWindow: InfoWindow(title: element.nameApp)));
+        myMarkers.add(Marker(markerId: MarkerId(element.nameApp), position: LatLng(element.latitude, element.longitude), infoWindow: InfoWindow(title: element.nameApp)));
 
         print("finished");
       });
@@ -183,29 +197,30 @@ class _MapsState extends State<Maps> {
 
       // print(markers);
       // print(hpList);
+      // _timer?.cancel();
+      // await EasyLoading.dismiss();
     }, onError: (e) {
-      print("fsadfs");
+      print("Map initState error");
       print(e);
     });
 
-    addMarkers() async {
-      BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(),
-        "assets/images/bike.png",
-      );
-    }
+    // addMarkers() async {
+    //   BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
+    //     ImageConfiguration(),
+    //     "assets/images/bike.png",
+    //   );
+    // }
 
     manager = _initClusterManager();
     super.initState();
   }
 
   ClusterManager _initClusterManager() {
-    print("something2");
-    return ClusterManager<Place>(
-      hpList!,
-      _updateMarkers,
-      markerBuilder: _markerBuilder,
-    );
+    print("_initClusterManager");
+    return ClusterManager<Place>(hpList!, _updateMarkers,
+        markerBuilder: _markerBuilder,
+        // levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0],
+        stopClusteringZoom: 12.0);
   }
 
   void _updateMarkers(Set<Marker> markers) {
@@ -219,16 +234,19 @@ class _MapsState extends State<Maps> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    mapController.dispose();
+    // mapController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       child: Stack(children: [
         GoogleMap(
           // onMapCreated: _onMapCreated,
+
           zoomGesturesEnabled: true,
+          rotateGesturesEnabled: true,
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
             manager.setMapId(controller.mapId);
@@ -239,6 +257,7 @@ class _MapsState extends State<Maps> {
             target: _center,
             zoom: 6.0,
           ),
+          myLocationEnabled: true,
           myLocationButtonEnabled: false,
           mapToolbarEnabled: false,
           // markers: Set<Marker>.from(myMarkers),
@@ -252,96 +271,99 @@ class _MapsState extends State<Maps> {
 
           // markers: Set<Marker>.of(markers.values),
         ),
-        SafeArea(
-          child: Align(
-              //search input bar
-              alignment: Alignment.topCenter,
-              child: InkWell(
 
-                  // focusColor: Colors.red,
+        Align(
+            //search input bar
+            alignment: Alignment.topCenter,
+            child: InkWell(
 
-                  onTap: () async {
-                    var place = await PlacesAutocomplete.show(
-                        // decoration: BoxDecoration(
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Colors.grey.withOpacity(0.1),
-                        //         spreadRadius: 1,
-                        //         blurRadius: 0,
-                        //         // offset: Offset(0, 3), // changes position of shadow
-                        //       ),
-                        //     ],
-                        //     color: Colors.lightBlue,
-                        //     border: Border.all(
-                        //       // color: Colors.red,
-                        //     ),
-                        //     borderRadius: BorderRadius.circular(15)),
-                        radius: 10000,
-                        context: context,
-                        apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
-                        mode: Mode.overlay,
-                        types: [],
-                        strictbounds: false,
-                        components: [Component(Component.country, 'de')],
-                        //google_map_webservice package
-                        onError: (err) {
-                          print("error");
-                          print(err);
-                        });
-                    print("place");
-                    if (place != null) {
-                      setState(() {
-                        location = place.description.toString();
+                // focusColor: Colors.red,
+
+                onTap: () async {
+                  var place = await PlacesAutocomplete.show(
+                      // decoration: BoxDecoration(
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.grey.withOpacity(0.1),
+                      //         spreadRadius: 1,
+                      //         blurRadius: 0,
+                      //         // offset: Offset(0, 3), // changes position of shadow
+                      //       ),
+                      //     ],
+                      //     color: Colors.lightBlue,
+                      //     border: Border.all(
+                      //       // color: Colors.red,
+                      //     ),
+                      //     borderRadius: BorderRadius.circular(15)),
+                      logo: Text(""),
+                      radius: 10000,
+                      context: context,
+                      apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
+                      // mode: Mode.values[15],
+                      types: [],
+                      strictbounds: false,
+                      components: [Component(Component.country, 'de')],
+                      //google_map_webservice package
+                      onError: (err) {
+                        print("error");
+                        print(err);
                       });
+                  print("place");
+                  if (place != null) {
+                    setState(() {
+                      location = place.description.toString();
+                    });
 
-                      //form google_maps_webservice package
-                      final plist = GoogleMapsPlaces(
-                        apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
-                        apiHeaders: await GoogleApiHeaders().getHeaders(),
-                        //from google_api_headers package
-                      );
-                      String placeid = place.placeId ?? "0";
-                      final detail = await plist.getDetailsByPlaceId(placeid);
-                      final geometry = detail.result.geometry!;
-                      final lat = geometry.location.lat;
-                      final lang = geometry.location.lng;
-                      var newlatlang = LatLng(lat, lang);
-                      // var newlatlang = LatLng(51.00, 10.00);
+                    //form google_maps_webservice package
+                    final plist = GoogleMapsPlaces(
+                      apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
+                      apiHeaders: await GoogleApiHeaders().getHeaders(),
+                      //from google_api_headers package
+                    );
+                    String placeid = place.placeId ?? "0";
+                    final detail = await plist.getDetailsByPlaceId(placeid);
+                    final geometry = detail.result.geometry!;
+                    final lat = geometry.location.lat;
+                    final lang = geometry.location.lng;
+                    var newlatlang = LatLng(lat, lang);
+                    // var newlatlang = LatLng(51.00, 10.00);
 
-                      //move map camera to selected place with animation
-                      mapController.animateCamera(
-                          CameraUpdate.newCameraPosition(
-                              CameraPosition(target: newlatlang, zoom: 17)));
-                    }
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              // spreadRadius: 7,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width - 40,
-                        child: ListTile(
-                          title: Text(
-                            location,
-                            style: TextStyle(fontSize: 18),
+                    //move map camera to selected place with animation
+                    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: newlatlang, zoom: 17)));
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            // spreadRadius: 7,
+                            // blurRadius: 7,
+                            offset: Offset(0, 1), // changes position of shadow
                           ),
-                          trailing: Icon(Icons.location_searching),
-                          dense: true,
-                        )),
-                  ))),
-        ),
+                        ],
+                      ),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width - 40,
+                      child: ListTile(
+                        title: Text(
+                          location,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        trailing: GestureDetector(
+                            onTap: () {
+                              //still need to implement
+                            },
+                            child: Icon(
+                              Icons.location_searching,
+                            )),
+                        dense: true,
+                      )),
+                ))),
         // showlocationdetail == true
         //     ? Positioned(bottom: 90, child: _buildlocationcard())
         //     : Container()
@@ -370,21 +392,12 @@ class _MapsState extends State<Maps> {
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
                 locationmarker.nameApp,
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600),
+                style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Text(locationmarker.addressStreet +
-                  " " +
-                  locationmarker.addressHouseNr +
-                  ",\n" +
-                  locationmarker.addressZip +
-                  " " +
-                  locationmarker.addressCity),
+              child: Text(locationmarker.addressStreet + " " + locationmarker.addressHouseNr + ",\n" + locationmarker.addressZip + " " + locationmarker.addressCity),
             ),
           ),
           Row(
@@ -453,8 +466,7 @@ class _MapsState extends State<Maps> {
     c.animateCamera(CameraUpdate.newCameraPosition(p));
   }
 
-  Future<Marker> Function(Cluster<Place>) get _markerBuilder =>
-      (cluster) async {
+  Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
         mapController = await _controller.future;
         Completer<GoogleMapController> completer = Completer();
 
@@ -466,8 +478,7 @@ class _MapsState extends State<Maps> {
                 print("len");
                 setState(() {
                   print(cluster.location);
-                  animateTo(
-                      cluster.location.latitude, cluster.location.longitude);
+                  animateTo(cluster.location.latitude, cluster.location.longitude);
                   showlocationdetail = false;
                 });
               } else {
@@ -486,30 +497,11 @@ class _MapsState extends State<Maps> {
             },
             icon: cluster.isMultiple == true
                 ? await _getMarkerBitmap(125, text: cluster.count.toString())
-                : cluster.items.first.type! == 1
-                    ? await getBitmapDescriptorFromSVGAsset(
-                        context,
-                        "assets/images/pins.svg",
-                      )
-                    : cluster.items.first.type! == 2
-                        ? await getBitmapDescriptorFromSVGAsset(
-                            context,
-                            "assets/images/pins-2.svg",
-                          )
-                        : await getBitmapDescriptorFromSVGAsset(
-                            context,
-                            "assets/images/pins-3.svg",
-                          )
-            // icon: cluster.isMultiple == true
-            //     ? await _getMarkerBitmap(125, text: cluster.count.toString())
-            //     : await getBitmapDescriptorFromSVGAsset(
-            //         context,
-            //         "assets/images/pins.svg",
-            //       )
-
-            // icon: await _getMarkerBitmap(q ? 125 : 75,
-            //     text: cluster.isMultiple ? cluster.count.toString() : null),
-            );
+                : await getBitmapDescriptorFromSVGAsset(
+                    context,
+                    chooseMapPin(cluster.items.first.type!),
+                    // "assets/images/pins/cafe.svg",
+                  ));
       };
 }
 
@@ -554,13 +546,10 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
 
   final PictureRecorder pictureRecorder = PictureRecorder();
   final Canvas canvas = Canvas(pictureRecorder);
+  print("_getMarkerBitmap text");
   print(text);
-  final Paint paint1 = Paint()
-    ..color = int.parse(text!) < 10
-        ? Colors.blue.withOpacity(0.4)
-        : Colors.purple.withOpacity(0.4);
-  final Paint paint2 = Paint()
-    ..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
+  final Paint paint1 = Paint()..color = int.parse(text!) < 10 ? Colors.blue.withOpacity(0.4) : Colors.purple.withOpacity(0.4);
+  final Paint paint2 = Paint()..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
 
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.6, paint2);
@@ -570,10 +559,7 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
     TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
     painter.text = TextSpan(
       text: text,
-      style: TextStyle(
-          fontSize: size / 3,
-          color: Colors.white,
-          fontWeight: FontWeight.normal),
+      style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.normal),
     );
     painter.layout();
     painter.paint(
@@ -615,26 +601,70 @@ Future<BitmapDescriptor> getBitmapDescriptorFromSVGAsset(
   return BitmapDescriptor.fromBytes(uInt8List!);
 }
 
-// class HotspotforMap {
-//   final String id;
-//   final String nameApp;
-//   final String type;
-//   final String addressStreet;
-//   final String addressHouseNr;
-//   final String addressZip;
-//   final String addressCity;
-//   final double latitude;
-//   final double longitude;
-//
-//   HotspotforMap(
-//     this.id,
-//     this.nameApp,
-//     this.type,
-//     this.addressStreet,
-//     this.addressHouseNr,
-//     this.addressZip,
-//     this.addressCity,
-//     this.latitude,
-//     this.longitude,
-//   );
-// }
+String chooseMapPin(String hp_type) {
+  print("hp_type");
+  print(hp_type);
+  final basePath = "assets/images/pins/";
+
+  switch (int.parse(hp_type)) {
+    case 1:
+      return basePath + "cafe.svg";
+    case 2:
+      return basePath + "hotel.svg";
+    case 3:
+      return basePath + "klinik.svg";
+    case 4:
+      return basePath + "praxis.svg";
+    //Test
+    case 5:
+      return basePath + "cafe.svg";
+    case 6:
+      return basePath + "cafe.svg";
+    case 7:
+      return basePath + "friseur.svg";
+    case 8:
+      return basePath + "company.svg";
+    case 9:
+      return basePath + "stromtankstelle.svg";
+    case 10:
+      return basePath + "autohaus.svg";
+    case 11:
+      return basePath + "bibliothek.svg";
+//no pin
+    case 12:
+      return basePath + "cafe.svg";
+    case 13:
+      return basePath + "telekom.svg";
+    case 14:
+      return basePath + "voigt.svg";
+    case 15:
+      return basePath + "mercedes.svg";
+    case 16:
+      return basePath + "swb.svg";
+    case 17:
+      return basePath + "porsche.svg";
+    case 18:
+      return basePath + "dg_nexolution_eg.svg";
+    case 19:
+      return basePath + "tuv.svg";
+    case 20:
+      return basePath + "bankfiliale.svg";
+    case 21:
+      return basePath + "kantine.svg";
+    case 22:
+      return basePath + "kundencenter.svg";
+    case 23:
+      return basePath + "wellness.svg";
+    case 24:
+      return basePath + "öpnv.svg";
+    case 25:
+      return basePath + "fähre.svg";
+    case 26:
+      return basePath + "fitnessstudio.svg";
+    case 27:
+      return basePath + "kanzlei.svg";
+    case 28:
+      return basePath + "modelhaus.svg";
+  }
+  return basePath + "cafe.svg";
+}

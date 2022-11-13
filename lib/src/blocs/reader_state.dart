@@ -5,14 +5,17 @@ part of 'reader_bloc.dart';
 abstract class ReaderState extends Equatable {
   // late final NavbarItems navbarItem;
   // late final int index;
-//
-// NavbarState(this.navbarItem, this.index);
+
+  final List<Future<Uint8List>>? futureFuncAllPages;
+  ReaderState(this.futureFuncAllPages);
 //
 // @override
-// List<Object> get props => [this.navbarItem, this.index];
+  List<Object> get props => [];
 }
 
 class Initialized extends ReaderState {
+  Initialized() : super(null);
+
   // Loading(NavbarItems navbarItem, int index) : super(navbarItem, index);
 
   @override
@@ -20,7 +23,9 @@ class Initialized extends ReaderState {
 }
 
 class ReaderOpened extends ReaderState {
-  ReaderOpened();
+  // final List<Uint8List> bytes;
+  final List<Future<Uint8List>>? futureFuncAllPages;
+  ReaderOpened(this.futureFuncAllPages) : super(futureFuncAllPages);
   // Loading(NavbarItems navbarItem, int index) : super(navbarItem, index);
 
   @override

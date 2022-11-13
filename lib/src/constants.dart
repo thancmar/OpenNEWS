@@ -1,7 +1,9 @@
 class ApiConstants {
   static String baseUrl = 'https://app.sharemagazines.de/';
   static String usersEndpoint = '/sharemagazines/interface/json_main.php';
-  static String getimageJPEG = '/sharemagazines/interface/file.php';
+  static String getCoverJPEG = '/sharemagazines/interface/file.php';
+  static String getPageJPEG = '/sharemagazines/interface/file_page.php';
+  static String localization = '/sharemagazines/interface/localization.php';
 }
 
 //Route Constants

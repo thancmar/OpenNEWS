@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth_bloc.dart' as auth;
 import 'package:sharemagazines_flutter/src/blocs/navbar_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/validators/emailvalidator.dart';
@@ -14,7 +15,8 @@ import 'package:sharemagazines_flutter/src/presentation/widgets/loginwidget.dart
 import 'package:sharemagazines_flutter/src/models/login_model.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final SplashBloc splashbloc;
+  const LoginPage({Key? key, required this.splashbloc}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -52,15 +54,13 @@ class _LoginPageState extends State<LoginPage> {
       // ),
       body: BlocListener<auth.AuthBloc, auth.AuthState>(
         listener: (context, state) {
-          if (state is auth.Authenticated) {
+          print("AuthState $state");
+          if (state is auth.Authenticated || state is auth.IncompleteAuthenticated) {
             // Navigating to the dashboard screen if the user is authenticated
             // Navigator.pushReplacement(
-            //     context, MaterialPageRoute(builder: (context) => MainPage()));
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => MainPageState()),
-                (Route<dynamic> route) =>
-                    false); //removes everything below MainPage()
+            //     context, MaterialPageRoute(builder: (context) => MainPage()));+
+            print("AuthState $state");
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false); //removes everything below MainPage()
           }
           if (state is auth.AuthError) {
             // Showing the error message if the user has entered invalid credentials
@@ -99,8 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           flex: 2,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 0.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 0.0),
                             child: Row(
                               children: [
                                 BackButton(
@@ -108,8 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                                   // onPressed: () {
                                   //   Navigator.pop(context, true);
                                   // }),
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(true),
+                                  onPressed: () => Navigator.of(context).pop(true),
                                 ),
                                 Text(
                                   "Anmelden",
@@ -128,11 +126,9 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           flex: 3,
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                                20.0, 10.0, 20.0, 10.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                             child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
+                              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.all(
@@ -145,8 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                                 style: TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
                                     labelText: "E-Mail oder Benutzername",
-                                    labelStyle: TextStyle(
-                                        fontSize: 16.0), //, height: 3.8),
+                                    labelStyle: TextStyle(fontSize: 16.0), //, height: 3.8),
                                     border: InputBorder.none),
                               ),
                             ),
@@ -155,11 +150,9 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           flex: 3,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
                             child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
+                              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.all(
@@ -171,8 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                                 obscureText: true,
                                 decoration: InputDecoration(
                                   labelText: "Passwort",
-                                  labelStyle: TextStyle(
-                                      fontSize: 16.0), //20.0, height: 3.8),
+                                  labelStyle: TextStyle(fontSize: 16.0), //20.0, height: 3.8),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -182,8 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           flex: 2,
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                                20.0, 10.0, 20.0, 25.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 25.0),
                             child: InkWell(
                               onTap: () {
                                 print("I was tapped!");
@@ -204,8 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           flex: 3,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
                             child: ElevatedButton(
                               onPressed: () {
                                 // Navigator.pushReplacement(
@@ -235,8 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                                 shadowColor: Colors.blueAccent,
                                 elevation: 3,
                                 // side: BorderSide(width: 0.10, color: Colors.white),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14.0)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                                 minimumSize: Size(100, 60), //////// HERE
                               ),
                               child: Text(

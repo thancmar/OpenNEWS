@@ -11,7 +11,9 @@ class Initialize extends ReaderEvent {
 }
 
 class OpenReader extends ReaderEvent {
-  OpenReader();
+  final String idMagazinePublication;
+  final String pageNo;
+  OpenReader({required this.idMagazinePublication, required this.pageNo});
 }
 //
 // class Menu extends ReaderEvent {

@@ -5,6 +5,14 @@ abstract class AuthEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class Initialize extends AuthEvent {
+  Initialize();
+}
+
+class IncompleteSignInRequested extends AuthEvent {
+  IncompleteSignInRequested();
+}
+
 // When the user signing in with email and password this event is called and the [AuthRepository] is called to sign in the user
 class SignInRequested extends AuthEvent {
   final String email;
@@ -13,9 +21,9 @@ class SignInRequested extends AuthEvent {
   SignInRequested(this.email, this.password);
 }
 
-class IncompleteSignInRequested extends AuthEvent {
-  IncompleteSignInRequested();
-}
+// class IncompleteSignInRequested extends AuthEvent {
+//   IncompleteSignInRequested();
+// }
 
 // When the user signing up with email and password this event is called and the [AuthRepository] is called to sign up the user
 class SignUpRequested extends AuthEvent {
@@ -35,22 +43,8 @@ class SignUpRequested extends AuthEvent {
   final String? creation_date;
   final String? origin;
 
-  SignUpRequested(
-      this.email,
-      this.password,
-      this.firstname,
-      this.lastname,
-      this.date_of_birth,
-      this.sex,
-      this.address_street,
-      this.address_house_nr,
-      this.address_zip,
-      this.address_city,
-      this.phone,
-      this.iban,
-      this.account_owner,
-      this.creation_date,
-      this.origin);
+  SignUpRequested(this.email, this.password, this.firstname, this.lastname, this.date_of_birth, this.sex, this.address_street, this.address_house_nr, this.address_zip, this.address_city, this.phone,
+      this.iban, this.account_owner, this.creation_date, this.origin);
 }
 
 // When the user signing in with google this event is called and the [AuthRepository] is called to sign in the user

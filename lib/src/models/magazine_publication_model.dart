@@ -1,27 +1,28 @@
 import 'dart:convert';
 
-MagazinePublishedGetLastWithLimit MagazinePublishedGetLastWithLimitFromJson(
-        String str) =>
-    MagazinePublishedGetLastWithLimit.fromJson(json.decode(str));
+MagazinePublishedGetLastWithLimit MagazinePublishedGetLastWithLimitFromJson(String str) => MagazinePublishedGetLastWithLimit.fromJson(json.decode(str));
 
 class MagazinePublishedGetLastWithLimit {
   List<Response>? response;
 
-  MagazinePublishedGetLastWithLimit({required this.response});
+  MagazinePublishedGetLastWithLimit({this.response});
 
   MagazinePublishedGetLastWithLimit.fromJson(Map<String, dynamic> json) {
     if (json['response'] != null) {
       response = <Response>[];
-      json['response'].forEach((v) {
+
+      json!['response'].forEach((v) {
         response!.add(Response.fromJson(v));
       });
     } else {
-      " ";
+      // null;
+      // "fdgsbfsdbv ";
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+
     if (this.response != null) {
       data['response'] = this.response!.map((v) => v.toJson()).toList();
     }
@@ -58,19 +59,34 @@ class Response {
       this.coverUrl});
 
   Response.fromJson(Map<String, dynamic> json) {
-    name = json['name'] ?? '';
-
-    idPublisher = json['id_publisher'] ?? '';
-    idMagazineType = json['id_magazine_type'] ?? '';
-    singlePageOnly = json['single_page_only'] ?? true;
-    magazineLanguage = json['magazine_language'] ?? '';
-    idsMagazineCategory = json['ids_magazine_category'] ?? '';
-    idMagazinePublication = json['id_magazine_publication'] ?? '';
-    idMagazine = json['id_magazine'] ?? '';
-    dateOfPublication = json['date_of_publication'] ?? '';
-    pageMax = json['page_max'] ?? '';
-    advertisement = json['advertisement'] ?? true;
-    coverUrl = json['cover_url'] ?? '';
+    name = json['name'];
+    idPublisher = json['id_publisher'];
+    idMagazineType = json['id_magazine_type'];
+    singlePageOnly = json['single_page_only'];
+    magazineLanguage = json['magazine_language'];
+    idsMagazineCategory = json['ids_magazine_category'];
+    // idMagazinePublication = (int.parse(json['id_magazine_publication'] ?? 0));
+    idMagazinePublication = json['id_magazine_publication'];
+    idMagazine = json['id_magazine'];
+    dateOfPublication = json['date_of_publication'];
+    // pageMax = (int.parse(json['page_max'] ?? 0));
+    pageMax = json['page_max'];
+    advertisement = json['advertisement'];
+    coverUrl = json['cover_url'];
+    // name = json['name'] ?? '';
+    // idPublisher = json['id_publisher'] ?? '';
+    // idMagazineType = json['id_magazine_type'] ?? '';
+    // singlePageOnly = json['single_page_only'] ?? true;
+    // magazineLanguage = json['magazine_language'] ?? '';
+    // idsMagazineCategory = json['ids_magazine_category'] ?? '';
+    // // idMagazinePublication = (int.parse(json['id_magazine_publication'] ?? 0));
+    // idMagazinePublication = json['id_magazine_publication'] ?? '';
+    // idMagazine = json['id_magazine'] ?? '';
+    // dateOfPublication = json['date_of_publication'] ?? '';
+    // // pageMax = (int.parse(json['page_max'] ?? 0));
+    // pageMax = json['page_max'] ?? '';
+    // advertisement = json['advertisement'] ?? true;
+    // coverUrl = json['cover_url'] ?? '';
   }
 
   Map<String, dynamic> toJson() {

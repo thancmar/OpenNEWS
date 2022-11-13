@@ -5,6 +5,10 @@ abstract class SplashState {}
 
 class Initial extends SplashState {}
 
-class Loading extends SplashState {}
+class LoadingSplash extends SplashState {}
 
-class Loaded extends SplashState {}
+class Loaded extends SplashState {
+  final Position? position;
+
+  Loaded([this.position]) : super();
+}

@@ -7,26 +7,20 @@ class NavBarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white //Color(0x00ffffff)
+      ..color = Colors.grey //Color(0x00ffffff)
       ..strokeWidth = 0.2
       ..style = PaintingStyle.stroke;
 
     double bendWidth = 15.0;
     double bezierWidth = 10.0;
 
-    double startofBend =
-        ((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) -
-            1 -
-            bendWidth / 2;
+    double startofBend = ((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) - 1 - bendWidth / 2;
     double startofBezier = startofBend - bezierWidth;
-    double endofBend =
-        (((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) + 1) +
-            bendWidth / 2;
+    double endofBend = (((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) + 1) + bendWidth / 2;
     double endofBezier = endofBend + bezierWidth;
 
     double controlHeight = 9.0;
-    double centerPoint =
-        (((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2;
+    double centerPoint = (((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2;
 
     double leftControlPoint1 = startofBend;
     double leftControlPoint2 = startofBend;
@@ -39,10 +33,8 @@ class NavBarPainter extends CustomPainter {
     // print(size.height);
     path.moveTo(0, 0);
     path.lineTo(startofBezier, 0);
-    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
-        centerPoint, controlHeight);
-    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
-        endofBezier, 0);
+    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
+    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0, endofBezier, 0);
     path.lineTo(size.width, 0);
     // path.lineTo(size.width, size.height);
     // path.lineTo(0, size.height);
@@ -111,19 +103,13 @@ class NavBarClipper extends CustomClipper<Path> {
     double bendWidth = 15.0;
     double bezierWidth = 10.0;
 
-    double startofBend =
-        ((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) -
-            1 -
-            bendWidth / 2;
+    double startofBend = ((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) - 1 - bendWidth / 2;
     double startofBezier = startofBend - bezierWidth;
-    double endofBend =
-        (((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) + 1) +
-            bendWidth / 2;
+    double endofBend = (((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) + 1) + bendWidth / 2;
     double endofBezier = endofBend + bezierWidth;
 
     double controlHeight = 9.0;
-    double centerPoint =
-        (((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2;
+    double centerPoint = (((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2;
 
     double leftControlPoint1 = startofBend;
     double leftControlPoint2 = startofBend;
@@ -136,10 +122,8 @@ class NavBarClipper extends CustomClipper<Path> {
     // print(size.height);
     path.moveTo(0, 0);
     path.lineTo(startofBezier, 0);
-    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
-        centerPoint, controlHeight);
-    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
-        endofBezier, 0);
+    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
+    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0, endofBezier, 0);
     path.lineTo(size.width, 0);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);

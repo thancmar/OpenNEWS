@@ -4,7 +4,7 @@ part of 'map_bloc.dart';
 abstract class MapState extends Equatable {}
 
 // When the user presses the signin or signup button the state is changed to loading first and then to Authenticated.
-class Loading extends MapState {
+class LoadingMap extends MapState {
   @override
   List<Object?> get props => [];
 }

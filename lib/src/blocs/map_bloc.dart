@@ -13,12 +13,12 @@ part 'map_state.dart';
 class MapBloc extends Bloc<MapEvent, MapState> {
   final HotspotRepository hotspotRepository;
   final _dataController = StreamController<HotspotsGetAllActive>();
-  Sink<HotspotsGetAllActive> get searchQuery => _dataController.sink;
-  Stream<HotspotsGetAllActive>? get hotspotStream => _dataController.stream;
+  // Sink<HotspotsGetAllActive> get searchQuery => _dataController.sink;
+  // Stream<HotspotsGetAllActive>? get hotspotStream => _dataController.stream;
 
-  MapBloc({required this.hotspotRepository}) : super(Loading()) {
+  MapBloc({required this.hotspotRepository}) : super(LoadingMap()) {
     on<Initialize>((event, emit) async {
-      emit(Loading());
+      emit(LoadingMap());
       print("now");
       // searchQuery.add(hotspotRepository.GetAllActiveHotspots());
       // _dataController.stream.listen((event) {

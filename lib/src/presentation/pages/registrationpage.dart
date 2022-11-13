@@ -59,7 +59,7 @@ class _RegistrationState extends State<Registration> {
                 color: Colors.white,
                 height: 0.10,
               ),
-              preferredSize: Size.fromHeight(4.0)),
+              preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.01)),
           title: Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -90,22 +90,16 @@ class _RegistrationState extends State<Registration> {
                     },
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
+                      //Maybe we need it
+                      // contentPadding: const EdgeInsets.symmetric(
+                      //     vertical: 20.0, horizontal: 10.0),
                       floatingLabelStyle: TextStyle(color: Colors.blue),
                       labelText: "Vorname",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
+                      labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300), //, height: 3.8),
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
+                        borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -125,19 +119,12 @@ class _RegistrationState extends State<Registration> {
                     decoration: InputDecoration(
                       floatingLabelStyle: TextStyle(color: Colors.blue),
                       labelText: "Nachname",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0, color: Colors.grey), //, height: 3.8),
+                      labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey), //, height: 3.8),
 
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
+                        borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -152,18 +139,11 @@ class _RegistrationState extends State<Registration> {
                     decoration: InputDecoration(
                       floatingLabelStyle: TextStyle(color: Colors.blue),
                       labelText: "Email",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0, color: Colors.grey), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
+                      labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey), //, height: 3.8),
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
+                        borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -179,11 +159,7 @@ class _RegistrationState extends State<Registration> {
                     validator: (value) => validatePassword(value),
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
-                          icon: Icon(
-                              _passwordVisible
-                                  ? Icons.remove_red_eye_outlined
-                                  : Icons.remove_red_eye,
-                              color: Colors.grey),
+                          icon: Icon(_passwordVisible ? Icons.remove_red_eye_outlined : Icons.remove_red_eye, color: Colors.grey),
                           onPressed: () {
                             // Update the state i.e. toogle the state of passwordVisible variable
                             setState(() {
@@ -192,20 +168,11 @@ class _RegistrationState extends State<Registration> {
                           }),
                       floatingLabelStyle: TextStyle(color: Colors.blue),
                       labelText: "Passwort",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
+                      labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300), //, height: 3.8),
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
+                        borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -220,24 +187,16 @@ class _RegistrationState extends State<Registration> {
 
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.calendar_today_outlined,
-                            color: Colors.grey),
+                        icon: Icon(Icons.calendar_today_outlined, color: Colors.grey),
                         onPressed: () => _selectDate(context),
                       ),
                       floatingLabelStyle: TextStyle(color: Colors.blue),
                       labelText: "Geburtsdatum",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0, color: Colors.grey), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(1.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
+                      labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey), //, height: 3.8),
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(1.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
+                        borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -249,10 +208,7 @@ class _RegistrationState extends State<Registration> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Gender",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 16),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 16),
                     ),
                   ),
                 ),
@@ -261,12 +217,11 @@ class _RegistrationState extends State<Registration> {
                 //Controller not yet defined for gender
                 Container(
                   height: 60,
-                  // alignment: Alignment.centerRight,
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10)),
-                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  alignment: Alignment.center,
+                  // margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                   child: _buildChips(),
                   // color: Colors.blue,
                 ),
@@ -276,10 +231,7 @@ class _RegistrationState extends State<Registration> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "By pressing the button I agree with Share Magazines Terms and Conditions and the Privacy policy",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 14),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
                     ),
                   ),
                 ),
@@ -292,8 +244,8 @@ class _RegistrationState extends State<Registration> {
                           SignUpRequested(
                             _emailController.text,
                             _passwordController.text,
-                            _emailController.text,
-                            _passwordController.text,
+                            _firstnameController.text,
+                            _lastnameController.text,
                             " ",
                             " ",
                             " ",
@@ -314,8 +266,7 @@ class _RegistrationState extends State<Registration> {
                       onPrimary: Colors.white,
                       shadowColor: Colors.blueAccent,
                       elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14.0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                       minimumSize: Size(400, 60), //////// HERE
                     ),
                     child: Text(
@@ -335,10 +286,7 @@ class _RegistrationState extends State<Registration> {
                     alignment: Alignment.center,
                     child: Text(
                       "or signup with",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 14),
+                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w300, fontSize: 14),
                     ),
                   ),
                 ),
@@ -347,41 +295,69 @@ class _RegistrationState extends State<Registration> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
                       child: Container(
-                          // color: Colors.white,
-                          height: 50,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
+                        // color: Colors.white,
+                        height: 65,
+                        width: MediaQuery.of(context).size.width * 0.27,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
                           ),
-                          child: Icon(
-                            IconData(0xe255, fontFamily: 'MaterialIcons'),
-                            size: 30,
-                            color: Colors.blue,
-                          )),
+                        ),
+                        // child: Icon(
+                        //   IconData(0xe255, fontFamily: 'MaterialIcons'),
+                        //   size: 30,
+                        //   color: Colors.blue,
+                        // )
+                        child: new SvgPicture.asset(
+                          "assets/images/google_login_logo.svg",
+                          fit: BoxFit.fill,
+                          allowDrawingOutsideViewBox: true,
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
                       child: Container(
-                          // color: Colors.white,
-                          height: 50,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
+                        // color: Colors.white,
+                        height: 65,
+                        width: MediaQuery.of(context).size.width * 0.27,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
                           ),
-                          child: Icon(
-                            IconData(0xe255, fontFamily: 'MaterialIcons'),
-                            size: 30,
-                            color: Colors.blue,
-                          )),
+                        ),
+                        child: new SvgPicture.asset(
+                          "assets/images/facebook_login_logo.svg",
+                          fit: BoxFit.fill,
+                          allowDrawingOutsideViewBox: true,
+                        ),
+                      ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                      child: Container(
+                        // color: Colors.white,
+                        height: 65,
+                        width: MediaQuery.of(context).size.width * 0.27,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
+                          ),
+                        ),
+                        child: new SvgPicture.asset(
+                          "assets/images/apple_login_logo.svg",
+                          fit: BoxFit.fill,
+                          allowDrawingOutsideViewBox: true,
+                        ),
+                      ),
+                    ),
+                    Spacer()
                   ],
                 )
               ],
@@ -393,16 +369,11 @@ class _RegistrationState extends State<Registration> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2015),
-        lastDate: DateTime(2101));
+    final DateTime? picked = await showDatePicker(context: context, initialDate: selectedDate, firstDate: DateTime(2015), lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        _calenderController =
-            new TextEditingController(text: picked.toString().split(' ')[0]);
+        _calenderController = new TextEditingController(text: picked.toString().split(' ')[0]);
       });
     }
   }
@@ -420,11 +391,7 @@ class _RegistrationState extends State<Registration> {
       ChoiceChip choiceChip = ChoiceChip(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         selected: _selectedIndex == i,
-        label: Container(
-            width: 80,
-            height: 40,
-            alignment: Alignment.center,
-            child: Text(_options[i], style: TextStyle(color: Colors.white))),
+        label: Container(width: MediaQuery.of(context).size.width * 0.19, height: 40, alignment: Alignment.center, child: Text(_options[i], style: TextStyle(color: Colors.white))),
         // avatar: FlutterLogo(),
 
         // elevation: 10,
