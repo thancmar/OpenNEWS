@@ -104,8 +104,10 @@ class AuthRepository {
   }) async {
     print("Complete signIn");
     final getIt = GetIt.instance;
+    Map data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
+
     // SharedPreferences prefs = await SharedPreferences.getInstance();¢®
-    Map<String, dynamic> data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
+    // Map<String, dynamic> data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
 
     // String _cookieData = prefs.getString('cookie') ?? ' '; //Dont need it i guess
     // Map<String, String> head = {
@@ -119,16 +121,17 @@ class AuthRepository {
     // );
 
     // print(data);
-    final response = await getIt<ApiClient>().dioforImages.post(ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
+
+    final response = await getIt<ApiClient>().diofordata.post(ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
     print("User login response: ${response.data}");
     // print(response!.headers);
 //COde 103 cannot add reader
     if (response!.statusCode == 200) {
       // return jokeModelFromJson(response.body);
-      print(response!.realUri);
+      // print(response!.realUri);
       if (json.decode(response!.data)['response']['code'] == 107) {
         print("107");
-        throw Exception("Failed to signin with code 107");
+        throw Exception("Invalid login data(code 107)");
       } else {
         // String rawCookie = response.headers['set-cookie'] ?? _cookieData;
         print("rl Login");
@@ -145,13 +148,11 @@ class AuthRepository {
         return LoginModelFromJson(response!.data);
       }
     } else {
-      throw Exception("Failed to login");
+      throw Exception("Failed to login. Code ${response.statusCode}");
     }
   }
 
-  Future<IncompleteLoginModel?> signInIncomplete({
-    required ApiClient client,
-  }) async {
+  Future<IncompleteLoginModel?> signInIncomplete() async {
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     print("Incomplete signIn");
     final getIt = GetIt.instance;
@@ -167,7 +168,7 @@ class AuthRepository {
     // final response = await http.post(Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint), body: data, headers: head);
 
     // print(json.decode(response.body)['response']['code']);
-    var response = await getIt<ApiClient>().dioforImages.post(
+    var response = await getIt<ApiClient>().diofordata.post(
           ApiConstants.usersEndpoint,
           data: data,
         );

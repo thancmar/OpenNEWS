@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/validators/emailvalidator.dart';
 import 'package:sharemagazines_flutter/src/presentation/validators/passwordvalidator.dart';
@@ -30,16 +30,17 @@ class _RegistrationState extends State<Registration> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
-      Container(
-        child: new SvgPicture.asset(
-          "assets/images/background_webreader.svg",
+      Positioned.fill(
+        child: Image.asset(
+          "assets/images/Background.png",
           fit: BoxFit.fill,
-          allowDrawingOutsideViewBox: true,
+          // allowDrawingOutsideViewBox: true,
         ),
       ),
       Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          elevation: 0,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_sharp,

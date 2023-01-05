@@ -5,10 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/search_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/splash_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/splash.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
@@ -122,7 +122,12 @@ class MyApp extends StatelessWidget {
               // bottomSheetTheme: BottomSheetThemeData(
               //     backgroundColor: Colors.black.withOpacity(0)),
               //primarySwatch: Colors.blue,
-              pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              }),
+              fontFamily: 'Raleway',
+              // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
               dividerColor: Colors.transparent),
           home: SplashScreen(),
           builder: EasyLoading.init(),

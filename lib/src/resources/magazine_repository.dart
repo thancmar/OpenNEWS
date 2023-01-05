@@ -3,15 +3,15 @@ import 'dart:core';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:sharemagazines_flutter/src/constants.dart';
-import 'package:sharemagazines_flutter/src/models/magazine_publication_model.dart';
+import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:get_it/get_it.dart';
 
 import 'dioClient.dart';
 
 class MagazineRepository {
-  Future<MagazinePublishedGetLastWithLimit> magazinePublishedGetLastWithLimit({required String? id_hotspot, required CookieJar cookieJar}) async {
-    print("magazinePublishedGetLastWithLimit $id_hotspot");
+  Future<MagazinePublishedGetAllLastByHotspotId> magazinePublishedGetAllLastByHotspotId({required String? id_hotspot, required CookieJar cookieJar}) async {
+    print("magazinePublishedGetAllLastByHotspotId $id_hotspot");
     final getIt = GetIt.instance;
     Map<String, dynamic> data = {'f': 'magazinePublishedGetAllLastByHotspotId', 'json': '{"id_hotspot": "$id_hotspot"}'};
 
@@ -21,23 +21,49 @@ class MagazineRepository {
     //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
     //       data: data,
     //     );
-    var response = await getIt<ApiClient>().dioforImages.post(
+    var response = await getIt<ApiClient>().diofordata.post(
           ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
           data: data,
         );
     if (response.statusCode == 200) {
       print("magazinePublishedGetLastWithLimit sucess");
-      print(response.data);
+      // print(response.data);
       // print(response!.data);
       return MagazinePublishedGetLastWithLimitFromJson(response.data);
     } else {
-      print("Failed to login");
-      throw Exception("Failed to login");
+      print("Failed magazinePublishedGetLastWithLimit");
+      throw Exception("Failed magazinePublishedGetLastWithLimit");
+    }
+  }
+
+  Future<MagazinePublishedGetAllLastByHotspotId> magazinePublishedGetTopLastByRange({required String? id_hotspot, required CookieJar cookieJar}) async {
+    print("magazinePublishedGetTopLastByRange $id_hotspot");
+    final getIt = GetIt.instance;
+    Map<String, dynamic> data = {'f': 'magazinePublishedGetTopLastByRange', 'json': '{"id_hotspot": "$id_hotspot"}'};
+
+    var queryString = Uri(queryParameters: data).query;
+
+    // var response = await getIt<ApiClient>().dio.post(
+    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+    //       data: data,
+    //     );
+    var response = await getIt<ApiClient>().diofordata.post(
+          ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+          data: data,
+        );
+    if (response.statusCode == 200) {
+      print("magazinePublishedGetTopLastByRange sucess");
+      // print(response.data);
+      // print(response!.data);
+      return MagazinePublishedGetLastWithLimitFromJson(response.data);
+    } else {
+      print("Failed magazinePublishedGetTopLastByRange");
+      throw Exception("Failed magazinePublishedGetTopLastByRange");
     }
   }
 
   Future<Uint8List> GetPage({required String? page, required String? id_mag_pub}) async {
-    print("GetPage $id_mag_pub $page");
+    // print("GetPage $id_mag_pub $page");
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
       'page': page!,
@@ -50,8 +76,8 @@ class MagazineRepository {
     return Uint8List.fromList(response.data);
   }
 
-  Future<Uint8List> GetPagesforReader({required String? page, required String? id_mag_pub}) async {
-    print("GetPage $id_mag_pub $page");
+  Future<Uint8List> GetPagesforReader({required String? page, required String? id_mag_pub, required CancelToken? readerCancelToken}) async {
+    // print("GetPage $id_mag_pub $page");
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
       'page': page!,
@@ -59,7 +85,22 @@ class MagazineRepository {
     };
     var queryString = Uri(queryParameters: queryParame).query;
 
-    var response = await getIt<ApiClient>().diofordata.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
+    var response = await getIt<ApiClient>().diofordata.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
+
+    return Uint8List.fromList(response.data);
+  }
+
+  Future<Uint8List> GetPagesAsPDFforReader({required String? id_mag_pub, required CancelToken? readerCancelToken}) async {
+    print("GetPagesAsPDFforReader $id_mag_pub $id_mag_pub");
+    final getIt = GetIt.instance;
+    Map<String, dynamic> queryParame = {
+      'type': "pdf",
+      'id_mag_pub': id_mag_pub!,
+      'page': "all",
+    };
+    var queryString = Uri(queryParameters: queryParame).query;
+
+    var response = await getIt<ApiClient>().diofordata.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
 
     return Uint8List.fromList(response.data);
   }
@@ -75,7 +116,7 @@ class MagazineRepository {
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:sharemagazines_flutter/src/constants.dart';
 // import 'package:http/http.dart' as http;
-// import 'package:sharemagazines_flutter/src/models/magazine_publication_model.dart';
+// import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 // import 'package:cookie_jar/cookie_jar.dart';
 // import 'package:get_it/get_it.dart';
 //

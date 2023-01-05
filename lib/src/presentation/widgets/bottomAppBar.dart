@@ -22,6 +22,7 @@ class BottomNavBarImp extends StatelessWidget {
       backgroundColor: Colors.transparent,
 // backgroundColor: Theme.of(context).copyWith(splashColor: Colors.yellow),,
       elevation: 0,
+
       // backgroundColor: Color(0x00ffffff),
       showSelectedLabels: false,
       selectedItemColor: Colors.blue,
@@ -46,14 +47,14 @@ class BottomNavBarImp extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(
-            Icons.map,
+            Icons.pin_drop_outlined,
             color: selectedIndex == 2 ? Colors.blue : Colors.grey,
           ),
           label: 'Chats',
         ),
         BottomNavigationBarItem(
           icon: Icon(
-            Icons.account_box,
+            Icons.account_circle_outlined,
             color: selectedIndex == 3 ? Colors.blue : Colors.grey,
           ),
           label: 'Account',

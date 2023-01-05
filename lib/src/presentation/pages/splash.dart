@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 
-import 'package:sharemagazines_flutter/src/blocs/splash_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/splash_widget.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
@@ -15,32 +16,23 @@ import 'startpage.dart';
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(context),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            "assets/images/Background.png",
+            fit: BoxFit.fill,
+            // allowDrawingOutsideViewBox: true,
+          ),
+        ),
+        _buildBody(context)
+      ],
+      // body: _buildBody(context),
     );
   }
 
   BlocBuilder<SplashBloc, SplashState> _buildBody(BuildContext context) {
-    // return BlocProvider(
-    //   create: (BuildContext context) => SplashBloc(
-    //
-    //       // RepositoryProvider.of<HotspotRepository>(context),
-    //       // RepositoryProvider.of<AuthRepository>(context)
-    //       ),
-    //   child: BlocBuilder<SplashBloc, SplashState>(
-    //     builder: (context, state) {
-    //       if ((state is Initial || state is Loading)) {
-    //         //add lodaing state
-    //         return SplashScreenWidget();
-    //       } else if (state is Loaded) {
-    //         return StartPage(title: "notitle");
-    //       }
-    //       return StartPage(title: "notitle");
-    //     },
-    //   ),
-    // );
     return BlocBuilder<SplashBloc, SplashState>(
-      // bloc: BlocProvider.of(context),
       builder: (context, state) {
         print("bloc builder splash");
         if ((state is Initial)) {
@@ -53,7 +45,8 @@ class SplashScreen extends StatelessWidget {
           // return Navigator.of(context).push(PageRouteBuilder(pageBuilder: (BuildContext context, _, __) => SplashScreenWidget()));
         } else if (state is Loaded) {
           print("SplashScreen state is loaded");
-          print(state.position?.latitude);
+          // print(state.position?.latitude);
+          BlocProvider.of<AuthBloc>(context).add(Initialize());
           return StartPage(
             title: "notitle",
             splashbloc: BlocProvider.of<SplashBloc>(context),

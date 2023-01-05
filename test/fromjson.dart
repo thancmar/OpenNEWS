@@ -1,6 +1,6 @@
 // // Import the test package and Counter class
 //
-// import 'package:sharemagazines_flutter/src/models/magazine_publication_model.dart';
+// import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 // import 'package:test/test.dart';
 //
 // void main() {

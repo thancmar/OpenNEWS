@@ -6,9 +6,9 @@ Localization LocalizationFromJson(String str) => Localization.fromJson(json.deco
 class Localization {
   int? code;
   String? msg;
-  late List<Data> data = <Data>[];
+  List<Data>? data = <Data>[];
 
-  Localization({this.code, this.msg, required this.data});
+  Localization({this.code, this.msg, this.data});
 
   // Localization.fromJson(Map<String, dynamic> json) {
   //   code = json['code'];
@@ -26,14 +26,17 @@ class Localization {
   Localization.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     msg = json['msg'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
-    } else {
-      null;
-    }
+    // if (json['data'] != null) {
+    //   data = <Data>[];
+    //   json['data'].forEach((v) {
+    //     data!.add(new Data.fromJson(v));
+    //   });
+    // } else {
+    //   null;
+    // }
+    json['data'].forEach((v) {
+      data!.add(new Data.fromJson(v));
+    });
   }
   // factory Localization.fromJson(Map<String, dynamic> json) => new Localization(
   //       code: json['code'],

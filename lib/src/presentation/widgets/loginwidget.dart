@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
 //import 'package:sharemagazines_flutter/src/presentation/pages/map_page.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/loginwidget.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth_bloc.dart';
+import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/login_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -64,20 +64,17 @@ class _LoginPageState extends State<LoginPage> {
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  20.0, 5.0, 0.0, 0.0),
+                              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 0.0, 0.0),
                               child: BackButton(
                                 color: Colors.white,
                                 // onPressed: () {
                                 //   Navigator.pop(context, true);
                                 // }),
-                                onPressed: () =>
-                                    Navigator.of(context).pop(true),
+                                onPressed: () => Navigator.of(context).pop(true),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  5.0, 25.0, 20.0, 20.0),
+                              padding: const EdgeInsets.fromLTRB(5.0, 25.0, 20.0, 20.0),
                               child: Text(
                                 "Anmelden",
                                 textAlign: TextAlign.left,
@@ -92,11 +89,9 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                          padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                           child: Container(
-                            padding:
-                                const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.all(
@@ -107,18 +102,15 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(color: Colors.white),
                               decoration: InputDecoration(
                                   labelText: "E-Mail oder Benutzername",
-                                  labelStyle: TextStyle(
-                                      fontSize: 16.0), //, height: 3.8),
+                                  labelStyle: TextStyle(fontSize: 16.0), //, height: 3.8),
                                   border: InputBorder.none),
                             ),
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
+                          padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
                           child: Container(
-                            padding:
-                                const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
+                            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0.0),
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.all(
@@ -128,16 +120,14 @@ class _LoginPageState extends State<LoginPage> {
                             child: TextFormField(
                               decoration: InputDecoration(
                                 labelText: "Passwort",
-                                labelStyle: TextStyle(
-                                    fontSize: 16.0), //20.0, height: 3.8),
+                                labelStyle: TextStyle(fontSize: 16.0), //20.0, height: 3.8),
                                 border: InputBorder.none,
                               ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 25.0),
+                          padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 25.0),
                           child: InkWell(
                             onTap: () {
                               print("I was tapped!");
@@ -155,8 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
+                          padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
                           child: ElevatedButton(
                             onPressed: () {
                               //bloc.fetchLogin();
@@ -177,8 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                               shadowColor: Colors.blueAccent,
                               elevation: 3,
                               // side: BorderSide(width: 0.10, color: Colors.white),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14.0)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                               minimumSize: Size(100, 60), //////// HERE
                             ),
                             child: Text(
