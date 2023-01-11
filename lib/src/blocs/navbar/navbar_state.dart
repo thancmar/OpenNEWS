@@ -7,6 +7,9 @@ abstract class NavbarState extends Equatable {
   // late final int index;
   static late MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
   static late MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetTopLastByRange;
+  static late Position? currentPosition = null;
+  static late Future<HotspotsGetAllActive> hotspotList;
+  static late List<Place> allMapMarkers = <Place>[];
   // final List<Uint8List> bytes;
   // List<Future<Uint8List>>? AllCovers = List.empty(growable: true);
   // late final List<Future<Uint8List>>? futureFunc;
@@ -109,7 +112,7 @@ class GoToMenu extends NavbarState {
 // }
 
 class GoToMap extends NavbarState {
-  GoToMap(MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit, List<Future<Uint8List>>? futureFunc, Localization? locations) : super();
+  GoToMap() : super();
 
   // Loading(NavbarItems navbarItem, int index) : super(navbarItem, index);
 

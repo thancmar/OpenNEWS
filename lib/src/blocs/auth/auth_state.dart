@@ -27,6 +27,11 @@ class Authenticated extends AuthState {
   List<Object?> get props => [];
 }
 
+class AuthenticatedWithGoogle extends AuthState {
+  @override
+  List<Object?> get props => [];
+}
+
 class IncompleteAuthenticated extends AuthState {
   @override
   List<Object?> get props => [];

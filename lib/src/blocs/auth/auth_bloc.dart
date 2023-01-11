@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
@@ -21,9 +23,9 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
-  final HotspotRepository hotspotRepository;
 
   // late ApiClient dioClient;
+  late final AuthCredential credential;
   ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
   final GetIt getIt = GetIt.instance;
 
@@ -31,13 +33,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // Sink<String?> get searchQuery => _dataController.sink;
   // late Stream<HotspotsGetAllActive> hotspotStream;
 
-  AuthBloc({required this.authRepository, required this.hotspotRepository}) : super(UnAuthenticated()) {
+  AuthBloc({required this.authRepository}) : super(UnAuthenticated()) {
     on<Initialize>((event, emit) async {
       // emit(Loading());
       // SharedPreferences prefs = await SharedPreferences.getInstance();
       // prefs.setString('email', "");
       // prefs.setString('pw', "");
       // await authRepository.signOut();
+      FirebaseApp firebaseApp = await Firebase.initializeApp();
+      // User? user;
+
       AuthState.savedEmail = await dioClient.secureStorage.read(key: "email") ?? "asdsadddadsfdscvdfvfd";
       print("sdfdsf ${AuthState.savedEmail}");
       AuthState.savedPWD = await dioClient.secureStorage.read(key: "pw") ?? "";
@@ -53,8 +58,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // getIt.registerSingleton(() => ApiClient(dio: getIt<Dio>(), networkInfo: getIt<NetworkInfo>(), secureStorage: getIt<FlutterSecureStorage>()));
       // print(getIt.isRegistered());
       try {
-        await authRepository.signIn(email: event.email, password: event.password).then(
-            (value) async => {emit(Authenticated()), await dioClient.secureStorage.write(key: "email", value: event.email), await dioClient.secureStorage.write(key: "pw", value: event.password)});
+        await authRepository.signIn(email: event.email, password: event.password).then((value) async => {
+              emit(Authenticated()),
+              print("link with firebase"),
+              await dioClient.secureStorage.write(key: "email", value: event.email),
+              await dioClient.secureStorage.write(key: "pw", value: event.password),
+              credential = EmailAuthProvider.credential(email: event.email, password: event.password),
+            });
+        // try {
+        //   print("link with firebase ${FirebaseAuth.instance.currentUser?.email}");
+        //   final userCredential = await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
+        // } on FirebaseAuthException catch (e) {
+        //   print("link with firebase error");
+        //   switch (e.code) {
+        //     case "provider-already-linked":
+        //       print("The provider has already been linked to the user.");
+        //       break;
+        //     case "invalid-credential":
+        //       print("The provider's credential is not valid.");
+        //       break;
+        //     case "credential-already-in-use":
+        //       print("The account corresponding to the credential already exists, "
+        //           "or is already linked to a Firebase User.");
+        //       break;
+        //     // See the API reference for the full list of error codes.
+        //     default:
+        //       print("Unknown error.");
+        //   }
+        //   print("link with firebase currentuser ${FirebaseAuth.instance.currentUser!.email}");
+        // }
         // await authRepository.signIn(email: data?.response?.email, password: data?.response?.password);
         // print("asdasfsdfsd123432423");
         // print(data!.response!.email!);
@@ -69,14 +101,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<IncompleteSignInRequested>((event, emit) async {
-      print("first");
+      print("IncompleteSignInRequested");
       // emit(LoadingAuth());
       // emit(UnAuthenticated());
       // //
-      await authRepository
-          .signInIncomplete()
-          .then((value) async => await authRepository.signIn(email: value?.response?.email, password: value?.response?.password).then((value) => {emit(IncompleteAuthenticated())}));
-      print("2001");
+      try {
+        await authRepository
+            .signInIncomplete()
+            .then((value) async => await authRepository.signIn(email: value?.response?.email, password: value?.response?.password).then((value) => {emit(IncompleteAuthenticated())}));
+        print("2001");
+      } catch (e) {
+        emit(AuthError(e.toString()));
+        // emit(UnAuthenticated());
+        emit(AuthError(e.toString()));
+      }
       // emit(UnAuthenticated());
       // final data = await authRepository.signInIncomplete(client: dioClient);
       // print(data?.response?.email);
@@ -168,6 +206,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       //   emit(AuthError(e.toString()));
       //   emit(UnAuthenticated());
       // }
+    });
+    on<SignInWithGoogle>((event, emit) async {
+      final response = await authRepository.signInWithGoogle();
+      print("Google reesponse ${response}");
+      if (response) {
+        emit(AuthenticatedWithGoogle());
+      } else {
+        emit(UnAuthenticated());
+      }
+      // emit(GoToLoginPage());
+    });
+
+    on<SignUpWithGoogle>((event, emit) async {
+      final response = await authRepository.signInWithGoogle();
+      print("Google reesponse ${response}");
+      if (response) {
+        emit(AuthenticatedWithGoogle());
+      } else {
+        emit(UnAuthenticated());
+      }
+      // emit(GoToLoginPage());
     });
 
     // When User Presses the Google Login Button, we will send the GoogleSignInRequest Event to the AuthBloc to handle it and emit the Authenticated State if the user is authenticated

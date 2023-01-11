@@ -27,7 +27,7 @@ class _MenuPageState extends State<MenuPage> {
                           width: MediaQuery.of(context).size.width * 0.40,
                           height: MediaQuery.of(context).size.width * 0.1,
                           child: FloatingActionButton.extended(
-                            // heroTag: 'location_offers',
+                            heroTag: 'location_offers1',
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                             label: Text(
                               'Speisekarte',

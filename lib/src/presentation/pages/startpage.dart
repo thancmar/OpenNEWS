@@ -80,7 +80,7 @@ class _StartPageState extends State<StartPage> {
                   ),
                 ),
                 BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-                  if (state is Authenticated || state is IncompleteAuthenticated) {
+                  if (state is Authenticated || state is IncompleteAuthenticated || state is AuthenticatedWithGoogle) {
                     // Navigating to the dashboard screen if the user is authenticated
                     // Navigator.pushReplacement(
                     //     context, MaterialPageRoute(builder: (context) => MainPage()));+

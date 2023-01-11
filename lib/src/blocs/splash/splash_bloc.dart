@@ -10,6 +10,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
@@ -35,8 +36,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       // late GoogleMapController mapController;
       // await Future.delayed(Duration(seconds: 2)); // This is to simulate that above checking process
       bool serviceEnabled;
-
+      // await Geolocator.();
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
       if (!serviceEnabled) {
         // Location services are not enabled don't continue
         // accessing the position and request users of the
@@ -58,10 +60,24 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           emit(Loaded());
         }
       }
+      if (permission == LocationPermission.denied) {
+        print("splash permission");
+
+        await Geolocator.requestPermission();
+        permission = await Geolocator.requestPermission();
+        // openAppSettings();
+        // return Future.error(Exception('Location permissions are denied.'));
+        // Permissions are denied forever, handle appropriately.
+        // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+        emit(Loaded());
+      }
       if (permission == LocationPermission.deniedForever) {
         print("splash permission");
         await Geolocator.requestPermission();
+        // throw Exception("sdcds");
+        // openAppSettings();
         permission = await Geolocator.requestPermission();
+        // return Future.error(Exception('Location permissions are denied.'));
         // Permissions are denied forever, handle appropriately.
         // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
         emit(Loaded());

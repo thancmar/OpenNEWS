@@ -1,31 +1,24 @@
 import 'dart:async';
 
 import 'dart:typed_data';
-import 'package:dio/adapter.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:google_maps_webservice/directions.dart';
-import 'package:http/http.dart' as http;
+// import 'package:flutter_map/flutter_map.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:image/image.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
-import '../../constants.dart';
 import '../../models/hotspots_model.dart';
+import '../../presentation/widgets/place_map.dart';
 import '../../resources/dioClient.dart';
 
 part 'navbar_event.dart';
@@ -37,12 +30,12 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   final MagazineRepository magazineRepository;
   final LocationRepository locationRepository;
   final HotspotRepository hotspotRepository;
-  late Future<HotspotsGetAllActive> hotspotList;
+  // late Future<HotspotsGetAllActive> hotspotList;
   late Localization? locationResponse;
   late Data appbarlocation;
   bool statechanged = false;
   late List<Future<Uint8List>> getTop = List.empty(growable: true);
-  Position? position = null;
+  // Position? position = null;
   final GetIt getIt = GetIt.instance;
   var cookieJar = CookieJar();
   // GetIt getIt = GetIt.instance;
@@ -53,8 +46,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //   status: 'loading...',
     //   maskType: EasyLoadingMaskType.black,
     // );
-    print("GetAllMagazinesCover ${position?.latitude}");
-    await locationRepository.checklocation(locationID.toString(), position?.latitude, position?.longitude).then((value) async => {
+    print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
+    await locationRepository.checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
           // if (index != 0)
           if (locationID != 0)
             {
@@ -104,15 +97,34 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       NavbarState.languageResultsEN?.clear();
       NavbarState.languageResultsFR?.clear();
       // print(dioClient.accessToken);
-      hotspotList = hotspotRepository.GetAllActiveHotspots();
-      // await hotspotList;
+      NavbarState.hotspotList = hotspotRepository.GetAllActiveHotspots();
+      // await NavbarState.hotspotList;
+      NavbarState.hotspotList.then((data) {
+        List<Place>? hpList = [];
+        var len = data.response?.length;
+        for (int i = 0; i < len!; i++) {
+          final temp = Place(
+              id: data.response![i].id!,
+              nameApp: data.response![i].nameApp!,
+              type: data.response![i].type!,
+              addressStreet: data.response![i].addressStreet!,
+              addressHouseNr: data.response![i].addressHouseNr!,
+              addressZip: data.response![i].addressZip!,
+              addressCity: data.response![i].addressCity!,
+              latitude: data.response![i].latitude!,
+              longitude: data.response![i].longitude!);
+          NavbarState.allMapMarkers.add(temp);
+        }
+      });
+      print("Position lat");
       LocationPermission? permission = await Geolocator.checkPermission();
+      print("Position lat");
       if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-        position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+        NavbarState.currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {throw Exception("Failed to localize")});
       }
 
-      print("Position lat ${position?.latitude} ${position?.longitude}");
-      await locationRepository.checklocation(null, position?.latitude, position?.longitude).then((value) async => {
+      print("Position lat");
+      await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
             // print("checklocation value ${value!.data}"),
             locationResponse = value,
             // for (var i = 0; i < appbarlocation.data!.length; i++){
@@ -120,22 +132,22 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
             // },
             // if (value.code)
             // await locationRepository.checklocation(value!.data![0].idLocation),
-            print("value!.data!.length! ${value!.data!.length!}"),
+            print("value!.data!.length! ${value!.data!.length}"),
             print("value!.data!.length! }"),
-            if (value!.data!.length! > 1)
+            if (value.data!.length > 1)
               {
                 add(LocationSelection()),
                 event.timer?.cancel(),
                 await EasyLoading.dismiss(),
                 print('EasyLoading dismiss 3'),
               }
-            else if (value!.data!.length! == 1)
+            else if (value.data!.length == 1)
               {
                 // add(Home(value!.data![0])),
                 // await GetAllMagazinesCover(int.parse(value!.data![0].idLocation!)),
-                appbarlocation = value!.data![0],
+                appbarlocation = value.data![0],
                 print("appbarlocation = Data(),"),
-                await GetAllMagazinesCover(int.parse(value!.data![0].idLocation!), event).then((valueGetAllMagazinesCover) async => {
+                await GetAllMagazinesCover(int.parse(value.data![0].idLocation!), event).then((valueGetAllMagazinesCover) async => {
                       add(Home(value.data![0])),
                       event.timer?.cancel(),
                       await EasyLoading.dismiss(),
@@ -191,7 +203,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
     on<Map>((event, emit) async {
       statechanged = true;
-      emit(GoToMap(null, null, null));
+      emit(GoToMap());
       statechanged = false;
     });
 
@@ -231,7 +243,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //   maskType: EasyLoadingMaskType.black,
     // );
     print("bloc LocationRefresh");
-    await locationRepository.checklocation(null, position?.latitude, position?.longitude).then((value) async => {
+    await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
           print("bloc LocationRefresh ${appbarlocation.idLocation}"),
           // print("bloc LocationRefresh ${appbarlocation.idLocation} ${value!.data!}"),
 
@@ -251,7 +263,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
               // for (int i = 0; i < value!.data!.length; i++) {},
               for (int i = 0; i < value!.data!.length; i++)
                 {
-                  if (appbarlocation.idLocation == value!.data![i].idLocation)
+                  if (appbarlocation.idLocation == value.data![i].idLocation)
                     {
                       await EasyLoading.dismiss(),
                     }
@@ -260,7 +272,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
               //   {
               //     add(Initialize123(event.timer)),
               //   },
-              if (timer?.isActive == true || value!.data!.length == 0)
+              if (timer?.isActive == true || value.data!.length == 0)
                 {
                   add(Initialize123()),
                 }

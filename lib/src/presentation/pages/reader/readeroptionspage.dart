@@ -48,9 +48,11 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
           ),
           onPressed: () => {
             // Navigator.of(context).pop(),
-            dispose(),
-            Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close(),
+            // dispose(),
+            // Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close(),
             widget.bloc.add(CloseReader()),
+            // BlocProvider.of<ReaderBloc>(context).add(CloseReader()),
+            // BlocProvider
             // Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close()
           },
         ),

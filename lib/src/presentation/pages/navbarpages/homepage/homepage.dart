@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:dismissible_page/dismissible_page.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ import '../../../../blocs/searchpage/search_bloc.dart' as searchBloc;
 import '../../../../resources/magazine_repository.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
 import '../../player/player.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // class HomePageState extends StatelessWidget {
 //   const HomePageState({Key? key}) : super(key: key);
@@ -193,12 +195,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                   width: MediaQuery.of(context).size.width * 0.40,
                                   height: MediaQuery.of(context).size.width * 0.1,
                                   child: FloatingActionButton.extended(
-                                    // heroTag: 'location_offers',
-                                    heroTag: null,
+                                    heroTag: 'location_offers1',
+                                    // heroTag: null,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                                     label: Text(
                                       'Speisekarte',
-                                      style: TextStyle(fontSize: 12),
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                     ), // <-- Text
                                     backgroundColor: Colors.grey.withOpacity(0.1),
                                     icon: Icon(
@@ -224,7 +226,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
                                     label: Text(
                                       'Unser Barista',
-                                      style: TextStyle(fontSize: 12),
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                     ), // <-- Text
                                     backgroundColor: Colors.grey.withOpacity(0.1),
                                     icon: Icon(
@@ -247,7 +249,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                                     label: Text(
                                       'Kaffeesorten',
-                                      style: TextStyle(fontSize: 12),
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                     ), // <-- Text
                                     backgroundColor: Colors.grey.withOpacity(0.1),
                                     icon: Icon(
@@ -274,7 +276,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                       padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
                                       child: Text(
                                         "News aus deiner Region",
-                                        style: TextStyle(color: Colors.white, fontSize: 16),
+                                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                                         textAlign: TextAlign.right,
                                       ),
                                     ),
@@ -492,7 +494,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 100 : 20, 25, 20),
+                                padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
                                 child: Text(
                                   'Meistgelesene Artikel',
                                   style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
@@ -519,74 +521,110 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                     //   setState(() {});
                                     // }
                                     // print("Herooo $i");
-                                    return Hero(
-                                      // key: UniqueKey(),
-                                      tag: 'Meistgelesene_Artikel_$i',
-                                      child: FutureBuilder<Uint8List>(
-                                        // future: state.languageResultsALL_HomeState?[i],
-                                        future: NavbarState.languageResultsALL?[i],
-                                        builder: (context, snapshot) {
-                                          // print("Meistgelesene_Artikel_ ${snapshot.data}");
-                                          return Transform.scale(
-                                            // origin: Offset(100, 50),
+                                    return FutureBuilder<Uint8List>(
+                                      // future: state.languageResultsALL_HomeState?[i],
+                                      future: NavbarState.languageResultsALL?[i],
+                                      builder: (context, snapshot) {
+                                        // print("Meistgelesene_Artikel_ ${snapshot.data}");
+                                        return Transform.scale(
+                                          // origin: Offset(100, 50),
 
-                                            // scale: i == _index1 ? 1 : 1,
-                                            scale: 1,
+                                          // scale: i == _index1 ? 1 : 1,
+                                          scale: 1,
 
-                                            alignment: Alignment.bottomCenter,
-                                            // alignment: AlignmentGeometry(),
-                                            child: Card(
-                                                color: Colors.transparent,
-                                                // clipBehavior: Clip.hardEdge,
-                                                borderOnForeground: true,
-                                                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                                                elevation: 0,
+                                          alignment: Alignment.bottomCenter,
+                                          // alignment: AlignmentGeometry(),
+                                          child: Card(
+                                              color: Colors.transparent,
+                                              // clipBehavior: Clip.hardEdge,
+                                              borderOnForeground: true,
+                                              margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                              elevation: 0,
 
-                                                ///maybe 0?
-                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-                                                child: Stack(
-                                                  children: [
-                                                    (snapshot.hasData)
-                                                        ? GestureDetector(
-                                                            // behavior: HitTestBehavior.translucent,
-                                                            onTap: () => {
-                                                              Navigator.push(
-                                                                context,
-                                                                PageRouteBuilder(
-                                                                  // transitionDuration: Duration(seconds: 2),
-                                                                  opaque: true,
-                                                                  pageBuilder: (_, __, ___) => StartReader(
-                                                                    id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
-                                                                    index: i.toString(),
-                                                                    heroTag: 'Meistgelesene_Artikel_$i',
-                                                                    cover: snapshot.data!,
-                                                                    noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
-                                                                    readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
+                                              ///maybe 0?
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                                              child: Stack(
+                                                children: [
+                                                  GestureDetector(
+                                                    // behavior: HitTestBehavior.translucent,
+                                                    onTap: () => {
+                                                      context.pushTransparentRoute(
+                                                        StartReader(
+                                                          id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
+                                                          index: i.toString(),
+                                                          heroTag: 'Meistgelesene_Artikel_$i',
+                                                          cover: snapshot.data!,
+                                                          noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
+                                                          readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
 
-                                                                    // noofpages: 5,
+                                                          // noofpages: 5,
+                                                        ),
+                                                      ),
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   PageRouteBuilder(
+                                                      //     // transitionDuration: Duration(seconds: 2),
+                                                      //     opaque: true,
+                                                      //     pageBuilder: (_, __, ___) => StartReader(
+                                                      //       id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
+                                                      //       index: i.toString(),
+                                                      //       heroTag: 'Meistgelesene_Artikel_$i',
+                                                      //       cover: snapshot.data!,
+                                                      //       noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
+                                                      //       readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
+                                                      //
+                                                      //       // noofpages: 5,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                    },
+                                                    // child: ClipRRect(
+                                                    //   borderRadius: BorderRadius.circular(5.0),
+                                                    //   child: (snapshot.hasData)
+                                                    //       ? Hero(
+                                                    //           tag: 'Meistgelesene_Artikel_$i',
+                                                    //           child: Image.memory(
+                                                    //             // state.bytes![i],
+                                                    //             snapshot.data!,
+                                                    //           ),
+                                                    //         )
+                                                    //       : Container(
+                                                    //           color: Colors.grey.withOpacity(0.1),
+                                                    //           child: SpinKitFadingCircle(
+                                                    //             color: Colors.white,
+                                                    //             size: 50.0,
+                                                    //           ),
+                                                    //         ),
+                                                    // ),
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(5.0),
+                                                      child: (snapshot.hasData)
+                                                          ? Hero(
+                                                              tag: 'Meistgelesene_Artikel_$i',
+                                                              child: CachedNetworkImage(
+                                                                imageUrl: "http://via.placeholder.com/200x150",
+                                                                imageBuilder: (context, imageProvider) => Container(
+                                                                  decoration: BoxDecoration(
+                                                                    image: DecorationImage(image: imageProvider, fit: BoxFit.cover, colorFilter: ColorFilter.mode(Colors.red, BlendMode.colorBurn)),
                                                                   ),
                                                                 ),
+                                                                placeholder: (context, url) => CircularProgressIndicator(),
+                                                                errorWidget: (context, url, error) => Icon(Icons.error),
                                                               ),
-                                                            },
-                                                            child: ClipRRect(
-                                                              borderRadius: BorderRadius.circular(5.0),
-                                                              child: Image.memory(
-                                                                  // state.bytes![i],
-                                                                  snapshot.data!),
+                                                            )
+                                                          : Container(
+                                                              color: Colors.grey.withOpacity(0.1),
+                                                              child: SpinKitFadingCircle(
+                                                                color: Colors.white,
+                                                                size: 50.0,
+                                                              ),
                                                             ),
-                                                          )
-                                                        : Container(
-                                                            color: Colors.grey.withOpacity(0.1),
-                                                            child: SpinKitFadingCircle(
-                                                              color: Colors.white,
-                                                              size: 50.0,
-                                                            ),
-                                                          ),
-                                                  ],
-                                                )),
-                                          );
-                                        },
-                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              )),
+                                        );
+                                      },
                                     );
                                   },
                                 )),

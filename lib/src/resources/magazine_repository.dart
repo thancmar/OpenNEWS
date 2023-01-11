@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:core';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:sharemagazines_flutter/src/constants.dart';
 import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -40,7 +41,7 @@ class MagazineRepository {
     print("magazinePublishedGetTopLastByRange $id_hotspot");
     final getIt = GetIt.instance;
     Map<String, dynamic> data = {'f': 'magazinePublishedGetTopLastByRange', 'json': '{"id_hotspot": "$id_hotspot"}'};
-
+    print(data);
     var queryString = Uri(queryParameters: data).query;
 
     // var response = await getIt<ApiClient>().dio.post(
@@ -72,6 +73,11 @@ class MagazineRepository {
     var queryString = Uri(queryParameters: queryParame).query;
 
     var response = await getIt<ApiClient>().dioforImages.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
+    await DefaultCacheManager().putFile(
+      queryString,
+      Uint8List.fromList(response.data),
+      fileExtension: "jpeg",
+    );
 
     return Uint8List.fromList(response.data);
   }

@@ -17,6 +17,14 @@ class OpenLoginPage extends AuthEvent {
   OpenLoginPage();
 }
 
+class SignInWithGoogle extends AuthEvent {
+  SignInWithGoogle();
+}
+
+class SignUpWithGoogle extends AuthEvent {
+  SignUpWithGoogle();
+}
+
 // When the user signing in with email and password this event is called and the [AuthRepository] is called to sign in the user
 class SignInRequested extends AuthEvent {
   final String email;

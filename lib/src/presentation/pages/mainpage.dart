@@ -62,10 +62,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     //Dont know if this helps
-    HomePage().createState();
-    MenuPage().createState();
-    Maps().createState();
-    AccountPage().createState();
 
     print("init_MainPageState");
     // EasyLoading.addStatusCallback((status) {
@@ -226,110 +222,200 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: ExpandableNotifier(
                                   child: ScrollOnExpand(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Icon(
-                                            Icons.circle,
-                                            color: Colors.white,
-                                            size: 80,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              MarqueeWidget(
-                                                child: Text(
-                                                  // state.access_location.data!.isNotEmpty ==
-                                                  //         true
-                                                  //     ? "sdf"
-                                                  //     : "sdf",
-                                                  // "Weser kurier",
-                                                  state is GoToHome
-                                                      ? state.location_HomeState?.nameApp ?? "No location"
-                                                      : state is GoToMenu
-                                                          ? state.location?.nameApp ?? "No location"
-                                                          : "${state}",
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: 70,
+                                                width: 70,
+                                                // color: Colors.red,
+                                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(0100), color: Colors.grey.withOpacity(0.2)),
+                                              ),
+                                              // child: Icon(
+                                              //   Icons.circle,
+                                              //   color: Colors.white,
+                                              //   size: 80,
+                                              // ),
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  MarqueeWidget(
+                                                    child: Text(
+                                                      // state.access_location.data!.isNotEmpty ==
+                                                      //         true
+                                                      //     ? "sdf"
+                                                      //     : "sdf",
+                                                      // "Weser kurier",
+                                                      state is GoToHome
+                                                          ? state.location_HomeState?.nameApp ?? "No location"
+                                                          : state is GoToMenu
+                                                              ? state.location?.nameApp ?? "No location"
+                                                              : "${state}",
 // state.magazinePublishedGetLastWithLimit
 //     .response!.first.name!,
 //                                         overflow: TextOverflow.e,
 //                                         softWrap: true,
 //                                         maxLines: 1,
-                                                  style: TextStyle(fontFamily: 'Raleway', fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+                                                      style: TextStyle(fontFamily: 'Raleway', fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
 // textAlign: TextAlign.left,
-                                                ),
-                                              ),
-                                              Text(
-                                                "Infos zu deiner Location",
-                                                // overflow: TextOverflow.fade,
-                                                // softWrap: true,
-                                                style: TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w200),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Infos zu deiner Location",
+                                                    // overflow: TextOverflow.fade,
+                                                    // softWrap: true,
+                                                    style: TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w200),
 // textAlign: TextAlign.right,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        // Spacer(),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 10),
-                                          child: InkWell(
-                                            onTap: () => {
-                                              if (mounted) {setState(() => showSearchPage = true)},
-                                              // setState(() {
-                                              //   showSearchPage = true;
-                                              // }),
-                                              print("before searchpage state $state"),
-                                              Navigator.push(
-                                                context,
-                                                PageRouteBuilder(
-                                                  // transitionDuration:
-                                                  // Duration(seconds: 2),
-
-                                                  pageBuilder: (_, __, ___) {
-                                                    // return StartSearch();
-
-                                                    return SearchPage();
-                                                  },
-                                                  // maintainState: true,
-
-                                                  // transitionDuration: Duration(milliseconds: 1000),
-                                                  // transitionsBuilder: (context, animation, anotherAnimation, child) {
-                                                  //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
-                                                  //   return ScaleTransition(
-                                                  //     scale: animation,
-                                                  //     alignment: Alignment.topRight,
-                                                  //     child: child,
-                                                  //   );
-                                                  // }
-                                                ),
-                                              ).then((_) {
-                                                // if (mounted) {
-                                                print("after searchpage state $state");
-
-                                                setState(() {
-                                                  showSearchPage = false;
-                                                });
-                                                // }
-                                              })
-                                              // ).then((_) => setState(() {
-                                              //       showSearchPage = false;
-                                              //     }))
-                                            },
-                                            child: Hero(
-                                              tag: "search button",
-                                              child: Icon(
-                                                Icons.search_sharp,
-                                                // Icomoon.fc_logo,
-                                                color: Colors.white,
-                                                size: 40,
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ),
+                                            // Spacer(),
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 10),
+                                              child: InkWell(
+                                                onTap: () => {
+                                                  if (mounted) {setState(() => showSearchPage = true)},
+                                                  // setState(() {
+                                                  //   showSearchPage = true;
+                                                  // }),
+                                                  print("before searchpage state $state"),
+                                                  Navigator.push(
+                                                    context,
+                                                    PageRouteBuilder(
+                                                      // transitionDuration:
+                                                      // Duration(seconds: 2),
+
+                                                      pageBuilder: (_, __, ___) {
+                                                        // return StartSearch();
+
+                                                        return SearchPage();
+                                                      },
+                                                      // maintainState: true,
+
+                                                      // transitionDuration: Duration(milliseconds: 1000),
+                                                      // transitionsBuilder: (context, animation, anotherAnimation, child) {
+                                                      //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
+                                                      //   return ScaleTransition(
+                                                      //     scale: animation,
+                                                      //     alignment: Alignment.topRight,
+                                                      //     child: child,
+                                                      //   );
+                                                      // }
+                                                    ),
+                                                  ).then((_) {
+                                                    // if (mounted) {
+                                                    print("after searchpage state $state");
+
+                                                    setState(() {
+                                                      showSearchPage = false;
+                                                    });
+                                                    // }
+                                                  })
+                                                  // ).then((_) => setState(() {
+                                                  //       showSearchPage = false;
+                                                  //     }))
+                                                },
+                                                child: Hero(
+                                                  tag: "search button",
+                                                  child: Icon(
+                                                    Icons.search_sharp,
+                                                    // Icomoon.fc_logo,
+                                                    color: Colors.white,
+                                                    size: 40,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
+                                        // SingleChildScrollView(
+                                        //   physics: RangeMaintainingScrollPhysics(),
+                                        //   scrollDirection: Axis.horizontal,
+                                        //   child: Row(
+                                        //     children: [
+                                        //       Padding(
+                                        //         padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
+                                        //         child: Container(
+                                        //           width: MediaQuery.of(context).size.width * 0.40,
+                                        //           height: MediaQuery.of(context).size.width * 0.1,
+                                        //           child: FloatingActionButton.extended(
+                                        //             // heroTag: 'location_offers',
+                                        //             heroTag: null,
+                                        //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                        //             label: Text(
+                                        //               'Speisekarte',
+                                        //               style: TextStyle(fontSize: 12),
+                                        //             ), // <-- Text
+                                        //             backgroundColor: Colors.grey.withOpacity(0.1),
+                                        //             icon: Icon(
+                                        //               // <-- Icon
+                                        //               Icons.menu_book,
+                                        //               // IconData(0xe9a9, fontFamily: ‘icomoon’);
+                                        //               size: 16.0,
+                                        //             ),
+                                        //             onPressed: () {},
+                                        //             // extendedPadding: EdgeInsets.all(50),
+                                        //           ),
+                                        //         ),
+                                        //       ),
+                                        //       Padding(
+                                        //         padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                        //         child: Container(
+                                        //           width: MediaQuery.of(context).size.width * 0.40,
+                                        //           height: MediaQuery.of(context).size.width * 0.1,
+                                        //           child: FloatingActionButton.extended(
+                                        //             // heroTag: 'location_offers',
+                                        //             heroTag: null,
+                                        //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                        //
+                                        //             label: Text(
+                                        //               'Unser Barista',
+                                        //               style: TextStyle(fontSize: 12),
+                                        //             ), // <-- Text
+                                        //             backgroundColor: Colors.grey.withOpacity(0.1),
+                                        //             icon: Icon(
+                                        //               // <-- Icon
+                                        //               Icons.account_box,
+                                        //               size: 16.0,
+                                        //             ),
+                                        //             onPressed: () {},
+                                        //           ),
+                                        //         ),
+                                        //       ),
+                                        //       Padding(
+                                        //         padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                        //         child: Container(
+                                        //           width: MediaQuery.of(context).size.width * 0.40,
+                                        //           height: MediaQuery.of(context).size.width * 0.1,
+                                        //           child: FloatingActionButton.extended(
+                                        //             // heroTag: 'location_offers',
+                                        //             heroTag: null,
+                                        //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                        //             label: Text(
+                                        //               'Kaffeesorten',
+                                        //               style: TextStyle(fontSize: 12),
+                                        //             ), // <-- Text
+                                        //             backgroundColor: Colors.grey.withOpacity(0.1),
+                                        //             icon: Icon(
+                                        //               // <-- Icon
+                                        //               Icons.coffee,
+                                        //               size: 16.0,
+                                        //             ),
+                                        //             onPressed: () {},
+                                        //           ),
+                                        //         ),
+                                        //       ),
+                                        //     ],
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),

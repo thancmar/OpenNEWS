@@ -93,9 +93,16 @@ dependencies:
   flutter_spinkit: ^5.1.0
   image_size_getter: ^2.1.2
   page_curl: ^0.0.1
-
+  firebase_auth: ^4.2.5
   expandable: ^5.0.1
-
+  dismissible_page: ^0.7.3
+  assorted_layout_widgets: ^7.0.0
+  map_launcher: ^2.4.0
+  permission_handler: ^10.2.0
+  sign_in_with_apple: ^4.3.0
+  firebase_core: ^2.4.1
+  flutter_cache_manager: ^3.3.0
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:

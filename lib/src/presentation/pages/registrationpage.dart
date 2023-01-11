@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/validators/emailvalidator.dart';
 import 'package:sharemagazines_flutter/src/presentation/validators/passwordvalidator.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class Registration extends StatefulWidget {
   const Registration({Key? key}) : super(key: key);
@@ -29,6 +31,7 @@ class _RegistrationState extends State<Registration> {
   List<String> _options = ['Männlich', 'Weiblich', 'Divers'];
   @override
   Widget build(BuildContext context) {
+    GoogleSignIn _googleSignIn;
     return Stack(children: <Widget>[
       Positioned.fill(
         child: Image.asset(
@@ -295,26 +298,38 @@ class _RegistrationState extends State<Registration> {
                   children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: Container(
-                        // color: Colors.white,
-                        height: 65,
-                        width: MediaQuery.of(context).size.width * 0.27,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
+                      child: GestureDetector(
+                        onTap: () => {
+                          BlocProvider.of<AuthBloc>(context).add(SignInWithGoogle())
+                          // _googleSignIn = GoogleSignIn(
+                          //   scopes: [
+                          //     'email',
+                          //     'https://www.googleapis.com/auth/contacts.readonly',
+                          //   ],
+                          // )
+                        },
+                        child: Container(
+                          // color: Colors.white,
+                          height: 65,
+                          width: MediaQuery.of(context).size.width * 0.27,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 0.5),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
+                            ),
                           ),
-                        ),
-                        // child: Icon(
-                        //   IconData(0xe255, fontFamily: 'MaterialIcons'),
-                        //   size: 30,
-                        //   color: Colors.blue,
-                        // )
-                        child: new SvgPicture.asset(
-                          "assets/images/google_login_logo.svg",
-                          fit: BoxFit.fill,
-                          allowDrawingOutsideViewBox: true,
+
+                          // child: Icon(
+                          //   IconData(0xe255, fontFamily: 'MaterialIcons'),
+                          //   size: 30,
+                          //   color: Colors.blue,
+                          // )
+                          child: new SvgPicture.asset(
+                            "assets/images/google_login_logo.svg",
+                            fit: BoxFit.fill,
+                            allowDrawingOutsideViewBox: true,
+                          ),
                         ),
                       ),
                     ),
@@ -340,21 +355,41 @@ class _RegistrationState extends State<Registration> {
                     ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: Container(
-                        // color: Colors.white,
-                        height: 65,
-                        width: MediaQuery.of(context).size.width * 0.27,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
+                      child: GestureDetector(
+                        onTap: () => {
+                          SignInWithAppleButton(
+                            onPressed: () async {
+                              final credential = await SignInWithApple.getAppleIDCredential(
+                                scopes: [
+                                  AppleIDAuthorizationScopes.email,
+                                  AppleIDAuthorizationScopes.fullName,
+                                ],
+                              );
+
+                              print(credential);
+
+                              // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
+                              // after they have been validated with Apple (see `Integration` section for more information on how to do this)
+                            },
+                          )
+                        },
+                        child: Container(
+                          // color: Colors.white,
+                          height: 65,
+
+                          width: MediaQuery.of(context).size.width * 0.27,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 0.5),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
+                            ),
                           ),
-                        ),
-                        child: new SvgPicture.asset(
-                          "assets/images/apple_login_logo.svg",
-                          fit: BoxFit.fill,
-                          allowDrawingOutsideViewBox: true,
+                          child: new SvgPicture.asset(
+                            "assets/images/apple_login_logo.svg",
+                            fit: BoxFit.fill,
+                            allowDrawingOutsideViewBox: true,
+                          ),
                         ),
                       ),
                     ),

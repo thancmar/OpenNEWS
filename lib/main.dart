@@ -93,7 +93,6 @@ class MyApp extends StatelessWidget {
             create: (context) => AuthBloc(
               //no need of Authbloc here
               authRepository: RepositoryProvider.of<AuthRepository>(context),
-              hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
             ),
           ),
           BlocProvider<SplashBloc>(create: (context) => SplashBloc()),
@@ -127,6 +126,7 @@ class MyApp extends StatelessWidget {
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
               }),
               fontFamily: 'Raleway',
+
               // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
               dividerColor: Colors.transparent),
           home: SplashScreen(),

@@ -20,7 +20,7 @@ class ReaderOptionsPages extends StatefulWidget {
   State<ReaderOptionsPages> createState() => _ReaderOptionsPagesState();
 }
 
-class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with AutomaticKeepAliveClientMixin {
+class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ReaderOptionsPages> {
   int _index = 0;
   final controller = PageController(viewportFraction: 0.4);
   // int current = 0;
@@ -74,7 +74,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with AutomaticK
       child: PageView.builder(
         itemCount: int.parse(widget.reader.noofpages),
         // padEnds: true,
-        // allowImplicitScrolling: true,
+        // allowImplicitScrolling: false,
 
         controller: controller,
         onPageChanged: (int index) => setState(() => _index = index),
@@ -83,6 +83,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with AutomaticK
         itemBuilder: (_, i) {
           return Transform.scale(
             origin: Offset(0, 0),
+
             // scaleX: 1,
             // scaleY: 1,
             scale: 1,

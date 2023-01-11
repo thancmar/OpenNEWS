@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:map_launcher/map_launcher.dart';
 import 'package:sharemagazines_flutter/src/blocs/map/map_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
@@ -46,7 +47,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   // var repo = HotspotRepository();
   late Future<HotspotsGetAllActive> hotspotList;
   // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  late List<Place>? hpList = [];
+  // late List<Place>? hpList = [];
   Set<Marker> markers = Set(); //markers for google map
   List<Marker> myMarkers = <Marker>[];
   late ClusterManager manager;
@@ -135,38 +136,16 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 
   @override
   void initState() {
-    print("hotspotList");
+    print("_MapsState init");
 
     super.initState();
     manager = _initClusterManager();
-    BlocProvider.of<NavbarBloc>(context).hotspotList.then((data) {
-      var len = data.response?.length;
-      for (int i = 0; i < len!; i++) {
-        final temp = Place(
-            id: data.response![i].id!,
-            nameApp: data.response![i].nameApp!,
-            type: data.response![i].type!,
-            addressStreet: data.response![i].addressStreet!,
-            addressHouseNr: data.response![i].addressHouseNr!,
-            addressZip: data.response![i].addressZip!,
-            addressCity: data.response![i].addressCity!,
-            latitude: data.response![i].latitude!,
-            longitude: data.response![i].longitude!);
-        hpList?.add(temp);
-      }
-      hpList?.forEach((element) {
-        myMarkers.add(Marker(markerId: MarkerId(element.nameApp), position: LatLng(element.latitude, element.longitude), infoWindow: InfoWindow(title: element.nameApp)));
-      });
-      manager.updateMap.call();
-    }, onError: (e) {
-      print("Map initState error");
-      print(e);
-    });
+    // manager.updateMap.call();
   }
 
   ClusterManager _initClusterManager() {
     print("_initClusterManager");
-    return ClusterManager<Place>(hpList!, _updateMarkers,
+    return ClusterManager<Place>(NavbarState.allMapMarkers, _updateMarkers,
         markerBuilder: _markerBuilder,
         // levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0],
         stopClusteringZoom: 12.0);
@@ -177,6 +156,49 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     setState(() {
       this.markers = markers;
     });
+  }
+
+//Show available maps to show route to the dest.
+  openMapsSheet(context, _title, _lat, _lon) async {
+    try {
+      final coords = Coords(_lat, _lon);
+      final title = _title;
+      print("Breakpoint");
+      final availableMaps = await MapLauncher.installedMaps;
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    for (var map in availableMaps)
+                      ListTile(
+                        onTap: () => map.showDirections(
+                          destinationTitle: title,
+                          destination: coords,
+                          // coords: coords,
+                          // title: title,
+                        ),
+                        title: Text(map.mapName),
+                        leading: SvgPicture.asset(
+                          map.icon,
+                          height: 30.0,
+                          width: 30.0,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -200,11 +222,16 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
             _controller.complete(controller);
             manager.setMapId(controller.mapId);
           },
-          onCameraMove: manager.onCameraMove,
+          onCameraMove:
+              //Could zoom in on the location when click on?
+
+              manager.onCameraMove,
+          // showlocationdetail = false,
+
           onCameraIdle: manager.updateMap,
           initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 6.0,
+            target: NavbarState.currentPosition != null ? LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude) : _center,
+            zoom: NavbarState.currentPosition != null ? 15.0 : 6.0,
           ),
           myLocationEnabled: true,
           myLocationButtonEnabled: false,
@@ -216,19 +243,22 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               showlocationdetail = false;
             });
           },
+
+          // onCameraMoveStarted: () => {
+          //   setState(() {
+          //     showlocationdetail = false;
+          //   })
+          // },
           zoomControlsEnabled: true,
 
           // markers: Set<Marker>.of(markers.values),
         ),
-
         SafeArea(
           child: Align(
               //search input bar
               alignment: Alignment.topCenter,
               child: InkWell(
-
                   // focusColor: Colors.red,
-
                   onTap: () async {
                     var place = await PlacesAutocomplete.show(
                         // decoration: BoxDecoration(
@@ -245,6 +275,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         //       // color: Colors.red,
                         //     ),
                         //     borderRadius: BorderRadius.circular(15)),
+
                         logo: Text(""),
                         radius: 10000,
                         context: context,
@@ -308,6 +339,10 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           trailing: GestureDetector(
                               onTap: () {
                                 //still need to implement
+                                if (NavbarState.currentPosition != null) {
+                                  final p = CameraPosition(target: LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude), zoom: 15);
+                                  mapController.animateCamera(CameraUpdate.newCameraPosition(p));
+                                }
                               },
                               child: Icon(
                                 Icons.location_searching,
@@ -316,9 +351,6 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         )),
                   ))),
         ),
-        // showlocationdetail == true
-        //     ? Positioned(bottom: 90, child: _buildlocationcard())
-        //     : Container()
         showlocationdetail == true
             ? Align(
                 alignment: Alignment.bottomCenter,
@@ -398,7 +430,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                   ),
                   child: TextButton(
                     child: Icon(Icons.directions),
-                    onPressed: () {/* ... */},
+                    onPressed: () => openMapsSheet(context, locationmarker.nameApp!, locationmarker.latitude, locationmarker.longitude),
                   ),
                 ),
               ),
@@ -416,7 +448,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     double zoomlevel = await mapController.getZoomLevel() * 1.2;
     print(zoomlevel);
     final p = CameraPosition(target: LatLng(lat, lng), zoom: zoomlevel);
-    c.animateCamera(CameraUpdate.newCameraPosition(p));
+    // c.animateCamera(CameraUpdate.newCameraPosition(p));
+    mapController.animateCamera(CameraUpdate.newCameraPosition(p));
   }
 
   Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
@@ -428,19 +461,12 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
             position: cluster.location,
             onTap: () {
               if (cluster.isMultiple == true) {
-                print("len");
                 setState(() {
                   print(cluster.location);
                   animateTo(cluster.location.latitude, cluster.location.longitude);
                   showlocationdetail = false;
                 });
               } else {
-                print("len2");
-                // setState(() {
-                //   print(cluster.location);
-                //   animateTo(cluster.items.first.location.latitude,
-                //       cluster.items.first.location.longitude);
-                // });
                 setState(() {
                   print(cluster.items.first.addressStreet);
                   locationmarker = cluster.items.first;
@@ -457,42 +483,6 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                   ));
       };
 }
-
-// Future<BitmapDescriptor> _getMarkerBitmapHotspot(int size,
-//     {String? text}) async {
-//   if (kIsWeb) size = (size / 2).floor();
-//
-//   final PictureRecorder pictureRecorder = PictureRecorder();
-//   final Canvas canvas = Canvas(pictureRecorder);
-//   final Paint paint1 = Paint()..color = Colors.white;
-//   final Paint paint2 = Paint()..color = Colors.blue;
-//   // print("map");
-//   // final Paint paint2 = Paint()..color = size > 10 ? Colors.blue : Colors.red;
-//   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
-//   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.4, paint2);
-//   // canvas.drawCircle(Offset(size / 2, size / 2), size / 2.8, paint1);
-//
-//   if (text != null) {
-//     TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
-//     painter.text = TextSpan(
-//       text: text,
-//       style: TextStyle(
-//           fontSize: size / 3,
-//           color: Colors.white,
-//           fontWeight: FontWeight.normal),
-//     );
-//     painter.layout();
-//     painter.paint(
-//       canvas,
-//       Offset(size / 2 - painter.width / 2, size / 2 - painter.height / 2),
-//     );
-//   }
-//
-//   final img = await pictureRecorder.endRecording().toImage(size, size);
-//   final data = await img.toByteData(format: ImageByteFormat.png) as ByteData;
-//
-//   return BitmapDescriptor.fromBytes(data.buffer.asUint8List());
-// }
 
 Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
   if (kIsWeb) size = (size / 2).floor();
