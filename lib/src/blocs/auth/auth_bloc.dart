@@ -16,6 +16,7 @@ import 'package:sharemagazines_flutter/src/models/incomplete_login_model.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 
+import '../../models/userDetails_model.dart';
 import '../../resources/dioClient.dart';
 
 part 'auth_event.dart';
@@ -64,6 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               await dioClient.secureStorage.write(key: "email", value: event.email),
               await dioClient.secureStorage.write(key: "pw", value: event.password),
               credential = EmailAuthProvider.credential(email: event.email, password: event.password),
+              AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email)
             });
         // try {
         //   print("link with firebase ${FirebaseAuth.instance.currentUser?.email}");
@@ -115,40 +117,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // emit(UnAuthenticated());
         emit(AuthError(e.toString()));
       }
-      // emit(UnAuthenticated());
-      // final data = await authRepository.signInIncomplete(client: dioClient);
-      // print(data?.response?.email);
-      //
-      // await authRepository.signIn(email: data?.response?.email, password: data?.response?.password);
-      // // print("asdasfsdfsd123432423");
-      // print(data!.response!.email!);
-      // // await dioClient.secureStorage.write(key: "email", value: data!.response!.email!);
-      // // await dioClient.secureStorage.write(key: "pw", value: data!.response!.password!);
-      // // print(event.password);
-      // // print("asdasfsdfasdsd");
-      // // prefs.setString('email', data.response!.email!);
-      // // prefs.setString('pw', data.response!.password!);
-      // // print("lateinierr");
-      // // await hotspotRepository.GetAllActiveHotspots();
-      // // hotspotStream = _dataController.stream
-      // //     .asyncMap((query) => hotspotRepository.GetAllActiveHotspots());
-      //
-      // print("mmmm");
-      // emit(IncompleteAuthenticated());
-      //   } catch (e) {
-      //     print("err");
-      //     emit(AuthError(e.toString()));
-      //     emit(UnAuthenticated());
-      //   }
-      // } else {
-      //   print("IncompleteSignInRequested else");
-      //   print("email = $emailexists");
-      //   print("pw = $pwexists");
-      //   await authRepository.signIn(email: emailexists, password: pwexists).then((value) => emit(IncompleteAuthenticated()));
-      //   // hotspotStream = _dataController.stream
-      //   //     .asyncMap((query) => hotspotRepository.GetAllActiveHotspots());
-      //   // emit(IncompleteAuthenticated());
-      // }
     });
 
     // When User Presses the SignUp Button, we will send the SignUpRequest Event to the AuthBloc to handle it and emit the Authenticated State if the user is authenticated
@@ -179,33 +147,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<OpenLoginPage>((event, emit) async {
-      // await dioClient.secureStorage.deleteAll();
-      // AuthState.savedEmail = await dioClient.secureStorage.read(key: "email");
-      // print("sdfdsf ${AuthState.savedEmail}");
-      // AuthState.savedPWD = await dioClient.secureStorage.read(key: "pw");
       emit(GoToLoginPage());
-      // try {
-      //   await authRepository.signUp(
-      //       email: event.email,
-      //       password: event.password,
-      //       firstname: event.firstname,
-      //       lastname: event.lastname,
-      //       date_of_birth: event.date_of_birth,
-      //       sex: event.sex,
-      //       address_street: event.address_street!,
-      //       address_house_nr: event.address_house_nr!,
-      //       address_zip: event.address_zip!,
-      //       address_city: event.address_city!,
-      //       phone: event.phone!,
-      //       iban: event.iban!,
-      //       account_owner: event.account_owner!,
-      //       creation_date: event.creation_date!,
-      //       origin: event.origin!);
-      //   emit(Authenticated());
-      // } catch (e) {
-      //   emit(AuthError(e.toString()));
-      //   emit(UnAuthenticated());
-      // }
     });
     on<SignInWithGoogle>((event, emit) async {
       final response = await authRepository.signInWithGoogle();

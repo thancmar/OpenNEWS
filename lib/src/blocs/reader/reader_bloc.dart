@@ -37,27 +37,27 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   // final dio = Dio();
   // late List<Future<Uint8List>> futureFunc = List.empty(growable: true);
   ReaderBloc({required this.magazineRepository}) : super(Initialized()) {
-    // on<Initialize>((event, emit) async {
-    //   emit(Initialized());
-    //   // try {
-    //   //   print("emission-1");
-    //   //   // final magazinePublishedGetLastWithLimitdata = await magazineRepository
-    //   //   //     .magazinePublishedGetLastWithLimit(id_hotspot: '0');
-    //   //   // // print(magazinePublishedGetLastWithLimit!.response);
-    //   //   print("blocc");
-    //   //   // currentState = GoToHome(
-    //   //   //     magazinePublishedGetLastWithLimit:
-    //   //   //         magazinePublishedGetLastWithLimitdata!);
-    //   //   final getimage =
-    //   //       await magazineRepository.Getimage(page: '0', id_mag_pub: '190360');
-    //   //   print(getimage);
-    //   //   print("blocc");
-    //   //   emit(GoToHome(magazinePublishedGetLastWithLimitdata, getimage));
-    //   // } catch (e) {
-    //   //   print("noemission");
-    //   //   emit(NavbarError(e.toString()));
-    //   // }
-    // });
+    on<Initialize>((event, emit) async {
+      emit(Initialized());
+      // try {
+      //   print("emission-1");
+      //   // final magazinePublishedGetLastWithLimitdata = await magazineRepository
+      //   //     .magazinePublishedGetLastWithLimit(id_hotspot: '0');
+      //   // // print(magazinePublishedGetLastWithLimit!.response);
+      //   print("blocc");
+      //   // currentState = GoToHome(
+      //   //     magazinePublishedGetLastWithLimit:
+      //   //         magazinePublishedGetLastWithLimitdata!);
+      //   final getimage =
+      //       await magazineRepository.Getimage(page: '0', id_mag_pub: '190360');
+      //   print(getimage);
+      //   print("blocc");
+      //   emit(GoToHome(magazinePublishedGetLastWithLimitdata, getimage));
+      // } catch (e) {
+      //   print("noemission");
+      //   emit(NavbarError(e.toString()));
+      // }
+    });
 
     on<OpenReader>((event, emit) async {
       // ReaderOpened(futureFunc);
@@ -135,11 +135,15 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       //   // }
       // } else {
       try {
-        for (var i = 0; i < int.parse(event.pageNo); i++) {
-          futureFuncAllPages.add(magazineRepository.GetPagesforReader(page: i.toString(), id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
-        }
+        // image = await PdfDocument.openData(await magazineRepository.GetPagesAsPDFforReader(id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
+        ReaderState.doc = await magazineRepository.GetPagesAsPDFforReader(id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken);
+        //
+        // for (var i = 0; i < int.parse(event.pageNo); i++) {
+        //   futureFuncAllPages.add(magazineRepository.GetPagesforReader(page: i.toString(), id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
+        // }
       } finally {
-        emit(ReaderOpened(futureFuncAllPages));
+        // emit(ReaderOpened(futureFuncAllPages));
+        emit(ReaderOpened());
       }
       // }
     });

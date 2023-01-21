@@ -115,70 +115,71 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
                           // return ClipRRect(
                           //   borderRadius: BorderRadius.circular(5.0),
                           //   child: Image.memory(
-                          //     state.bytes[i],
+                          //     state.doc[i],
                           //   ),
                           // );
-                          return FutureBuilder<Uint8List>(
-                              future: state.futureFuncAllPages?[i],
-                              builder: (context, snapshot) {
-                                return Stack(children: [
-                                  GestureDetector(
-                                    onTap: () => {
-                                      widget.callback(i),
-                                      setState(() {}),
-                                    },
-                                    child: Stack(children: <Widget>[
-                                      Container(
-                                        alignment: Alignment.center,
-
-                                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                                        padding: i == widget.reader.currentPage ? EdgeInsets.all(4) : EdgeInsets.all(0), // Border width
-                                        decoration: BoxDecoration(
-                                          color: i == widget.reader.currentPage && snapshot.hasData ? Colors.blue : Colors.transparent,
-                                          shape: BoxShape.rectangle,
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(Radius.circular(1)),
-                                          child: SizedBox.fromSize(
-                                            // size: Size.fromRadius(500), // Image radius
-                                            child: Stack(children: <Widget>[
-                                              (snapshot.hasData)
-                                                  ? Image.memory(
-                                                      // state.bytes[i],
-                                                      snapshot.data!,
-                                                    )
-                                                  : Container(
-                                                      color: Colors.grey.withOpacity(0.2),
-                                                      child: SpinKitFadingCircle(
-                                                        color: Colors.white,
-                                                        size: 50.0,
-                                                      ),
-                                                    ),
-                                            ]),
-                                          ),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: LayoutBuilder(builder: (ctx, constraints) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              // padding: EdgeInsets.only(bottom: 20),
-                                              // alignment: Alignment.bottomCenter,
-                                              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Colors.black.withOpacity(0.8)),
-                                              // color: Colors.black.withOpacity(0.8),
-                                              height: constraints.maxHeight * 0.10,
-                                              width: constraints.maxWidth * 0.10,
-                                              child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
-                                            ),
-                                          );
-                                        }),
-                                      )
-                                    ]),
-                                  ),
-                                ]);
-                              });
+                          return Container();
+                          // return FutureBuilder<Uint8List>(
+                          //     future: state.futureFuncAllPages?[i],
+                          //     builder: (context, snapshot) {
+                          //       return Stack(children: [
+                          //         GestureDetector(
+                          //           onTap: () => {
+                          //             widget.callback(i),
+                          //             setState(() {}),
+                          //           },
+                          //           child: Stack(children: <Widget>[
+                          //             Container(
+                          //               alignment: Alignment.center,
+                          //
+                          //               clipBehavior: Clip.antiAliasWithSaveLayer,
+                          //               padding: i == widget.reader.currentPage ? EdgeInsets.all(4) : EdgeInsets.all(0), // Border width
+                          //               decoration: BoxDecoration(
+                          //                 color: i == widget.reader.currentPage && snapshot.hasData ? Colors.blue : Colors.transparent,
+                          //                 shape: BoxShape.rectangle,
+                          //               ),
+                          //               child: ClipRRect(
+                          //                 borderRadius: BorderRadius.all(Radius.circular(1)),
+                          //                 child: SizedBox.fromSize(
+                          //                   // size: Size.fromRadius(500), // Image radius
+                          //                   child: Stack(children: <Widget>[
+                          //                     (snapshot.hasData)
+                          //                         ? Image.memory(
+                          //                             // state.bytes[i],
+                          //                             snapshot.data!,
+                          //                           )
+                          //                         : Container(
+                          //                             color: Colors.grey.withOpacity(0.2),
+                          //                             child: SpinKitFadingCircle(
+                          //                               color: Colors.white,
+                          //                               size: 50.0,
+                          //                             ),
+                          //                           ),
+                          //                   ]),
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             Align(
+                          //               alignment: Alignment.bottomCenter,
+                          //               child: LayoutBuilder(builder: (ctx, constraints) {
+                          //                 return Padding(
+                          //                   padding: const EdgeInsets.all(8.0),
+                          //                   child: Container(
+                          //                     // padding: EdgeInsets.only(bottom: 20),
+                          //                     // alignment: Alignment.bottomCenter,
+                          //                     decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Colors.black.withOpacity(0.8)),
+                          //                     // color: Colors.black.withOpacity(0.8),
+                          //                     height: constraints.maxHeight * 0.10,
+                          //                     width: constraints.maxWidth * 0.10,
+                          //                     child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                          //                   ),
+                          //                 );
+                          //               }),
+                          //             )
+                          //           ]),
+                          //         ),
+                          //       ]);
+                          //     });
                         } else {
                           return Container(
                             color: Colors.grey.withOpacity(0.2),

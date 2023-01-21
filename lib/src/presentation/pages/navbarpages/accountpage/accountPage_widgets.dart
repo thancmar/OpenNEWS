@@ -19,105 +19,107 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
       // shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(15),
-            // overlayColor: MaterialStateProperty.resolveWith((states) {
-            //   // If the button is pressed, return green, otherwise blue
-            //   if (states.contains(MaterialState.pressed)) {
-            //     return Colors.green;
-            //   } else {
-            //     return Colors.blue;
-            //   }
-            // }),
-            // splashColor: Colors.red,
-            // focusColor: Colors.green,
-            onTap: () => {
-              Navigator.of(context).push(PageRouteBuilder(
-                // transitionDuration:
-                // Duration(seconds: 2),
+        AuthState.userDetails?.response?.firstname != null
+            ? Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  // overlayColor: MaterialStateProperty.resolveWith((states) {
+                  //   // If the button is pressed, return green, otherwise blue
+                  //   if (states.contains(MaterialState.pressed)) {
+                  //     return Colors.green;
+                  //   } else {
+                  //     return Colors.blue;
+                  //   }
+                  // }),
+                  // splashColor: Colors.red,
+                  // focusColor: Colors.green,
+                  onTap: () => {
+                    Navigator.of(context).push(PageRouteBuilder(
+                      // transitionDuration:
+                      // Duration(seconds: 2),
 
-                pageBuilder: (_, __, ___) {
-                  // return StartSearch();
+                      pageBuilder: (_, __, ___) {
+                        // return StartSearch();
 
-                  return MyProfile();
-                },
-              ))
-            },
-            child: AnimatedSize(
-              // vsync: this,
+                        return MyProfile();
+                      },
+                    ))
+                  },
+                  child: AnimatedSize(
+                    // vsync: this,
 
-              // opacity: widget1Opacity,
-              duration: const Duration(milliseconds: 500),
+                    // opacity: widget1Opacity,
+                    duration: const Duration(milliseconds: 500),
 
-              child: Container(
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 0,
-                        // offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                    color: Colors.lightBlue,
-                    // color: Colors.transparent,
-                    border: Border.all(
-                        // color: Colors.red,
-                        ),
-                    borderRadius: BorderRadius.circular(15)),
-                // color: Colors.blue,
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                      child: Text(
-                        'Herzlich Willkommen',
-                        style: TextStyle(
-                          fontSize: 16,
-                          // fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: Text(
-                        'Johanna Meister',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: RichText(
-                        text: TextSpan(children: [
-                          WidgetSpan(
-                              child: Icon(
-                                Icons.account_circle_outlined,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 0,
+                              // offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                          color: Colors.lightBlue,
+                          // color: Colors.transparent,
+                          border: Border.all(
+                              // color: Colors.red,
+                              ),
+                          borderRadius: BorderRadius.circular(15)),
+                      // color: Colors.blue,
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                            child: Text(
+                              'Herzlich Willkommen',
+                              style: TextStyle(
+                                fontSize: 16,
+                                // fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
-                              alignment: PlaceholderAlignment.middle),
-                          TextSpan(
-                            text: "My profile ",
+                              textAlign: TextAlign.left,
+                            ),
                           ),
-                        ]),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                            child: Text(
+                              '${AuthState.userDetails?.response?.firstname} ${AuthState.userDetails?.response?.lastname}',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                            child: RichText(
+                              text: TextSpan(children: [
+                                WidgetSpan(
+                                    child: Icon(
+                                      Icons.account_circle_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    alignment: PlaceholderAlignment.middle),
+                                TextSpan(
+                                  text: "My profile ",
+                                ),
+                              ]),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ),
+              )
+            : Container(),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
           child: AnimatedOpacity(

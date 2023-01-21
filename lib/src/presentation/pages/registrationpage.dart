@@ -393,9 +393,9 @@ class _RegistrationState extends State<Registration> {
                         ),
                       ),
                     ),
-                    Spacer()
+                    Spacer(),
                   ],
-                )
+                ),
               ],
             ),
           ),

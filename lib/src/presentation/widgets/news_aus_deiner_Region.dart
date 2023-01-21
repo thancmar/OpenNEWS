@@ -111,7 +111,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                                                   pageBuilder: (_, __, ___) => StartReader(
                                                     id: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication!,
                                                     index: i.toString(),
-                                                    cover: snapshot.data!,
+                                                    coverURL: snapshot.data!,
                                                     noofpages: NavbarState.magazinePublishedGetTopLastByRange!.response![i].pageMax!,
                                                     readerTitle: NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!,
                                                     heroTag: 'News_aus_deiner_Region_$i',

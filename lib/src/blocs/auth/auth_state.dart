@@ -5,6 +5,7 @@ abstract class AuthState extends Equatable {
   // static late User? user;
   static String savedEmail = "asdsad";
   static String savedPWD = "";
+  static late GetUserDetails? userDetails = GetUserDetails();
 }
 
 // When the user presses the signin or signup button the state is changed to loading first and then to Authenticated.

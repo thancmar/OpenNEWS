@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 // import 'package:flutter_map/flutter_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +12,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
+import 'package:sharemagazines_flutter/src/models/magazineCategoryGetAllActive.dart';
 import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
@@ -46,7 +48,11 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //   status: 'loading...',
     //   maskType: EasyLoadingMaskType.black,
     // );
+
+    //TO Do: go thru each response item and check if exists in cache
+    await magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
     print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
+
     await locationRepository.checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
           // if (index != 0)
           if (locationID != 0)
@@ -56,7 +62,10 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                     // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
                     for (var i = 0; i < value.response!.length; i++)
                       {
-                        NavbarState.getTopMagazines?.add(magazineRepository.GetPage(page: '0', id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!)),
+                        NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
+                            page: '0',
+                            id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
+                            date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
                         // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
                       },
                     event?.timer?.cancel(),
@@ -66,16 +75,44 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           await magazineRepository.magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((data) async {
             NavbarState.magazinePublishedGetLastWithLimit = data;
             for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
-              NavbarState.languageResultsALL?.add(magazineRepository.GetPage(page: '0', id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!));
-              if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("de")) {
-                NavbarState.languageResultsDE?.add(NavbarState.languageResultsALL![i]);
+              //To show on the searchpage
+              switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
+                case "de":
+                  NavbarState.counterDE = NavbarState.counterDE + 1;
+                  break;
+                case "en":
+                  NavbarState.counterEN++;
+                  break;
+                case "fr":
+                  NavbarState.counterFR++;
+                  break;
+                case "es":
+                  NavbarState.counterES++;
+                  break;
               }
-              if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("en")) {
-                NavbarState.languageResultsEN?.add(NavbarState.languageResultsALL![i]);
+              var oldimage = await DefaultCacheManager().getFileFromCache(
+                  NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! + "_" + NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!);
+              if (oldimage == null) {
+                // NavbarState.languageResultsALL?.add(magazineRepository.GetPage(
+                //     page: '0',
+                //     id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
+                //     date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!));
+                magazineRepository.GetPage(
+                    page: '0',
+                    id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
+                    date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!);
+                print(NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!);
               }
-              if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("fr")) {
-                NavbarState.languageResultsFR?.add(NavbarState.languageResultsALL![i]);
-              }
+              // NavbarState.languageResultsALLStream?.add(magazineRepository.GetPageDuplicate(page: '0', id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!));
+              // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("de")) {
+              //   NavbarState.languageResultsDE?.add(NavbarState.languageResultsALL![i]);
+              // }
+              // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("en")) {
+              //   NavbarState.languageResultsEN?.add(NavbarState.languageResultsALL![i]);
+              // }
+              // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("fr")) {
+              //   NavbarState.languageResultsFR?.add(NavbarState.languageResultsALL![i]);
+              // }
             }
             event?.timer?.cancel();
             await EasyLoading.dismiss();

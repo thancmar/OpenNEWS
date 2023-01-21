@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sharemagazines_flutter/readerpdftester.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/splash.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
@@ -74,65 +76,85 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MultiRepositoryProvider(
+  //     providers: [
+  //       RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
+  //       RepositoryProvider<HotspotRepository>(create: (context) => HotspotRepository()),
+  //       RepositoryProvider<MagazineRepository>(
+  //         create: (context) => MagazineRepository(),
+  //         lazy: false,
+  //       ),
+  //       RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
+  //     ],
+  //     child: MultiBlocProvider(
+  //       providers: [
+  //         ///Have to add all blocs here
+  //         BlocProvider<AuthBloc>(
+  //           create: (context) => AuthBloc(
+  //             //no need of Authbloc here
+  //             authRepository: RepositoryProvider.of<AuthRepository>(context),
+  //           ),
+  //         ),
+  //         BlocProvider<SplashBloc>(create: (context) => SplashBloc()),
+  //         BlocProvider<NavbarBloc>(
+  //             create: (context) => NavbarBloc(
+  //                 magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
+  //                 locationRepository: RepositoryProvider.of<LocationRepository>(context),
+  //                 hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
+  //         BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
+  //         // BlocProvider<AuthBloc>(
+  //         //   create: (context) => AuthBloc(
+  //         //     //no need of Authbloc here
+  //         //     authRepository: RepositoryProvider.of<AuthRepository>(context),
+  //         //     hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
+  //         //   ),
+  //         // ),
+  //       ],
+  //       // create: (context) => AuthBloc(
+  //       //   //no need of Authbloc here
+  //       //   authRepository: RepositoryProvider.of<AuthRepository>(context),
+  //       //   hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
+  //       // ),
+  //       child: MaterialApp(
+  //         title: 'sharemagazines',
+  //         theme: ThemeData(
+  //             // bottomSheetTheme: BottomSheetThemeData(
+  //             //     backgroundColor: Colors.black.withOpacity(0)),
+  //             //primarySwatch: Colors.blue,
+  //             pageTransitionsTheme: PageTransitionsTheme(builders: {
+  //               TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+  //               TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+  //             }),
+  //             fontFamily: 'Raleway',
+  //
+  //             // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
+  //             dividerColor: Colors.transparent),
+  //         home: SplashScreen(),
+  //         builder: EasyLoading.init(),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
-        RepositoryProvider<HotspotRepository>(create: (context) => HotspotRepository()),
-        RepositoryProvider<MagazineRepository>(
-          create: (context) => MagazineRepository(),
-          lazy: false,
-        ),
-        RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          ///Have to add all blocs here
-          BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(
-              //no need of Authbloc here
-              authRepository: RepositoryProvider.of<AuthRepository>(context),
-            ),
-          ),
-          BlocProvider<SplashBloc>(create: (context) => SplashBloc()),
-          BlocProvider<NavbarBloc>(
-              create: (context) => NavbarBloc(
-                  magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
-                  locationRepository: RepositoryProvider.of<LocationRepository>(context),
-                  hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
-          BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
-          // BlocProvider<AuthBloc>(
-          //   create: (context) => AuthBloc(
-          //     //no need of Authbloc here
-          //     authRepository: RepositoryProvider.of<AuthRepository>(context),
-          //     hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
-          //   ),
-          // ),
-        ],
-        // create: (context) => AuthBloc(
-        //   //no need of Authbloc here
-        //   authRepository: RepositoryProvider.of<AuthRepository>(context),
-        //   hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
-        // ),
-        child: MaterialApp(
-          title: 'sharemagazines',
-          theme: ThemeData(
-              // bottomSheetTheme: BottomSheetThemeData(
-              //     backgroundColor: Colors.black.withOpacity(0)),
-              //primarySwatch: Colors.blue,
-              pageTransitionsTheme: PageTransitionsTheme(builders: {
-                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-              }),
-              fontFamily: 'Raleway',
+    return MaterialApp(
+      title: 'sharemagazines',
+      theme: ThemeData(
+          // bottomSheetTheme: BottomSheetThemeData(
+          //     backgroundColor: Colors.black.withOpacity(0)),
+          //primarySwatch: Colors.blue,
+          pageTransitionsTheme: PageTransitionsTheme(builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          }),
+          fontFamily: 'Raleway',
 
-              // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
-              dividerColor: Colors.transparent),
-          home: SplashScreen(),
-          builder: EasyLoading.init(),
-        ),
-      ),
+          // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
+          dividerColor: Colors.transparent),
+      home: StartReaderTesting(),
     );
   }
 }

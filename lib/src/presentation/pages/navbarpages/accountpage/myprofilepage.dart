@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class MyProfile extends StatefulWidget {
@@ -10,7 +11,9 @@ class MyProfile extends StatefulWidget {
 
 class _MyProfileState extends State<MyProfile> {
   DateTime selectedDate = DateTime.now();
-  TextEditingController _calenderController = TextEditingController();
+  TextEditingController _calenderController = TextEditingController(text: AuthState.userDetails?.response?.dateOfBirth);
+  TextEditingController _firstnameController = TextEditingController(text: AuthState.userDetails?.response?.firstname);
+  TextEditingController _lastnameController = TextEditingController(text: AuthState.userDetails?.response?.lastname);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,7 +71,7 @@ class _MyProfileState extends State<MyProfile> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 5.0),
                 child: TextFormField(
-                  // controller: _firstnameController,
+                  controller: _firstnameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This is the required field';
@@ -80,6 +83,7 @@ class _MyProfileState extends State<MyProfile> {
                     //Maybe we need it
                     // contentPadding: const EdgeInsets.symmetric(
                     //     vertical: 20.0, horizontal: 10.0),
+
                     floatingLabelStyle: TextStyle(color: Colors.blue),
                     labelText: "Vorname",
                     labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300), //, height: 3.8),
@@ -95,7 +99,7 @@ class _MyProfileState extends State<MyProfile> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                 child: TextFormField(
-                  // controller: _firstnameController,
+                  controller: _lastnameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This is the required field';
@@ -155,20 +159,22 @@ class _MyProfileState extends State<MyProfile> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                // padding: EdgeInsets.fromLTRB(30, 10, 40, 10),
+                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                 child: Container(
                   alignment: Alignment.center,
                   padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
                   decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(10)),
                   child: ToggleSwitch(
-                    minWidth: 90.0,
-                    dividerColor: Colors.transparent,
-                    inactiveBgColor: Colors.transparent,
-                    initialLabelIndex: 0,
-                    totalSwitches: 3,
+                    minWidth: MediaQuery.of(context).size.width / 2 - 30, //40 because of padding
+                    // dividerColor: Colors.red,
+                    inactiveBgColor: Colors.grey.withOpacity(0.1),
+                    initialLabelIndex: AuthState.userDetails?.response?.sex == "w" ? 1 : 0,
+                    totalSwitches: 2,
                     radiusStyle: true,
+
                     inactiveFgColor: Colors.white,
-                    labels: ['America', 'Canada', 'Mexico'],
+                    labels: ['Männlich', 'Female'],
                     onToggle: (index) {
                       print('switched to: $index');
                     },

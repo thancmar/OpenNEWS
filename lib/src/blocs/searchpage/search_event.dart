@@ -38,7 +38,16 @@ class OpenLanguageResults extends SearchEvent {
   // final String pageNo;
   final BuildContext context;
   final String languageText;
+
   OpenLanguageResults(this.context, this.languageText);
+}
+
+class OpenCategoryPage extends SearchEvent {
+  // final String idMagazinePublication;
+  // final String pageNo;
+  final BuildContext context;
+  final String categoryID;
+  OpenCategoryPage(this.context, this.categoryID);
 }
 //
 // class Menu extends ReaderEvent {

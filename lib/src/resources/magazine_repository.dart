@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:core';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByH
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:get_it/get_it.dart';
 
+import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
 class MagazineRepository {
@@ -63,7 +65,40 @@ class MagazineRepository {
     }
   }
 
-  Future<Uint8List> GetPage({required String? page, required String? id_mag_pub}) async {
+  Future<MagazineCategoryGetAllActive> magazineCategoryGetAllActive() async {
+    final getIt = GetIt.instance;
+    Map<String, dynamic> data = {'f': 'magazineCategoryGetAllActive'};
+    print(data);
+    var queryString = Uri(queryParameters: data).query;
+
+    // var response = await getIt<ApiClient>().dio.post(
+    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+    //       data: data,
+    //     );
+    var response = await getIt<ApiClient>().diofordata.post(
+          ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+          data: data,
+        );
+    if (response.statusCode == 200) {
+      print("magazineCategoryGetAllActive sucess");
+      // for (int i = 0; i < MagazineCategoryGetAllActiveFromJson(response.data).response!.length; i++) {
+      //   await DefaultCacheManager().putFile(
+      //       MagazineCategoryGetAllActiveFromJson(response.data).response![i].id! + "_" + MagazineCategoryGetAllActiveFromJson(response.data).response![i].name!,
+      //       Uint8List.fromList(
+      //         base64Decode(MagazineCategoryGetAllActiveFromJson(response.data).response![i].image!),
+      //       ),
+      //       fileExtension: "jpeg");
+      // }
+      // print(response.data);
+      // print(response.data);
+      return MagazineCategoryGetAllActiveFromJson(response.data);
+    } else {
+      print("Failed magazineCategoryGetAllActive");
+      throw Exception("Failed magazineCategoryGetAllActive");
+    }
+  }
+
+  Future<Uint8List> GetPage({required String? page, required String? id_mag_pub, required String? date_of_publication}) async {
     // print("GetPage $id_mag_pub $page");
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
@@ -71,15 +106,16 @@ class MagazineRepository {
       'id_mag_pub': id_mag_pub!,
     };
     var queryString = Uri(queryParameters: queryParame).query;
+    // var file = await DefaultCacheManager().getSingleFile(queryString);
 
+    // await DefaultCacheManager().emptyCache();
     var response = await getIt<ApiClient>().dioforImages.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
-    await DefaultCacheManager().putFile(
-      queryString,
-      Uint8List.fromList(response.data),
-      fileExtension: "jpeg",
-    );
-
+    await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication!, Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 30));
     return Uint8List.fromList(response.data);
+
+    // print("cache response ${file2.da}");
+
+    // print("cache ${file.}")
   }
 
   Future<Uint8List> GetPagesforReader({required String? page, required String? id_mag_pub, required CancelToken? readerCancelToken}) async {

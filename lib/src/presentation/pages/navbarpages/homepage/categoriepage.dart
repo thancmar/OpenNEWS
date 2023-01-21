@@ -9,23 +9,23 @@ import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 
-class LanguagePage extends StatefulWidget {
+class CategoryPage extends StatefulWidget {
   final String titleText;
-  final String language;
-  const LanguagePage({Key? key, required this.titleText, required this.language}) : super(key: key);
+  final String categoryID;
+  const CategoryPage({Key? key, required this.titleText, required this.categoryID}) : super(key: key);
 
   @override
-  State<LanguagePage> createState() => _LanguagePageState();
+  State<CategoryPage> createState() => _CategoryPageState();
 }
 
-class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClientMixin<LanguagePage> {
+class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClientMixin<CategoryPage> {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.language));
+    BlocProvider.of<SearchBloc>(context).add(OpenCategoryPage(context, widget.categoryID));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
 
@@ -106,10 +106,11 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
           body: BlocBuilder<SearchBloc, SearchState>(
             builder: (context, state) {
               print("$state");
-              if (state is GoToLanguageResults) {
+              if (state is GoToCategoryPage) {
                 return GridView.builder(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
-                    itemCount: state.selectedLanguage!.response?.length,
+                    itemCount: state.selectedCategory!.response?.length,
+                    // itemCount: 10,
                     // itemCount: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "en").toList().length,
                     physics: RangeMaintainingScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
@@ -118,13 +119,12 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                       //     "_" +
                       //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!);
                       return Card(
-                          shadowColor: Colors.transparent,
                           color: Colors.transparent,
                           // clipBehavior: Clip.hardEdge,
                           // borderOnForeground: true,
                           // margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          // elevation: 200,
-                          semanticContainer: false,
+                          // elevation: 0,
+                          // semanticContainer: false,
 
                           ///maybe 0?
                           // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -177,7 +177,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                               alignment: Alignment.center,
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: state.selectedLanguage!.response![index].idMagazinePublication! + "_" + state.selectedLanguage!.response![index].dateOfPublication!,
+                                  imageUrl: (state.selectedCategory!.response?[index].idMagazinePublication! ?? "") + "_" + (state.selectedCategory!.response?[index].dateOfPublication! ?? ""),
                                   // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                                   //     "_" +
                                   //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
@@ -207,6 +207,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
                                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      // color: Colors.grey.withOpacity(0.05),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
                                     child: SpinKitFadingCircle(
@@ -223,7 +224,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                     ),
                                     child: SpinKitFadingCircle(
                                       color: Colors.white,
-                                      size: 50.0,
+                                      // size: 50.0,
                                     ),
                                   ),
                                   // errorWidget: (context, url, error) => Container(
@@ -233,6 +234,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                   //       color: Colors.grey.withOpacity(0.8),
                                   //     )),
                                 ),
+                                // Spacer(),
                                 Positioned(
                                   // top: -50,
                                   bottom: -30,
@@ -240,7 +242,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                   width: MediaQuery.of(context).size.width / 2 - 20,
                                   child: Text(
                                     // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    state.selectedLanguage!.response![index].name!,
+                                    state.selectedCategory!.response![index].name!,
                                     // " asd",
                                     // "Card ${i + 1}",
                                     textAlign: TextAlign.center,
@@ -342,8 +344,8 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                     });
               }
               return Container(
-                color: Colors.transparent,
-              );
+                  // color: Colors.red,
+                  );
             },
           ),
         ));

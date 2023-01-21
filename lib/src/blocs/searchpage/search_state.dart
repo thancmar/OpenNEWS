@@ -34,7 +34,8 @@ class GoToSearchResults extends SearchState {
   // final Localization? location;
   // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
   // final List<Uint8List> bytes;
-  final List<Future<Uint8List>>? searchResultCovers;
+  // final List<Future<Uint8List>>? searchResultCovers;
+  final MagazinePublishedGetAllLastByHotspotId? searchResultCovers;
   // final Localization? location;
   GoToSearchResults(this.searchResultCovers) : super(null);
 
@@ -46,9 +47,26 @@ class GoToLanguageResults extends SearchState {
   // final Localization? location;
   // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
   // final List<Uint8List> bytes;
-  final List<Future<Uint8List>>? futureLangFunc;
-  final Localization? location;
-  GoToLanguageResults(this.futureLangFunc, this.location) : super(null);
+  // final List<Future<Uint8List>>? futureLangFunc;
+  late MagazinePublishedGetAllLastByHotspotId? selectedLanguage;
+
+  // final Localization? location;
+  GoToLanguageResults({required this.selectedLanguage}) : super(null);
+
+  @override
+  List<Object> get props => [];
+}
+
+class GoToCategoryPage extends SearchState {
+  // final Localization? location;
+  // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
+  // final List<Uint8List> bytes;
+  // final List<Future<Uint8List>>? futureLangFunc;
+  // late List<Response>? itemCount;
+  late MagazinePublishedGetAllLastByHotspotId? selectedCategory;
+
+  // final Localization? location;
+  GoToCategoryPage({required this.selectedCategory}) : super(null);
 
   @override
   List<Object> get props => [];

@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:sharemagazines_flutter/src/models/incomplete_login_model.dart';
 import 'package:sharemagazines_flutter/src/models/login_model.dart';
 import 'package:sharemagazines_flutter/src/models/registrierung_model.dart';
+import 'package:sharemagazines_flutter/src/models/userDetails_model.dart';
 import 'package:sharemagazines_flutter/src/resources/dioClient.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -215,6 +216,36 @@ class AuthRepository {
       }
     } else {
       throw Exception("Failed to login");
+    }
+  }
+
+  Future<GetUserDetails?> getUserDetails({
+    required String? userID,
+    required String? email,
+    // required ApiClient client,
+  }) async {
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("getUserDetails");
+    final getIt = GetIt.instance;
+    Map data = {'f': 'readerGetByIdAndEmail', 'json': '{"id_reader": "$userID", "email":"$email"}'};
+
+    var response = await getIt<ApiClient>().diofordata.post(
+          ApiConstants.usersEndpoint,
+          data: data,
+        );
+    // print(response!.data);
+    print("getUserDetails response: ${response.data}");
+    if (response.statusCode == 200) {
+      // // return jokeModelFromJson(response.body);
+      // print(json.decode(response.data)['response']['code']);
+      // if (json.decode(response.data)['response']['code'] == 103) {
+      //   throw Exception("Failed to login with code 103");
+      // } else {
+      //   return IncompleteLoginModelFromJson(response.data);
+      // }
+      return GetUserDetailsFromJson(response.data);
+    } else {
+      throw Exception("Failed getUserDetails");
     }
   }
 
