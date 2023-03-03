@@ -9,3 +9,9 @@ abstract class MapEvent extends Equatable {
 class Initialize extends MapEvent {
   Initialize();
 }
+
+// class GetMapOffer extends MapEvent {
+//   final Place loc;
+//   GetMapOffer({required this.loc});
+//   List<Object> get props => [];
+// }

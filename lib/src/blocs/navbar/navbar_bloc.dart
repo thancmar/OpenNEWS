@@ -20,6 +20,8 @@ import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
 import '../../models/hotspots_model.dart';
+import '../../models/locationGetHeader_model.dart';
+import '../../models/locationOffers_model.dart';
 import '../../presentation/widgets/place_map.dart';
 import '../../resources/dioClient.dart';
 
@@ -39,6 +41,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   late List<Future<Uint8List>> getTop = List.empty(growable: true);
   // Position? position = null;
   final GetIt getIt = GetIt.instance;
+  // static late Future<LocationOffers>? maplocationoffers;
   var cookieJar = CookieJar();
   // GetIt getIt = GetIt.instance;
 
@@ -57,6 +60,19 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           // if (index != 0)
           if (locationID != 0)
             {
+              NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: locationID.toString()),
+              await NavbarState.locationheader?.then((value) async => {
+                    // NavbarState.locationheader = value,
+
+                    if (value.filePath != "") {NavbarState.locationImage = locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())}
+                  }),
+              NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
+              await NavbarState.locationoffers?.then((value) async => {
+                    // NavbarState.locationheader = value,
+                    value.locationOffer!.forEach((element) {
+                      NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                    })
+                  }),
               await magazineRepository.magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((value) async => {
                     NavbarState.magazinePublishedGetTopLastByRange = value,
                     // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
@@ -242,6 +258,14 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       statechanged = true;
       emit(GoToMap());
       statechanged = false;
+    });
+
+    on<GetMapOffer>((event, emit) async {
+      //   statechanged = true;
+      //
+      NavbarState.maplocationoffers = locationRepository.GetLocationOffers(locationID: event.loc.id.toString());
+      //   emit(GoToMapOffer(loc: event.loc, offers: maplocationoffers));
+      //   statechanged = false;
     });
 
     on<AccountEvent>((event, emit) async {

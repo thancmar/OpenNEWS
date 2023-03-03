@@ -4,7 +4,9 @@ part of 'pdf_view_pinch.dart';
 class CustumPdfControllerPinch extends TransformationController with BasePdfController {
   CustumPdfControllerPinch({
     required this.document,
-    this.initialPage = 1,
+    // required this.currentPageNumber,
+    // required this.allPagesViewer,
+    this.initialPage = 0,
     this.viewportFraction = 1.0,
   }) : assert(viewportFraction > 0.0);
 
@@ -13,6 +15,10 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
 
   /// Document future for showing in [CustumPdfViewPinch]
   Future<PdfDocument> document;
+
+  /// The page to show when first creating the [CustumPdfViewPinch].
+  static int currentPageNumber = 3;
+  // final ReaderOptionsPage allPagesViewer;
 
   /// The page to show when first creating the [CustumPdfViewPinch].
   late int initialPage;
@@ -34,13 +40,18 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
   /// the page that has the largest area from [visiblePages].
   @override
   int get page {
-    MapEntry<int, double>? max;
-    for (final v in visiblePages.entries) {
-      if (max == null || max.value < v.value) {
-        max = v;
-      }
-    }
-    return max?.key ?? initialPage;
+    // MapEntry<int, double>? max;
+    // for (final v in visiblePages.entries) {
+    //   if (max == null || max.value < v.value) {
+    //     max = v;
+    //   }
+    // }
+    // return max?.key ?? initialPage;
+    return currentPageNumber;
+  }
+
+  void set pageSet(int currentIndex) {
+    currentPageNumber = currentIndex;
   }
 
   late int _prevPage = initialPage;
@@ -124,6 +135,7 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
     addListener(() {
       if (page != _prevPage) {
         _state!.widget.onPageChanged?.call(page);
+        // _state!.widget.onPageChanged?.call(currentPageNumber);
         pageListenable.value = page;
         _prevPage = page;
       }
@@ -148,16 +160,16 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
   /// To go to a specific page, use [animateToPage] method or use
   ///  [calculatePageFitMatrix] method to calculate the page location matrix.
   /// If [destination] is null, the method does nothing.
-  Future<void> goTo({
-    Matrix4? destination,
-    Duration duration = const Duration(milliseconds: 200),
-    Curve curve = Curves.easeInOut,
-  }) =>
-      _state!._goTo(
-        destination: destination,
-        duration: duration,
-        curve: curve,
-      );
+  // Future<void> goTo({
+  //   Matrix4? destination,
+  //   Duration duration = const Duration(milliseconds: 200),
+  //   Curve curve = Curves.easeInOut,
+  // }) =>
+  //     _state!._goTo(
+  //       destination: destination,
+  //       duration: duration,
+  //       curve: curve,
+  //     );
 
   // /// Go to the specified page.
   // Future<void> animateToPage({
@@ -220,9 +232,9 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
   /// The map keys are the page numbers.
   /// And each page number is associated to the page area (width x height)
   ///  exposed to the viewport;
-  Map<int, double> get visiblePages => _state!._visiblePages;
+  // Map<int, double> get visiblePages => _state!._visiblePages;
 
-  /// Calculate the matrix that corresponding to the page position.
+  // /// Calculate the matrix that corresponding to the page position.
   // Matrix4? calculatePageFitMatrix({required int pageNumber, double? padding}) {
   //   print("calculatePageFitMatrix");
   //   final rect = getPageRect(pageNumber)?.inflate(padding ?? _state!._padding);
@@ -301,14 +313,16 @@ class _PdfPageState {
   final _previewNotifier = ValueNotifier<int>(0);
   final _realSizeNotifier = ValueNotifier<int>(0);
 
-  void updatePreview() {
-    if (status != _PdfPageLoadingStatus.disposed) {
-      _previewNotifier.value++;
-    }
-  }
-
+  // void updatePreview() {
+  //   if (status != _PdfPageLoadingStatus.disposed) {
+  //     print("_previewNotifier.value = ${_previewNotifier.value}");
+  //     _previewNotifier.value++;
+  //   }
+  // }
+  //
   void _updateRealSizeOverlay() {
     if (status != _PdfPageLoadingStatus.disposed) {
+      print("_previewNotifier.value = ${_realSizeNotifier.value}");
       _realSizeNotifier.value++;
     }
   }

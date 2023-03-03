@@ -8,16 +8,22 @@ import 'dart:async';
 
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 
+import '../../models/locationOffers_model.dart';
+import '../../presentation/widgets/place_map.dart';
+import '../../resources/location_repository.dart';
+
 part 'map_event.dart';
 part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   final HotspotRepository hotspotRepository;
+  final LocationRepository locationRepository;
   final _dataController = StreamController<HotspotsGetAllActive>();
+  static late Future<LocationOffers>? maplocationoffers;
   // Sink<HotspotsGetAllActive> get searchQuery => _dataController.sink;
   // Stream<HotspotsGetAllActive>? get hotspotStream => _dataController.stream;
 
-  MapBloc({required this.hotspotRepository}) : super(LoadingMap()) {
+  MapBloc({required this.hotspotRepository, required this.locationRepository}) : super(LoadingMap()) {
     on<Initialize>((event, emit) async {
       emit(LoadingMap());
       print("now");
@@ -35,5 +41,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       print("loaded");
       emit(Loaded()); // In this state we can load the HOME PAGE
     });
+
+    // on<GetMapOffer>((event, emit) async {
+    //   maplocationoffers = locationRepository.GetLocationOffers(locationID: event.loc.id.toString());
+    //   emit(MapLocationOffer(loc: event.loc, offers: maplocationoffers));
+    // });
   }
 }

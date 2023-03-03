@@ -294,21 +294,29 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               child: GestureDetector(
                                 onTap: () => {
                                   print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
+                                  // Navigator.of(context).push(
+                                  //   PageRouteBuilder(
+                                  //     // transitionDuration:
+                                  //     // Duration(seconds: 2),
+                                  //     maintainState: true,
+                                  //     pageBuilder: (_, __, ___) {
+                                  //       // return StartSearch();
+                                  //
+                                  //       return CategoryPage(
+                                  //         titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                  //         categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                                  //       );
+                                  //     },
+                                  //   ),
+                                  // ),
                                   Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      // transitionDuration:
-                                      // Duration(seconds: 2),
-
-                                      pageBuilder: (_, __, ___) {
-                                        // return StartSearch();
-
-                                        return CategoryPage(
-                                          titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                          categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-                                        );
-                                      },
-                                    ),
-                                  )
+                                    MaterialPageRoute(builder: (context) {
+                                      return CategoryPage(
+                                        titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                        categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                                      );
+                                    }),
+                                  ),
                                 },
                                 child: Column(
                                   children: [
@@ -474,7 +482,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
                                     style: TextStyle(fontSize: 12),
                                   ), // <-- Text
-                                  backgroundColor: Colors.grey.withOpacity(0.1),
+                                  backgroundColor: Colors.red.withOpacity(0.1),
                                   // icon: Icon(
                                   //   // <-- Icon
                                   //   Icons.menu_book,

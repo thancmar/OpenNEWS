@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,7 +115,8 @@ class _StartPageState extends State<StartPage> {
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
                                 child: Text(
-                                  "Herzlich willkommen",
+                                  ('welcome').tr(),
+                                  // "Herzlich willkommen",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     // fontFamily: "Raleway",
@@ -128,7 +130,7 @@ class _StartPageState extends State<StartPage> {
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
                                 child: Text(
-                                  "Lorem ipsum dolor sit amit, consectetur adipiscing elit.",
+                                  ('welcome_text').tr(),
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.white,

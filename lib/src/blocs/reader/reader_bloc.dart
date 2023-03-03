@@ -98,9 +98,10 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       // if (int.parse(event.pageNo) > 5) {
       //   // try {
       //   print(event.pageNo);
-      //   // for (var i = 0; i < int.parse(event.pageNo); i++) {
-      //   //   futureFuncAllPages.add(magazineRepository.GetPagesforReader(page: i.toString(), id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
-      //   // }
+      for (var i = 0; i < int.parse(event.pageNo); i++) {
+        futureFuncAllPages.add(magazineRepository.GetPagesforReader(page: i.toString(), id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
+      }
+      ReaderState.pagesAll = futureFuncAllPages;
       //   // Future asd = await magazineRepository.GetPagesforReader(page: "", id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken);
       //
       //   // await magazineRepository.GetPagesAsPDFforReader(id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken).then((value) => {emit(ReaderOpenedPDF(value))});
@@ -136,9 +137,8 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       // } else {
       try {
         // image = await PdfDocument.openData(await magazineRepository.GetPagesAsPDFforReader(id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
-        ReaderState.doc = await magazineRepository.GetPagesAsPDFforReader(id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken);
-        //
-        // for (var i = 0; i < int.parse(event.pageNo); i++) {
+        // ReaderState.doc = await magazineRepository.GetPagesAsPDFforReader(id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken);
+
         //   futureFuncAllPages.add(magazineRepository.GetPagesforReader(page: i.toString(), id_mag_pub: event.idMagazinePublication, readerCancelToken: cancelToken));
         // }
       } finally {

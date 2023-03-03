@@ -27,7 +27,7 @@ class ApiClient {
 
     // headers: ,
     headers: {"content-Type": "application/x-www-form-urlencoded"},
-    baseUrl: ApiConstants.baseUrl, // Domain constant (base path).
+    // baseUrl: ApiConstants.baseUrl, // Domain constant (base path).
   );
 
   ApiClient({

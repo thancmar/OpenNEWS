@@ -6,6 +6,7 @@ abstract class ReaderState extends Equatable {
   // late final NavbarItems navbarItem;
   // late final int index;
   static late Uint8List doc;
+  static late List<Future<Uint8List>>? pagesAll = List.empty(growable: true);
   // final List<Future<Uint8List>>? futureFuncAllPages;
   ReaderState();
 //

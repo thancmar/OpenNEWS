@@ -137,7 +137,7 @@ class AuthRepository {
     final getIt = GetIt.instance;
     Map data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
 
-    final response = await getIt<ApiClient>().diofordata.post(ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
+    final response = await getIt<ApiClient>().diofordata.post(ApiConstants.baseUrl + ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
     print("User login response: ${response.data}");
     // print(response!.headers);
 //COde 103 cannot add reader
@@ -201,7 +201,7 @@ class AuthRepository {
     };
 
     var response = await getIt<ApiClient>().diofordata.post(
-          ApiConstants.usersEndpoint,
+          ApiConstants.baseUrl + ApiConstants.usersEndpoint,
           data: data,
         );
     // print(response!.data);
@@ -230,7 +230,7 @@ class AuthRepository {
     Map data = {'f': 'readerGetByIdAndEmail', 'json': '{"id_reader": "$userID", "email":"$email"}'};
 
     var response = await getIt<ApiClient>().diofordata.post(
-          ApiConstants.usersEndpoint,
+          ApiConstants.baseUrl + ApiConstants.usersEndpoint,
           data: data,
         );
     // print(response!.data);

@@ -46,7 +46,7 @@ dependencies:
   shaky_animated_listview: ^0.0.5
   #package_info_plus: ^1.4.2
   bloc_concurrency: ^0.2.0
-
+  easy_localization: ^3.0.1
   pdfx: ^2.3.0
 #  firebase_auth: ^3.4.2
 #  firebase_core: ^1.19.2
@@ -91,7 +91,7 @@ dependencies:
   geolocator: ^9.0.1
   marquee: ^2.2.3
   flip_widget: ^0.1.11
-  better_page_turn: ^0.0.6
+#  better_page_turn: ^0.0.6
   flutter_spinkit: ^5.1.0
   image_size_getter: ^2.1.2
   page_curl: ^0.0.1
@@ -105,6 +105,12 @@ dependencies:
   firebase_core: ^2.4.1
   flutter_cache_manager: ^3.3.0
   cached_network_image: ^3.2.3
+  pdf_render: ^1.3.6
+  scroll_snap_list: ^0.9.1
+  animate_icons: ^2.0.0
+  intl: ^0.17.0
+  video_player: ^2.5.2
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +118,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.9.2
   build_runner: ^2.1.9
   json_serializable: ^6.1.6
+  backdrop: ^0.8.1
 
 flutter_icons:
   android: true
@@ -121,7 +128,7 @@ flutter_icons:
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
+  # encourage good coding practiceshttps://www.geeksforgeeks.org/union-and-intersection-of-two-sorted-arrays-2/. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
@@ -145,9 +152,10 @@ flutter:
 
   assets:
     - assets/PDFtest.pdf
+    - assets/test.mp4
     - assets/images/
     - assets/images/2.0x/
-
+    - assets/translations/
     - assets/images/pins/
 
   fonts:

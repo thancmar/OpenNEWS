@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-HotspotsGetAllActive HotspotsGetAllActiveFromJson(String str) =>
-    HotspotsGetAllActive.fromJson(json.decode(str));
+HotspotsGetAllActive HotspotsGetAllActiveFromJson(String str) => HotspotsGetAllActive.fromJson(json.decode(str));
 
 class HotspotsGetAllActive {
   List<Response>? response;

@@ -109,7 +109,7 @@ class MagazineRepository {
     // var file = await DefaultCacheManager().getSingleFile(queryString);
 
     // await DefaultCacheManager().emptyCache();
-    var response = await getIt<ApiClient>().dioforImages.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
+    var response = await getIt<ApiClient>().dioforImages.get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
     await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication!, Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 30));
     return Uint8List.fromList(response.data);
 
@@ -127,7 +127,9 @@ class MagazineRepository {
     };
     var queryString = Uri(queryParameters: queryParame).query;
 
-    var response = await getIt<ApiClient>().diofordata.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
+    var response = await getIt<ApiClient>()
+        .diofordata
+        .get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
 
     return Uint8List.fromList(response.data);
   }
@@ -142,7 +144,9 @@ class MagazineRepository {
     };
     var queryString = Uri(queryParameters: queryParame).query;
 
-    var response = await getIt<ApiClient>().diofordata.get(ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
+    var response = await getIt<ApiClient>()
+        .diofordata
+        .get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
 
     return Uint8List.fromList(response.data);
   }

@@ -1,5 +1,6 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,16 @@ Future<void> main() async {
 //       overlays: [SystemUiOverlay.top]);
 //   setUpLocator();
 //   configureInjection();
-  runApp(const MyApp());
+
+  //Langange package init
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(EasyLocalization(
+      supportedLocales: [Locale('en'), Locale('de')],
+      path: 'assets/translations', // <-- change the path of the translation files
+      fallbackLocale: Locale('en'),
+      child: const MyApp()));
   configLoading();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 }
@@ -76,85 +86,91 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MultiRepositoryProvider(
-  //     providers: [
-  //       RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
-  //       RepositoryProvider<HotspotRepository>(create: (context) => HotspotRepository()),
-  //       RepositoryProvider<MagazineRepository>(
-  //         create: (context) => MagazineRepository(),
-  //         lazy: false,
-  //       ),
-  //       RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
-  //     ],
-  //     child: MultiBlocProvider(
-  //       providers: [
-  //         ///Have to add all blocs here
-  //         BlocProvider<AuthBloc>(
-  //           create: (context) => AuthBloc(
-  //             //no need of Authbloc here
-  //             authRepository: RepositoryProvider.of<AuthRepository>(context),
-  //           ),
-  //         ),
-  //         BlocProvider<SplashBloc>(create: (context) => SplashBloc()),
-  //         BlocProvider<NavbarBloc>(
-  //             create: (context) => NavbarBloc(
-  //                 magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
-  //                 locationRepository: RepositoryProvider.of<LocationRepository>(context),
-  //                 hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
-  //         BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
-  //         // BlocProvider<AuthBloc>(
-  //         //   create: (context) => AuthBloc(
-  //         //     //no need of Authbloc here
-  //         //     authRepository: RepositoryProvider.of<AuthRepository>(context),
-  //         //     hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
-  //         //   ),
-  //         // ),
-  //       ],
-  //       // create: (context) => AuthBloc(
-  //       //   //no need of Authbloc here
-  //       //   authRepository: RepositoryProvider.of<AuthRepository>(context),
-  //       //   hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
-  //       // ),
-  //       child: MaterialApp(
-  //         title: 'sharemagazines',
-  //         theme: ThemeData(
-  //             // bottomSheetTheme: BottomSheetThemeData(
-  //             //     backgroundColor: Colors.black.withOpacity(0)),
-  //             //primarySwatch: Colors.blue,
-  //             pageTransitionsTheme: PageTransitionsTheme(builders: {
-  //               TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-  //               TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-  //             }),
-  //             fontFamily: 'Raleway',
-  //
-  //             // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
-  //             dividerColor: Colors.transparent),
-  //         home: SplashScreen(),
-  //         builder: EasyLoading.init(),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'sharemagazines',
-      theme: ThemeData(
-          // bottomSheetTheme: BottomSheetThemeData(
-          //     backgroundColor: Colors.black.withOpacity(0)),
-          //primarySwatch: Colors.blue,
-          pageTransitionsTheme: PageTransitionsTheme(builders: {
-            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          }),
-          fontFamily: 'Raleway',
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
+        RepositoryProvider<HotspotRepository>(create: (context) => HotspotRepository()),
+        RepositoryProvider<MagazineRepository>(
+          create: (context) => MagazineRepository(),
+          lazy: false,
+        ),
+        RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          ///Have to add all blocs here
+          BlocProvider<AuthBloc>(
+            create: (context) => AuthBloc(
+              //no need of Authbloc here
+              authRepository: RepositoryProvider.of<AuthRepository>(context),
+            ),
+          ),
+          BlocProvider<SplashBloc>(create: (context) => SplashBloc()),
+          BlocProvider<NavbarBloc>(
+              create: (context) => NavbarBloc(
+                  magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
+                  locationRepository: RepositoryProvider.of<LocationRepository>(context),
+                  hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
+          BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
+          // BlocProvider<AuthBloc>(
+          //   create: (context) => AuthBloc(
+          //     //no need of Authbloc here
+          //     authRepository: RepositoryProvider.of<AuthRepository>(context),
+          //     hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
+          //   ),
+          // ),
+        ],
+        // create: (context) => AuthBloc(
+        //   //no need of Authbloc here
+        //   authRepository: RepositoryProvider.of<AuthRepository>(context),
+        //   hotspotRepository: RepositoryProvider.of<HotspotRepository>(context),
+        // ),
+        child: MaterialApp(
+          title: 'sharemagazines',
 
-          // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
-          dividerColor: Colors.transparent),
-      home: StartReaderTesting(),
+          //langange package parameteres
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+
+          theme: ThemeData(
+              // bottomSheetTheme: BottomSheetThemeData(
+              //     backgroundColor: Colors.black.withOpacity(0)),
+              //primarySwatch: Colors.blue,
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              }),
+              fontFamily: 'Raleway',
+
+              // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
+              dividerColor: Colors.transparent),
+          home: SplashScreen(),
+          builder: EasyLoading.init(),
+        ),
+      ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     title: 'sharemagazines',
+  //     theme: ThemeData(
+  //         // bottomSheetTheme: BottomSheetThemeData(
+  //         //     backgroundColor: Colors.black.withOpacity(0)),
+  //         //primarySwatch: Colors.blue,
+  //         pageTransitionsTheme: PageTransitionsTheme(builders: {
+  //           TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+  //           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+  //         }),
+  //         fontFamily: 'Raleway',
+  //
+  //         // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
+  //         dividerColor: Colors.transparent),
+  //     home: StartReaderTesting(),
+  //   );
+  // }
 }

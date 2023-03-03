@@ -16,6 +16,9 @@ typedef CustumPdfViewPinchBuilder<T> = Widget Function(
   /// Pdf document when he loaded
   PdfDocument? document,
 
+  ///
+  // int currentPage,
+
   /// Error of pdf loading
   Exception? loadingError,
 );

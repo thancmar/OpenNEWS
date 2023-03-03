@@ -1,0 +1,11 @@
+{
+  "welcome":"Herzlichen Willkommen",
+  "welcome_text":"Lorem ipsum dolor sit amit, consectetur adipiscing elit.",
+  "msg_named":"Easy localization is written in the {lang} language",
+  "msg_mixed":"{} are written in the {lang} language",
+  "home":{
+    "info_for_your_location":"Info for your Location",
+    "female":"Hello girl :) {}",
+    "other":"Hello {}"
+  }
+}

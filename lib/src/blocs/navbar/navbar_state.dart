@@ -27,7 +27,12 @@ abstract class NavbarState extends Equatable {
   // late final Localization? locations_NavbarState;
 
   // Localization get access_location;
+  static late Future<LocationGetHeader>? locationheader = null;
+  static late Future<LocationOffers>? locationoffers = null;
+  static late List<Future<Uint8List>>? locationoffersImages = List.empty(growable: true);
+  static late Future<Uint8List>? locationImage = null;
 
+  static late Future<LocationOffers>? maplocationoffers = null;
   // NavbarState(this.magazinePublishedGetLastWithLimit, this.languageResultsALL, this.locations);
   NavbarState();
 
@@ -128,6 +133,21 @@ class GoToMap extends NavbarState {
   // @override
   // // TODO: implement access_position
   // Localization get access_location => throw UnimplementedError();
+}
+
+class GoToMapOffer extends NavbarState {
+  final Place loc;
+  final Future<LocationOffers>? offers;
+  GoToMapOffer({required this.loc, required this.offers}) : super();
+
+  // Loading(NavbarItems navbarItem, int index) : super(navbarItem, index);
+
+  @override
+  List<Object> get props => [];
+
+// @override
+// // TODO: implement access_position
+// Localization get access_location => throw UnimplementedError();
 }
 
 class GoToAccount extends NavbarState {

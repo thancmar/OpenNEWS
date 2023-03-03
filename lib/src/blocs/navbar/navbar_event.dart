@@ -35,6 +35,12 @@ class Map extends NavbarEvent {
   List<Object> get props => [];
 }
 
+class GetMapOffer extends NavbarEvent {
+  final Place loc;
+  GetMapOffer({required this.loc});
+  List<Object> get props => [];
+}
+
 class AccountEvent extends NavbarEvent {
   AccountEvent();
   List<Object> get props => [];

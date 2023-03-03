@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
@@ -15,6 +16,7 @@ import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
 import 'package:sharemagazines_flutter/src/models/incomplete_login_model.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../models/userDetails_model.dart';
 import '../../resources/dioClient.dart';
@@ -58,14 +60,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // dioClient = ApiClient(dio: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
       // getIt.registerSingleton(() => ApiClient(dio: getIt<Dio>(), networkInfo: getIt<NetworkInfo>(), secureStorage: getIt<FlutterSecureStorage>()));
       // print(getIt.isRegistered());
+      await EasyLoading.show(
+        status: 'loading...',
+        maskType: EasyLoadingMaskType.black,
+      );
       try {
         await authRepository.signIn(email: event.email, password: event.password).then((value) async => {
-              emit(Authenticated()),
               print("link with firebase"),
               await dioClient.secureStorage.write(key: "email", value: event.email),
               await dioClient.secureStorage.write(key: "pw", value: event.password),
               credential = EmailAuthProvider.credential(email: event.email, password: event.password),
-              AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email)
+              AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
+              emit(Authenticated()),
             });
         // try {
         //   print("link with firebase ${FirebaseAuth.instance.currentUser?.email}");
@@ -100,6 +106,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // emit(UnAuthenticated());
         emit(AuthError(e.toString()));
       }
+      await EasyLoading.dismiss();
     });
 
     on<IncompleteSignInRequested>((event, emit) async {
@@ -107,6 +114,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // emit(LoadingAuth());
       // emit(UnAuthenticated());
       // //
+      await EasyLoading.show(
+        status: 'loading...',
+        maskType: EasyLoadingMaskType.black,
+      );
       try {
         await authRepository
             .signInIncomplete()
@@ -117,6 +128,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // emit(UnAuthenticated());
         emit(AuthError(e.toString()));
       }
+      await EasyLoading.dismiss();
     });
 
     // When User Presses the SignUp Button, we will send the SignUpRequest Event to the AuthBloc to handle it and emit the Authenticated State if the user is authenticated
@@ -168,6 +180,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         emit(UnAuthenticated());
       }
+      // emit(GoToLoginPage());
+    });
+
+    on<SignUpWithApple>((event, emit) async {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      print(credential);
+      // if (response) {
+      //   // emit(AuthenticatedWithGoogle());
+      // } else {
+      //   // emit(UnAuthenticated());
+      // }
       // emit(GoToLoginPage());
     });
 

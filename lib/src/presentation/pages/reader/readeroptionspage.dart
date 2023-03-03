@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/readeroptionspages.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptionspages.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 
 class ReaderOptionsPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class ReaderOptionsPage extends StatefulWidget {
   State<ReaderOptionsPage> createState() => _ReaderOptionsPageState();
 }
 
-class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKeepAliveClientMixin {
+class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKeepAliveClientMixin<ReaderOptionsPage> {
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   @override
   bool get wantKeepAlive => true;

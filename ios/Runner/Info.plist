@@ -83,5 +83,18 @@
     	</dict>
     </array>
     <!-- End of the Google Sign-in Section -->
+    <key>CFBundleLocalizations</key>
+    <array>
+    	<string>en</string>
+    	<string>de</string>
+    </array>
+
+
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+          <true/>
+    </dict>
 </dict>
+
 </plist>

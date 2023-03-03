@@ -5,9 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
+import '../../../widgets/marquee.dart';
 
 class LanguagePage extends StatefulWidget {
   final String titleText;
@@ -235,20 +237,50 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                 ),
                                 Positioned(
                                   // top: -50,
-                                  bottom: -30,
+                                  bottom: -35,
                                   // height: -50,
                                   width: MediaQuery.of(context).size.width / 2 - 20,
-                                  child: Text(
-                                    // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    state.selectedLanguage!.response![index].name!,
-                                    // " asd",
-                                    // "Card ${i + 1}",
-                                    textAlign: TextAlign.center,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: MarqueeWidget(
+                                      child: Text(
+                                        // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                        DateFormat("d. MMMM yyyy").format(DateTime.parse(state.selectedLanguage!.response![index].dateOfPublication!)),
+                                        // " asd",
+                                        // "Card ${i + 1}",
+                                        textAlign: TextAlign.center,
 
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      backgroundColor: Colors.transparent,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          backgroundColor: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  // top: -50,
+                                  bottom: -20,
+                                  // height: -50,
+                                  width: MediaQuery.of(context).size.width / 2 - 20,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: MarqueeWidget(
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
+                                      child: Text(
+                                        // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                        state.selectedLanguage!.response![index].name!,
+                                        // " asd",
+                                        // "Card ${i + 1}",
+                                        textAlign: TextAlign.center,
+
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          backgroundColor: Colors.transparent,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),

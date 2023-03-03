@@ -195,7 +195,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               // horizontalTitleGap: 0.0,
               minLeadingWidth: 0,
-              child: const ExpansionTile(
+              child: ExpansionTile(
                 // textColor: Colors.red,
                 initiallyExpanded: true,
                 leading: const Icon(
@@ -261,6 +261,51 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                             color: Colors.white,
                           ),
                         )),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                    child: GestureDetector(
+                      onTap: () => {
+                        // Navigator.pop(context, Department.treasury);
+                        // SimpleDialog(
+                        //   // <-- SEE HERE
+                        //   title: const Text('Select Booking Type'),
+                        //   children: <Widget>[
+                        //     SimpleDialogOption(
+                        //       onPressed: () {
+                        //         Navigator.of(context).pop();
+                        //       },
+                        //       child: const Text('General'),
+                        //     ),
+                        //     SimpleDialogOption(
+                        //       onPressed: () {
+                        //         Navigator.of(context).pop();
+                        //       },
+                        //       child: const Text('Silver'),
+                        //     ),
+                        //     SimpleDialogOption(
+                        //       onPressed: () {
+                        //         Navigator.of(context).pop();
+                        //       },
+                        //       child: const Text('Gold'),
+                        //     ),
+                        //   ],
+                        // )
+                      },
+                      child: ListTile(
+                          leading: Icon(
+                            Icons.language,
+                            color: Colors.white,
+                          ),
+                          minLeadingWidth: 10,
+                          title: Text(
+                            'Sprache',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          )),
+                    ),
                   ),
                 ],
               ),

@@ -9,6 +9,14 @@ class LoadingMap extends MapState {
   List<Object?> get props => [];
 }
 
+// class MapLocationOffer extends MapState {
+//   final Place loc;
+//   final Future<LocationOffers>? offers;
+//   MapLocationOffer({required this.loc, required this.offers}) : super();
+//   @override
+//   List<Object?> get props => [];
+// }
+
 class Loaded extends MapState {
   @override
   List<Object?> get props => [];

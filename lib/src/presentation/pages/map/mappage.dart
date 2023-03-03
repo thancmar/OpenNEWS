@@ -17,23 +17,10 @@ import 'package:sharemagazines_flutter/src/blocs/map/map_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/map/mapOfferpage.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/place_map.dart';
-
-// class MapsBlocWidget extends StatelessWidget {
-//   MapBloc _bloc = MapBloc(
-//     hotspotRepository: HotspotRepository(),
-//   );
-//   @override
-//   Widget build(BuildContext context) {
-//     // Future<HotspotsGetAllActive>hp = RepositoryProvider.of<HotspotRepository>(context);
-//     return BlocProvider.value(
-//       value: _bloc,
-//       child: Maps(),
-//     );
-//   }
-// }
 
 class Maps extends StatefulWidget {
   const Maps({Key? key}) : super(key: key);
@@ -62,77 +49,6 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 
   @override
   bool get wantKeepAlive => true;
-
-  // void _onMapCreated(GoogleMapController controller) {
-  //   // mapController = controller;
-  //   //
-  //   // var markerIdVal = MyWayToGenerateId();
-  //   // final MarkerId markerId = MarkerId(markerIdVal);
-  //
-  //   // creating a new MARKER
-  //
-  //   // final Marker marker = Marker(
-  //   //   markerId: MarkerId('place_name'),
-  //   //   position: LatLng(
-  //   //     53.5511,
-  //   //     9.9937,
-  //   //   ),
-  //   //   infoWindow: InfoWindow(title: "markerIdVal", snippet: '*'),
-  //   //   // onTap: () {
-  //   //   //   _onMarkerTapped(markerId);
-  //   //   // },
-  //   // );
-  //
-  //   // hp.then((data) {
-  //   //   print("hp");
-  //   //   var len = data.response?.length;
-  //   //   for (int i = 0; i < len!; i++) {
-  //   //     // final temp = HotspotforMap(
-  //   //     //   data.response![i].id!,
-  //   //     //   data.response![i].nameApp!,
-  //   //     //   data.response![i].type!,
-  //   //     //   data.response![i].addressCity!,
-  //   //     //   data.response![i].addressHouseNr!,
-  //   //     //   data.response![i].addressZip!,
-  //   //     //   data.response![i].addressZip!,
-  //   //     //   data.response![i].latitude!,
-  //   //     //   data.response![i].longitude!,
-  //   //     // );
-  //   //     final temp = Place(
-  //   //         id: data.response![i].id!,
-  //   //         nameApp: data.response![i].nameApp!,
-  //   //         type: data.response![i].type!,
-  //   //         addressStreet: data.response![i].addressCity!,
-  //   //         addressHouseNr: data.response![i].addressHouseNr!,
-  //   //         addressZip: data.response![i].addressZip!,
-  //   //         addressCity: data.response![i].addressCity!,
-  //   //         latitude: data.response![i].latitude!,
-  //   //         longitude: data.response![i].longitude!);
-  //   //     hpList?.add(temp);
-  //   //
-  //   //     print("mark");
-  //   //   }
-  //   //   print("something");
-  //   //   // adding a new marker to map
-  //   //   // markers[MarkerId('place_name')] = marker;
-  //   //   hpList?.forEach((element) {
-  //   //     myMarkers.add(Marker(
-  //   //         markerId: MarkerId(element.nameApp),
-  //   //         position: LatLng(element.latitude, element.longitude),
-  //   //         infoWindow: InfoWindow(title: element.nameApp)));
-  //   //     print("finished");
-  //   //   });
-  //   //   print("done");
-  //   //
-  //   //   setState(() {});
-  //   //
-  //   //   // print(markers);
-  //   //   // print(hpList);
-  //   // }, onError: (e) {
-  //   //   print("fsadfs");
-  //   //   print(e);
-  //   // });
-  // }
 
   @override
   void initState() {
@@ -275,7 +191,23 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         //       // color: Colors.red,
                         //     ),
                         //     borderRadius: BorderRadius.circular(15)),
-
+                        // overlayBorderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        // decoration: InputDecoration(
+                        //     //Maybe we need it
+                        //     // contentPadding: const EdgeInsets.symmetric(
+                        //     //     vertical: 20.0, horizontal: 10.0),
+                        //     // enabled: true,
+                        //     // focusColor: Colors.yellow,
+                        //     // floatingLabelStyle: TextStyle(color: Colors.red),
+                        //     // // labelText: "Vorname",
+                        //     // labelStyle: TextStyle(fontSize: 16.0, color: Colors.green, fontWeight: FontWeight.w300), //, height: 3.8),
+                        //     // border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                        //     // errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
+                        //     // enabledBorder: const OutlineInputBorder(
+                        //     //   borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                        //     //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        //     // ),
+                        //     ),
                         logo: Text(""),
                         radius: 10000,
                         context: context,
@@ -407,7 +339,25 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                   ),
                   child: TextButton(
                     child: const Text('Angebote'),
-                    onPressed: () {/* ... */},
+                    onPressed: () {
+                      /* ... */
+                      BlocProvider.of<NavbarBloc>(context).add(GetMapOffer(loc: locationmarker));
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) {
+                            return MapOffer(
+                              locationDetails: locationmarker,
+                            );
+                          },
+                        ),
+                      ).then((_) {
+                        // print("after searchpage state $state");
+                        // setState(() {
+                        //   showSearchPage = false;
+                        // });
+                      });
+                    },
                   ),
                 ),
               ),
