@@ -27,7 +27,7 @@ class _MenuPageState extends State<MenuPage> {
                           width: MediaQuery.of(context).size.width * 0.40,
                           height: MediaQuery.of(context).size.width * 0.1,
                           child: FloatingActionButton.extended(
-                            heroTag: 'location_offers1',
+                            // heroTag: 'location_offers1',
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                             label: Text(
                               'Speisekarte',
@@ -77,7 +77,7 @@ class _MenuPageState extends State<MenuPage> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                             label: Text(
                               'Kaffeesorten',
-                              style: TextStyle(fontSize: 12),
+                              style: TextStyle(fontSize: 1),
                             ), // <-- Text
                             backgroundColor: Colors.grey.withOpacity(0.1),
                             icon: Icon(

@@ -1,12 +1,16 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines_flutter/readerpdftester.dart';
+import 'package:sharemagazines_flutter/pdfreadermain.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
@@ -18,6 +22,7 @@ import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 import 'package:get_it/get_it.dart';
+// import ‘package:flutter/services.dart’;
 // import 'package:rest_api_work/Service/note_service.dart';
 // import 'firebase_options.dart';
 
@@ -53,13 +58,22 @@ Future<void> main() async {
 
   //Langange package init
   WidgetsFlutterBinding.ensureInitialized();
+
   await EasyLocalization.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(EasyLocalization(
+      supportedLocales: [Locale('en'), Locale('de')],
+      path: 'assets/translations', // <-- change the path of the translation files
+      fallbackLocale: Locale('en'),
+      child: MyApp())));
 
   runApp(EasyLocalization(
       supportedLocales: [Locale('en'), Locale('de')],
       path: 'assets/translations', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
-      child: const MyApp()));
+      child: MyApp()));
   configLoading();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 }
@@ -107,7 +121,7 @@ class MyApp extends StatelessWidget {
               authRepository: RepositoryProvider.of<AuthRepository>(context),
             ),
           ),
-          BlocProvider<SplashBloc>(create: (context) => SplashBloc()),
+          BlocProvider<SplashBloc>(create: (context) => SplashBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
           BlocProvider<NavbarBloc>(
               create: (context) => NavbarBloc(
                   magazineRepository: RepositoryProvider.of<MagazineRepository>(context),

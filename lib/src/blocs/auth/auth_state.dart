@@ -3,8 +3,8 @@ part of 'auth_bloc.dart';
 @immutable
 abstract class AuthState extends Equatable {
   // static late User? user;
-  static String savedEmail = "asdsad";
-  static String savedPWD = "";
+  static String? savedEmail;
+  static String? savedPWD;
   static late GetUserDetails? userDetails = GetUserDetails();
 }
 
@@ -15,8 +15,6 @@ abstract class AuthState extends Equatable {
 // }
 
 class GoToLoginPage extends AuthState {
-  // final String? savedEmail;
-  // final String? savedPWD;
   GoToLoginPage();
   @override
   List<Object?> get props => [];

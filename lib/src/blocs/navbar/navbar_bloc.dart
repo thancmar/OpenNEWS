@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:flutter_map/flutter_map.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:sharemagazines_flutter/src/models/magazineCategoryGetAllActive.dart';
 import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
@@ -22,7 +24,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import '../../models/hotspots_model.dart';
 import '../../models/locationGetHeader_model.dart';
 import '../../models/locationOffers_model.dart';
-import '../../presentation/widgets/place_map.dart';
+import '../../models/place_map.dart';
 import '../../resources/dioClient.dart';
 
 part 'navbar_event.dart';
@@ -36,7 +38,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   final HotspotRepository hotspotRepository;
   // late Future<HotspotsGetAllActive> hotspotList;
   late Localization? locationResponse;
-  late Data appbarlocation;
+  static late Data appbarlocation;
   bool statechanged = false;
   late List<Future<Uint8List>> getTop = List.empty(growable: true);
   // Position? position = null;
@@ -44,15 +46,17 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   // static late Future<LocationOffers>? maplocationoffers;
   var cookieJar = CookieJar();
   // GetIt getIt = GetIt.instance;
+  CancelToken cancelToken = CancelToken();
+  ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
 
   Future<void> GetAllMagazinesCover(int locationID, NavbarEvent? event) async {
+    // await DefaultCacheManager().emptyCache();
     // event?.timer?.cancel();
     // await EasyLoading.show(
     //   status: 'loading...',
     //   maskType: EasyLoadingMaskType.black,
     // );
 
-    //TO Do: go thru each response item and check if exists in cache
     await magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
     print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
 
@@ -69,27 +73,60 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
               NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
               await NavbarState.locationoffers?.then((value) async => {
                     // NavbarState.locationheader = value,
-                    value.locationOffer!.forEach((element) {
-                      NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
-                    })
+                    if (value.locationOffer!.length > 0)
+                      {
+                        value.locationOffer?.forEach((element) {
+                          NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                        })
+                      }
                   }),
-              await magazineRepository.magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((value) async => {
+              await magazineRepository.magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((value) => {
                     NavbarState.magazinePublishedGetTopLastByRange = value,
                     // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
                     for (var i = 0; i < value.response!.length; i++)
                       {
-                        NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
-                            page: '0',
-                            id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
-                            date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
-                        // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
+                        for (var k = 1; k < int.parse(value.response![i].pageMax!); k++)
+                          {
+                            DefaultCacheManager().getFileFromCache(value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + k.toString()).then((valueCache) => {
+                                  if (valueCache == null)
+                                    {
+                                      magazineRepository.GetPagesforReader(
+                                          page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
+
+                                      // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
+                                      // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
+                                      //     page: '0',
+                                      //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
+                                      //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
+                                      // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
+                                    },
+                                }),
+                            // magazineRepository.GetPagesforReader(
+                            //     page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
+                          }
+                        // await DefaultCacheManager()
+                        //     .getFileFromCache(value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + i.toString())
+                        //     .then((value) async => {
+                        //           if (value == null)
+                        //             {
+                        //               print("empty")
+                        //               // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
+                        //               // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
+                        //               //     page: '0',
+                        //               //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
+                        //               //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
+                        //               // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
+                        //             },
+                        //         }),
                       },
-                    event?.timer?.cancel(),
-                    await EasyLoading.dismiss(),
+                    // event?.timer?.cancel(),
+                    // EasyLoading.dismiss(),
                   })
             },
           await magazineRepository.magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((data) async {
             NavbarState.magazinePublishedGetLastWithLimit = data;
+            // dioClient.secureStorage.write(key: "allmagazines", value: data);
+
             for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
               //To show on the searchpage
               switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
@@ -106,225 +143,263 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                   NavbarState.counterES++;
                   break;
               }
-              var oldimage = await DefaultCacheManager().getFileFromCache(
-                  NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! + "_" + NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!);
-              if (oldimage == null) {
-                // NavbarState.languageResultsALL?.add(magazineRepository.GetPage(
-                //     page: '0',
-                //     id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                //     date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!));
-                magazineRepository.GetPage(
-                    page: '0',
-                    id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                    date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!);
-                print(NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!);
-              }
-              // NavbarState.languageResultsALLStream?.add(magazineRepository.GetPageDuplicate(page: '0', id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!));
-              // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("de")) {
-              //   NavbarState.languageResultsDE?.add(NavbarState.languageResultsALL![i]);
-              // }
-              // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("en")) {
-              //   NavbarState.languageResultsEN?.add(NavbarState.languageResultsALL![i]);
-              // }
-              // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("fr")) {
-              //   NavbarState.languageResultsFR?.add(NavbarState.languageResultsALL![i]);
-              // }
+              await DefaultCacheManager()
+                  .getFileFromCache(
+                      NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! + "_" + NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! + "_0")
+                  .then((value) => {
+                        if (value?.file.lengthSync() == null)
+                          {
+                            // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
+                            magazineRepository.GetPage(
+                                page: '0',
+                                id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
+                                date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!)
+                          }
+                      });
             }
-            event?.timer?.cancel();
-            await EasyLoading.dismiss();
+            // event?.timer?.cancel();
+            // await EasyLoading.dismiss();
           }),
         });
   }
 
   NavbarBloc({required this.magazineRepository, required this.locationRepository, required this.hotspotRepository}) : super(Loading()) {
     on<Initialize123>((event, emit) async {
-      print("access token");
-      event.timer?.cancel();
-      await EasyLoading.show(
-        status: 'loading...',
-        maskType: EasyLoadingMaskType.black,
-      );
-      print('EasyLoading show Initialize123');
-      NavbarState.languageResultsALL?.clear();
-      NavbarState.languageResultsDE?.clear();
-      NavbarState.languageResultsEN?.clear();
-      NavbarState.languageResultsFR?.clear();
-      // print(dioClient.accessToken);
-      NavbarState.hotspotList = hotspotRepository.GetAllActiveHotspots();
-      // await NavbarState.hotspotList;
-      NavbarState.hotspotList.then((data) {
-        List<Place>? hpList = [];
-        var len = data.response?.length;
-        for (int i = 0; i < len!; i++) {
-          final temp = Place(
-              id: data.response![i].id!,
-              nameApp: data.response![i].nameApp!,
-              type: data.response![i].type!,
-              addressStreet: data.response![i].addressStreet!,
-              addressHouseNr: data.response![i].addressHouseNr!,
-              addressZip: data.response![i].addressZip!,
-              addressCity: data.response![i].addressCity!,
-              latitude: data.response![i].latitude!,
-              longitude: data.response![i].longitude!);
-          NavbarState.allMapMarkers.add(temp);
-        }
-      });
-      print("Position lat");
-      LocationPermission? permission = await Geolocator.checkPermission();
-      print("Position lat");
-      if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-        NavbarState.currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {throw Exception("Failed to localize")});
+      try {
+        emit(Loading());
+        // event.timer?.cancel();
+        await EasyLoading.show(
+          status: 'loading...',
+          maskType: EasyLoadingMaskType.black,
+        );
+        NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetLastWithLimitFromJson(await dioClient.secureStorage.read(key: "allmagazines") ?? '');
+        // NavbarState.magazinePublishedGetTopLastByRange = MagazinePublishedGetLastWithLimitFromJson(await dioClient.secureStorage.read(key: "allmagazinesbyrange") ?? '');
+
+        NavbarState.languageResultsALL?.clear();
+        NavbarState.languageResultsDE?.clear();
+        NavbarState.languageResultsEN?.clear();
+        NavbarState.languageResultsFR?.clear();
+        // NavbarState.hotspotList = await hotspotRepository.GetAllActiveHotspots();
+        // await NavbarState.hotspotList;
+        appbarlocation = Data();
+        NavbarState.locationheader = null;
+        NavbarState.magazineCategoryGetAllActive = null;
+        NavbarState.locationoffers = null;
+        NavbarState.locationoffersImages?.clear();
+        NavbarState.locationImage = null;
+        NavbarState.hotspotList = HotspotsGetAllActive();
+        NavbarState.allMapMarkers = <Place>[];
+
+        hotspotRepository.GetAllActiveHotspots().then((data) {
+          NavbarState.hotspotList = data;
+          List<Place>? hpList = [];
+          var len = data.response?.length;
+          for (int i = 0; i < len!; i++) {
+            final temp = Place(
+                id: data.response![i].id!,
+                nameApp: data.response![i].nameApp!,
+                type: data.response![i].type!,
+                addressStreet: data.response![i].addressStreet!,
+                addressHouseNr: data.response![i].addressHouseNr!,
+                addressZip: data.response![i].addressZip!,
+                addressCity: data.response![i].addressCity!,
+                latitude: data.response![i].latitude!,
+                longitude: data.response![i].longitude!);
+            NavbarState.allMapMarkers.add(temp);
+          }
+        });
+        print("Position lat");
+        // LocationPermission? permission = await Geolocator.checkPermission();
+        // print("Position lat");
+        // if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+        //   NavbarState.currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {
+        //         // throw Exception("Failed to localize")
+        //         emit(NavbarError("Geolocator error"))
+        //       });
+        // }
+
+        print("Position lat");
+        await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
+              // print("value!.data!.length! ${value!.data!.length}"),
+              // print("value!.data!.length! }"),
+              if (value!.data!.length > 1)
+                {
+                  add(LocationSelection(locations: value.data!)),
+                  // event.timer?.cancel(),
+                  // await EasyLoading.dismiss(),
+                  print('EasyLoading dismiss 3'),
+                }
+              else if (value?.data!.length == 1)
+                {
+                  appbarlocation = value!.data![0],
+                  print("appbarlocation = Data(),"),
+                  // add(Home(value.data![0])),
+                  //await
+                  GetAllMagazinesCover(int.parse(value.data![0].idLocation!), event).then((valueGetAllMagazinesCover) async => {
+                        // add(Menu()),
+                        add(Home(value.data![0])),
+                        // event.timer?.cancel(),
+                        await EasyLoading.dismiss(),
+                        // emit(GoToHome(currentLocation: appbarlocation!)),
+                        print('EasyLoading dismiss 1'),
+                      }),
+                }
+              else
+                {
+                  await GetAllMagazinesCover(int.parse("0"), null).then((value) async => {
+                        add(Home()),
+                        // event.timer?.cancel(),
+                        await EasyLoading.dismiss(),
+                        print('EasyLoading dismiss 2'),
+                      }),
+                },
+            });
+      } catch (e) {
+        // statechanged = false;
+        emit(NavbarError(e.toString()));
       }
-
-      print("Position lat");
-      await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-            // print("checklocation value ${value!.data}"),
-            locationResponse = value,
-            // for (var i = 0; i < appbarlocation.data!.length; i++){
-            //
-            // },
-            // if (value.code)
-            // await locationRepository.checklocation(value!.data![0].idLocation),
-            print("value!.data!.length! ${value!.data!.length}"),
-            print("value!.data!.length! }"),
-            if (value.data!.length > 1)
-              {
-                add(LocationSelection()),
-                event.timer?.cancel(),
-                await EasyLoading.dismiss(),
-                print('EasyLoading dismiss 3'),
-              }
-            else if (value.data!.length == 1)
-              {
-                // add(Home(value!.data![0])),
-                // await GetAllMagazinesCover(int.parse(value!.data![0].idLocation!)),
-                appbarlocation = value.data![0],
-                print("appbarlocation = Data(),"),
-                await GetAllMagazinesCover(int.parse(value.data![0].idLocation!), event).then((valueGetAllMagazinesCover) async => {
-                      add(Home(value.data![0])),
-                      event.timer?.cancel(),
-                      await EasyLoading.dismiss(),
-                      print('EasyLoading dismiss 1'),
-                    }),
-                // event.timer?.cancel(),
-                // await EasyLoading.dismiss(),
-              }
-            // else if (value!.data!.length! == 0)
-            else
-              {
-                appbarlocation = Data(),
-
-                await GetAllMagazinesCover(int.parse("0"), null).then((value) async => {
-                      add(Home()),
-                      event.timer?.cancel(),
-                      await EasyLoading.dismiss(),
-                      print('EasyLoading dismiss 2'),
-                    }),
-                // add(Home()),
-              },
-            print("Breakpoint"),
-          });
     });
 
     on<Home>((event, emit) async {
       try {
-        // print(futureFuncLanguageResultsALL[1].toString());
-        // emit(GoToHome(magazinePublishedGetLastWithLimitdata, getTop, futureFuncLanguageResultsALL, futureFuncLanguageResultsDE, futureFuncLanguageResultsEN, futureFuncLanguageResultsFR,
-        //     locationResponse, appbarlocation));
-        // emit(GoToHome(magazinePublishedGetLastWithLimitdata_navbarBloc, futureFuncLanguageResultsALL, futureFuncLanguageResultsDE, futureFuncLanguageResultsEN, futureFuncLanguageResultsFR,
-        //     locationResponse, appbarlocation));
-        emit(GoToHome(NavbarState.magazinePublishedGetLastWithLimit, NavbarState.languageResultsALL, NavbarState.languageResultsDE, NavbarState.languageResultsEN, NavbarState.languageResultsFR,
-            locationResponse, appbarlocation));
-
+        emit(GoToHome(currentLocation: appbarlocation!));
+        // event.timer?.cancel();
+        await EasyLoading.dismiss();
         print("Navbarbloc home event emitted123");
-        // emit(GoToHome());
-        // });
         statechanged = false;
-
         // statsechanged = true;
       } catch (e) {
         // statechanged = false;
+        emit(NavbarError(e.toString()));
         print(e);
       }
     });
 
     on<Menu>((event, emit) async {
-      statechanged = true;
-      emit(GoToMenu(locationResponse, appbarlocation));
-      statechanged = false;
+      try {
+        statechanged = true;
+        emit(GoToMenu());
+        statechanged = false;
+      } on Exception catch (e) {
+        emit(NavbarError(e.toString()));
+        print(e);
+      }
     });
 
     on<Map>((event, emit) async {
-      statechanged = true;
-      emit(GoToMap());
-      statechanged = false;
+      try {
+        statechanged = true;
+        emit(GoToMap());
+        statechanged = false;
+      } on Exception catch (e) {
+        emit(NavbarError(e.toString()));
+        print(e);
+      }
     });
 
     on<GetMapOffer>((event, emit) async {
       //   statechanged = true;
       //
-      NavbarState.maplocationoffers = locationRepository.GetLocationOffers(locationID: event.loc.id.toString());
+      try {
+        print("GetMapOffer ${event.loc.id.toString()}");
+        NavbarState.maplocationoffers = null;
+        NavbarState.maplocationoffers = locationRepository.GetLocationOffers(locationID: event.loc.id);
+      } catch (error) {
+        print("GetMapOffer error - $error");
+        emit(NavbarError(error.toString()));
+      }
+
       //   emit(GoToMapOffer(loc: event.loc, offers: maplocationoffers));
       //   statechanged = false;
     });
 
     on<AccountEvent>((event, emit) async {
-      statechanged = true;
-      emit(GoToAccount(null, null, null));
-      statechanged = false;
+      try {
+        statechanged = true;
+        emit(GoToAccount(null, null, null));
+        statechanged = false;
+      } on Exception catch (e) {
+        emit(NavbarError(e.toString()));
+        print(e);
+      }
     });
 
     on<LocationSelection>((event, emit) async {
-      print("emit(GoToLocationSelection(null, null, locationResponse)); ${event.location?.idLocation},");
-      statechanged = true;
-      if (event.location?.idLocation != null) {
-        event.timer?.cancel();
+      // print("emit(GoToLocationSelection(null, null, locationResponse)); ${event.location?.idLocation},");
+      // statechanged = true;
+      // if (event.location?.idLocation != null) {
+      //   event.timer?.cancel();
+      //   await EasyLoading.show(
+      //     status: 'loading...',
+      //     maskType: EasyLoadingMaskType.black,
+      //   );
+      //   appbarlocation = event.location!;
+      //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
+      //         add(Home(event.location!)),
+      //         event.timer?.cancel(),
+      //         await EasyLoading.dismiss(),
+      //       });
+      // } else {
+      try {
+        await EasyLoading.dismiss();
+        emit(GoToLocationSelection(event.locations));
+        // }
+        statechanged = false;
+      } on Exception catch (e) {
+        emit(NavbarError(e.toString()));
+        print(e);
+      }
+    });
+
+    on<LocationSelected>((event, emit) async {
+      try {
         await EasyLoading.show(
           status: 'loading...',
           maskType: EasyLoadingMaskType.black,
         );
         appbarlocation = event.location!;
+        print("appbarlocation = Data(),");
         await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
               add(Home(event.location!)),
-              event.timer?.cancel(),
+              // event.timer?.cancel(),
               await EasyLoading.dismiss(),
+              print('EasyLoading dismiss 112'),
             });
-      } else {
-        emit(GoToLocationSelection(locationResponse));
+        statechanged = false;
+      } on Exception catch (e) {
+        await EasyLoading.dismiss();
+        emit(NavbarError(e.toString()));
+        print(e);
       }
-      statechanged = false;
     });
   }
 
   Future<void> checkLocation(Timer? timer) async {
     statechanged = true;
-
     // await EasyLoading.show(
     //   status: 'loading...',
     //   maskType: EasyLoadingMaskType.black,
     // );
     print("bloc LocationRefresh");
     await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-          print("bloc LocationRefresh ${appbarlocation.idLocation}"),
+          print("bloc LocationRefresh ${appbarlocation!.idLocation}"),
           // print("bloc LocationRefresh ${appbarlocation.idLocation} ${value!.data!}"),
 
-          if (appbarlocation.idLocation == null)
+          if (appbarlocation!.idLocation == null)
             {
-              if (value!.data!.length > 0)
-                {add(Initialize123())}
-              else
-                {
-                  // event.timer?.cancel(),
-                  // await EasyLoading.dismiss(),
-                }
+              if (value!.data!.length > 0) {add(Initialize123())}
             }
           else
             {
               // nearbyLocationIDs = [],
               // for (int i = 0; i < value!.data!.length; i++) {},
+              if (timer?.isActive == true || value!.data!.length == 0)
+                {
+                  add(Initialize123()),
+                },
               for (int i = 0; i < value!.data!.length; i++)
                 {
-                  if (appbarlocation.idLocation == value.data![i].idLocation)
+                  if (appbarlocation!.idLocation == value.data![i].idLocation)
                     {
                       await EasyLoading.dismiss(),
                     }
@@ -333,10 +408,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
               //   {
               //     add(Initialize123(event.timer)),
               //   },
-              if (timer?.isActive == true || value.data!.length == 0)
-                {
-                  add(Initialize123()),
-                }
+
               // if (value!.data!.contains("appbarlocation") == false)
               //   {
               //     add(Initialize123(event.timer)),
@@ -349,35 +421,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
             },
           // {add(Initialize123(event.timer))},
           statechanged = false,
-          timer?.cancel(),
+          // timer?.cancel(),
           await EasyLoading.dismiss(),
         });
-
-    // emit(GoToLocationSelection(null, null, locationResponse));
-    // });
-// on<Location>((event, emit) async {
-//   emit(GoToLocation());
-//   // statechanged = true;
-// });
-// on<Search>((event, emit) async {
-//   emit(GoToSearch());
-//   // statechanged = true;
-// });
   }
-  // void getNavBarItem(NavbarItems navbarItem) {
-  //   switch (navbarItem) {
-  //     case NavbarItems.Home:
-  //       emit(NavbarState(NavbarItems.Home, 0));
-  //       break;
-  //     case NavbarItems.Menu:
-  //       emit(NavbarState(NavbarItems.Menu, 1));
-  //       break;
-  //     case NavbarItems.Map:
-  //       emit(NavbarState(NavbarItems.Map, 2));
-  //       break;
-  //     case NavbarItems.Account:
-  //       emit(NavbarState(NavbarItems.Account, 3));
-  //       break;
-  //   }
-  // }
 }

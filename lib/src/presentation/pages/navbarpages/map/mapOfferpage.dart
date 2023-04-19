@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/map/map_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 
-import '../../../models/locationOffers_model.dart';
-import '../../widgets/place_map.dart';
+import '../../../../models/locationOffers_model.dart';
+import '../../../../models/place_map.dart';
 import 'offerpage.dart';
 
 class MapOffer extends StatefulWidget {
@@ -66,9 +67,9 @@ class _MapOfferState extends State<MapOffer> {
                   FutureBuilder<LocationOffers>(
                       future: NavbarState.maplocationoffers,
                       builder: (context, snapshot) {
-                        print(snapshot.data);
+                        print("NavbarState.maplocationoffers snapdata is ${snapshot.data}");
                         if (snapshot.hasData) {
-                          print(snapshot.data!.locationOffer!.length);
+                          // print(snapshot.data!.locationOffer!.length);
 
                           return Column(
                             children: [
@@ -80,12 +81,10 @@ class _MapOfferState extends State<MapOffer> {
                                       Navigator.push(
                                         context,
                                         PageRouteBuilder(
-                                          pageBuilder: (_, __, ___) {
-                                            return OfferPage(
-                                              locOffer: snapshot.data!.locationOffer![i],
-                                              heroTag: 'OfferTitle$i',
-                                            );
-                                          },
+                                          pageBuilder: (_, __, ___) => OfferPage(
+                                            locOffer: snapshot.data!.locationOffer![i],
+                                            heroTag: i,
+                                          ),
                                         ),
                                       )
                                     },
@@ -103,7 +102,7 @@ class _MapOfferState extends State<MapOffer> {
                                       ),
                                       alignment: Alignment.centerLeft,
                                       child: Hero(
-                                          tag: 'OfferTitle$i',
+                                          tag: 'offer_title$i',
                                           child: Text(snapshot.data!.locationOffer![i].shm2Offer![0].title!, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300))),
                                     ),
                                   ),
@@ -111,11 +110,19 @@ class _MapOfferState extends State<MapOffer> {
                             ],
                           );
                         }
-                        return Container(
-                            // color: Colors.red,
-                            // width: 20,
-                            // height: 20,
-                            );
+                        // else {
+                        //   return SpinKitFadingCircle(
+                        //     color: Colors.white,
+                        //     size: 50.0,
+                        //   );
+                        // }
+                        else
+                          return Container(child: Text('No loaction offers', style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300))
+
+                              // color: Colors.red,
+                              // width: 20,
+                              // height: 20,
+                              );
                       })
                 ],
               ),

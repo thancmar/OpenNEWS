@@ -1,18 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
-
-import 'navbar_painter.dart';
-
-class BottomNavBarImp extends StatelessWidget {
+class CustomNavbar extends StatelessWidget {
   // const BottomNavBarImp({
   // int selectedIndex = 0;
   final selectedIndex;
-  ValueChanged<int> onClicked;
-  BottomNavBarImp({required this.selectedIndex, required this.onClicked});
+  final ValueChanged<int> onClicked;
+  CustomNavbar({required this.selectedIndex, required this.onClicked});
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +13,14 @@ class BottomNavBarImp extends StatelessWidget {
       // withd: MediaQuery.of(context).padding.bottom;
       type: BottomNavigationBarType.fixed, //Helps with the Transparent Bug
       backgroundColor: Colors.transparent,
-// backgroundColor: Theme.of(context).copyWith(splashColor: Colors.yellow),,
+      // backgroundColor: Theme.of(context).copyWith(splashColor: Colors.yellow),,
       elevation: 0,
-
       // backgroundColor: Color(0x00ffffff),
       showSelectedLabels: false,
       selectedItemColor: Colors.blue,
       showUnselectedLabels: false,
       currentIndex: selectedIndex,
       onTap: onClicked,
-
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(

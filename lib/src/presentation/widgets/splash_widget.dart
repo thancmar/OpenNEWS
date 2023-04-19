@@ -13,8 +13,10 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
   @override
   void initState() {
     super.initState();
-
-    this._dispatchEvent(context); // This will dispatch the navigateToHomeScreen event.
+    //This  will dispatch the navigateToHomeScreen event.
+    BlocProvider.of<SplashBloc>(context).add(
+      NavigateToHomeEvent(),
+    );
   }
 
   @override
@@ -41,13 +43,6 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
           ],
         ),
       ),
-    );
-  }
-
-  //This method will dispatch the navigateToHomeScreen event.
-  void _dispatchEvent(BuildContext context) {
-    BlocProvider.of<SplashBloc>(context).add(
-      NavigateToHomeEvent(),
     );
   }
 }

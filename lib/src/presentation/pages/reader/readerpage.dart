@@ -1,78 +1,33 @@
-import 'dart:async';
-
-import 'dart:typed_data';
-
-import 'package:dismissible_page/dismissible_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flip_widget/flip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pdf_render/pdf_render_widgets.dart';
-import 'package:pdfx/pdfx.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:sharemagazines_flutter/src/blocs/reader/reader_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/pdfWidget.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/pdf_view_pinch.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptionspage.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreaderoption.dart';
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
-//Reader is divided into 3 parts
-//1. (Reader) The Actual reader
-//2. (ReaderOptionsPage) The screen with opaque background
-//3. (ReaderOptionsPage) The widget that contains all the pages
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 
-// class StartReader extends StatelessWidget {
-//   final String id;
-//   final String index;
-//   final Uint8List coverURL;
-//   final String noofpages;
-//   final String readerTitle;
-//   final String heroTag;
-//   StartReader({Key? key, required this.id, required this.index, required this.coverURL, required this.noofpages, required this.readerTitle, required this.heroTag}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     print("StartReader readerTitle $readerTitle");
-//     return BlocProvider(
-//         create: (BuildContext context) => ReaderBloc(
-//               magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
-//             ),
-//         child: Reader(
-//           id: this.id,
-//           index: this.index,
-//           cover: this.coverURL,
-//           noofpages: this.noofpages,
-//           readerTitle: this.readerTitle,
-//           currentPage: 0,
-//           heroTag: this.heroTag,
-//         ));
-//   }
-//   //   return Container();
-// }
 class StartReader extends StatelessWidget {
-  final String id;
-  final String index;
-  final Uint8List coverURL;
-  final String noofpages;
-  final String readerTitle;
+  final model.Response magazine;
   final String heroTag;
-  StartReader({Key? key, required this.id, required this.index, required this.coverURL, required this.noofpages, required this.readerTitle, required this.heroTag}) : super(key: key);
+  StartReader({Key? key, required this.magazine, required this.heroTag}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print("StartReader readerTitle $readerTitle");
     return BlocProvider(
         create: (BuildContext context) => ReaderBloc(
               magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
             ),
         child: Reader(
-          id: this.id,
-          index: this.index,
-          cover: this.coverURL,
-          noofpages: this.noofpages,
-          readerTitle: this.readerTitle,
-          currentPage: 0,
+          magazine: this.magazine,
+          currentPage: ValueNotifier<int>(0),
           heroTag: this.heroTag,
         ));
   }
@@ -80,22 +35,18 @@ class StartReader extends StatelessWidget {
 }
 
 class Reader extends StatefulWidget {
-  final String id;
-  final String index;
-  final Uint8List cover;
-  final String noofpages;
-  final String? readerTitle;
-  int currentPage;
+  final model.Response magazine;
+  ValueNotifier<int> currentPage;
   final String heroTag;
-  Reader({Key? key, required this.id, required this.index, required this.cover, required this.noofpages, required this.readerTitle, required this.currentPage, required this.heroTag})
-      : super(key: key);
+
+  Reader({Key? key, required this.magazine, required this.currentPage, required this.heroTag}) : super(key: key);
 
   @override
   State<Reader> createState() => _ReaderState();
 }
 
-class _ReaderState extends State<Reader> with AutomaticKeepAliveClientMixin<Reader> {
-  bool isOnPageTurning = false;
+class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
+  // bool isOnPageTurning = false;
   late final CustumPdfControllerPinch pdfPinchController;
   GlobalKey<FlipWidgetState> _flipKey = GlobalKey();
   // late final PdfController pdfController;
@@ -104,13 +55,14 @@ class _ReaderState extends State<Reader> with AutomaticKeepAliveClientMixin<Read
   late double pageScale;
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController _controller = TransformationController(matrix4);
-
+  static ValueNotifier<int> _networklHasErrorNotifier = ValueNotifier(0);
+  late AnimationController? _spinKitController;
   callback(newValue) {
-    setState(() {
-      print("reader callback function");
-      widget.currentPage = newValue;
-      _controller.value = matrix4;
-    });
+    // setState(() {
+    //   print("reader callback function");
+    //   widget.currentPage = newValue;
+    //   _controller.value = matrix4;
+    // });
   }
 
   @override
@@ -118,12 +70,23 @@ class _ReaderState extends State<Reader> with AutomaticKeepAliveClientMixin<Read
 
   @override
   void initState() {
-    print(widget.id);
+    // print(widget.id);
     pageScale = _controller.value.getMaxScaleOnAxis();
     BlocProvider.of<ReaderBloc>(context).add(
-      OpenReader(idMagazinePublication: widget.id, pageNo: widget.noofpages),
+      // OpenReader(idMagazinePublication: widget.magazine.idMagazinePublication!, dateofPublicazion: widget.magazine.dateOfPublication!, pageNo: widget.magazine.pageMax!),
+      OpenReader(magazine: widget.magazine),
     );
     // final pdfPinchController = CustumPdfControllerPinch(document: PdfDocument.openData(ReaderState.doc));
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    _spinKitController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    );
     super.initState();
     // controller.addListener(zoomListener);
   }
@@ -132,7 +95,12 @@ class _ReaderState extends State<Reader> with AutomaticKeepAliveClientMixin<Read
   void dispose() {
     // _controller.dispose();
     // pdfController.dispose();
+    _spinKitController?.dispose();
     super.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   // @override
@@ -202,7 +170,13 @@ class _ReaderState extends State<Reader> with AutomaticKeepAliveClientMixin<Read
             // ),
             GestureDetector(
                 onTap: () => Navigator.push(
-                    context, ReaderOptionRoute(widget: ReaderOptionsPage(isOnPageTurning: isOnPageTurning, callback: this.callback, reader: this.widget, bloc: BlocProvider.of<ReaderBloc>(context)))),
+                    context,
+                    ReaderOptionRoute(
+                        widget: ReaderOptionsPage(
+                      reader: this.widget,
+                      bloc: BlocProvider.of<ReaderBloc>(context),
+                      currentPage: widget.currentPage,
+                    ))),
                 onDoubleTap: () => {
                       // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
                       print("controller"),
@@ -217,70 +191,150 @@ class _ReaderState extends State<Reader> with AutomaticKeepAliveClientMixin<Read
                   listener: (context, state) {
                     if (state is ReaderClosed) {
                       print("state.ReaderClosed");
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      // Navigator.of(context).popUntil((route) => route.isFirst);
+                      int count = 0;
+                      Navigator.popUntil(context, (route) {
+                        return count++ == 2;
+                      });
                     }
                   },
                   child: BlocBuilder<ReaderBloc, ReaderState>(
                     builder: (context, state) {
                       // if (state is ReaderOpened) {
-                      return DismissiblePage(
-                        backgroundColor: Colors.transparent,
-                        onDismissed: () {
-                          Navigator.of(context).pop();
-                        },
-                        key: UniqueKey(),
-                        disabled: pageScale <= 1.0 && widget.currentPage == 0 ? false : true,
-                        direction: pageScale <= 1.0 ? DismissiblePageDismissDirection.vertical : DismissiblePageDismissDirection.none,
-                        child: InteractiveViewer(
-                          clipBehavior: Clip.hardEdge,
-                          alignPanAxis: true,
-                          transformationController: _controller,
-                          minScale: 0.01,
-                          maxScale: 3.5,
-                          key: _flipKey,
-                          // constrained: false,
+                      return InteractiveViewer(
+                        clipBehavior: Clip.hardEdge,
+                        alignPanAxis: true,
+                        transformationController: _controller,
+                        minScale: 0.01,
+                        maxScale: 3.5,
 
-                          onInteractionUpdate: (ScaleUpdateDetails details) {
-                            // get the scale from the ScaleUpdateDetails callback
-                            setState(() {
-                              pageScale = _controller.value.getMaxScaleOnAxis();
-                            });
-                            print(pageScale);
-                            // print the scale here
-                          },
-                          child: Container(
-                            // width: MediaQuery.of(context).size.width,
-                            width: MediaQuery.of(context).size.width,
-                            // height: MediaQuery.of(context).size.height + 100,
-                            // color: Colors.cyan,
-                            // height: MediaQuery.of(context).size.height,
-                            //Need to calculate page width minus minus padding
-                            padding: orientation == Orientation.portrait ? EdgeInsets.only(top: 150, bottom: 150) : EdgeInsets.only(right: 150, left: 150), //have to adjust later
-                            child: Hero(
+                        // boundaryMargin: Orientation == Orientation.portrait
+                        //     ? EdgeInsets.only(right: 150, bottom: 500)
+                        //     : EdgeInsets.only(right: -MediaQuery.of(context).size.width * 0.3, left: -MediaQuery.of(context).size.width * 0.3),
+                        // ,
+                        key: _flipKey,
+                        // constrained: false,
+
+                        onInteractionUpdate: (ScaleUpdateDetails details) {
+                          // get the scale from the ScaleUpdateDetails callback
+                          setState(() {
+                            pageScale = _controller.value.getMaxScaleOnAxis();
+                          });
+                          // print(pageScale);
+                          // print the scale here
+                        },
+                        child: Container(
+                          // width: MediaQuery.of(context).size.width,
+                          width: MediaQuery.of(context).size.width,
+                          // height: MediaQuery.of(context).size.height - 100,
+                          // color: Colors.cyan,
+                          // height: MediaQuery.of(context).size.height,
+                          //Need to calculate page width minus minus padding
+                          padding: orientation == Orientation.portrait
+                              ? EdgeInsets.only(top: 150, bottom: 150)
+                              : EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3, left: MediaQuery.of(context).size.width * 0.3),
+                          //have to
+                          // adjust
+                          // later
+                          //Remove future pages all from bloc state
+                          child: Hero(
                               tag: '${widget.heroTag}',
                               child: Card(
-                                  color: Colors.transparent,
-                                  clipBehavior: Clip.hardEdge,
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  elevation: 0,
-                                  // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                                  child: state is ReaderOpened
-                                      ? FutureBuilder<Uint8List>(
-                                          // future: state.futureFuncAllPages?[widget.currentPage],
-                                          future: ReaderState.pagesAll?[widget.currentPage],
-                                          builder: (context, snapshot) {
-                                            // return Hero(key: UniqueKey(), tag: '${widget.heroTag}', child: (snapshot.hasData) ? Image.memory(snapshot.data!) : Container(child: Image.memory(widget.cover)));
-                                            return AnimatedSwitcher(
-                                              // key: UniqueKey(),
-                                              duration: Duration(milliseconds: 0),
-                                              switchOutCurve: Threshold(0),
+                                color: Colors.transparent,
+                                clipBehavior: Clip.hardEdge,
+                                margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                elevation: 0,
+                                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                child: state is ReaderOpened
+                                    ? AnimatedSwitcher(
+                                        // key: UniqueKey(),
+                                        duration: Duration(milliseconds: 100),
+                                        switchOutCurve: Threshold(5),
+                                        child: ValueListenableBuilder<int>(
+                                            valueListenable: widget.currentPage,
+                                            builder: (BuildContext context, int pageNo, Widget? child) {
+                                              return CachedNetworkImage(
+                                                  key: ValueKey(_networklHasErrorNotifier.value),
+                                                  filterQuality: FilterQuality.none,
+                                                  imageUrl: widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + pageNo.toString(),
+                                                  // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
+                                                  //     "_" +
+                                                  //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
+                                                  // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+                                                  //   // color: Colors.grey.withOpacity(0.1),
+                                                  //   decoration: BoxDecoration(
+                                                  //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                  //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                  //     color: Colors.grey.withOpacity(0.1),
+                                                  //   ),
+                                                  //   child: SpinKitFadingCircle(
+                                                  //     color: Colors.white,
+                                                  //     size: 50.0,
+                                                  //   ),
+                                                  // ),
 
-                                              child: Image.memory((snapshot.hasData) && widget.currentPage != 0 ? snapshot.data! : widget.cover),
-                                            );
-                                          })
-                                      : Image.memory(widget.cover)),
-                            ),
-                          ),
+                                                  imageBuilder: (context, imageProvider) => Container(
+                                                        height: MediaQuery.of(context).size.height,
+                                                        width: MediaQuery.of(context).size.width,
+                                                        // color: Colors.red,
+                                                        decoration: BoxDecoration(
+                                                          image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                        ),
+                                                      ),
+                                                  // useOldImageOnUrlChange: true,
+                                                  // very important: keep both placeholder and errorWidget
+                                                  placeholder: (context, url) => Container(
+                                                        // color: Colors.grey.withOpacity(0.1),
+                                                        decoration: BoxDecoration(
+                                                          // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                          color: Colors.grey.withOpacity(0.1),
+                                                        ),
+                                                        child: SpinKitFadingCircle(
+                                                          color: Colors.white,
+                                                          size: 50.0,
+                                                          controller: _spinKitController,
+                                                        ),
+                                                      ),
+                                                  errorWidget: (context, url, error) {
+                                                    Future.delayed(const Duration(milliseconds: 100), () {
+                                                      setState(() {
+                                                        _networklHasErrorNotifier.value++;
+                                                      });
+                                                    });
+                                                    return Container(
+                                                      // color: Colors.grey.withOpacity(0.1),
+
+                                                      decoration: BoxDecoration(
+                                                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                        color: Colors.grey.withOpacity(0.1),
+                                                      ),
+                                                      child: SpinKitFadingCircle(
+                                                        color: Colors.white,
+                                                        size: 50.0,
+                                                        controller: _spinKitController,
+                                                      ),
+                                                    );
+                                                  }
+                                                  // errorWidget: (context, url, error) => Container(
+                                                  //     alignment: Alignment.center,
+                                                  //     child: Icon(
+                                                  //       Icons.error,
+                                                  //       color: Colors.grey.withOpacity(0.8),
+                                                  //     )),
+                                                  );
+                                            }),
+                                        // child: Image.memory((snapshot.hasData) && widget.currentPage != 0 ? snapshot.data! : widget.cover),
+                                      )
+                                    : SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 50.0,
+                                      ),
+                              )
+                              // : Image.memory(widget.cover)),
+                              ),
                         ),
                       );
                     },

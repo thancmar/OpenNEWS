@@ -5,15 +5,16 @@ enum NavbarItems { Home, Menu, Map, Account }
 abstract class NavbarState extends Equatable {
   // late final NavbarItems navbarItem;
   // late final int index;
-  static late MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
-  static late MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetTopLastByRange;
+  static MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit = null;
+  static MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetTopLastByRange = null;
+
   static late MagazineCategoryGetAllActive? magazineCategoryGetAllActive;
   static late Position? currentPosition = null;
   static int counterDE = 0;
   static int counterEN = 0;
   static int counterFR = 0;
   static int counterES = 0;
-  static late Future<HotspotsGetAllActive> hotspotList;
+  static late HotspotsGetAllActive hotspotList;
   static late List<Place> allMapMarkers = <Place>[];
   // final List<Uint8List> bytes;
   // List<Future<Uint8List>>? AllCovers = List.empty(growable: true);
@@ -27,6 +28,7 @@ abstract class NavbarState extends Equatable {
   // late final Localization? locations_NavbarState;
 
   // Localization get access_location;
+
   static late Future<LocationGetHeader>? locationheader = null;
   static late Future<LocationOffers>? locationoffers = null;
   static late List<Future<Uint8List>>? locationoffersImages = List.empty(growable: true);
@@ -65,30 +67,13 @@ class Loading extends NavbarState {
 // }
 
 class GoToHome extends NavbarState {
-  final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit_HomeState;
-  // final List<Uint8List> bytes;
-  // final List<Future<Uint8List>>? futureFunc;
-  final List<Future<Uint8List>>? languageResultsALL_HomeState;
-  final List<Future<Uint8List>>? languageResultsDE_HomeState;
-  final List<Future<Uint8List>>? languageResultsEN_HomeState;
-  final List<Future<Uint8List>>? languageResultsFR_HomeState;
-  final Localization? locations_HomeState;
-  final Data? location_HomeState;
-  // GoToHome([this.magazinePublishedGetLastWithLimit, this.location, this.futureFunc]);
-  GoToHome(
-      [this.magazinePublishedGetLastWithLimit_HomeState,
-      // this.futureFunc,
-      this.languageResultsALL_HomeState,
-      this.languageResultsDE_HomeState,
-      this.languageResultsEN_HomeState,
-      this.languageResultsFR_HomeState,
-      this.locations_HomeState,
-      this.location_HomeState])
-      : super();
+  final Data currentLocation;
+  GoToHome({required this.currentLocation}) : super();
 
   @override
   // TODO: implement props
-  List<Object?> get props => [this.location_HomeState];
+  List<Object?> get props => [currentLocation, NavbarState.magazinePublishedGetLastWithLimit];
+  // List<Object?> get props => [];
 
   //
   // @override
@@ -103,9 +88,7 @@ class GoToHome extends NavbarState {
 }
 
 class GoToMenu extends NavbarState {
-  final Localization? locations_NavbarState;
-  final Data? location;
-  GoToMenu(this.locations_NavbarState, this.location) : super();
+  GoToMenu() : super();
 
   @override
   List<Object> get props => [];
@@ -164,7 +147,7 @@ class GoToAccount extends NavbarState {
 }
 
 class GoToLocationSelection extends NavbarState {
-  final Localization? locations_GoToLocationSelection;
+  final List<Data>? locations_GoToLocationSelection;
   GoToLocationSelection(this.locations_GoToLocationSelection) : super();
 
   @override

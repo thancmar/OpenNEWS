@@ -5,6 +5,10 @@ import 'package:sharemagazines_flutter/src/models/login_model.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/myprofilepage.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 
+import '../../../../blocs/navbar/navbar_bloc.dart';
+import '../../../../blocs/splash/splash_bloc.dart';
+import '../../startpage.dart';
+
 class AccountPageWidgets extends StatefulWidget {
   const AccountPageWidgets({Key? key}) : super(key: key);
 
@@ -19,7 +23,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
       // shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
       children: <Widget>[
-        AuthState.userDetails?.response?.firstname != null
+        AuthState.userDetails?.response?.firstname != ''
             ? Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
                 child: InkWell(
@@ -114,6 +118,74 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        AuthState.userDetails?.response?.firstname == ''
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                child: AnimatedOpacity(
+                  opacity: 1,
+                  duration: const Duration(milliseconds: 850),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 0,
+
+                            // offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                        color: Colors.transparent,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 0.25,
+                        ),
+                        borderRadius: BorderRadius.circular(10)),
+                    // color: Colors.blue,
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: ListTileTheme(
+                      minLeadingWidth: 0,
+                      child: ExpansionTile(
+                        maintainState: true,
+                        onExpansionChanged: (isExpanded) {
+                          BlocProvider.of<AuthBloc>(context).add(Initialize());
+                          // BlocProvider.of<NavbarBloc>(context).close();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StartPage(
+                                title: "notitle",
+                              ),
+                              // transitionDuration: Duration.zero,
+                            ),
+                          );
+                        },
+
+                        controlAffinity: ListTileControlAffinity.platform,
+                        // textColor: Colors.red,
+                        backgroundColor: Colors.transparent,
+                        leading: Icon(
+                          Icons.login,
+                          color: Colors.white,
+                        ),
+                        trailing: Icon(
+                          Icons.star,
+                          color: Colors.transparent,
+                        ),
+                        title: Text(
+                          'To Login',
+                          style: TextStyle(
+                            fontSize: 16,
+                            // fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -264,7 +336,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: () => {
                         // Navigator.pop(context, Department.treasury);
                         // SimpleDialog(
@@ -441,69 +513,139 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
-          child: Container(
-            decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 0,
-                    // offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-                color: Colors.transparent,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 0.25,
-                ),
-                borderRadius: BorderRadius.circular(10)),
-            // color: Colors.blue,
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: ListTile(
-                onTap: () => BlocProvider.of<AuthBloc>(context).add(
-                      SignOutRequested(),
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //         boxShadow: [
+        //           BoxShadow(
+        //             color: Colors.grey.withOpacity(0.1),
+        //             spreadRadius: 1,
+        //             blurRadius: 0,
+        //             // offset: Offset(0, 3), // changes position of shadow
+        //           ),
+        //         ],
+        //         color: Colors.transparent,
+        //         border: Border.all(
+        //           color: Colors.white,
+        //           width: 0.25,
+        //         ),
+        //         borderRadius: BorderRadius.circular(10)),
+        //     // color: Colors.blue,
+        //
+        //     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+        //     child: ListTile(
+        //
+        //         onTap: () => BlocProvider.of<AuthBloc>(context).add(
+        //               SignOutRequested(),
+        //             ),
+        //         leading: const Icon(
+        //           Icons.logout,
+        //           color: Colors.white,
+        //         ),
+        //         minLeadingWidth: 10,
+        //         title: Text(
+        //           'Abmelden',
+        //           style: TextStyle(
+        //             fontSize: 16,
+        //             color: Colors.white,
+        //           ),
+        //         )),
+        //     // child: ListTileTheme(
+        //     //   minLeadingWidth: 0,
+        //     //   child: const ExpansionTile(
+        //     //     maintainState: true,
+        //     //     controlAffinity: ListTileControlAffinity.platform,
+        //     //     // textColor: Colors.red,
+        //     //     backgroundColor: Colors.transparent,
+        //     //     leading: Icon(
+        //     //       Icons.logout,
+        //     //       color: Colors.white,
+        //     //     ),
+        //     //     trailing: Icon(
+        //     //       Icons.star,
+        //     //       color: Colors.transparent,
+        //     //     ),
+        //     //     title: Text(
+        //     //       'Abmelden',
+        //     //       style: TextStyle(
+        //     //         fontSize: 16,
+        //     //         // fontWeight: FontWeight.bold,
+        //     //         color: Colors.white,
+        //     //       ),
+        //     //     ),
+        //     //   ),
+        //     // ),
+        //   ),
+        // ),
+        AuthState.userDetails?.response?.firstname != ''
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                child: AnimatedOpacity(
+                  opacity: 1,
+                  duration: const Duration(milliseconds: 850),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 0,
+
+                            // offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                        color: Colors.transparent,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 0.25,
+                        ),
+                        borderRadius: BorderRadius.circular(10)),
+                    // color: Colors.blue,
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: ListTileTheme(
+                      minLeadingWidth: 0,
+                      child: ExpansionTile(
+                        maintainState: true,
+                        onExpansionChanged: (isExpanded) {
+                          BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
+                          // BlocProvider.of<NavbarBloc>(context).;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StartPage(
+                                title: "notitle",
+                              ),
+                              // transitionDuration: Duration.zero,
+                            ),
+                          );
+                        },
+
+                        controlAffinity: ListTileControlAffinity.platform,
+                        // textColor: Colors.red,
+                        backgroundColor: Colors.transparent,
+                        leading: Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                        ),
+                        trailing: Icon(
+                          Icons.star,
+                          color: Colors.transparent,
+                        ),
+                        title: Text(
+                          'Abmelden',
+                          style: TextStyle(
+                            fontSize: 16,
+                            // fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                leading: const Icon(
-                  Icons.logout,
-                  color: Colors.white,
-                ),
-                minLeadingWidth: 10,
-                title: Text(
-                  'Abmelden',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
                   ),
-                )),
-            // child: ListTileTheme(
-            //   minLeadingWidth: 0,
-            //   child: const ExpansionTile(
-            //     maintainState: true,
-            //     controlAffinity: ListTileControlAffinity.platform,
-            //     // textColor: Colors.red,
-            //     backgroundColor: Colors.transparent,
-            //     leading: Icon(
-            //       Icons.logout,
-            //       color: Colors.white,
-            //     ),
-            //     trailing: Icon(
-            //       Icons.star,
-            //       color: Colors.transparent,
-            //     ),
-            //     title: Text(
-            //       'Abmelden',
-            //       style: TextStyle(
-            //         fontSize: 16,
-            //         // fontWeight: FontWeight.bold,
-            //         color: Colors.white,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-          ),
-        ),
+                ),
+              )
+            : Container(),
         Padding(
           padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
           child: Center(

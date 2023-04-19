@@ -43,7 +43,7 @@ class LocationOffer {
   LocationOffer.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     order = json['order'];
-    idLocation = json['id_location'];
+    idLocation = int.parse(json['id_location'].toString());
     idOffer = json['id_offer'];
     status = json['status'];
     if (json['shm2_offer'] != null) {

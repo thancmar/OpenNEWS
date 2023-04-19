@@ -41,15 +41,12 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Container(
-        // color: Colors.red,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Background.png"),
-            fit: BoxFit.fill,
-          ),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Hero(tag: 'bg', child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)),
         ),
-        child: Scaffold(
+        Scaffold(
           // extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -284,82 +281,6 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                     ),
                                   ),
                                 ),
-
-                                // return GestureDetector(
-                                //   behavior: HitTestBehavior.translucent,
-                                //   onTap: () => {
-                                //     // Navigator.push(
-                                //     //     context,
-                                //     //     new ReaderRoute(
-                                //     //         widget: StartReader(
-                                //     //       id: state
-                                //     //           .magazinePublishedGetLastWithLimit
-                                //     //           .response![i + 1]
-                                //     //           .idMagazinePublication!,
-                                //     //       tagindex: i,
-                                //     //       cover: state.bytes[i],
-                                //     //     ))),
-                                //     // print('Asf'),
-                                //     Navigator.push(
-                                //       context,
-                                //       PageRouteBuilder(
-                                //         // transitionDuration:
-                                //         // Duration(seconds: 2),
-                                //         pageBuilder: (_, __, ___) => StartReader(
-                                //           id: state.magazinePublishedGetLastWithLimit.response![i + 1].idMagazinePublication!,
-                                //
-                                //           index: i.toString(),
-                                //           cover: state.bytes![i],
-                                //           noofpages: state.magazinePublishedGetLastWithLimit.response![i + 1].pageMax!,
-                                //           readerTitle: state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                //
-                                //           // noofpages: 5,
-                                //         ),
-                                //       ),
-                                //     )
-                                //     // Navigator.push(context,
-                                //     //     MaterialPageRoute(
-                                //     //         builder: (context) {
-                                //     //   return StartReader(
-                                //     //     id: state
-                                //     //         .magazinePublishedGetLastWithLimit
-                                //     //         .response![i + 1]
-                                //     //         .idMagazinePublication!,
-                                //     //     index: i,
-                                //     //   );
-                                //     // }))
-                                //   },
-                                //   child: Image.memory(
-                                //       // state.bytes![i],
-                                //       snapshot.data!
-                                //       // fit: BoxFit.fill,
-                                //       // frameBuilder: ((context, child, frame, wasSynchronouslyLoaded) {
-                                //       //   if (wasSynchronouslyLoaded) return child;
-                                //       //   return AnimatedSwitcher(
-                                //       //     duration: const Duration(milliseconds: 200),
-                                //       //     child: frame != null
-                                //       //         ? child
-                                //       //         : SizedBox(
-                                //       //             height: 60,
-                                //       //             width: 60,
-                                //       //             child: CircularProgressIndicator(strokeWidth: 6),
-                                //       //           ),
-                                //       //   );
-                                //       // }),
-                                //       ),
-                                // );
-
-                                // Align(
-                                //   alignment: Alignment.bottomCenter,
-                                //   child: Text(
-                                //     state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                //     // " asd",
-                                //     // "Card ${i + 1}",
-                                //     textAlign: TextAlign.center,
-                                //
-                                //     style: TextStyle(fontSize: 32, color: Colors.white, backgroundColor: Colors.transparent),
-                                //   ),
-                                // ),
                               ],
                             ),
                           )
@@ -378,6 +299,8 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
               );
             },
           ),
-        ));
+        ),
+      ],
+    );
   }
 }

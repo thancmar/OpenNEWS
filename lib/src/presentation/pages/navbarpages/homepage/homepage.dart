@@ -1,30 +1,17 @@
 import 'dart:async';
 import 'dart:typed_data';
-
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:dismissible_page/dismissible_page.dart';
-import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:shaky_animated_listview/widgets/animated_listview.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/locationOffers_model.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/photohero.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreader.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreaderoption.dart';
-import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
-
-import '../../../../blocs/searchpage/search_bloc.dart' as searchBloc;
-import '../../../../resources/magazine_repository.dart';
+import '../../../widgets/marquee.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
-import '../../player/player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../map/offerpage.dart';
 
 // class HomePageState extends StatelessWidget {
 //   const HomePageState({Key? key}) : super(key: key);
@@ -61,13 +48,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
   int _index1 = 0;
-  int _index2 = 1;
   int index_News_aus_deiner_Region = 0;
   Timer? _timer;
-  static const _indicatorSize = 150.0;
-  bool _renderCompleteState = false;
-  List<Uint8List> meistgelesene_Artikel = [];
-  List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8"];
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
@@ -148,7 +130,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     enablePullDown: true,
                     // enablePullUp: true,
 
-                    header: ClassicHeader(),
+                    // header: ClassicHeader(),
                     // footer: CustomFooter(
                     //   builder: (BuildContext context, LoadStatus? mode) {
                     //     Widget body;
@@ -189,9 +171,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         //   physics: RangeMaintainingScrollPhysics(),
                         //   scrollDirection: Axis.horizontal,
                         //   child:
-                        LocationOffersWidget(),
+
+                        // LocationOffersWidget(),
                         // ),
-                        if (NavbarState.getTopMagazines!.length != 0)
+
+                        if (NavbarState.locationheader != null) LocationOffersWidget(),
+                        if (NavbarState.magazinePublishedGetTopLastByRange != null && NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
                           Stack(
                             clipBehavior: Clip.none,
                             children: [
@@ -367,7 +352,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                                // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                                padding: EdgeInsets.fromLTRB(25, 60, 25, 20),
                                 child: Text(
                                   'Meistgelesene Artikel',
                                   style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
@@ -376,18 +362,21 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               ),
                             ),
                             SizedBox(
-                                height: 300, // card height
+                                height: 350, // card height
+                                // width: 200,
                                 child: PageView.builder(
-                                  itemCount: state.magazinePublishedGetLastWithLimit_HomeState!.response!.length,
+                                  itemCount: NavbarState.magazinePublishedGetLastWithLimit?.response!.length,
                                   // itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 10,
                                   // itemCount: 10,
                                   // padEnds: true,
                                   allowImplicitScrolling: false,
                                   controller: PageController(
-                                    viewportFraction: 0.65,
+                                    // viewportFraction: 0.65,
+                                    viewportFraction: MediaQuery.of(context).size.aspectRatio * 1.5, //Works?
                                   ),
+
                                   // onPageChanged: (int index) => setState(() => _index2 = index),
-                                  onPageChanged: (int index) => _index2 = index,
+                                  // onPageChanged: (int index) => _index2 = index,
                                   pageSnapping: false,
                                   itemBuilder: (context, i) {
                                     // if (state.bytes.isEmpty) {
@@ -396,248 +385,336 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                     // print("Herooo $i");
                                     return Transform.scale(
                                       // origin: Offset(100, 50),
-
+                                      // alignment: Alignment.center,
                                       // scale: i == _index1 ? 1 : 1,
                                       scale: 1,
 
-                                      alignment: Alignment.bottomCenter,
+                                      // alignment: Alignment.bottomCenter,
                                       // alignment: AlignmentGeometry(),
-                                      child: Card(
-                                          color: Colors.transparent,
-                                          // clipBehavior: Clip.hardEdge,
-                                          // borderOnForeground: true,
-                                          margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                                          elevation: 0,
-
-                                          ///maybe 0?
-                                          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(500)),
-                                          child: Stack(
-                                            children: [
-                                              GestureDetector(
-                                                // behavior: HitTestBehavior.translucent,
-                                                onTap: () => {
-                                                  // context.pushTransparentRoute(
-                                                  //   StartReader(
-                                                  //     id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
-                                                  //     index: i.toString(),
-                                                  //     heroTag: 'Meistgelesene_Artikel_$i',
-                                                  //     coverURL: snapshot.data!,
-                                                  //     // coverURL:  state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
-                                                  //     noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
-                                                  //     readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
-                                                  //
-                                                  //     // noofpages: 5,
-                                                  //   ),
-                                                  // ),
-                                                  // Navigator.push(
-                                                  //   context,
-                                                  //   PageRouteBuilder(
-                                                  //     // transitionDuration: Duration(seconds: 2),
-                                                  //     opaque: true,
-                                                  //     pageBuilder: (_, __, ___) => StartReader(
-                                                  //       id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
-                                                  //       index: i.toString(),
-                                                  //       heroTag: 'Meistgelesene_Artikel_$i',
-                                                  //       cover: snapshot.data!,
-                                                  //       noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
-                                                  //       readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
-                                                  //
-                                                  //       // noofpages: 5,
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                },
-                                                // child: ClipRRect(
-                                                //   borderRadius: BorderRadius.circular(5.0),
-                                                //   child: (snapshot.hasData)
-                                                //       ? Hero(
-                                                //           tag: 'Meistgelesene_Artikel_$i',
-                                                //           child: Image.memory(
-                                                //             // state.bytes![i],
-                                                //             snapshot.data!,
-                                                //           ),
-                                                //         )
-                                                //       : Container(
-                                                //           color: Colors.grey.withOpacity(0.1),
-                                                //           child: SpinKitFadingCircle(
-                                                //             color: Colors.white,
-                                                //             size: 50.0,
-                                                //           ),
-                                                //         ),
-                                                // ),
-                                                child: Hero(
-                                                  tag: 'Meistgelesene_Artikel_$i',
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication! +
-                                                        "_" +
-                                                        state.magazinePublishedGetLastWithLimit_HomeState!.response![i].dateOfPublication!,
-                                                    // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-                                                    //   // color: Colors.grey.withOpacity(0.1),
-                                                    //   decoration: BoxDecoration(
-                                                    //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                    //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                    //     color: Colors.grey.withOpacity(0.1),
-                                                    //   ),
-                                                    //   child: SpinKitFadingCircle(
-                                                    //     color: Colors.white,
-                                                    //     size: 50.0,
-                                                    //   ),
-                                                    // ),
-
-                                                    imageBuilder: (context, imageProvider) => Container(
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                      ),
-                                                    ),
-                                                    useOldImageOnUrlChange: true,
-                                                    // very important: keep both placeholder and errorWidget
-                                                    placeholder: (context, url) => Container(
-                                                      // color: Colors.grey.withOpacity(0.1),
-                                                      decoration: BoxDecoration(
-                                                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                        color: Colors.grey.withOpacity(0.1),
-                                                      ),
-                                                      child: SpinKitFadingCircle(
-                                                        color: Colors.white,
-                                                        size: 50.0,
-                                                      ),
-                                                    ),
-                                                    errorWidget: (context, url, error) => Container(
-                                                      // color: Colors.grey.withOpacity(0.1),
-                                                      decoration: BoxDecoration(
-                                                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                        color: Colors.grey.withOpacity(0.1),
-                                                      ),
-                                                      child: SpinKitFadingCircle(
-                                                        color: Colors.white,
-                                                        size: 50.0,
-                                                      ),
-                                                    ),
-                                                    // errorWidget: (context, url, error) => Container(
-                                                    //     alignment: Alignment.center,
-                                                    //     child: Icon(
-                                                    //       Icons.error,
-                                                    //       color: Colors.grey.withOpacity(0.8),
-                                                    //     )),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          )),
-                                    );
-                                  },
-                                )),
-                          ],
-                        ),
-
-                        Column(
-                          // crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(25, 100, 25, 20),
-                                child: Text(
-                                  'Widget3',
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                                height: 300, // card height
-                                child: PageView.builder(
-                                  itemCount: state.languageResultsALL_HomeState?.length,
-                                  // itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 10,
-                                  // itemCount: 10,
-                                  // padEnds: true,
-                                  allowImplicitScrolling: false,
-                                  controller: PageController(
-                                    viewportFraction: 0.65,
-                                  ),
-                                  // onPageChanged: (int index) => setState(() => _index2 = index),
-                                  onPageChanged: (int index) => _index2 = index,
-                                  pageSnapping: false,
-                                  itemBuilder: (context, i) {
-                                    // if (state.bytes.isEmpty) {
-                                    //   setState(() {});
-                                    // }
-                                    // print("Herooo $i");
-                                    return Hero(
-                                      key: UniqueKey(),
-                                      tag: 'Widget3_$i',
-                                      child: FutureBuilder<Uint8List>(
-                                        future: state.languageResultsALL_HomeState?[i],
-                                        builder: (context, snapshot) {
-                                          return Transform.scale(
-                                            // origin: Offset(100, 50),
-
-                                            // scale: i == _index1 ? 1 : 1,
-                                            scale: 1,
-
-                                            alignment: Alignment.bottomCenter,
-                                            // alignment: AlignmentGeometry(),
+                                      child: Column(
+                                        // mainAxisAlignment: MainAxisAlignment.center,
+                                        // crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
                                             child: Card(
                                                 color: Colors.transparent,
                                                 // clipBehavior: Clip.hardEdge,
-                                                borderOnForeground: true,
+                                                // borderOnForeground: true,
                                                 margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
                                                 elevation: 0,
 
                                                 ///maybe 0?
-                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                                                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(500)),
                                                 child: Stack(
                                                   children: [
-                                                    (snapshot.hasData)
-                                                        ? GestureDetector(
-                                                            behavior: HitTestBehavior.translucent,
-                                                            onTap: () => {
-                                                              Navigator.push(
-                                                                context,
-                                                                PageRouteBuilder(
-                                                                  // transitionDuration: Duration(seconds: 2),
-                                                                  opaque: true,
-                                                                  pageBuilder: (_, __, ___) => StartPlayer(),
-                                                                  // pageBuilder: (_, __, ___) => StartReader(
-                                                                  //   id: state.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                                                                  //   index: i.toString(),
-                                                                  //   heroTag: 'Meistgelesene_Artikel_$i',
-                                                                  //   cover: snapshot.data!,
-                                                                  //   noofpages: state.magazinePublishedGetLastWithLimit!.response![i].pageMax!,
-                                                                  //   readerTitle: state.magazinePublishedGetLastWithLimit!.response![i].name!,
-                                                                  //
-                                                                  //   // noofpages: 5,
-                                                                  // ),
-                                                                ),
-                                                              ),
-                                                            },
-                                                            child: ClipRRect(
-                                                              borderRadius: BorderRadius.circular(5.0),
-                                                              child: Image.memory(
-                                                                  // state.bytes![i],
-                                                                  snapshot.data!),
+                                                    GestureDetector(
+                                                      // behavior: HitTestBehavior.translucent,
+                                                      onTap: () => {
+                                                        // context.pushTransparentRoute(
+                                                        //   StartReader(
+                                                        //     id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
+                                                        //     index: i.toString(),
+                                                        //     heroTag: 'Meistgelesene_Artikel_$i',
+                                                        //     coverURL: snapshot.data!,
+                                                        //     // coverURL:  state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
+                                                        //     noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
+                                                        //     readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
+                                                        //
+                                                        //     // noofpages: 5,
+                                                        //   ),
+                                                        // ),
+                                                        // Navigator.push(
+                                                        //   context,
+                                                        //   PageRouteBuilder(
+                                                        //     // transitionDuration: Duration(seconds: 2),
+                                                        //     opaque: true,
+                                                        //     pageBuilder: (_, __, ___) => StartReader(
+                                                        //       id: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].idMagazinePublication!,
+                                                        //       index: i.toString(),
+                                                        //       heroTag: 'Meistgelesene_Artikel_$i',
+                                                        //       cover: snapshot.data!,
+                                                        //       noofpages: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].pageMax!,
+                                                        //       readerTitle: state.magazinePublishedGetLastWithLimit_HomeState!.response![i].name!,
+                                                        //
+                                                        //       // noofpages: 5,
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
+                                                      },
+                                                      // child: ClipRRect(
+                                                      //   borderRadius: BorderRadius.circular(5.0),
+                                                      //   child: (snapshot.hasData)
+                                                      //       ? Hero(
+                                                      //           tag: 'Meistgelesene_Artikel_$i',
+                                                      //           child: Image.memory(
+                                                      //             // state.bytes![i],
+                                                      //             snapshot.data!,
+                                                      //           ),
+                                                      //         )
+                                                      //       : Container(
+                                                      //           color: Colors.grey.withOpacity(0.1),
+                                                      //           child: SpinKitFadingCircle(
+                                                      //             color: Colors.white,
+                                                      //             size: 50.0,
+                                                      //           ),
+                                                      //         ),
+                                                      // ),
+                                                      child: Hero(
+                                                        tag: 'Meistgelesene_Artikel_$i',
+                                                        child: CachedNetworkImage(
+                                                          imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! +
+                                                              "_" +
+                                                              NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! +
+                                                              "_0",
+                                                          // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+                                                          //   // color: Colors.grey.withOpacity(0.1),
+                                                          //   decoration: BoxDecoration(
+                                                          //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                          //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                          //     color: Colors.grey.withOpacity(0.1),
+                                                          //   ),
+                                                          //   child: SpinKitFadingCircle(
+                                                          //     color: Colors.white,
+                                                          //     size: 50.0,
+                                                          //   ),
+                                                          // ),
+
+                                                          imageBuilder: (context, imageProvider) => Container(
+                                                            decoration: BoxDecoration(
+                                                              image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                                             ),
-                                                          )
-                                                        : Container(
-                                                            color: Colors.grey.withOpacity(0.1),
+                                                          ),
+                                                          useOldImageOnUrlChange: true,
+                                                          // very important: keep both placeholder and errorWidget
+                                                          placeholder: (context, url) => Container(
+                                                            // color: Colors.grey.withOpacity(0.1),
+                                                            decoration: BoxDecoration(
+                                                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                              color: Colors.grey.withOpacity(0.1),
+                                                            ),
                                                             child: SpinKitFadingCircle(
                                                               color: Colors.white,
                                                               size: 50.0,
                                                             ),
                                                           ),
+                                                          errorWidget: (context, url, error) => Container(
+                                                            // color: Colors.grey.withOpacity(0.1),
+                                                            decoration: BoxDecoration(
+                                                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                              color: Colors.grey.withOpacity(0.1),
+                                                            ),
+                                                            child: SpinKitFadingCircle(
+                                                              color: Colors.white,
+                                                              size: 50.0,
+                                                            ),
+                                                          ),
+                                                          // errorWidget: (context, url, error) => Container(
+                                                          //     alignment: Alignment.center,
+                                                          //     child: Icon(
+                                                          //       Icons.error,
+                                                          //       color: Colors.grey.withOpacity(0.8),
+                                                          //     )),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                 )),
-                                          );
-                                        },
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(0, 4, 20, 0),
+                                              //Dumb hack
+                                              child: MarqueeWidget(
+                                                child: MarqueeWidget(
+                                                  direction: Axis.vertical,
+
+                                                  // crossAxisAlignment: CrossAxisAlignment.start,
+                                                  child: Text(
+                                                    // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                                    NavbarState.magazinePublishedGetLastWithLimit!.response![i].name!,
+                                                    // " asd",
+                                                    // "Card ${i + 1}",
+                                                    textAlign: TextAlign.center,
+
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: Colors.white,
+                                                      backgroundColor: Colors.transparent,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                              child: MarqueeWidget(
+                                                child: MarqueeWidget(
+                                                  direction: Axis.vertical,
+                                                  child: Text(
+                                                    // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                                    DateFormat("d. MMMM yyyy").format(DateTime.parse(NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!)),
+                                                    // " asd",
+                                                    // "Card ${i + 1}",
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                      backgroundColor: Colors.transparent,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // Positioned(
+                                          //   // top: -50,
+                                          //   bottom: -100,
+                                          //   // height: -50,
+                                          //   width: MediaQuery.of(context).size.width / 2 - 20,
+                                          //   child: Align(
+                                          //     alignment: Alignment.center,
+                                          //     child: MarqueeWidget(
+                                          //       // crossAxisAlignment: CrossAxisAlignment.start,
+                                          //       child: Text(
+                                          //         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                          //         NavbarState.magazinePublishedGetLastWithLimit!.response![i].name!,
+                                          //         // " asd",
+                                          //         // "Card ${i + 1}",
+                                          //         textAlign: TextAlign.center,
+                                          //
+                                          //         style: TextStyle(
+                                          //           fontSize: 14,
+                                          //           color: Colors.white,
+                                          //           backgroundColor: Colors.transparent,
+                                          //         ),
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                        ],
                                       ),
                                     );
                                   },
                                 )),
                           ],
                         ),
+                        //Add as padding
+                        Container(
+                          height: 80,
+                        )
+                        //Widget 3
+                        // Column(
+                        //   // crossAxisAlignment: CrossAxisAlignment.stretch,
+                        //   children: <Widget>[
+                        //     Align(
+                        //       alignment: Alignment.centerLeft,
+                        //       child: Padding(
+                        //         padding: EdgeInsets.fromLTRB(25, 100, 25, 20),
+                        //         child: Text(
+                        //           'Widget3',
+                        //           style: TextStyle(color: Colors.white, fontSize: 16),
+                        //           textAlign: TextAlign.right,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(
+                        //         height: 300, // card height
+                        //         child: PageView.builder(
+                        //           itemCount: state.languageResultsALL_HomeState?.length,
+                        //           // itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 10,
+                        //           // itemCount: 10,
+                        //           // padEnds: true,
+                        //           allowImplicitScrolling: false,
+                        //           controller: PageController(
+                        //             viewportFraction: 0.65,
+                        //           ),
+                        //           // onPageChanged: (int index) => setState(() => _index2 = index),
+                        //           onPageChanged: (int index) => _index2 = index,
+                        //           pageSnapping: false,
+                        //           itemBuilder: (context, i) {
+                        //             // if (state.bytes.isEmpty) {
+                        //             //   setState(() {});
+                        //             // }
+                        //             // print("Herooo $i");
+                        //             return Hero(
+                        //               key: UniqueKey(),
+                        //               tag: 'Widget3_$i',
+                        //               child: FutureBuilder<Uint8List>(
+                        //                 future: state.languageResultsALL_HomeState?[i],
+                        //                 builder: (context, snapshot) {
+                        //                   return Transform.scale(
+                        //                     // origin: Offset(100, 50),
+                        //
+                        //                     // scale: i == _index1 ? 1 : 1,
+                        //                     scale: 1,
+                        //
+                        //                     alignment: Alignment.bottomCenter,
+                        //                     // alignment: AlignmentGeometry(),
+                        //                     child: Card(
+                        //                         color: Colors.transparent,
+                        //                         // clipBehavior: Clip.hardEdge,
+                        //                         borderOnForeground: true,
+                        //                         margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                        //                         elevation: 0,
+                        //
+                        //                         ///maybe 0?
+                        //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                        //                         child: Stack(
+                        //                           children: [
+                        //                             (snapshot.hasData)
+                        //                                 ? GestureDetector(
+                        //                                     behavior: HitTestBehavior.translucent,
+                        //                                     onTap: () => {
+                        //                                       Navigator.push(
+                        //                                         context,
+                        //                                         PageRouteBuilder(
+                        //                                           // transitionDuration: Duration(seconds: 2),
+                        //                                           opaque: true,
+                        //                                           pageBuilder: (_, __, ___) => StartPlayer(),
+                        //                                           // pageBuilder: (_, __, ___) => StartReader(
+                        //                                           //   id: state.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
+                        //                                           //   index: i.toString(),
+                        //                                           //   heroTag: 'Meistgelesene_Artikel_$i',
+                        //                                           //   cover: snapshot.data!,
+                        //                                           //   noofpages: state.magazinePublishedGetLastWithLimit!.response![i].pageMax!,
+                        //                                           //   readerTitle: state.magazinePublishedGetLastWithLimit!.response![i].name!,
+                        //                                           //
+                        //                                           //   // noofpages: 5,
+                        //                                           // ),
+                        //                                         ),
+                        //                                       ),
+                        //                                     },
+                        //                                     child: ClipRRect(
+                        //                                       borderRadius: BorderRadius.circular(5.0),
+                        //                                       child: Image.memory(
+                        //                                           // state.bytes![i],
+                        //                                           snapshot.data!),
+                        //                                     ),
+                        //                                   )
+                        //                                 : Container(
+                        //                                     color: Colors.grey.withOpacity(0.1),
+                        //                                     child: SpinKitFadingCircle(
+                        //                                       color: Colors.white,
+                        //                                       size: 50.0,
+                        //                                     ),
+                        //                                   ),
+                        //                           ],
+                        //                         )),
+                        //                   );
+                        //                 },
+                        //               ),
+                        //             );
+                        //           },
+                        //         )),
+                        //   ],
+                        // ),
 
                         // Padding(
                         //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 200),
@@ -756,23 +833,34 @@ class LocationOffersWidget extends StatelessWidget {
                         // width: MediaQuery.of(context).size.width * 0.40,
                         // height: MediaQuery.of(context).size.width * 0.1,
                         color: Colors.transparent,
+                        elevation: 0,
                         child: FloatingActionButton.extended(
-                          heroTag: 'location_offers1',
+                          // heroTag: 'offer_title$i',
                           // heroTag: null,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                           label: Text(
                             snapshot.data!.locationOffer![i].shm2Offer![0].title!,
                             // 'Speisekarte',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w300),
                           ), // <-- Text
-                          backgroundColor: Colors.grey.withOpacity(0.15),
+                          backgroundColor: Colors.grey.withOpacity(0.1),
                           // icon: Icon(
                           //   // <-- Icon
                           //   Icons.menu_book,
                           //   // IconData(0xe9a9, fontFamily: ‘icomoon’);
                           //   size: 16.0,
                           // ),
-                          onPressed: () {},
+                          onPressed: () => {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => OfferPage(
+                                  locOffer: snapshot.data!.locationOffer![i],
+                                  heroTag: i,
+                                ),
+                              ),
+                            )
+                          },
                           // extendedPadding: EdgeInsets.all(50),
                         ),
                       );

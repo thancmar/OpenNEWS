@@ -9,10 +9,10 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../blocs/player/player_bloc.dart';
 import '../../../blocs/reader/reader_bloc.dart';
-import '../../widgets/body_painter.dart';
-import '../../widgets/bottomAppBar.dart';
+import '../../widgets/navbar/body_clipper.dart';
+import '../../widgets/navbar/custom_navbar.dart';
 import '../../widgets/marquee.dart';
-import '../../widgets/navbar_painter.dart';
+import '../../widgets/navbar/navbar_painter_clipper.dart';
 
 class StartPlayer extends StatelessWidget {
   const StartPlayer({Key? key}) : super(key: key);

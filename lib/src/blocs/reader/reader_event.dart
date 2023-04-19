@@ -11,9 +11,29 @@ class Initialize extends ReaderEvent {
 }
 
 class OpenReader extends ReaderEvent {
-  final String idMagazinePublication;
-  final String pageNo;
-  OpenReader({required this.idMagazinePublication, required this.pageNo});
+  // final String idMagazinePublication;
+  // final String dateofPublicazion;
+  // final String pageNo;
+  final model.Response magazine;
+  OpenReader({required this.magazine});
+}
+
+class DownloadPage extends ReaderEvent {
+  // final String idMagazinePublication;
+  // final String dateofPublicazion;
+  // final String pageNo;
+  final model.Response magazine;
+  final int pageNo;
+  DownloadPage({required this.magazine, required this.pageNo});
+}
+
+class DownloadThumbnail extends ReaderEvent {
+  // final String idMagazinePublication;
+  // final String dateofPublicazion;
+  // final String pageNo;
+  final model.Response magazine;
+  final int pageNo;
+  DownloadThumbnail({required this.magazine, required this.pageNo});
 }
 
 class CloseReader extends ReaderEvent {

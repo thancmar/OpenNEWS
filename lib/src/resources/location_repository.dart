@@ -128,29 +128,35 @@ class LocationRepository {
   }
 
   Future<LocationOffers> GetLocationOffers({required String locationID}) async {
-    // print("GetPage $id_mag_pub $page");
-    final getIt = GetIt.instance;
-    // Map<String, dynamic> queryParame = {
-    //   'page': page!,
-    //   'id_mag_pub': id_mag_pub!,
-    // };
-    // var queryString = Uri(queryParameters: queryParame).query;
-    // var file = await DefaultCacheManager().getSingleFile(queryString);
+    try {
+      // print("GetPage $id_mag_pub $page");
+      final getIt = GetIt.instance;
+      // Map<String, dynamic> queryParame = {
+      //   'page': page!,
+      //   'id_mag_pub': id_mag_pub!,
+      // };
+      // var queryString = Uri(queryParameters: queryParame).query;
+      // var file = await DefaultCacheManager().getSingleFile(queryString);
 
-    // await DefaultCacheManager().emptyCache();
-    var response = await getIt<ApiClient>()
-        .dioforImages
-        .get(ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "offer?locationID=" + locationID, options: Options(responseType: ResponseType.json));
-    // var response = await getIt<ApiClient>().dioforImages.get(
-    //     ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "location/" + "4188" + "/getImage?filePath=" + "/uploads/headers/4188_01.12.2020-12-04-02.jpg",
-    //     options: Options(responseType: ResponseType.bytes));
+      // await DefaultCacheManager().emptyCache();
+      var response = await getIt<ApiClient>()
+          .dioforImages
+          .get(ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "offer?locationID=" + locationID, options: Options(responseType: ResponseType.json));
+      // var response = await getIt<ApiClient>().dioforImages.get(
+      //     ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "location/" + "4188" + "/getImage?filePath=" + "/uploads/headers/4188_01.12.2020-12-04-02.jpg",
+      //     options: Options(responseType: ResponseType.bytes));
 
-    print("GetLocationOffers response  ${response.data}");
-    // await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication!, Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 30));
-    if (response.statusCode == 200) {
-      return LocationOffers.fromJson(response.data);
-    } else {
-      throw Exception("An error occurred while fetching location offers");
+      print("GetLocationOffers response  ${response.data}");
+      // await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication!, Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 30));
+      if (response.statusCode == 200) {
+        // print(response.data);
+        return LocationOffers.fromJson(response.data);
+      } else {
+        throw Exception("An error occurred while fetching location offers");
+      }
+    } catch (error) {
+      print("GetLocationOffers $error");
+      throw Exception();
     }
   }
 
@@ -194,7 +200,7 @@ class LocationRepository {
     // await DefaultCacheManager().emptyCache();
     var response = await getIt<ApiClient>()
         .dioforImages
-        .get(ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "offer/" + offerID + "/getImage?filePath=" + "$filePath", options: Options(responseType: ResponseType.bytes));
+        .get(ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "offer/" + offerID + "/getData?filePath=" + "$filePath", options: Options(responseType: ResponseType.bytes));
     // var response = await getIt<ApiClient>().dioforImages.get(
     //     ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "location/" + "4188" + "/getImage?filePath=" + "/uploads/headers/4188_01.12.2020-12-04-02.jpg",
     //     options: Options(responseType: ResponseType.bytes));
@@ -211,4 +217,34 @@ class LocationRepository {
       throw Exception("An error occurred while fetching location offer image");
     }
   }
+  // Future<File> GetLocationOfferVideo({required String offerID, required String filePath}) async {
+  //   // print("GetPage $id_mag_pub $page");
+  //   final getIt = GetIt.instance;
+  //   // Map<String, dynamic> queryParame = {
+  //   //   'page': page!,
+  //   //   'id_mag_pub': id_mag_pub!,
+  //   // };
+  //   // var queryString = Uri(queryParameters: queryParame).query;
+  //   // var file = await DefaultCacheManager().getSingleFile(queryString);
+  //
+  //   // await DefaultCacheManager().emptyCache();
+  //   var response = await getIt<ApiClient>()
+  //       .dioforImages
+  //       .get(ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "offer/" + offerID + "/getData?filePath=" + "$filePath", options: Options(responseType: ResponseType.bytes));
+  //   // var response = await getIt<ApiClient>().dioforImages.get(
+  //   //     ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "location/" + "4188" + "/getImage?filePath=" + "/uploads/headers/4188_01.12.2020-12-04-02.jpg",
+  //   //     options: Options(responseType: ResponseType.bytes));
+  //
+  //   // print("GetLocationImage response  ${response.data}");
+  //   // await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication!, Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 30));
+  //   if (response.statusCode == 200) {
+  //     // print(response.data);
+  //     final appDir = await syspaths.getTemporaryDirectory();
+  //     File file = File('${appDir.path}/sth.mp4');
+  //     await file.writeAsBytes(response.data);
+  //     return file;
+  //   } else {
+  //     throw Exception("An error occurred while fetching location offer image");
+  //   }
+  // }
 }

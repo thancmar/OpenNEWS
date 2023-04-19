@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -131,91 +132,50 @@ class AuthRepository {
   Future<LoginModel> signIn({
     required String? email,
     required String? password,
-    // required ApiClient client,
   }) async {
-    print("Complete signIn");
-    final getIt = GetIt.instance;
-    Map data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
-
-    final response = await getIt<ApiClient>().diofordata.post(ApiConstants.baseUrl + ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
-    print("User login response: ${response.data}");
-    // print(response!.headers);
-//COde 103 cannot add reader
-    if (response.statusCode == 200) {
-      // return jokeModelFromJson(response.body);
-      // print(response!.realUri);
-      if (json.decode(response.data)['response']['code'] == 107) {
-        print("107");
-        throw Exception("Invalid login data(code 107)");
-      } else {
-        // String rawCookie = response.headers['set-cookie'] ?? _cookieData;
-        print("rl Login");
-        print(response.data);
-        print(response.headers['set-cookie']);
-        // client.accessToken = response.headers['set-cookie'].toString();
-        print("rl Login");
-        // final credential =
-        // EmailAuthProvider.credential(email: LoginModelFromJson(response.data).response!.email!, password: LoginModelFromJson(response.data).response!.);
-        try {
-          UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: email!,
-            password: password!,
-          );
-          print("crurrent user $userCredential");
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'user-not-found') {
-            print('No user found for that email.');
-            try {
-              UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                email: email!,
-                password: password!,
-              );
-            } on FirebaseAuthException catch (e) {
-              if (e.code == 'weak-password') {
-                print('The password provided is too weak.');
-              } else if (e.code == 'email-already-in-use') {
-                print('The account already exists for that email.');
-              }
-            } catch (e) {
-              print(e);
-            }
-          } else if (e.code == 'wrong-password') {
-            print('Wrong password provided for that user.');
+    try {
+      final getIt = GetIt.instance;
+      Map data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
+      final response = await getIt<ApiClient>().diofordata.post(ApiConstants.baseUrl + ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
+      switch (response.statusCode) {
+        case 200:
+          if (json.decode(response.data)['response']['code'] == 107) {
+            print("107");
+            throw Exception("Invalid login data");
+          } else {
+            return LoginModelFromJson(response.data);
           }
-          print(e);
-        }
-
-        return LoginModelFromJson(response.data);
+        default:
+          throw Exception("Failed to login. Code ${response.statusCode}");
       }
-    } else {
-      throw Exception("Failed to login. Code ${response.statusCode}");
+    } on SocketException catch (e) {
+      rethrow;
     }
   }
 
   Future<IncompleteLoginModel?> signInIncomplete() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    print("Incomplete signIn");
-    final getIt = GetIt.instance;
-    Map data = {
-      'f': 'incompleteReaderAdd',
-    };
-
-    var response = await getIt<ApiClient>().diofordata.post(
-          ApiConstants.baseUrl + ApiConstants.usersEndpoint,
-          data: data,
-        );
-    // print(response!.data);
-    print("User Incomplete login response: ${response.data}");
-    if (response.statusCode == 200) {
-      // return jokeModelFromJson(response.body);
-      print(json.decode(response.data)['response']['code']);
-      if (json.decode(response.data)['response']['code'] == 103) {
-        throw Exception("Failed to login with code 103");
-      } else {
-        return IncompleteLoginModelFromJson(response.data);
+    try {
+      final getIt = GetIt.instance;
+      Map data = {
+        'f': 'incompleteReaderAdd',
+      };
+      var response = await getIt<ApiClient>().diofordata.post(
+            ApiConstants.baseUrl + ApiConstants.usersEndpoint,
+            data: data,
+          );
+      switch (response.statusCode) {
+        case 200:
+          print(json.decode(response.data)['response']['code']);
+          if (json.decode(response.data)['response']['code'] == 103) {
+            throw Exception("Failed to login with code 103");
+          } else {
+            return IncompleteLoginModelFromJson(response.data);
+          }
+        default:
+          throw Exception(response.data);
       }
-    } else {
-      throw Exception("Failed to login");
+    } on SocketException catch (e) {
+      rethrow;
     }
   }
 

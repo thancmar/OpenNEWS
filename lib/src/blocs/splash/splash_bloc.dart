@@ -22,16 +22,22 @@ part 'splash_event.dart';
 part 'splash_state.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  final GetIt getIt = GetIt.instance;
+  final getIt = GetIt.instance;
+  final AuthRepository authRepository;
+  ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
 
-  SplashBloc() : super(Initial()) {
+  SplashBloc({required this.authRepository}) : super(Initial()) {
     // on<NavigateToHomeEvent>((event, emit) async {
     //   emit(Loading());
     // });
 
     on<NavigateToHomeEvent>((event, emit) async {
-      //emit(LoadingSplash());
       getIt.registerSingleton<ApiClient>(ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage()), signalsReady: true);
+      // await dioClient.secureStorage.deleteAll;
+      String? emailExists = await dioClient.secureStorage.read(key: "email");
+      String? existingpwd = await dioClient.secureStorage.read(key: "pwd");
+
+      //emit(LoadingSplash());
 
       // late GoogleMapController mapController;
       // await Future.delayed(Duration(seconds: 2)); // This is to simulate that above checking process
@@ -44,7 +50,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         // accessing the position and request users of the
         // App to enable the location services.
         // return Future.error('Location services are disabled.');
-        emit(Loaded());
+        // emit(Loaded());
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
@@ -57,7 +63,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           // returned true. According to Android guidelines
           // your App should show an explanatory UI now.
           // return Future.error('Location permissions are denied');
-          emit(Loaded());
+          // emit(Loaded());
         }
       }
       if (permission == LocationPermission.denied) {
@@ -69,7 +75,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         // return Future.error(Exception('Location permissions are denied.'));
         // Permissions are denied forever, handle appropriately.
         // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-        emit(Loaded());
+        // emit(Loaded());
       }
       if (permission == LocationPermission.deniedForever) {
         print("splash permission");
@@ -80,10 +86,15 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         // return Future.error(Exception('Location permissions are denied.'));
         // Permissions are denied forever, handle appropriately.
         // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-        emit(Loaded());
+        // emit(Loaded());
       }
       print("splash permission");
       print(permission);
+      if (emailExists != null && existingpwd != null) {
+        emit(SkipLogin(emailExists, existingpwd));
+        return;
+      }
+
       emit(Loaded());
       // emit(Loaded(await Geolocator.getCurrentPosition())); // In this state we can load the HOME PAGE
     });

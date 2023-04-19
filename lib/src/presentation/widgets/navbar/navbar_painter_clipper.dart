@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class NavBarPainter extends CustomPainter {
+class NavbarPainter extends CustomPainter {
   final int index;
-  const NavBarPainter(this.index);
+  const NavbarPainter(this.index);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -29,8 +29,6 @@ class NavBarPainter extends CustomPainter {
 
     Path path = Path();
     path.fillType = PathFillType.evenOdd;
-    // print("navbarpainter");
-    // print(size.height);
     path.moveTo(0, 0);
     path.lineTo(startofBezier, 0);
     path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
@@ -46,6 +44,54 @@ class NavBarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class NavbarClipper extends CustomClipper<Path> {
+  final int index;
+  const NavbarClipper(this.index);
+
+  @override
+  getClip(Size size) {
+    // final paint = Paint()
+    //   ..color = Colors.white //Color(0x00ffffff)
+    //   ..strokeWidth = 0.2
+    //   ..style = PaintingStyle.stroke;
+    double bendWidth = 15.0;
+    double bezierWidth = 10.0;
+
+    double startofBend = ((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) - 1 - bendWidth / 2;
+    double startofBezier = startofBend - bezierWidth;
+    double endofBend = (((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) + 1) + bendWidth / 2;
+    double endofBezier = endofBend + bezierWidth;
+
+    double controlHeight = 9.0;
+    double centerPoint = (((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2;
+
+    double leftControlPoint1 = startofBend;
+    double leftControlPoint2 = startofBend;
+    double rightControlPoint1 = endofBend;
+    double rightControlPoint2 = endofBend;
+
+    Path path = Path();
+    path.fillType = PathFillType.evenOdd;
+    // print(size.height);
+    path.moveTo(0, 0);
+    path.lineTo(startofBezier, 0);
+    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
+    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0, endofBezier, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.lineTo(0, 0);
+    path.close();
+    // canvas.drawPath(path, paint);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
     return true;
   }
 }
@@ -88,56 +134,6 @@ class NavBarPainter extends CustomPainter {
 //     return true;
 //   }
 // }
-
-class NavBarClipper extends CustomClipper<Path> {
-  final int index;
-  const NavBarClipper(this.index);
-
-  @override
-  getClip(Size size) {
-    // print("Navbarclipper");
-    final paint = Paint()
-      ..color = Colors.white //Color(0x00ffffff)
-      ..strokeWidth = 0.2
-      ..style = PaintingStyle.stroke;
-    double bendWidth = 15.0;
-    double bezierWidth = 10.0;
-
-    double startofBend = ((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) - 1 - bendWidth / 2;
-    double startofBezier = startofBend - bezierWidth;
-    double endofBend = (((((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2) + 1) + bendWidth / 2;
-    double endofBezier = endofBend + bezierWidth;
-
-    double controlHeight = 9.0;
-    double centerPoint = (((index + 1) / 4) * size.width) - ((1 / 4) * size.width) / 2;
-
-    double leftControlPoint1 = startofBend;
-    double leftControlPoint2 = startofBend;
-    double rightControlPoint1 = endofBend;
-    double rightControlPoint2 = endofBend;
-
-    Path path = Path();
-    path.fillType = PathFillType.evenOdd;
-    // print("hreerf");
-    // print(size.height);
-    path.moveTo(0, 0);
-    path.lineTo(startofBezier, 0);
-    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
-    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0, endofBezier, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.lineTo(0, 0);
-    path.close();
-    // canvas.drawPath(path, paint);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
 
 // class NavBarPainter extends ShapeBorder {
 //   final int index;

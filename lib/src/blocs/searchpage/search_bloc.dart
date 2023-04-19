@@ -37,9 +37,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   SearchBloc({required this.magazineRepository}) : super(LoadingSearchState()) {
     on<DeleteSearchResult>((event, emit) async {
-      print("remove at ${event.index}");
-      oldSearchResults.removeAt(event.index);
-      await dioClient.secureStorage.write(key: "oldSearchResults", value: jsonEncode(oldSearchResults));
+      try {
+        print("remove at ${event.index}");
+        oldSearchResults.removeAt(event.index);
+        await dioClient.secureStorage.write(key: "oldSearchResults", value: jsonEncode(oldSearchResults));
+      } catch (e) {
+        emit(SearchError(e.toString()));
+      }
     });
 
     //Probably dont need this

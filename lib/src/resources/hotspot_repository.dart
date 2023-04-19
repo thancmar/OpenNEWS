@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
@@ -15,33 +16,23 @@ import 'dioClient.dart';
 class HotspotRepository {
   Future<HotspotsGetAllActive> GetAllActiveHotspots() async {
     try {
-      print(" hot repo hotspotGetAllActive");
       final getIt = GetIt.instance;
       Map<String, dynamic> data = {
         'f': 'hotspotGetAllActive',
       };
       var queryString = Uri(queryParameters: data).query;
-
-      // final response = await getIt<ApiClient>().dio.post(ApiConstants.usersEndpoint + '?' + queryString, data: data, options: Options(responseType: ResponseType.plain));
       var response = await getIt<ApiClient>().diofordata.post(
             ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
             data: data,
           );
-      print(response.data);
-      if (response.statusCode == 200) {
-        var status = response.data.contains('session: you are not logged in.');
-        if (status) {
-          throw Exception("Failed to login ${response.statusCode} session: you are not logged in.");
-        } else {
+      switch (response.statusCode) {
+        case 200:
           return HotspotsGetAllActiveFromJson(response.data);
-        }
-      } else {
-        throw Exception("Failed to login");
+        default:
+          throw Exception(response.data);
       }
-    } catch (e) {
-      print('An Error Occurred $e');
-      throw Exception("Failed to login");
-      // return false;
+    } on SocketException catch (e) {
+      rethrow;
     }
   }
 }

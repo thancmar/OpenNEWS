@@ -55,6 +55,18 @@ class ReaderClosed extends ReaderState {
   @override
   List<Object> get props => [];
 }
+
+class ReaderError extends ReaderState {
+  final String error;
+  // final List<Uint8List> bytes;
+  // final List<Future<Uint8List>>? futureFuncAllPages;
+  ReaderError(this.error) : super();
+  // Loading(NavbarItems navbarItem, int index) : super(navbarItem, index);
+
+  @override
+  List<Object> get props => [];
+}
+
 //
 // class GoToMenu extends ReaderState {
 //   // Loading(NavbarItems navbarItem, int index) : super(navbarItem, index);

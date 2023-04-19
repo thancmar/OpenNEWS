@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/categoriepage.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/searchpageDeleteResult.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/searchpage/search_bloc.dart';
@@ -41,7 +42,7 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMixin<SearchPage> {
+class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SearchPage> {
   TextEditingController _searchController = TextEditingController();
 
   @override
@@ -97,7 +98,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
+    Size size = MediaQuery.of(context).size;
     // return BlocBuilder<NavbarBloc, NavbarState>(
     //   builder: (BuildContext context, state) {
     // if (state is GoToSearch) {
@@ -115,647 +116,680 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     //     ],
     //   ));
     // }
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/Background.png"),
-          fit: BoxFit.fill,
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Hero(tag: 'bg', child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)),
         ),
-      ),
-      child: BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
-        // print("SearchState is ${BlocProvider.of<SearchState>(context).state}");
-        // print(BlocProvider.of<NavbarBloc>(context).state);
-        // print("rebuild $state");
-        // print("search bloc state $state");
-        return Scaffold(
-          // extendBodyBehindAppBar: true,
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
+        BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
+          // print("SearchState is ${BlocProvider.of<SearchState>(context).state}");
+          // print(BlocProvider.of<NavbarBloc>(context).state);
+          // print("rebuild $state");
+          // print("search bloc state $state");
+          return Scaffold(
+            // extendBodyBehindAppBar: true,
             backgroundColor: Colors.transparent,
-            elevation: 0,
-            // automaticallyImplyLeading: false,
-            toolbarHeight: 100,
-            leading: Container(
-              // width: 35,
-              color: Colors.transparent,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 0, 00, 0),
-                  //Hero for langauge page
-                  child: Hero(
-                    tag: "backbutton",
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 30,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              // automaticallyImplyLeading: false,
+              toolbarHeight: size.height * 0.13,
+              titleSpacing: size.width * 0.02,
+              leading: Container(
+                // width: 35,
+                color: Colors.transparent,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 0, 00, 0),
+                    //Hero for langauge page
+                    child: Hero(
+                      tag: "backbutton",
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: size.width * 0.1,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            title: Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    // height: MediaQuery.of(context).size.height,
-                    // width: MediaQuery.of(context).size.width * 0.2,
-                    color: Colors.transparent,
+              title: Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      // height: MediaQuery.of(context).size.height,
+                      // width: MediaQuery.of(context).size.width * 0.2,
+                      color: Colors.transparent,
 
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: TextFormField(
-                        style: TextStyle(fontSize: 18, color: Colors.white.withOpacity(0.5)),
-                        controller: _searchController,
-                        cursorColor: Colors.white,
-                        onTap: () {
-                          if (_searchController.selection == TextSelection.fromPosition(TextPosition(offset: _searchController.text.length - 1))) {
-                            setState(() {
-                              _searchController.selection = TextSelection.fromPosition(TextPosition(offset: _searchController.text.length));
-                            });
-                          }
-                        },
-                        onFieldSubmitted: (text) {
-                          print("field submitted");
-                          handleSearchClick(text, state, null);
-                        },
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.withOpacity(0.1),
-                          labelStyle: TextStyle(fontSize: 18.0, color: Colors.white.withOpacity(0.5)),
-                          floatingLabelStyle: TextStyle(color: Colors.blue),
-                          labelText: "Suchen",
-                          border: OutlineInputBorder(borderSide: BorderSide(width: 0.10, color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white, width: 0.2),
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          ),
-                          // disabledBorder: const OutlineInputBorder(
-                          //   borderSide: const BorderSide(color: Colors.grey, width: 0.2),
-                          //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          // ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.blue, width: 0.4),
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: TextFormField(
+                          style: TextStyle(fontSize: 18, color: Colors.white.withOpacity(0.5)),
+                          controller: _searchController,
+                          cursorColor: Colors.white,
+                          onTap: () {
+                            if (_searchController.selection == TextSelection.fromPosition(TextPosition(offset: _searchController.text.length - 1))) {
+                              setState(() {
+                                _searchController.selection = TextSelection.fromPosition(TextPosition(offset: _searchController.text.length));
+                              });
+                            }
+                          },
+                          onFieldSubmitted: (text) {
+                            print("field submitted");
+                            handleSearchClick(text, state, null);
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.withOpacity(0.1),
+                            labelStyle: TextStyle(fontSize: size.width * 0.06, color: Colors.white.withOpacity(0.5)),
+                            floatingLabelStyle: TextStyle(color: Colors.blue),
+                            labelText: "Suchen",
+                            border: OutlineInputBorder(borderSide: BorderSide(width: 0.10, color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white, width: 0.2),
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            // disabledBorder: const OutlineInputBorder(
+                            //   borderSide: const BorderSide(color: Colors.grey, width: 0.2),
+                            //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            // ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.blue, width: 0.4),
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
                           ),
                         ),
                       ),
                     ),
+                  )
+                ],
+              ),
+              // ),
+              actions: [
+                InkWell(
+                  onTap: () => {
+                    // print(_searchController.text), showSearchResults = true
+                    // if (state is GoToSearchPage)
+                    //   {
+                    //     BlocProvider.of<SearchBloc>(context).add(OpenSearchResults()),
+                    //   }
+                    // else if (state is GoToSearchResults)
+                    //   {
+                    //     BlocProvider.of<SearchBloc>(context).add(OpenSearch()),
+                    //   }
+                    handleSearchClick(_searchController.text, state, state is GoToSearchResults ? true : false),
+                    FocusManager.instance.primaryFocus?.unfocus()
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: Hero(
+                      tag: "search button",
+
+                      child: Icon(
+                        state is GoToSearchPage || state is LoadingSearchState ? Icons.search : Icons.close_rounded,
+                        color: Colors.white,
+                        size: size.width * 0.1,
+                      ),
+                      // child: ImageIcon(
+                      //   AssetImage(
+                      //     "assets/images/search_button.png",
+                      //   ),
+                      //   // color: Colors.blue,
+                      //
+                      //   size: 50,
+                      // )
+                    ),
                   ),
-                )
+                  // child: Image.asset("assets/images/search_button.png")),
+                ),
               ],
+              // flexibleSpace: SafeArea(
+              //     child: Container(
+              //   color: Colors.red,
+              // )),
             ),
-            // ),
-            actions: [
-              InkWell(
-                onTap: () => {
-                  // print(_searchController.text), showSearchResults = true
-                  // if (state is GoToSearchPage)
-                  //   {
-                  //     BlocProvider.of<SearchBloc>(context).add(OpenSearchResults()),
-                  //   }
-                  // else if (state is GoToSearchResults)
-                  //   {
-                  //     BlocProvider.of<SearchBloc>(context).add(OpenSearch()),
-                  //   }
-                  handleSearchClick(_searchController.text, state, state is GoToSearchResults ? true : false),
-                  FocusManager.instance.primaryFocus?.unfocus()
-                },
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  child: Hero(
-                    tag: "search button",
-
-                    child: Icon(
-                      state is GoToSearchPage || state is LoadingSearchState ? Icons.search : Icons.close_rounded,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                    // child: ImageIcon(
-                    //   AssetImage(
-                    //     "assets/images/search_button.png",
-                    //   ),
-                    //   // color: Colors.blue,
-                    //
-                    //   size: 50,
-                    // )
-                  ),
-                ),
-                // child: Image.asset("assets/images/search_button.png")),
-              ),
-            ],
-            // flexibleSpace: SafeArea(
-            //     child: Container(
-            //   color: Colors.red,
-            // )),
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: state is GoToSearchPage
-                  ? <Widget>[
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(30, 10, 30, 20),
-                          child: Text(
-                            'Kategorien',
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right,
+            body: SingleChildScrollView(
+              child: Column(
+                children: state is GoToSearchPage
+                    ? <Widget>[
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(30, 10, 30, 20),
+                            child: Text(
+                              'Kategorien',
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.right,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.17,
-                        child: PageView.builder(
-                          controller: PageController(viewportFraction: 0.30
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.17,
+                          child: PageView.builder(
+                            controller: PageController(
+                              viewportFraction: 0.30,
                               // keepPage: true
-                              ),
+                            ),
 
-                          itemCount: NavbarState.magazineCategoryGetAllActive!.response!.length,
-                          allowImplicitScrolling: false,
-                          // pageSnapping: false,
-                          scrollDirection: Axis.horizontal,
-                          dragStartBehavior: DragStartBehavior.start,
-                          pageSnapping: false,
-                          padEnds: false,
+                            itemCount: NavbarState.magazineCategoryGetAllActive!.response!.length,
+                            allowImplicitScrolling: false,
+                            // pageSnapping: false,
+                            scrollDirection: Axis.horizontal,
+                            dragStartBehavior: DragStartBehavior.start,
+                            pageSnapping: false,
+                            padEnds: false,
 // scrollBehavior: ScrollBehavior.,
 
-                          itemBuilder: (context, i) {
-                            return Transform.scale(
-                              scale: 0.95,
-                              alignment: Alignment.center,
-                              child: GestureDetector(
-                                onTap: () => {
-                                  print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
-                                  // Navigator.of(context).push(
-                                  //   PageRouteBuilder(
-                                  //     // transitionDuration:
-                                  //     // Duration(seconds: 2),
-                                  //     maintainState: true,
-                                  //     pageBuilder: (_, __, ___) {
-                                  //       // return StartSearch();
-                                  //
-                                  //       return CategoryPage(
-                                  //         titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                  //         categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-                                  //       );
-                                  //     },
-                                  //   ),
-                                  // ),
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) {
-                                      return CategoryPage(
-                                        titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                        categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-                                      );
-                                    }),
-                                  ),
-                                },
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: MediaQuery.of(context).size.height * 0.13,
-                                      // width: 100,
-                                      // color: Colors.green,
-                                      child: Card(
-                                        color: Colors.transparent,
+                            itemBuilder: (context, i) {
+                              return Transform.scale(
+                                scale: 0.95,
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () => {
+                                    print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                          // transitionDuration:
+                                          // Duration(seconds: 2),
+                                          maintainState: true,
+                                          pageBuilder: (_, __, ___) => CategoryPage(
+                                                titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                                categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                                              ),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            const begin1 = Offset(-1.0, 0.0);
+                                            const begin2 = Offset(1.0, 0.0);
+                                            // const end = Offset.zero;
+                                            const end = Offset(0.0, 0.0);
+                                            const curve = Curves.ease;
+                                            final tween = Tween(begin: begin1, end: end).chain(CurveTween(curve: curve));
+                                            // final offsetAnimation = animation.drive(tween);
+                                            // final _scale = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
+                                            final _scaleAnimation = TweenSequence(
+                                              <TweenSequenceItem<Offset>>[
+                                                TweenSequenceItem<Offset>(
+                                                  tween: Tween(begin: begin1, end: end).chain(CurveTween(curve: curve)),
+                                                  weight: 80.0,
+                                                ),
+                                                // TweenSequenceItem<Offset>(
+                                                //   tween: Tween(begin: begin2, end: end).chain(CurveTween(curve: curve)),
+                                                //   weight: 50.0,
+                                                // ),
+                                              ],
+                                            ).animate(animation);
+                                            // return SlideTransition(position: animation.drive(tween), child: child);
+                                            return SlideTransition(position: _scaleAnimation, child: Container(color: Colors.red, width: 20, child: child));
+                                          }),
+                                    ),
+                                    // Navigator.of(context).push(
+                                    //   MaterialPageRoute(builder: (context) {
+                                    //     return CategoryPage(
+                                    //       titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                    //       categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                                    //     );
+                                    //   }),
+                                    // ),
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: MediaQuery.of(context).size.height * 0.13,
+                                        // width: 100,
+                                        // color: Colors.green,
+                                        child: Card(
+                                          color: Colors.transparent,
 
-                                        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
-                                        shape: CircleBorder(
-                                          side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
-                                          // borderRadius: BorderRadius.circular(100),
+                                          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
+                                          shape: CircleBorder(
+                                            side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
+                                            // borderRadius: BorderRadius.circular(100),
+                                          ),
+
+                                          clipBehavior: Clip.hardEdge,
+                                          // margin: EdgeInsets.all(10.0),
+                                          child: ClipRRect(
+                                            // borderRadius: BorderRadius.circular(11.0),
+                                            child: Image.memory(
+                                              // state.bytes![i],
+
+                                              base64.decode(NavbarState.magazineCategoryGetAllActive!.response![i].image!),
+                                              fit: BoxFit.cover,
+                                              alignment: Alignment.center,
+
+                                              // scale: 0.001,
+                                              // filterQuality: FilterQuality.high,
+                                              // colorBlendMode: BlendMode.colorBurn,
+                                              // height: MediaQuery.of(context).size.height * 0.1,
+                                              // width: MediaQuery.of(context).size.width * 0.9,
+                                              // height: 20,
+                                            ),
+                                          ),
+                                          // child: Icon(
+                                          //   Icons.ac_unit,
+                                          //   size: 50,
+                                          //   color: Colors.amber,
+                                          // ),
                                         ),
-
-                                        clipBehavior: Clip.hardEdge,
-                                        // margin: EdgeInsets.all(10.0),
-                                        child: ClipRRect(
-                                          // borderRadius: BorderRadius.circular(11.0),
-                                          child: Image.memory(
-                                            // state.bytes![i],
-
-                                            base64.decode(NavbarState.magazineCategoryGetAllActive!.response![i].image!),
-                                            fit: BoxFit.cover,
-                                            alignment: Alignment.center,
-
-                                            // scale: 0.001,
-                                            // filterQuality: FilterQuality.high,
-                                            // colorBlendMode: BlendMode.colorBurn,
-                                            // height: MediaQuery.of(context).size.height * 0.1,
-                                            // width: MediaQuery.of(context).size.width * 0.9,
-                                            // height: 20,
+                                      ),
+                                      // Spacer(),
+                                      Hero(
+                                        tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                        child: Text(
+                                          NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                          style: TextStyle(color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      // Spacer()
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        state.searchResults?.length != 0
+                            ? Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                                  child: Text(
+                                    'Letzte Suchanfragen',
+                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        // for (var i = 0; i < state.searchResults!.length; i++)
+                        for (var i = state.searchResults!.length - 1; i >= 0; i--)
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.access_time_sharp,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        // Navigator.pop(context);
+                                        handleSearchClick(state.searchResults?[i], state, false);
+                                        _searchController.text = state.searchResults?[i];
+                                      },
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 10),
+                                          child: Text(
+                                            // 'hamburg',
+                                            // state.searchResults!.isNotEmpty ? state.searchResults![i] : "",
+                                            state.searchResults?[i],
+                                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
+                                            textAlign: TextAlign.left,
                                           ),
                                         ),
-                                        // child: Icon(
-                                        //   Icons.ac_unit,
-                                        //   size: 50,
-                                        //   color: Colors.amber,
-                                        // ),
                                       ),
                                     ),
-                                    // Spacer(),
-                                    Hero(
-                                      tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                      child: Text(
-                                        NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                        style: TextStyle(color: Colors.white),
-                                        textAlign: TextAlign.center,
+                                  ),
+                                  // SearchResult(
+                                  //   index: i,
+                                  // )
+                                  InkWell(
+                                    onTap: () {
+                                      // state.searchResults?.removeAt(i);
+                                      BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
+                                      setState(() {});
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Container(
+                                        child: Padding(
+                                            padding: const EdgeInsets.only(left: 0),
+                                            child: Icon(
+                                              Icons.close_outlined,
+                                              color: Colors.white,
+                                              // size: 30,
+                                            )),
                                       ),
                                     ),
-                                    // Spacer()
-                                  ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                            child: Text(
+                              'Choose a language',
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
+                          physics: RangeMaintainingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * 0.40,
+                                  height: MediaQuery.of(context).size.width * 0.1,
+
+                                  child: FloatingActionButton.extended(
+                                    // heroTag: 'location_offers',
+                                    key: UniqueKey(),
+                                    heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                    splashColor: Colors.white,
+
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+
+                                    label: Text(
+                                      'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                      // 'All($counterALL)',
+                                      // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
+                                      style: TextStyle(fontSize: 12),
+                                    ), // <-- Text
+                                    backgroundColor: Colors.grey.withOpacity(0.1),
+                                    // icon: Icon(
+                                    //   // <-- Icon
+                                    //   Icons.menu_book,
+                                    //   size: 16.0,
+                                    // ),
+                                    onPressed: () {
+                                      print("!breakpoint");
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          // transitionDuration:
+                                          // Duration(seconds: 2),
+
+                                          pageBuilder: (_, __, ___) {
+                                            // return StartSearch();
+
+                                            return LanguagePage(
+                                              titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                              language: "all",
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    // extendedPadding: EdgeInsets.all(50),
+                                  ),
                                 ),
                               ),
-                            );
-                          },
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * 0.40,
+                                  height: MediaQuery.of(context).size.width * 0.1,
+                                  child: FloatingActionButton.extended(
+                                    // heroTag: 'location_offers',
+                                    key: UniqueKey(),
+                                    heroTag: 'German(${NavbarState.counterDE})',
+
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+
+                                    label: Text(
+                                      'German(${NavbarState.counterDE})',
+                                      style: TextStyle(fontSize: 12),
+                                    ), // <-- Text
+                                    backgroundColor: Colors.grey.withOpacity(0.1),
+                                    // icon: Icon(
+                                    //   // <-- Icon
+                                    //   Icons.account_box,
+                                    //   size: 16.0,
+                                    // ),
+                                    onPressed: () {
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
+
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          // transitionDuration:
+                                          // Duration(seconds: 2),
+
+                                          pageBuilder: (_, __, ___) {
+                                            // return StartSearch();
+
+                                            return LanguagePage(
+                                              titleText: 'German(${NavbarState.counterDE})',
+                                              language: "de",
+                                            );
+                                          },
+                                          // maintainState: true,
+
+                                          // transitionDuration: Duration(milliseconds: 1000),
+                                          // transitionsBuilder: (context, animation, anotherAnimation, child) {
+                                          //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
+                                          //   return ScaleTransition(
+                                          //     scale: animation,
+                                          //     alignment: Alignment.topRight,
+                                          //     child: child,
+                                          //   );
+                                          // }
+                                        ),
+                                      );
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "de"));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * 0.40,
+                                  height: MediaQuery.of(context).size.width * 0.1,
+                                  child: FloatingActionButton.extended(
+                                    // heroTag: 'location_offers',
+                                    key: UniqueKey(),
+                                    heroTag: 'English(${NavbarState.counterEN})',
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                    label: Text(
+                                      'English(${NavbarState.counterEN})',
+                                      style: TextStyle(fontSize: 12),
+                                    ), // <-- Text
+                                    backgroundColor: Colors.grey.withOpacity(0.1),
+                                    // icon: Icon(
+                                    //   // <-- Icon
+                                    //   Icons.coffee,
+                                    //   size: 16.0,
+                                    // ),
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          // transitionDuration:
+                                          // Duration(seconds: 2),
+
+                                          pageBuilder: (_, __, ___) {
+                                            // return StartSearch();
+
+                                            return LanguagePage(
+                                              titleText: 'English(${NavbarState.counterEN})',
+                                              language: "en",
+                                            );
+                                          },
+                                        ),
+                                      );
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "en"));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * 0.40,
+                                  height: MediaQuery.of(context).size.width * 0.1,
+                                  child: FloatingActionButton.extended(
+                                    // heroTag: 'location_offers',
+                                    key: UniqueKey(),
+                                    heroTag: 'French(${NavbarState.counterFR})',
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                    label: Text(
+                                      'French(${NavbarState.counterFR})',
+                                      style: TextStyle(fontSize: 12),
+                                    ), // <-- Text
+                                    backgroundColor: Colors.grey.withOpacity(0.1),
+                                    // icon: Icon(
+                                    //   // <-- Icon
+                                    //   Icons.coffee,
+                                    //   size: 16.0,
+                                    // ),
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          // transitionDuration:
+                                          // Duration(seconds: 2),
+
+                                          pageBuilder: (_, __, ___) {
+                                            // return StartSearch();
+
+                                            return LanguagePage(
+                                              titleText: 'French(${NavbarState.counterFR})',
+                                              language: "fr",
+                                            );
+                                          },
+                                        ),
+                                      );
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * 0.40,
+                                  height: MediaQuery.of(context).size.width * 0.1,
+                                  child: FloatingActionButton.extended(
+                                    // heroTag: 'location_offers',
+                                    key: UniqueKey(),
+                                    heroTag: 'Spanish(${NavbarState.counterES})',
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                    label: Text(
+                                      'Spanish(${NavbarState.counterES})',
+                                      style: TextStyle(fontSize: 12),
+                                    ), // <-- Text
+                                    backgroundColor: Colors.grey.withOpacity(0.1),
+                                    // icon: Icon(
+                                    //   // <-- Icon
+                                    //   Icons.coffee,
+                                    //   size: 16.0,
+                                    // ),
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          // transitionDuration:
+                                          // Duration(seconds: 2),
+
+                                          pageBuilder: (_, __, ___) {
+                                            // return StartSearch();
+
+                                            return LanguagePage(
+                                              titleText: 'Spanish(${NavbarState.counterES})',
+                                              language: "es",
+                                            );
+                                          },
+                                        ),
+                                      );
+                                      // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      state.searchResults?.length != 0
-                          ? Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                            child: Text(
+                              'Versuchen Sie, nach zu suchen',
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(30, 5, 30, 00),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
                                 child: Text(
-                                  'Letzte Suchanfragen',
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  'die beliebtesten Channel',
+                                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
-                            )
-                          : Container(),
-                      // for (var i = 0; i < state.searchResults!.length; i++)
-                      for (var i = state.searchResults!.length - 1; i >= 0; i--)
-                        Container(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.access_time_sharp,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      // Navigator.pop(context);
-                                      handleSearchClick(state.searchResults?[i], state, false);
-                                      _searchController.text = state.searchResults?[i];
-                                    },
-                                    child: Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          // 'hamburg',
-                                          // state.searchResults!.isNotEmpty ? state.searchResults![i] : "",
-                                          state.searchResults?[i],
-                                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                    ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(30, 5, 30, 20),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    'magazinen, die Sie gelesen haben',
+                                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    // state.searchResults?.removeAt(i);
-                                    BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
-                                    setState(() {});
-                                  },
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Container(
-                                      child: Padding(
-                                          padding: const EdgeInsets.only(left: 0),
-                                          child: Icon(
-                                            Icons.close_outlined,
-                                            color: Colors.white,
-                                            // size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                          child: Text(
-                            'Choose a language',
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
-                        physics: RangeMaintainingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
-                              child: Container(
-                                // width: MediaQuery.of(context).size.width * 0.40,
-                                height: MediaQuery.of(context).size.width * 0.1,
-
-                                child: FloatingActionButton.extended(
-                                  // heroTag: 'location_offers',
-                                  key: UniqueKey(),
-                                  heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                  splashColor: Colors.white,
-
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-
-                                  label: Text(
-                                    'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                    // 'All($counterALL)',
-                                    // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
-                                    style: TextStyle(fontSize: 12),
-                                  ), // <-- Text
-                                  backgroundColor: Colors.red.withOpacity(0.1),
-                                  // icon: Icon(
-                                  //   // <-- Icon
-                                  //   Icons.menu_book,
-                                  //   size: 16.0,
-                                  // ),
-                                  onPressed: () {
-                                    print("!breakpoint");
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        // transitionDuration:
-                                        // Duration(seconds: 2),
-
-                                        pageBuilder: (_, __, ___) {
-                                          // return StartSearch();
-
-                                          return LanguagePage(
-                                            titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                            language: "all",
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  // extendedPadding: EdgeInsets.all(50),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                              child: Container(
-                                // width: MediaQuery.of(context).size.width * 0.40,
-                                height: MediaQuery.of(context).size.width * 0.1,
-                                child: FloatingActionButton.extended(
-                                  // heroTag: 'location_offers',
-                                  key: UniqueKey(),
-                                  heroTag: 'German(${NavbarState.counterDE})',
-
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-
-                                  label: Text(
-                                    'German(${NavbarState.counterDE})',
-                                    style: TextStyle(fontSize: 12),
-                                  ), // <-- Text
-                                  backgroundColor: Colors.grey.withOpacity(0.1),
-                                  // icon: Icon(
-                                  //   // <-- Icon
-                                  //   Icons.account_box,
-                                  //   size: 16.0,
-                                  // ),
-                                  onPressed: () {
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        // transitionDuration:
-                                        // Duration(seconds: 2),
-
-                                        pageBuilder: (_, __, ___) {
-                                          // return StartSearch();
-
-                                          return LanguagePage(
-                                            titleText: 'German(${NavbarState.counterDE})',
-                                            language: "de",
-                                          );
-                                        },
-                                        // maintainState: true,
-
-                                        // transitionDuration: Duration(milliseconds: 1000),
-                                        // transitionsBuilder: (context, animation, anotherAnimation, child) {
-                                        //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
-                                        //   return ScaleTransition(
-                                        //     scale: animation,
-                                        //     alignment: Alignment.topRight,
-                                        //     child: child,
-                                        //   );
-                                        // }
-                                      ),
-                                    );
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "de"));
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                              child: Container(
-                                // width: MediaQuery.of(context).size.width * 0.40,
-                                height: MediaQuery.of(context).size.width * 0.1,
-                                child: FloatingActionButton.extended(
-                                  // heroTag: 'location_offers',
-                                  key: UniqueKey(),
-                                  heroTag: 'English(${NavbarState.counterEN})',
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-                                  label: Text(
-                                    'English(${NavbarState.counterEN})',
-                                    style: TextStyle(fontSize: 12),
-                                  ), // <-- Text
-                                  backgroundColor: Colors.grey.withOpacity(0.1),
-                                  // icon: Icon(
-                                  //   // <-- Icon
-                                  //   Icons.coffee,
-                                  //   size: 16.0,
-                                  // ),
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        // transitionDuration:
-                                        // Duration(seconds: 2),
-
-                                        pageBuilder: (_, __, ___) {
-                                          // return StartSearch();
-
-                                          return LanguagePage(
-                                            titleText: 'English(${NavbarState.counterEN})',
-                                            language: "en",
-                                          );
-                                        },
-                                      ),
-                                    );
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "en"));
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                              child: Container(
-                                // width: MediaQuery.of(context).size.width * 0.40,
-                                height: MediaQuery.of(context).size.width * 0.1,
-                                child: FloatingActionButton.extended(
-                                  // heroTag: 'location_offers',
-                                  key: UniqueKey(),
-                                  heroTag: 'French(${NavbarState.counterFR})',
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-                                  label: Text(
-                                    'French(${NavbarState.counterFR})',
-                                    style: TextStyle(fontSize: 12),
-                                  ), // <-- Text
-                                  backgroundColor: Colors.grey.withOpacity(0.1),
-                                  // icon: Icon(
-                                  //   // <-- Icon
-                                  //   Icons.coffee,
-                                  //   size: 16.0,
-                                  // ),
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        // transitionDuration:
-                                        // Duration(seconds: 2),
-
-                                        pageBuilder: (_, __, ___) {
-                                          // return StartSearch();
-
-                                          return LanguagePage(
-                                            titleText: 'French(${NavbarState.counterFR})',
-                                            language: "fr",
-                                          );
-                                        },
-                                      ),
-                                    );
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                              child: Container(
-                                // width: MediaQuery.of(context).size.width * 0.40,
-                                height: MediaQuery.of(context).size.width * 0.1,
-                                child: FloatingActionButton.extended(
-                                  // heroTag: 'location_offers',
-                                  key: UniqueKey(),
-                                  heroTag: 'Spanish(${NavbarState.counterES})',
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-                                  label: Text(
-                                    'Spanish(${NavbarState.counterES})',
-                                    style: TextStyle(fontSize: 12),
-                                  ), // <-- Text
-                                  backgroundColor: Colors.grey.withOpacity(0.1),
-                                  // icon: Icon(
-                                  //   // <-- Icon
-                                  //   Icons.coffee,
-                                  //   size: 16.0,
-                                  // ),
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        // transitionDuration:
-                                        // Duration(seconds: 2),
-
-                                        pageBuilder: (_, __, ___) {
-                                          // return StartSearch();
-
-                                          return LanguagePage(
-                                            titleText: 'Spanish(${NavbarState.counterES})',
-                                            language: "es",
-                                          );
-                                        },
-                                      ),
-                                    );
-                                    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                          child: Text(
-                            'Versuchen Sie, nach zu suchen',
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 5, 30, 00),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                'die beliebtesten Channel',
-                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 5, 30, 20),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Text(
-                                  'magazinen, die Sie gelesen haben',
-                                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ]
-                  : state is GoToSearchResults
-                      ? SearchResults(context, state)
-                      : <Widget>[],
+                      ]
+                    : state is GoToSearchResults
+                        ? SearchResults(context, state)
+                        : state is SearchError
+                            ? <Widget>[
+                                Container(
+                                  child: Text(state.error,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                      )),
+                                )
+                              ]
+                            : <Widget>[],
+              ),
             ),
-          ),
-        );
+          );
 
-        // );
-      }),
+          // );
+        }),
+      ],
     );
     // return Scaffold(
     //     back: Image.asset("assets/images/Background.png", fit: BoxFit.cover),
@@ -787,7 +821,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
               child: PageView.builder(
                 // itemCount: state.magazinePublishedGetLastWithLimit?.response?.length ?? 0 + 10,
                 // itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 10,
-                itemCount: state.searchResultCovers!.response!.length,
+                itemCount: state.searchResults!.response!.length,
                 // padEnds: true,
                 allowImplicitScrolling: false,
                 controller: PageController(
@@ -822,7 +856,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                           alignment: Alignment.center,
                           children: [
                             CachedNetworkImage(
-                              imageUrl: (state.searchResultCovers!.response?[i].idMagazinePublication! ?? "") + "_" + (state.searchResultCovers!.response?[i].dateOfPublication! ?? ""),
+                              imageUrl: (state.searchResults!.response?[i].idMagazinePublication! ?? "") + "_" + (state.searchResults!.response?[i].dateOfPublication! ?? ""),
                               // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                               //     "_" +
                               //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,

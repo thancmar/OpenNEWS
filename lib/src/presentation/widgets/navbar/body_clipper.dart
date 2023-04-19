@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class BodyPainter extends CustomClipper<Path> {
+class BodyClipper extends CustomClipper<Path> {
   final int index;
   final BuildContext context;
   final GlobalKey key;
-  const BodyPainter({required this.index, required this.context, required this.key});
+  const BodyClipper({required this.index, required this.context, required this.key});
 
   @override
   getClip(Size size) {

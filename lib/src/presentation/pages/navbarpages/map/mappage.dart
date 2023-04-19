@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,14 +12,12 @@ import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:sharemagazines_flutter/src/blocs/map/map_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/map/mapOfferpage.dart';
-import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/place_map.dart';
+
+import 'package:sharemagazines_flutter/src/models/place_map.dart';
+
+import 'mapOfferpage.dart';
 
 class Maps extends StatefulWidget {
   const Maps({Key? key}) : super(key: key);
@@ -79,7 +76,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     try {
       final coords = Coords(_lat, _lon);
       final title = _title;
-      print("Breakpoint");
+      print("Breakpoint2");
       final availableMaps = await MapLauncher.installedMaps;
 
       showModalBottomSheet(
@@ -338,9 +335,10 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     // ),
                   ),
                   child: TextButton(
-                    child: const Text('Angebote'),
+                    child: Text('Angebote'),
                     onPressed: () {
                       /* ... */
+                      print('Angebote');
                       BlocProvider.of<NavbarBloc>(context).add(GetMapOffer(loc: locationmarker));
                       Navigator.push(
                         context,

@@ -2,26 +2,33 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:sharemagazines_flutter/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptionspages.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+
 class ReaderOptionsPage extends StatefulWidget {
+  // final model.Response magazine;
   final ReaderBloc bloc;
 
   final Reader reader;
-  Function callback;
-  bool isOnPageTurning;
+  // Function callback;
+  // bool isOnPageTurning;
   // print("dsfs");
-  int current = 0;
-  ReaderOptionsPage({required this.callback, required this.isOnPageTurning, required this.reader, required this.bloc}) : super();
+  // int current = 0;
+  ValueNotifier<int> currentPage;
+  ReaderOptionsPage({required this.reader, required this.bloc, required this.currentPage}) : super();
   @override
   State<ReaderOptionsPage> createState() => _ReaderOptionsPageState();
 }
 
 class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKeepAliveClientMixin<ReaderOptionsPage> {
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  ValueNotifier<bool> isOnPageTurning = ValueNotifier<bool>(false);
+
   @override
   bool get wantKeepAlive => true;
 
@@ -58,7 +65,7 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
         ),
         title: MarqueeWidget(
           // child: Text("sfd"),
-          child: Text(widget.reader.readerTitle ?? "Title"),
+          child: Text(widget.reader.magazine.name! ?? "Title"),
           direction: Axis.horizontal,
           // pauseDuration: Duration(milliseconds: 100),
           // animationDuration: Duration(seconds: 2),
@@ -87,7 +94,7 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => {
-              if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("single tap reader")}
+              if (isOnPageTurning.value = true) {Navigator.of(context).pop(), print("single tap reader")}
             },
             // onDoubleTap: () => {
             //   // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
@@ -121,7 +128,14 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
                 //   style: TextStyle(color: Colors.red),
                 // )
 
-                Align(alignment: Alignment.bottomCenter, child: ReaderOptionsPages(isOnPageTurning: widget.isOnPageTurning, callback: widget.callback, reader: widget.reader, bloc: widget.bloc)),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ReaderOptionsPages(
+                      isOnPageTurning: isOnPageTurning,
+                      reader: widget.reader,
+                      bloc: widget.bloc,
+                      currentPage: widget.currentPage,
+                    )),
               ],
             ),
           ),

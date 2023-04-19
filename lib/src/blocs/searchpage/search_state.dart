@@ -35,9 +35,9 @@ class GoToSearchResults extends SearchState {
   // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
   // final List<Uint8List> bytes;
   // final List<Future<Uint8List>>? searchResultCovers;
-  final MagazinePublishedGetAllLastByHotspotId? searchResultCovers;
+  final MagazinePublishedGetAllLastByHotspotId? searchResults;
   // final Localization? location;
-  GoToSearchResults(this.searchResultCovers) : super(null);
+  GoToSearchResults(this.searchResults) : super(null);
 
   @override
   List<Object> get props => [];
@@ -70,4 +70,12 @@ class GoToCategoryPage extends SearchState {
 
   @override
   List<Object> get props => [];
+}
+
+class SearchError extends SearchState {
+  final String error;
+
+  SearchError(this.error) : super(null);
+  @override
+  List<Object?> get props => [error];
 }
