@@ -66,9 +66,9 @@ class _OfferPageState extends State<OfferPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _controller?.pause();
     _controller = null;
+    super.dispose();
   }
 
   _asyncMethod() async {
@@ -127,9 +127,9 @@ class _OfferPageState extends State<OfferPage> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             // bottomOpacity: 1.0,
-            leading: InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+            leading: GestureDetector(
+                // splashColor: Colors.transparent,
+                // highlightColor: Colors.transparent,
                 onTap: () => {
                       // setState(() {
                       //   BlocProvider.of<NavbarBloc>(context).add(Map());

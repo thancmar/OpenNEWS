@@ -7,6 +7,7 @@ import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/splash/splash_bloc.dart';
+import '../../../../models/location_model.dart';
 import '../../startpage.dart';
 
 class AccountPageWidgets extends StatefulWidget {

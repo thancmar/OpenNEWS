@@ -6,6 +6,7 @@ import 'package:flutter_svg/parser.dart';
 
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
+import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/registrationpage.dart';
 
@@ -17,6 +18,7 @@ import '../validators/emailvalidator.dart';
 
 class StartPage extends StatefulWidget {
   final String title;
+
   const StartPage({Key? key, required this.title}) : super(key: key);
 
   @override
@@ -86,7 +88,7 @@ class _StartPageState extends State<StartPage> {
                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
 
                     // BlocProvider.of<NavbarBloc>(context);
-                    BlocProvider.of<NavbarBloc>(context).add(Initialize123());
+                    BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
                     // setState(() {});
                   });
                 } else if (state is UnAuthenticated) {

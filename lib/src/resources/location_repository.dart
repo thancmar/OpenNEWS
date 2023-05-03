@@ -66,7 +66,7 @@ class LocationRepository {
         print("you are near a location.");
         return LocalizationFromJson(response.data);
       } else if (decoded['code'] == 500) {
-        print("Locaclization failed with error code 500");
+        // print("Locaclization failed with error code 500");
         print("you are not near a location");
         return LocalizationFromJson(response.data);
       }

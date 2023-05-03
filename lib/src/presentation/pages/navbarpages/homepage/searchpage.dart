@@ -13,6 +13,7 @@ import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepa
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/searchpage/search_bloc.dart';
 import '../../../../resources/magazine_repository.dart';
+import '../../../widgets/routes/gotoSearchPage.dart';
 import 'languagepage.dart';
 
 // class StartSearch extends StatelessWidget {
@@ -42,9 +43,14 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SearchPage> {
+class _SearchPageState extends State<SearchPage>
+    with
+        SingleTickerProviderStateMixin
+// ,TickerProviderStateMixin
+        ,
+        AutomaticKeepAliveClientMixin<SearchPage> {
   TextEditingController _searchController = TextEditingController();
-
+  static late PageController controller = PageController(viewportFraction: 0.30, keepPage: true);
   @override
   bool get wantKeepAlive => true;
 
@@ -119,8 +125,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, 
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(tag: 'bg', child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)),
-        ),
+            // child: Hero(tag: 'bg',
+            child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)
+            // ),
+            ),
         BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
           // print("SearchState is ${BlocProvider.of<SearchState>(context).state}");
           // print(BlocProvider.of<NavbarBloc>(context).state);
@@ -234,7 +242,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, 
                       tag: "search button",
 
                       child: Icon(
-                        state is GoToSearchPage || state is LoadingSearchState ? Icons.search : Icons.close_rounded,
+                        // state is GoToSearchPage || state is LoadingSearchState
+                        //     ?
+                        Icons.search,
+                        // : Icons.close_rounded,
                         color: Colors.white,
                         size: size.width * 0.1,
                       ),
@@ -274,10 +285,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, 
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.17,
                           child: PageView.builder(
-                            controller: PageController(
-                              viewportFraction: 0.30,
-                              // keepPage: true
-                            ),
+                            controller: controller,
 
                             itemCount: NavbarState.magazineCategoryGetAllActive!.response!.length,
                             allowImplicitScrolling: false,
@@ -295,39 +303,48 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, 
                                 child: GestureDetector(
                                   onTap: () => {
                                     print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
+                                    // Navigator.push(
+                                    //     context,
+                                    //     CupertinoRoute(
+                                    //         exitPage: SearchPage(),
+                                    //         enterPage: CategoryPage(
+                                    //           titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                    //           categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                                    //         ))),
                                     Navigator.of(context).push(
                                       PageRouteBuilder(
-                                          // transitionDuration:
-                                          // Duration(seconds: 2),
-                                          maintainState: true,
-                                          pageBuilder: (_, __, ___) => CategoryPage(
-                                                titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                                categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-                                              ),
-                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                            const begin1 = Offset(-1.0, 0.0);
-                                            const begin2 = Offset(1.0, 0.0);
-                                            // const end = Offset.zero;
-                                            const end = Offset(0.0, 0.0);
-                                            const curve = Curves.ease;
-                                            final tween = Tween(begin: begin1, end: end).chain(CurveTween(curve: curve));
-                                            // final offsetAnimation = animation.drive(tween);
-                                            // final _scale = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
-                                            final _scaleAnimation = TweenSequence(
-                                              <TweenSequenceItem<Offset>>[
-                                                TweenSequenceItem<Offset>(
-                                                  tween: Tween(begin: begin1, end: end).chain(CurveTween(curve: curve)),
-                                                  weight: 80.0,
-                                                ),
-                                                // TweenSequenceItem<Offset>(
-                                                //   tween: Tween(begin: begin2, end: end).chain(CurveTween(curve: curve)),
-                                                //   weight: 50.0,
-                                                // ),
-                                              ],
-                                            ).animate(animation);
-                                            // return SlideTransition(position: animation.drive(tween), child: child);
-                                            return SlideTransition(position: _scaleAnimation, child: Container(color: Colors.red, width: 20, child: child));
-                                          }),
+                                        // transitionDuration:
+                                        // Duration(seconds: 2),
+                                        maintainState: true,
+                                        pageBuilder: (_, __, ___) => CategoryPage(
+                                          titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                                          categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                                        ),
+                                        // transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        //   const begin1 = Offset(1.0, 0.0);
+                                        //   const begin2 = Offset(1.0, 0.0);
+                                        //   // const end = Offset.zero;
+                                        //   const end = Offset(0.0, 0.0);
+                                        //   const curve = Curves.ease;
+                                        //   final tween = Tween(begin: begin1, end: end).chain(CurveTween(curve: curve));
+                                        //   // final offsetAnimation = animation.drive(tween);
+                                        //   // final _scale = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
+                                        //   final _scaleAnimation = TweenSequence(
+                                        //     <TweenSequenceItem<Offset>>[
+                                        //       TweenSequenceItem<Offset>(
+                                        //         tween: Tween(begin: begin1, end: end).chain(CurveTween(curve: curve)),
+                                        //         weight: 80.0,
+                                        //       ),
+                                        //       // TweenSequenceItem<Offset>(
+                                        //       //   tween: Tween(begin: begin2, end: end).chain(CurveTween(curve: curve)),
+                                        //       //   weight: 50.0,
+                                        //       // ),
+                                        //     ],
+                                        //   ).animate(animation);
+                                        //   // return SlideTransition(position: animation.drive(tween), child: child);
+                                        //   return SlideTransition(position: _scaleAnimation, child: Container(color: Colors.red, width: 20, child: child));
+                                        // }
+                                      ),
                                     ),
                                     // Navigator.of(context).push(
                                     //   MaterialPageRoute(builder: (context) {
@@ -925,136 +942,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin, 
                         ),
                   );
                 },
-              )
-              // child: PageView.builder(
-              //   // itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 1,
-              //   itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 1,
-              //   // itemCount: 10,
-              //   // padEnds: true,
-              //   allowImplicitScrolling: false,
-              //   controller: PageController(viewportFraction: 0.65),
-              //   onPageChanged: (int index) => setState(() => _index2 = index),
-              //   pageSnapping: false,
-              //   itemBuilder: (context, i) {
-              //     // if (state.bytes.isEmpty) {
-              //     //   setState(() {});
-              //     // }
-              //     return Transform.scale(
-              //       // origin: Offset(100, 50),
-              //
-              //       // scale: i == _index1 ? 1 : 1,
-              //       scale: 1,
-              //
-              //       alignment: Alignment.bottomCenter,
-              //       // alignment: AlignmentGeometry(),
-              //       child: Card(
-              //         color: Colors.transparent,
-              //         clipBehavior: Clip.antiAliasWithSaveLayer,
-              //         margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-              //         elevation: 0,
-              //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-              //         child: state.bytes.isNotEmpty
-              //             ? Stack(
-              //                 children: [
-              //                   Hero(
-              //                     tag: '$i',
-              //                     transitionOnUserGestures: true,
-              //                     child: SizedBox(
-              //                       width: 450,
-              //                       height: 300,
-              //                       child: GestureDetector(
-              //                         behavior: HitTestBehavior.translucent,
-              //                         onTap: () => {
-              //                           // Navigator.push(
-              //                           //     context,
-              //                           //     new ReaderRoute(
-              //                           //         widget: StartReader(
-              //                           //       id: state
-              //                           //           .magazinePublishedGetLastWithLimit
-              //                           //           .response![i + 1]
-              //                           //           .idMagazinePublication!,
-              //                           //       tagindex: i,
-              //                           //       cover: state.bytes[i],
-              //                           //     ))),
-              //                           // print('Asf'),
-              //                           Navigator.push(
-              //                             context,
-              //                             PageRouteBuilder(
-              //                               // transitionDuration:
-              //                               // Duration(seconds: 2),
-              //                               pageBuilder: (_, __, ___) => StartReader(
-              //                                 id: state.magazinePublishedGetLastWithLimit.response![i + 1].idMagazinePublication!,
-              //
-              //                                 index: i.toString(),
-              //                                 cover: state.bytes![i],
-              //                                 noofpages: state.magazinePublishedGetLastWithLimit.response![i + 1].pageMax!,
-              //                                 readerTitle: state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-              //
-              //                                 // noofpages: 5,
-              //                               ),
-              //                             ),
-              //                           )
-              //                           // Navigator.push(context,
-              //                           //     MaterialPageRoute(
-              //                           //         builder: (context) {
-              //                           //   return StartReader(
-              //                           //     id: state
-              //                           //         .magazinePublishedGetLastWithLimit
-              //                           //         .response![i + 1]
-              //                           //         .idMagazinePublication!,
-              //                           //     index: i,
-              //                           //   );
-              //                           // }))
-              //                         },
-              //                         child: Image.memory(
-              //                           state.bytes![i],
-              //                           // fit: BoxFit.fill,
-              //                           // frameBuilder: ((context, child, frame, wasSynchronouslyLoaded) {
-              //                           //   if (wasSynchronouslyLoaded) return child;
-              //                           //   return AnimatedSwitcher(
-              //                           //     duration: const Duration(milliseconds: 200),
-              //                           //     child: frame != null
-              //                           //         ? child
-              //                           //         : SizedBox(
-              //                           //             height: 60,
-              //                           //             width: 60,
-              //                           //             child: CircularProgressIndicator(strokeWidth: 6),
-              //                           //           ),
-              //                           //   );
-              //                           // }),
-              //                         ),
-              //                       ),
-              //                       // child: Image.network(
-              //                       //   'https://via.placeholder.com/300?text=DITTO',
-              //                       //   fit: BoxFit.fill,
-              //                       // ),
-              //                     ),
-              //                   ),
-              //                   // Align(
-              //                   //   alignment: Alignment.bottomCenter,
-              //                   //   child: Text(
-              //                   //     state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-              //                   //     // " asd",
-              //                   //     // "Card ${i + 1}",
-              //                   //     textAlign: TextAlign.center,
-              //                   //
-              //                   //     style: TextStyle(fontSize: 32, color: Colors.white, backgroundColor: Colors.transparent),
-              //                   //   ),
-              //                   // ),
-              //                 ],
-              //               )
-              //             : Container(
-              //                 color: Colors.grey.withOpacity(0.2),
-              //                 child: SpinKitFadingCircle(
-              //                   color: Colors.white,
-              //                   size: 50.0,
-              //                 ),
-              //               ),
-              //       ),
-              //     );
-              //   },
-              // )
-              )
+              ))
           : Container()
     ];
   }

@@ -27,7 +27,7 @@ class GoToSearchPage extends SearchState {
   GoToSearchPage(this.searchResults) : super(null);
   @override
   // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props => [searchResults];
 }
 
 class GoToSearchResults extends SearchState {

@@ -21,7 +21,8 @@ class ReaderOptionsPages extends StatefulWidget {
 
 class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ReaderOptionsPages> {
   int _index = 0;
-  late final controller = PageController(viewportFraction: 0.4, initialPage: widget.currentPage.value);
+  // var controller;
+  static late PageController controller = PageController();
   static late List<ValueNotifier<int>> _networklHasErrorNotifier;
 
   late List<bool> toggleImageLoaded = List.filled(int.parse(widget.reader.magazine.pageMax!), false);
@@ -44,6 +45,9 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
       duration: Duration(milliseconds: 800),
     );
     controller.addListener(scrollListener);
+    // controller.jumpTo(5);
+    controller = PageController(viewportFraction: 0.7, initialPage: widget.currentPage.value);
+
     var visitedPages = [];
   }
 
@@ -66,6 +70,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
   void dispose() {
     timer?.cancel();
     _spinKitController?.dispose();
+    // controller.
     super.dispose();
   }
 
@@ -73,65 +78,56 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
   Widget build(BuildContext context) {
     super.build(context);
     // print(ImageSizeGetter.getSize(MemoryInput(widget.reader.cover)).height);
-    return SizedBox(
-      // width: 500,
-      // width: double.infinity,
+    return OrientationBuilder(builder: (context, orientation) {
+      // controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.4 : 0.15);
+      controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15);
+      controller.addListener(scrollListener);
+      return SizedBox(
+        // width: 500,
+        // width: double.infinity,
 
-      // height: double.infinity,
-      height: MediaQuery.of(context).size.aspectRatio * 450,
-      width: MediaQuery.of(context).size.aspectRatio * 1550,
-      // width: 50,
-      // height: 250, // card height
-      // height: ImageSizeGetter.getSize(MemoryInput(widget.reader.cover)).height.floorToDouble(),
-      child: RawScrollbar(
-        controller: controller,
-        thickness: 10,
-        interactive: true,
-        scrollbarOrientation: ScrollbarOrientation.top,
-        thumbVisibility: true,
-        thumbColor: Colors.grey,
-        radius: Radius.circular(20),
-        crossAxisMargin: 0,
-        minThumbLength: 100,
-        trackVisibility: false,
-        // padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-        // shape: ,
-        child: PageView.builder(
-          itemCount: int.parse(widget.reader.magazine.pageMax!),
-          padEnds: false,
-          // allowImplicitScrolling: false,
-// findChildIndexCallback: ,
+        // height: double.infinity,
+        height: (MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.height * 0.28 : MediaQuery.of(context).size.height * 0.450),
+        // width: MediaQuery.of(context).size.width + 01000,
+        // width: 50,
+        // height: 250, // card height
+        // height: ImageSizeGetter.getSize(MemoryInput(widget.reader.cover)).height.floorToDouble(),
+        child: RawScrollbar(
           controller: controller,
+          thickness: 10,
+          interactive: true,
+          scrollbarOrientation: ScrollbarOrientation.top,
+          thumbVisibility: true,
+          thumbColor: Colors.grey,
+          radius: Radius.circular(20),
+          crossAxisMargin: 0,
+          minThumbLength: 100,
+          trackVisibility: false,
+          // padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          // shape: ,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: PageView.builder(
+              itemCount: int.parse(widget.reader.magazine.pageMax!),
+              padEnds: false,
 
-          // onPageChanged: (int index) => setState(() => {}),
-          // allowImplicitScrolling: false,
-          pageSnapping: false,
-          itemBuilder: (_, i) {
-            // print(widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + i.toString());
-            return Transform.scale(
-              // origin: Offset(00, 100),
-              // scaleX: 1,
-              // scaleY: 1,
-              scale: 1,
-              origin: Offset(1000, 0),
-              // scale: i == _index1 ? 1 : 1,
-              // alignment: FractionalOffset.bottomLeft,
-              alignment: Alignment.bottomLeft,
-              // transform: Matrix4.skewY(0),
-              child: Card(
-                color: Colors.transparent,
-                // clipBehavior: Clip.hardE,
-                margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.aspectRatio * 10, 10, MediaQuery.of(context).size.aspectRatio * 10, 0),
-                elevation: 0,
-
-                // shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                child: Stack(
-                  children: [
-                    BlocBuilder<ReaderBloc, ReaderState>(
-                      bloc: widget.bloc,
-                      builder: (context, state) {
-                        // print(state);
-                        if (state is ReaderOpened) {
+              // allowImplicitScrolling: false,
+// findChildIndexCallback: ,
+              controller: controller,
+// clipBehavior: Clip.hardEdge,
+              // onPageChanged: (int index) => setState(() => {}),
+              allowImplicitScrolling: false,
+              pageSnapping: false,
+              itemBuilder: (_, i) {
+                // print(widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + i.toString());
+                return ValueListenableBuilder(
+                    valueListenable: widget.reader.currentPage,
+                    builder: (BuildContext context, int pageNo, Widget? child) {
+                      return BlocBuilder<ReaderBloc, ReaderState>(
+                        bloc: widget.bloc,
+                        builder: (context, state) {
+                          // print(state);
+                          // if (state is ReaderOpened) {
                           // return ClipRRect(
                           //   borderRadius: BorderRadius.circular(5.0),
                           //   child: Image.memory(
@@ -151,142 +147,124 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
                                   widget.reader.currentPage.value = i;
                                 }),
                               },
-                              child: Stack(children: <Widget>[
-                                //To give the blue frame to the selected page
-                                ValueListenableBuilder(
-                                    valueListenable: widget.reader.currentPage,
-                                    builder: (BuildContext context, int pageNo, Widget? child) {
-                                      return CachedNetworkImage(
-                                          key: ValueKey(_networklHasErrorNotifier[i].value),
-                                          filterQuality: FilterQuality.high,
-                                          // height: double.infinity,
-                                          imageUrl: widget.reader.magazine.idMagazinePublication! + "_" + widget.reader.magazine.dateOfPublication! + "_" + i.toString() + "_" + "thumbnail",
-                                          imageBuilder: (context, imageProvider) {
-                                            return ClipRRect(
-                                              // borderRadius: BorderRadius.circular(15.0),
+                              child: CachedNetworkImage(
+                                  key: ValueKey(_networklHasErrorNotifier[i].value),
+                                  filterQuality: FilterQuality.low,
+                                  // height: double.infinity,
+                                  imageUrl: widget.reader.magazine.idMagazinePublication! + "_" + widget.reader.magazine.dateOfPublication! + "_" + i.toString() + "_" + "thumbnail",
+                                  imageBuilder: (context, imageProvider) {
+                                    return Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            padding: i == pageNo ? EdgeInsets.fromLTRB(10, 10, 10, 10) : EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                            // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            decoration: i == pageNo ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue) : BoxDecoration(),
+                                            // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                              child: Image(
+                                                  alignment: Alignment.center,
+                                                  image: imageProvider,
+                                                  // scale: i == pageNo ? MediaQuery.of(context).size.aspectRatio * 4 : 1,
+                                                  //   scale: i == pageNo ? 2 : 1,
+                                                  //   // fit: i == pageNo ? BoxFit.fitWidth : BoxFit.fitWidth
+                                                  fit: BoxFit.fitWidth),
+                                            ),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: LayoutBuilder(builder: (ctx, constraints) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(15.0),
                                               child: Container(
-                                                height: MediaQuery.of(context).size.aspectRatio * 450,
-                                                // width: MediaQuery.of(context).size.width,
+                                                // padding: EdgeInsets.only(bottom: 20),
                                                 // alignment: Alignment.center,
-                                                // margin: EdgeInsets.all(MediaQuery.of(context).size.aspectRatio * 0),
-                                                clipBehavior: Clip.hardEdge,
-                                                // padding: EdgeInsets.all(400), // Border width
-                                                // padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                                // color: Colors.red,
+                                                // constraints: flase,
+
                                                 decoration: BoxDecoration(
-                                                  // color: Colors.blue,
-                                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                  // border: i == pageNo ? Border.all(color: Colors.blueAccent, width: 4.10) : Border.all(color: Colors.transparent, width: 0),
-                                                  color: i == pageNo ? Colors.blue : Colors.transparent,
-                                                  // shape: BoxShape.rectangle,
-                                                  border: Border.all(
-                                                    color: Colors.red,
-                                                    width: 5.25,
-                                                  ),
-                                                  image: DecorationImage(
-                                                    image: imageProvider,
-                                                    // scale: i == pageNo ? MediaQuery.of(context).size.aspectRatio * 4 : 1,
-                                                    scale: i == pageNo ? 2 : 1,
-                                                    // fit: i == pageNo ? BoxFit.fitWidth : BoxFit.fitWidth
-                                                    // fit: BoxFit.cover
+                                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                                    color: Colors.black.withOpacity(0.8),
+                                                    border: i == pageNo ? Border.all(color: Colors.transparent, width: 5.10) : Border.all(color: Colors.transparent, width: 0)),
+                                                // color: Colors.black.withOpacity(0.8),
+                                                // height: constraints.maxHeight * 0.10,
+                                                // width: constraints.maxWidth * 0.10,
 
-                                                    // onError: (obj, errDetailsTrace) {
-                                                    //   Future.delayed(const Duration(milliseconds: 500), () {
-                                                    //     setState(() {
-                                                    //       _networklHasErrorNotifier[i].value++;
-                                                    //     });
-                                                    //   });
-                                                    // }
-                                                  ),
-                                                  // borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                ),
-                                                child: Align(
-                                                  alignment: Alignment.bottomCenter,
-                                                  child: LayoutBuilder(builder: (ctx, constraints) {
-                                                    return Padding(
-                                                      padding: const EdgeInsets.all(15.0),
-                                                      child: Container(
-                                                        // padding: EdgeInsets.only(bottom: 20),
-                                                        // alignment: Alignment.center,
-                                                        // constraints: flase,
-
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                                            color: Colors.black.withOpacity(0.8),
-                                                            border: i == pageNo ? Border.all(color: Colors.transparent, width: 5.10) : Border.all(color: Colors.transparent, width: 0)),
-                                                        // color: Colors.black.withOpacity(0.8),
-                                                        // height: constraints.maxHeight * 0.10,
-                                                        // width: constraints.maxWidth * 0.10,
-
-                                                        padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                                                        child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
-                                                      ),
-                                                    );
-                                                  }),
-                                                ),
-                                                // child: Container(color: Colors.red, child: Padding(padding: i == pageNo ? EdgeInsets.all(8.0) : EdgeInsets.all(0))),
-                                                // child: Stack(children: <Widget>[]),
+                                                padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
+                                                child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                                               ),
                                             );
-                                          },
-                                          // useOldImageOnUrlChange: true,
-                                          // very important: keep both placeholder and errorWidget
-                                          placeholder: (context, url) => Container(
-                                                // color: Colors.grey.withOpacity(0.1),
-                                                decoration: BoxDecoration(
-                                                  // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                  color: Colors.grey.withOpacity(0.1),
-                                                ),
-                                                child: SpinKitFadingCircle(
-                                                  color: Colors.white,
-                                                  size: 50.0,
-                                                  controller: _spinKitController,
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) {
-                                            Future.delayed(const Duration(milliseconds: 500), () {
-                                              setState(() {
-                                                _networklHasErrorNotifier[i].value++;
-                                              });
-                                            });
-                                            return Container(
-                                              // color: Colors.grey.withOpacity(0.1),
-                                              decoration: BoxDecoration(
-                                                // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                color: Colors.grey.withOpacity(0.1),
-                                              ),
-                                              child: SpinKitFadingCircle(
-                                                color: Colors.white,
-                                                size: 50.0,
-                                                controller: _spinKitController,
-                                                // itemBuilder: (BuildContext context, int value) => {},
-                                              ),
-                                            );
-                                          });
-                                    }),
-                              ]),
+                                          }),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  // useOldImageOnUrlChange: true,
+                                  // very important: keep both placeholder and errorWidget
+                                  placeholder: (context, url) => Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Container(
+                                          // color: Colors.grey.withOpacity(0.1),
+
+                                          decoration: BoxDecoration(
+                                            // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                            color: Colors.grey.withOpacity(0.1),
+                                          ),
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 50.0,
+                                            controller: _spinKitController,
+                                          ),
+                                        ),
+                                      ),
+                                  errorWidget: (context, url, error) {
+                                    Future.delayed(const Duration(milliseconds: 500), () {
+                                      setState(() {
+                                        _networklHasErrorNotifier[i].value++;
+                                      });
+                                    });
+                                    return Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Container(
+                                        // color: Colors.grey.withOpacity(0.1),
+
+                                        decoration: BoxDecoration(
+                                          // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+
+                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          color: Colors.grey.withOpacity(0.1),
+                                        ),
+                                        child: SpinKitFadingCircle(
+                                          color: Colors.white,
+                                          size: 50.0,
+                                          controller: _spinKitController,
+                                          // itemBuilder: (BuildContext context, int value) => {},
+                                        ),
+                                      ),
+                                    );
+                                  }),
                             ),
                           ]);
-                        } else {
-                          return Container(
-                            color: Colors.grey.withOpacity(0.2),
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 50.0,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+                          // } else {
+                          //   return Container(
+                          //     color: Colors.grey.withOpacity(0.2),
+                          //     child: SpinKitFadingCircle(
+                          //       color: Colors.white,
+                          //       size: 50.0,
+                          //     ),
+                          //   );
+                          // }
+                        },
+                      );
+                    });
+              },
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

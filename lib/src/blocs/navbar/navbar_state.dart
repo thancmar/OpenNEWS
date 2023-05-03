@@ -146,13 +146,13 @@ class GoToAccount extends NavbarState {
   // Localization get access_location => throw UnimplementedError();
 }
 
-class GoToLocationSelection extends NavbarState {
-  final List<Data>? locations_GoToLocationSelection;
-  GoToLocationSelection(this.locations_GoToLocationSelection) : super();
-
-  @override
-  List<Object> get props => [];
-}
+// class GoToLocationSelection extends NavbarState {
+//   final List<Data>? locations_GoToLocationSelection;
+//   GoToLocationSelection(this.locations_GoToLocationSelection) : super();
+//
+//   @override
+//   List<Object> get props => [];
+// }
 
 class NavbarError extends NavbarState {
   final String error;

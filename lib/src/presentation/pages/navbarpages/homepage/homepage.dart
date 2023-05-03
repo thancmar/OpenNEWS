@@ -49,7 +49,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
   int _index1 = 0;
   int index_News_aus_deiner_Region = 0;
-  Timer? _timer;
+  // Timer? _timer;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     // if failed,use refreshFailed()
 
     // BlocProvider.of<NavbarBloc>(context).add(LocationRefresh(_timer));
-    await BlocProvider.of<NavbarBloc>(context).checkLocation(_timer);
+    await BlocProvider.of<NavbarBloc>(context).checkLocation();
 
     _refreshController.refreshCompleted();
   }

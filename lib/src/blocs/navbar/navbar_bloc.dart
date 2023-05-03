@@ -13,6 +13,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:sharemagazines_flutter/src/models/magazineCategoryGetAllActive.dart';
 import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
@@ -36,6 +37,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   final MagazineRepository magazineRepository;
   final LocationRepository locationRepository;
   final HotspotRepository hotspotRepository;
+
   // late Future<HotspotsGetAllActive> hotspotList;
   late Localization? locationResponse;
   static late Data appbarlocation;
@@ -51,13 +53,13 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
   Future<void> GetAllMagazinesCover(int locationID, NavbarEvent? event) async {
     // await DefaultCacheManager().emptyCache();
-    // event?.timer?.cancel();
+    // event?.timer?.cancel();xdcvx
     // await EasyLoading.show(
     //   status: 'loading...',
     //   maskType: EasyLoadingMaskType.black,
     // );
 
-    await magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
+    magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
     print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
 
     await locationRepository.checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
@@ -65,13 +67,13 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           if (locationID != 0)
             {
               NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: locationID.toString()),
-              await NavbarState.locationheader?.then((value) async => {
+              NavbarState.locationheader?.then((value) => {
                     // NavbarState.locationheader = value,
 
                     if (value.filePath != "") {NavbarState.locationImage = locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())}
                   }),
               NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
-              await NavbarState.locationoffers?.then((value) async => {
+              NavbarState.locationoffers?.then((value) => {
                     // NavbarState.locationheader = value,
                     if (value.locationOffer!.length > 0)
                       {
@@ -123,7 +125,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                     // EasyLoading.dismiss(),
                   })
             },
-          await magazineRepository.magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((data) async {
+          await magazineRepository.magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((data) {
             NavbarState.magazinePublishedGetLastWithLimit = data;
             // dioClient.secureStorage.write(key: "allmagazines", value: data);
 
@@ -143,7 +145,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                   NavbarState.counterES++;
                   break;
               }
-              await DefaultCacheManager()
+              DefaultCacheManager()
                   .getFileFromCache(
                       NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! + "_" + NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! + "_0")
                   .then((value) => {
@@ -209,51 +211,76 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           }
         });
         print("Position lat");
-        // LocationPermission? permission = await Geolocator.checkPermission();
-        // print("Position lat");
-        // if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-        //   NavbarState.currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {
-        //         // throw Exception("Failed to localize")
-        //         emit(NavbarError("Geolocator error"))
-        //       });
-        // }
+        LocationPermission? permission = await Geolocator.checkPermission();
+        print("Position lat");
+        if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+          NavbarState.currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {
+                // throw Exception("Failed to localize")
+                emit(NavbarError("Geolocator error"))
+              });
+        }
 
         print("Position lat");
-        await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-              // print("value!.data!.length! ${value!.data!.length}"),
-              // print("value!.data!.length! }"),
-              if (value!.data!.length > 1)
-                {
-                  add(LocationSelection(locations: value.data!)),
-                  // event.timer?.cancel(),
-                  // await EasyLoading.dismiss(),
-                  print('EasyLoading dismiss 3'),
-                }
-              else if (value?.data!.length == 1)
-                {
-                  appbarlocation = value!.data![0],
-                  print("appbarlocation = Data(),"),
-                  // add(Home(value.data![0])),
-                  //await
-                  GetAllMagazinesCover(int.parse(value.data![0].idLocation!), event).then((valueGetAllMagazinesCover) async => {
-                        // add(Menu()),
-                        add(Home(value.data![0])),
-                        // event.timer?.cancel(),
-                        await EasyLoading.dismiss(),
-                        // emit(GoToHome(currentLocation: appbarlocation!)),
-                        print('EasyLoading dismiss 1'),
-                      }),
-                }
-              else
-                {
-                  await GetAllMagazinesCover(int.parse("0"), null).then((value) async => {
-                        add(Home()),
-                        // event.timer?.cancel(),
-                        await EasyLoading.dismiss(),
-                        print('EasyLoading dismiss 2'),
-                      }),
-                },
+        // if (SplashState.appbarlocation != null) {
+        appbarlocation = event.currentPosition!;
+        print("appbarlocation = Data(),");
+        // add(Home(value.data![0])),
+        //await
+        GetAllMagazinesCover(int.parse(event.currentPosition?.idLocation ?? "0"), event).then((valueGetAllMagazinesCover) async => {
+              // add(Menu()),
+              add(Home(event.currentPosition)),
+              // event.timer?.cancel(),
+              await EasyLoading.dismiss(),
+              // emit(GoToHome(currentLocation: appbarlocation!)),
+              print('EasyLoading dismiss 1'),
             });
+        // } else {
+        //   appbarlocation = Data();
+        //   GetAllMagazinesCover(0, event).then((valueGetAllMagazinesCover) async => {
+        //         // add(Menu()),
+        //         add(Home(appbarlocation)),
+        //         // event.timer?.cancel(),
+        //         await EasyLoading.dismiss(),
+        //         // emit(GoToHome(currentLocation: appbarlocation!)),
+        //         print('EasyLoading dismiss 1'),
+        //       });
+        // }
+        // if (event.currentPosition != null) {}
+        // await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
+        //       // print("value!.data!.length! ${value!.data!.length}"),
+        //       // print("value!.data!.length! }"),
+        //       if (value!.data!.length > 1)
+        //         {
+        //           add(LocationSelection(locations: value.data!)),
+        //           // event.timer?.cancel(),
+        //           // await EasyLoading.dismiss(),
+        //           print('EasyLoading dismiss 3'),
+        //         }
+        //       else if (value?.data!.length == 1)
+        //         {
+        //           appbarlocation = value!.data![0],
+        //           print("appbarlocation = Data(),"),
+        //           // add(Home(value.data![0])),
+        //           //await
+        //           GetAllMagazinesCover(int.parse(value.data![0].idLocation!), event).then((valueGetAllMagazinesCover) async => {
+        //                 // add(Menu()),
+        //                 add(Home(value.data![0])),
+        //                 // event.timer?.cancel(),
+        //                 await EasyLoading.dismiss(),
+        //                 // emit(GoToHome(currentLocation: appbarlocation!)),
+        //                 print('EasyLoading dismiss 1'),
+        //               }),
+        //         }
+        //       else
+        //         {
+        //           await GetAllMagazinesCover(int.parse("0"), null).then((value) async => {
+        //                 add(Home()),
+        //                 // event.timer?.cancel(),
+        //                 await EasyLoading.dismiss(),
+        //                 print('EasyLoading dismiss 2'),
+        //               }),
+        //         },
+        //     });
       } catch (e) {
         // statechanged = false;
         emit(NavbarError(e.toString()));
@@ -324,32 +351,32 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       }
     });
 
-    on<LocationSelection>((event, emit) async {
-      // print("emit(GoToLocationSelection(null, null, locationResponse)); ${event.location?.idLocation},");
-      // statechanged = true;
-      // if (event.location?.idLocation != null) {
-      //   event.timer?.cancel();
-      //   await EasyLoading.show(
-      //     status: 'loading...',
-      //     maskType: EasyLoadingMaskType.black,
-      //   );
-      //   appbarlocation = event.location!;
-      //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
-      //         add(Home(event.location!)),
-      //         event.timer?.cancel(),
-      //         await EasyLoading.dismiss(),
-      //       });
-      // } else {
-      try {
-        await EasyLoading.dismiss();
-        emit(GoToLocationSelection(event.locations));
-        // }
-        statechanged = false;
-      } on Exception catch (e) {
-        emit(NavbarError(e.toString()));
-        print(e);
-      }
-    });
+    // on<LocationSelection>((event, emit) async {
+    //   // print("emit(GoToLocationSelection(null, null, locationResponse)); ${event.location?.idLocation},");
+    //   // statechanged = true;
+    //   // if (event.location?.idLocation != null) {
+    //   //   event.timer?.cancel();
+    //   //   await EasyLoading.show(
+    //   //     status: 'loading...',
+    //   //     maskType: EasyLoadingMaskType.black,
+    //   //   );
+    //   //   appbarlocation = event.location!;
+    //   //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
+    //   //         add(Home(event.location!)),
+    //   //         event.timer?.cancel(),
+    //   //         await EasyLoading.dismiss(),
+    //   //       });
+    //   // } else {
+    //   try {
+    //     await EasyLoading.dismiss();
+    //     emit(GoToLocationSelection(event.locations));
+    //     // }
+    //     statechanged = false;
+    //   } on Exception catch (e) {
+    //     emit(NavbarError(e.toString()));
+    //     print(e);
+    //   }
+    // });
 
     on<LocationSelected>((event, emit) async {
       try {
@@ -374,51 +401,69 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     });
   }
 
-  Future<void> checkLocation(Timer? timer) async {
+  Future<void> checkLocation() async {
     statechanged = true;
     // await EasyLoading.show(
     //   status: 'loading...',
     //   maskType: EasyLoadingMaskType.black,
     // );
-    print("bloc LocationRefresh");
+    bool updateLocation = true;
+    print("bloc LocationRefresh ${appbarlocation != Data()}");
     await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-          print("bloc LocationRefresh ${appbarlocation!.idLocation}"),
+          // print("bloc LocationRefresh ${appbarlocation!.idLocation}"),
           // print("bloc LocationRefresh ${appbarlocation.idLocation} ${value!.data!}"),
-
-          if (appbarlocation!.idLocation == null)
+          updateLocation = value!.data!.length == 0 ? false : true,
+          for (int i = 0; i < value!.data!.length; i++)
             {
-              if (value!.data!.length > 0) {add(Initialize123())}
-            }
-          else
-            {
-              // nearbyLocationIDs = [],
-              // for (int i = 0; i < value!.data!.length; i++) {},
-              if (timer?.isActive == true || value!.data!.length == 0)
+              if (appbarlocation!.idLocation == value.data![i].idLocation)
                 {
-                  add(Initialize123()),
-                },
-              for (int i = 0; i < value!.data!.length; i++)
-                {
-                  if (appbarlocation!.idLocation == value.data![i].idLocation)
-                    {
-                      await EasyLoading.dismiss(),
-                    }
-                },
-              // if (value!.data!.length == 0)
-              //   {
-              //     add(Initialize123(event.timer)),
-              //   },
-
-              // if (value!.data!.contains("appbarlocation") == false)
-              //   {
-              //     add(Initialize123(event.timer)),
-              //   }
-              // else
-              //   {
-              //     // event.timer?.cancel(),
-              //     // await EasyLoading.dismiss(),
-              //   }
+                  updateLocation = false,
+                  await EasyLoading.dismiss(),
+                }
             },
+          if (updateLocation == true)
+            {
+              add(Initialize123(currentPosition: value!.data![0])),
+            },
+          // else {add(Initialize123())},
+          // if (appbarlocation!.idLocation == null)
+          //   {
+          //     if (value!.data!.length > 0) {add(Initialize123())}
+          //   }
+          // else
+          //   {
+          //     // nearbyLocationIDs = [],
+          //     // for (int i = 0; i < value!.data!.length; i++) {},
+          //     if (
+          //     // timer?.isActive == true ||
+          //     value!.data!.length == 0)
+          //       {
+          //         add(Initialize123()),
+          //       },
+          //     for (int i = 0; i < value!.data!.length; i++)
+          //       {
+          //         if (appbarlocation!.idLocation == value.data![i].idLocation)
+          //           {
+          //             await EasyLoading.dismiss(),
+          //
+          //           }
+          //       },
+
+          // if (value!.data!.length == 0)
+          //   {
+          //     add(Initialize123(event.timer)),
+          //   },
+
+          // if (value!.data!.contains("appbarlocation") == false)
+          //   {
+          //     add(Initialize123(event.timer)),
+          //   }
+          // else
+          //   {
+          //     // event.timer?.cancel(),
+          //     // await EasyLoading.dismiss(),
+          //   }
+          // },
           // {add(Initialize123(event.timer))},
           statechanged = false,
           // timer?.cancel(),

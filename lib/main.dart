@@ -121,7 +121,8 @@ class MyApp extends StatelessWidget {
               authRepository: RepositoryProvider.of<AuthRepository>(context),
             ),
           ),
-          BlocProvider<SplashBloc>(create: (context) => SplashBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
+          BlocProvider<SplashBloc>(
+              create: (context) => SplashBloc(authRepository: RepositoryProvider.of<AuthRepository>(context), locationRepository: RepositoryProvider.of<LocationRepository>(context))),
           BlocProvider<NavbarBloc>(
               create: (context) => NavbarBloc(
                   magazineRepository: RepositoryProvider.of<MagazineRepository>(context),

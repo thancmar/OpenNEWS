@@ -21,7 +21,7 @@ class CategoryPage extends StatefulWidget {
   State<CategoryPage> createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClientMixin<CategoryPage> {
+class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<CategoryPage> {
   @override
   bool get wantKeepAlive => true;
 
@@ -61,16 +61,20 @@ class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClie
               child: GestureDetector(
                 behavior: HitTestBehavior.deferToChild,
                 onTap: () {
-                  Navigator.pop(context);
-                  NavigatorObserver();
                   BlocProvider.of<SearchBloc>(context).add(OpenSearch());
+                  Navigator.pop(context, true);
+                  // NavigatorObserver();
+                  // BlocProvider.of<SearchBloc>(context).add(OpenSearch());
                 },
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(30, 0, 00, 0),
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 30,
+                  child: Hero(
+                    tag: 'backbutton',
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),

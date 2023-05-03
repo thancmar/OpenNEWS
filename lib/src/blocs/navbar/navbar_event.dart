@@ -6,7 +6,8 @@ abstract class NavbarEvent extends Equatable {
 }
 
 class Initialize123 extends NavbarEvent {
-  Initialize123();
+  final Data? currentPosition;
+  Initialize123({required this.currentPosition});
   List<Object> get props => [];
 }
 

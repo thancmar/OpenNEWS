@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
@@ -16,7 +17,10 @@ import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 
 import '../../models/hotspots_model.dart';
+import '../../models/location_model.dart';
+import '../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../resources/dioClient.dart';
+import '../../resources/location_repository.dart';
 
 part 'splash_event.dart';
 part 'splash_state.dart';
@@ -24,9 +28,10 @@ part 'splash_state.dart';
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final getIt = GetIt.instance;
   final AuthRepository authRepository;
+  final LocationRepository locationRepository;
   ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
 
-  SplashBloc({required this.authRepository}) : super(Initial()) {
+  SplashBloc({required this.authRepository, required this.locationRepository}) : super(Initial()) {
     // on<NavigateToHomeEvent>((event, emit) async {
     //   emit(Loading());
     // });
@@ -90,13 +95,68 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       }
       print("splash permission");
       print(permission);
-      if (emailExists != null && existingpwd != null) {
-        emit(SkipLogin(emailExists, existingpwd));
-        return;
-      }
 
-      emit(Loaded());
+      Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {emit(SplashError())});
+
+      await locationRepository.checklocation(null, currentPosition.latitude, currentPosition.longitude).then((value) async => {
+            if (value!.data!.length > 1)
+              {
+                // SplashState.appbarlocation = value.data![1],
+                add(LocationSelection(locations: value.data!)),
+                // await locationRepository.checklocation(value!.data![0].idLocation!, currentPosition?.latitude, currentPosition?.longitude).then((value) async => {})
+              }
+            else if (value!.data!.length == 1)
+              {
+                print("debug"),
+                print(value.data![0].nameApp),
+                SplashState.appbarlocation = value.data![0],
+                emit(Loaded(currentLocation: value.data![0]))
+                // await locationRepository.checklocation(value!.data![0] .toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
+              }
+            else
+              {SplashState.appbarlocation = Data(), emit(Loaded(currentLocation: Data()))},
+            // if (emailExists != null && existingpwd != null)
+            //   {
+            //     emit(SkipLogin(emailExists, existingpwd, value!.data![0])),
+            //     // return
+            //   }
+            // else
+            //   {SplashState.appbarlocation = Data(), emit(Loaded(currentLocation: Data()))}
+          });
+
+      // if (emailExists != null && existingpwd != null) {
+      //   emit(SkipLogin(emailExists, existingpwd));
+      //   return;
+      // }
+      // emit(Loaded(currentLocation: Data()));
+      // emit(Loaded());
       // emit(Loaded(await Geolocator.getCurrentPosition())); // In this state we can load the HOME PAGE
+    });
+    on<LocationSelection>((event, emit) async {
+      // print("emit(GoToLocationSelection(null, null, locationResponse)); ${event.location?.idLocation},");
+      // statechanged = true;
+      // if (event.location?.idLocation != null) {
+      //   event.timer?.cancel();
+      //   await EasyLoading.show(
+      //     status: 'loading...',
+      //     maskType: EasyLoadingMaskType.black,
+      //   );
+      //   appbarlocation = event.location!;
+      //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
+      //         add(Home(event.location!)),
+      //         event.timer?.cancel(),
+      //         await EasyLoading.dismiss(),
+      //       });
+      // } else {
+      try {
+        await EasyLoading.dismiss();
+        emit(GoToLocationSelection(event.locations));
+        // }
+        // statechanged = false;
+      } on Exception catch (e) {
+        emit(SplashError());
+        print(e);
+      }
     });
   }
 }
