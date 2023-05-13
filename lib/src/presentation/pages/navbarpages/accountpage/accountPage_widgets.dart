@@ -40,16 +40,32 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   // splashColor: Colors.red,
                   // focusColor: Colors.green,
                   onTap: () => {
-                    Navigator.of(context).push(PageRouteBuilder(
-                      // transitionDuration:
-                      // Duration(seconds: 2),
-
-                      pageBuilder: (_, __, ___) {
-                        // return StartSearch();
-
-                        return MyProfile();
-                      },
-                    ))
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => MyProfile(),
+                          // transitionDuration: Duration(milliseconds: 500),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(0.0, 1.0);
+                            const end = Offset.zero;
+                            const curve = Curves.decelerate;
+                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            final offsetAnimation = animation.drive(tween);
+                            return SlideTransition(position: animation.drive(tween), child: child);
+                          }
+                          ),
+                    ),
+                    // Navigator.of(context).push(PageRouteBuilder(
+                    //   // transitionDuration:
+                    //   // Duration(seconds: 2),
+                    //
+                    //   pageBuilder: (_, __, ___) {
+                    //     // return StartSearch();
+                    //
+                    //     return MyProfile();
+                    //   },
+                    // )
+                    // )
                   },
                   child: AnimatedSize(
                     // vsync: this,

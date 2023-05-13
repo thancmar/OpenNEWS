@@ -119,7 +119,7 @@ class _OfferPageState extends State<OfferPage> {
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(tag: 'bg', child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)),
+          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBody: true,

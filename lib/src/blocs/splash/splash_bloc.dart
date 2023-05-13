@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -32,36 +33,35 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
 
   SplashBloc({required this.authRepository, required this.locationRepository}) : super(Initial()) {
-    // on<NavigateToHomeEvent>((event, emit) async {
-    //   emit(Loading());
-    // });
-
     on<NavigateToHomeEvent>((event, emit) async {
+      try{
       getIt.registerSingleton<ApiClient>(ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage()), signalsReady: true);
-      // await dioClient.secureStorage.deleteAll;
       String? emailExists = await dioClient.secureStorage.read(key: "email");
       String? existingpwd = await dioClient.secureStorage.read(key: "pwd");
-
-      //emit(LoadingSplash());
-
-      // late GoogleMapController mapController;
-      // await Future.delayed(Duration(seconds: 2)); // This is to simulate that above checking process
+      // await dioClient.secureStorage.deleteAll();
       bool serviceEnabled;
-      // await Geolocator.();
+      LocationPermission permission;
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
       if (!serviceEnabled) {
         // Location services are not enabled don't continue
         // accessing the position and request users of the
         // App to enable the location services.
         // return Future.error('Location services are disabled.');
         // emit(Loaded());
+
+        permission = await Geolocator.requestPermission();
+        emit(SplashError("Location services are not enabled"));
+        // if (!await Geolocator.isLocationServiceEnabled()) {
+        //   // If the user still didn't enable the location service, handle this case.
+        //   // You can show a dialog or a snackbar to inform the user that the app requires location services.
+        // };
+      }else{
+         permission = await Geolocator.checkPermission();
+
       }
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
           // Permissions are denied, next time you could try
           // requesting permissions again (this is also where
           // Android's shouldShowRequestPermissionRationale
@@ -69,94 +69,100 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           // your App should show an explanatory UI now.
           // return Future.error('Location permissions are denied');
           // emit(Loaded());
-        }
-      }
-      if (permission == LocationPermission.denied) {
-        print("splash permission");
-
-        await Geolocator.requestPermission();
+        // emit(SplashError("Location services are not enabled"));
         permission = await Geolocator.requestPermission();
-        // openAppSettings();
-        // return Future.error(Exception('Location permissions are denied.'));
-        // Permissions are denied forever, handle appropriately.
-        // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-        // emit(Loaded());
-      }
-      if (permission == LocationPermission.deniedForever) {
-        print("splash permission");
-        await Geolocator.requestPermission();
-        // throw Exception("sdcds");
-        // openAppSettings();
-        permission = await Geolocator.requestPermission();
-        // return Future.error(Exception('Location permissions are denied.'));
-        // Permissions are denied forever, handle appropriately.
-        // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-        // emit(Loaded());
-      }
-      print("splash permission");
-      print(permission);
-
-      Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium).catchError(() => {emit(SplashError())});
-
-      await locationRepository.checklocation(null, currentPosition.latitude, currentPosition.longitude).then((value) async => {
-            if (value!.data!.length > 1)
-              {
-                // SplashState.appbarlocation = value.data![1],
-                add(LocationSelection(locations: value.data!)),
-                // await locationRepository.checklocation(value!.data![0].idLocation!, currentPosition?.latitude, currentPosition?.longitude).then((value) async => {})
-              }
-            else if (value!.data!.length == 1)
-              {
-                print("debug"),
-                print(value.data![0].nameApp),
-                SplashState.appbarlocation = value.data![0],
-                emit(Loaded(currentLocation: value.data![0]))
-                // await locationRepository.checklocation(value!.data![0] .toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-              }
-            else
-              {SplashState.appbarlocation = Data(), emit(Loaded(currentLocation: Data()))},
-            // if (emailExists != null && existingpwd != null)
+          await locationRepository.checklocation(null,null, null).then((value) async => {
+            // if (value!.data!.length > 1)
             //   {
-            //     emit(SkipLogin(emailExists, existingpwd, value!.data![0])),
-            //     // return
+            //     // SplashState.appbarlocation = value.data![1],
+            //     add(LocationSelection(locations: value.data!)),
+            //     // await locationRepository.checklocation(value!.data![0].idLocation!, currentPosition?.latitude, currentPosition?.longitude).then((value) async => {})
             //   }
-            // else
-            //   {SplashState.appbarlocation = Data(), emit(Loaded(currentLocation: Data()))}
-          });
+            // else if (value!.data!.length == 1)
+            //   {
+                print("debug"),
+                // print(value.data![0].nameApp),
+                // SplashState.appbarlocation = value.data![0],
+                if(emailExists!=null &&existingpwd!=null){
+                  emit(SkipLogin(emailExists, existingpwd))
+                }else{
+                  emit(Loaded())
+                }
 
-      // if (emailExists != null && existingpwd != null) {
-      //   emit(SkipLogin(emailExists, existingpwd));
-      //   return;
-      // }
-      // emit(Loaded(currentLocation: Data()));
-      // emit(Loaded());
-      // emit(Loaded(await Geolocator.getCurrentPosition())); // In this state we can load the HOME PAGE
-    });
-    on<LocationSelection>((event, emit) async {
-      // print("emit(GoToLocationSelection(null, null, locationResponse)); ${event.location?.idLocation},");
-      // statechanged = true;
-      // if (event.location?.idLocation != null) {
-      //   event.timer?.cancel();
-      //   await EasyLoading.show(
-      //     status: 'loading...',
-      //     maskType: EasyLoadingMaskType.black,
-      //   );
-      //   appbarlocation = event.location!;
-      //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
-      //         add(Home(event.location!)),
-      //         event.timer?.cancel(),
-      //         await EasyLoading.dismiss(),
-      //       });
-      // } else {
-      try {
-        await EasyLoading.dismiss();
-        emit(GoToLocationSelection(event.locations));
+                // await locationRepository.checklocation(value!.data![0] .toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
+          //     }
+          //   else {
+          // SplashState.appbarlocation = Data(),
+          // if(emailExists!=null && existingpwd!=null){
+          // emit(SkipLogin(emailExists, existingpwd, Data()))
+          // } else{
+          // emit(Loaded(currentLocation: Data()))
+          // }
+          //
+          //   }
+          });
+        }else{
+
+
+        Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+        await locationRepository.checklocation(null, currentPosition.latitude, currentPosition.longitude).then((value) async => {
+          // if (value!.data!.length > 1)
+          //   {
+          //     // SplashState.appbarlocation = value.data![1],
+          //     add(LocationSelection(locations: value.data!)),
+          //     // await locationRepository.checklocation(value!.data![0].idLocation!, currentPosition?.latitude, currentPosition?.longitude).then((value) async => {})
+          //   }
+          // else if (value!.data!.length == 1)
+          //   {
+              print("debug"),
+              // print(value.data![0].nameApp),
+          if (value!.data!.length != 0)
+            SplashState.appbarlocation=value?.data?[0],
+            SplashState.allNearbyLocations=value.data!,
+          // if(value!.data!.length == 1)
+          //   SplashState.appbarlocation=value!.data![0],
+
+
+
+
+          //     SplashState.appbarlocation = value.data[0],
+              // emit(Loaded(currentLocation: value.data![0]))
+              // if(emailExists!=null && existingpwd!=null){
+              //   emit(SkipLogin(emailExists, existingpwd))
+              // } else{
+                emit(Loaded())
+              // }
+              // await locationRepository.checklocation(value!.data![0] .toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
+        //     }
+        //   else
+        // {
+        // SplashState.appbarlocation = Data(),
+        // // emit(Loaded(currentLocation: Data())
+        // if(emailExists!=null && existingpwd!=null){
+        // emit(SkipLogin(emailExists, existingpwd, Data()))
+        // } else{
+        // emit(Loaded(currentLocation: Data()))
         // }
-        // statechanged = false;
-      } on Exception catch (e) {
-        emit(SplashError());
-        print(e);
+        // },
+
+        }
+        );
       }
-    });
+    } catch (error) {
+      emit(SplashError(error.toString()));
+    }
+      }
+
+      );
+    // on<LocationSelection>((event, emit) async {
+    //   try {
+    //     await EasyLoading.dismiss();
+    //     emit(GoToLocationSelection(event.locations));
+    //   } on Exception catch (e) {
+    //     emit(SplashError(e.toString()));
+    //     print(e);
+    //   }
+    // });
+
   }
 }

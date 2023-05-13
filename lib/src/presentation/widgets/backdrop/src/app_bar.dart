@@ -196,11 +196,11 @@ class BackdropAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       // ignore: deprecated_member_use, deprecated_member_use_from_same_package
-      brightness: brightness,
+      // brightness: brightness,
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
       // ignore: deprecated_member_use, deprecated_member_use_from_same_package
-      textTheme: textTheme,
+      // textTheme: textTheme,
       primary: primary,
       centerTitle: centerTitle,
       excludeHeaderSemantics: excludeHeaderSemantics,

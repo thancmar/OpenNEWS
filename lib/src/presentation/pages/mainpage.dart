@@ -15,12 +15,15 @@ import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/menupa
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/searchpage.dart';
 
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/accountpage.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/navbar/body_clipper.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/navbar/custom_navbar.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/sliding_AppBar.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/navbar/navbar_painter_clipper.dart';
 
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/splash/splash_bloc.dart';
 import '../../models/locationGetHeader_model.dart';
 import '../widgets/backdrop/backdrop.dart';
 
@@ -42,6 +45,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   ValueNotifier<bool> showLocationPage = ValueNotifier<bool>(true);
   GlobalKey _keyheight = GlobalKey();
   List<String> _masForUsing = [];
+  int currentIndex=0;
   late List<Widget> _pages = [
     HomePage(),
     MenuPage(),
@@ -75,33 +79,35 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   void onClicked(int index) {
     print("mainpage onclicked");
-    if (showSearchPage == false) {
+    // if (showSearchPage == false) {
       setState(() {
+        currentIndex=index;
         _pageController.animateToPage(index, duration: Duration(milliseconds: 400), curve: Curves.ease);
       });
-    }
+    // }
     print(index);
-    if (index == 0) {
-      print("home page bloc add");
-      BlocProvider.of<NavbarBloc>(context).add(
-        Home(),
-      );
-    } else if (index == 1) {
-      print("menu page bloc add");
-      BlocProvider.of<NavbarBloc>(context).add(
-        Menu(),
-      );
-    } else if (index == 2) {
-      print("Mappage bloc add");
-      BlocProvider.of<NavbarBloc>(context).add(
-        Map(),
-      );
-    } else if (index == 3) {
-      print("Account page bloc add");
-      BlocProvider.of<NavbarBloc>(context).add(
-        AccountEvent(),
-      );
-    }
+
+    // if (index == 0) {
+    //   print("home page bloc add");
+    //   BlocProvider.of<NavbarBloc>(context).add(
+    //     Home(),
+    //   );
+    // } else if (index == 1) {
+    //   print("menu page bloc add");
+    //   BlocProvider.of<NavbarBloc>(context).add(
+    //     Menu(),
+    //   );
+    // } else if (index == 2) {
+    //   print("Mappage bloc add");
+    //   BlocProvider.of<NavbarBloc>(context).add(
+    //     Map(),
+    //   );
+    // } else if (index == 3) {
+    //   print("Account page bloc add");
+    //   BlocProvider.of<NavbarBloc>(context).add(
+    //     AccountEvent(),
+    //   );
+    // }
   }
 
   @override
@@ -109,21 +115,26 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.build(context);
     Size size = MediaQuery.of(context).size;
     return BlocBuilder<NavbarBloc, NavbarState>(builder: (context, state) {
-      int currentIndex = state is GoToHome //|| state is HomeLoaded
-          ? 0
-          : state is GoToMenu
-              ? 1
-              : state is GoToMap
-                  ? 2
-                  : state is GoToAccount
-                      ? 3
-                      // : state is GoToSearch
-                      // : state is GoToLocationSelection
-                      //     ? 4
-                      //     ? 4
-                      : 0;
-      print("Mainpage blocbuilder $state");
-
+      // int currentIndex = state is GoToHome //|| state is HomeLoaded
+      //     ? 0
+      //     : state is GoToMenu
+      //         ? 1
+      //         : state is GoToMap
+      //             ? 2
+      //             : state is GoToAccount
+      //                 ? 3
+      //                 // : state is GoToSearch
+      //                 // : state is GoToLocationSelection
+      //                 //     ? 4
+      //                 //     ? 4
+      //                 : 0;
+      // print("Mainpage blocbuilder $state");
+      if(state is NavbarError){
+        BlocProvider.of<AuthBloc>(context).emit(AuthError("error"));
+        return StartPage(
+          title: "notitle",
+        );
+      }
       return Stack(
         children: <Widget>[
           // new SvgPicture.asset(
@@ -153,60 +164,66 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 //     )
                 //   ]);
                 // },
-                child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)),
+                child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
           ),
-          state is! Loading
-              ? Center(
+          state is GoToLocationSelection
+          ?
+          Center(
+            child: CupertinoActionSheet(
+                title: Text(
+                  'You are near these Locations',
+                  style: TextStyle(fontSize: 20, color: Colors.black),
+                ),
+                message: Text(
+                  'Please select one',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+                actions: <Widget>[
+                  ...List.generate(
+                    state.locations_GoToLocationSelection!.length,
+                        (index) => GestureDetector(
+                      // onTap: () => setState(() => _selectedIndex = index),
+                      child: CupertinoActionSheetAction(
+                        child: Text(
+                          state.locations_GoToLocationSelection![index].nameApp!,
+                          // "$index",
+                          style: TextStyle(fontSize: 20, color: Colors.black),
+                        ),
+                        onPressed: () {
+                          print(state.locations_GoToLocationSelection![index].nameApp!);
+                          // Navigator.of(context, rootNavigator: true).pop();
+                          // currentIndex = 0;
+                          setState(() {
+                            BlocProvider.of<NavbarBloc>(context).add(LocationSelected(location: state.locations_GoToLocationSelection![index]));
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+
+                  // CupertinoActionSheetAction(
+                  //   child: Text(state.location!.data![0].nameApp!),
+                  //   onPressed: () {
+                  //     print(state.location);
+                  //     // Navigator.of(context, rootNavigator: true).pop();
+                  //
+                  //     setState(() {
+                  //       BlocProvider.of<NavbarBloc>(context).add(
+                  //         Home(),
+                  //       );
+                  //       currentIndex = 0;
+                  //     });
+                  //   },
+                  // )
+                ]),
+          ):Container(),
+          state is NavbarLoaded
+              ?
+
+          Center(
                   child:
-                      // state is GoToLocationSelection
-                      //     ? CupertinoActionSheet(
-                      //         title: Text(
-                      //           'You are near these Locations',
-                      //           style: TextStyle(fontSize: 20, color: Colors.black),
-                      //         ),
-                      //         message: Text(
-                      //           'Please select one',
-                      //           style: TextStyle(fontSize: 16, color: Colors.black),
-                      //         ),
-                      //         actions: <Widget>[
-                      //             ...List.generate(
-                      //               state.locations_GoToLocationSelection!.length,
-                      //               (index) => GestureDetector(
-                      //                 // onTap: () => setState(() => _selectedIndex = index),
-                      //                 child: CupertinoActionSheetAction(
-                      //                   child: Text(
-                      //                     state.locations_GoToLocationSelection![index].nameApp!,
-                      //                     // "$index",
-                      //                     style: TextStyle(fontSize: 20, color: Colors.black),
-                      //                   ),
-                      //                   onPressed: () {
-                      //                     print(state.locations_GoToLocationSelection![index].nameApp!);
-                      //                     // Navigator.of(context, rootNavigator: true).pop();
-                      //                     // currentIndex = 0;
-                      //                     setState(() {
-                      //                       BlocProvider.of<NavbarBloc>(context).add(LocationSelected(location: state.locations_GoToLocationSelection![index]));
-                      //                     });
-                      //                   },
-                      //                 ),
-                      //               ),
-                      //             ),
-                      //
-                      //             // CupertinoActionSheetAction(
-                      //             //   child: Text(state.location!.data![0].nameApp!),
-                      //             //   onPressed: () {
-                      //             //     print(state.location);
-                      //             //     // Navigator.of(context, rootNavigator: true).pop();
-                      //             //
-                      //             //     setState(() {
-                      //             //       BlocProvider.of<NavbarBloc>(context).add(
-                      //             //         Home(),
-                      //             //       );
-                      //             //       currentIndex = 0;
-                      //             //     });
-                      //             //   },
-                      //             // )
-                      //           ])
-                      //     :
+
+
                       // state is GoToMapOffer
                       //         ? MapOffer()
 
@@ -309,30 +326,42 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                         //     ? "sdf"
                                                         //     : "sdf",
                                                         // "Weser kurier",
-                                                        state is GoToHome
-                                                            ? state.currentLocation.nameApp ?? "No location"
+                                                  SplashState.appbarlocation?.nameApp ?? "No location",
+                                                        // state is GoToHome
+                                                        //     ? state.currentLocation.nameApp ?? "No location"
                                                             // : state is GoToMenu
                                                             //     ? NavbarState.currentLocation.data![0].nameApp ?? "No location"
-                                                            : "${state}",
+                                                            // : "${state}",
 // state.magazinePublishedGetLastWithLimit
 //     .response!.first.name!,
 //                                         overflow: TextOverflow.e,
 //                                         softWrap: true,
 //                                         maxLines: 1,
-                                                        style: TextStyle(fontFamily: 'Raleway', fontSize: size.width * 0.07, color: Colors.white, fontWeight: FontWeight.bold),
+                                                        style: TextStyle(
+                                                            fontSize: size.aspectRatio * 65,
+                                                            color: Colors.white,
+                                                            // fontWeight: FontWeight.bold
+                                                        ),
                                                         textAlign: TextAlign.center,
 // textAlign: TextAlign.left,
                                                       ),
                                                     ),
                                                     Row(
+                                                      // mainAxisSize: MainAxisSize.min,
                                                       children: [
-                                                        MarqueeWidget(
-                                                          child: Text(
-                                                            "Infos zu deiner Location ",
-                                                            // overflow: TextOverflow.fade,
-                                                            // softWrap: true,
-                                                            style: TextStyle(fontSize: size.width * 0.035, color: Colors.white, fontWeight: FontWeight.w200),
+                                                        Flexible(
+                                                          child: MarqueeWidget(
+                                                            child: Text(
+                                                              "Infos zu deiner Location ",
+                                                              // overflow: TextOverflow.fade,
+                                                              // softWrap: true,
+                                                              style: TextStyle
+                                                                (fontSize: size.aspectRatio * 25,
+                                                                  color: Colors.white
+                                                                  , fontWeight: FontWeight.w200),
+                                                              // textAlign: TextAlign.center,
 // textAlign: TextAlign.right,
+                                                            ),
                                                           ),
                                                         ),
                                                         ValueListenableBuilder(
@@ -351,7 +380,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                 child: Icon(
                                                                   counterValue ? Icons.arrow_upward : Icons.arrow_downward,
                                                                   color: Colors.white,
-                                                                  size: size.height * 0.025,
+                                                                  size: size.aspectRatio * 30,
                                                                 ),
                                                               );
                                                             }),
@@ -366,12 +395,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                       );
                                     },
                                   )),
-                                  // Builder(builder: (BuildContext context) {
-                                  //   return SearchCloseButton(context: context, callback: this.callback);
-                                  // }),
-                                  // ])
-                                  // ),
-                                  // Spacer(),
+
                                   Container(
                                     color: Colors.transparent,
                                     child: ValueListenableBuilder(
@@ -459,14 +483,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   onBackLayerRevealed: () => showLocationPage.value = false,
                   onBackLayerConcealed: () => showLocationPage.value = true,
 
-                  backLayerScrim: Colors.red,
+                  // backLayerScrim: Colors.red,
                   // extendBody: true,
                   // subHeaderAlwaysActive: true,
                   frontLayer: Stack(
                     children: [
                       Positioned.fill(
                         //Remove hero
-                        child: Hero(tag: 'bg1', child: Image.asset("assets/images/Background.png", fit: BoxFit.cover)),
+                        child: Hero(tag: 'bg1', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
                       ),
                       NavbarState.locationheader != null
                           ? SafeArea(
@@ -476,19 +500,19 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                   FutureBuilder<LocationGetHeader>(
                                       future: NavbarState.locationheader,
                                       builder: (context, snapshotInfo) {
-                                        if (snapshotInfo.connectionState != ConnectionState.done) {
-                                          return SpinKitFadingCircle(
-                                            color: Colors.red,
-                                            size: 50.0,
-                                          );
-                                          ;
-                                        }
-                                        if (snapshotInfo.hasError) {
-                                          return SpinKitFadingCircle(
-                                            color: Colors.red,
-                                            size: 50.0,
-                                          );
-                                        }
+                                        // if (snapshotInfo.connectionState != ConnectionState.done) {
+                                        //   return SpinKitFadingCircle(
+                                        //     color: Colors.red,
+                                        //     size: 50.0,
+                                        //   );
+                                        //   ;
+                                        // }
+                                        // if (snapshotInfo.hasError) {
+                                        //   return SpinKitFadingCircle(
+                                        //     color: Colors.red,
+                                        //     size: 50.0,
+                                        //   );
+                                        // }
                                         if (snapshotInfo.hasData) {
                                           LineSplitter ls = new LineSplitter();
                                           _masForUsing = ls.convert(snapshotInfo.data!.text!);
@@ -504,17 +528,17 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
                                                     // "datadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadata",
                                                     style: TextStyle(
-                                                        fontSize: a == 0 ? size.width * 0.065 : size.width * 0.05, fontWeight: a == 0 ? FontWeight.w900 : FontWeight.w500, color: Colors.white),
+                                                        fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40, fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300, color: Colors.white),
                                                   ),
                                                 ),
                                             ],
                                           );
                                         }
-
-                                        return SpinKitFadingCircle(
-                                          color: Colors.red,
-                                          size: 50.0,
-                                        );
+return Container();
+                                        // return SpinKitFadingCircle(
+                                        //   color: Colors.red,
+                                        //   size: 50.0,
+                                        // );
                                       }),
                                   NavbarState.locationoffersImages != null
                                       ? Expanded(

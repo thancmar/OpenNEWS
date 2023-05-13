@@ -15,12 +15,13 @@ class ReaderOptionsPage extends StatefulWidget {
   final ReaderBloc bloc;
 
   final Reader reader;
+  final TransformationController controller;
   // Function callback;
   // bool isOnPageTurning;
   // print("dsfs");
   // int current = 0;
   ValueNotifier<int> currentPage;
-  ReaderOptionsPage({required this.reader, required this.bloc, required this.currentPage}) : super();
+  ReaderOptionsPage({required this.reader, required this.bloc, required this.currentPage,required this.controller}) : super();
   @override
   State<ReaderOptionsPage> createState() => _ReaderOptionsPageState();
 }
@@ -57,6 +58,10 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             // Navigator.of(context).pop(),
             // dispose(),
             // Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close(),
+            // setState(() {
+            //   pageScale = _controller.value.getMaxScaleOnAxis();
+            // }),
+            widget.controller.value = Matrix4.identity(),//To resize the loading icon
             widget.bloc.add(CloseReader()),
             // BlocProvider.of<ReaderBloc>(context).add(CloseReader()),
             // BlocProvider

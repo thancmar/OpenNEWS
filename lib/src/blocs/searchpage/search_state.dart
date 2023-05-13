@@ -2,71 +2,49 @@ part of 'search_bloc.dart';
 
 abstract class SearchState extends Equatable {
   // final List<Future<Uint8List>>? searchResultCovers;
-  final List<Future<Uint8List>>? futureLangFunc;
+  // final List<Future<Uint8List>>? futureLangFunc;
   // List<dynamic>? oldSearchResults = List.empty(growable: true);
-  SearchState(this.futureLangFunc);
+  // SearchState(this.futureLangFunc);
+  SearchState();
 // @override
 // List<Object> get props => [this.navbarItem, this.index];
 }
 
 class LoadingSearchState extends SearchState {
-  LoadingSearchState() : super(null);
+  LoadingSearchState() : super();
 
   @override
   List<Object> get props => [];
 }
 
 class GoToSearchPage extends SearchState {
-  // final MagazinePublishedGetLastWithLimit? magazinePublishedGetLastWithLimit;
-  // // final List<Uint8List> bytes;
-  // final List<Future<Uint8List>>? futureFunc;
-  // final Localization? location;
   final List<dynamic>? searchResults;
+  GoToSearchPage(this.searchResults) : super();
 
-  // GoToHome([this.magazinePublishedGetLastWithLimit, this.location, this.futureFunc]);
-  GoToSearchPage(this.searchResults) : super(null);
   @override
   // TODO: implement props
   List<Object?> get props => [searchResults];
 }
 
 class GoToSearchResults extends SearchState {
-  // final Localization? location;
-  // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
-  // final List<Uint8List> bytes;
-  // final List<Future<Uint8List>>? searchResultCovers;
-  final MagazinePublishedGetAllLastByHotspotId? searchResults;
-  // final Localization? location;
-  GoToSearchResults(this.searchResults) : super(null);
+  final MagazinePublishedGetAllLastByHotspotId searchResults;
+  GoToSearchResults( {required this.searchResults}) : super();
 
   @override
-  List<Object> get props => [];
+  List<MagazinePublishedGetAllLastByHotspotId> get props => [searchResults];
 }
 
 class GoToLanguageResults extends SearchState {
-  // final Localization? location;
-  // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
-  // final List<Uint8List> bytes;
-  // final List<Future<Uint8List>>? futureLangFunc;
   late MagazinePublishedGetAllLastByHotspotId? selectedLanguage;
-
-  // final Localization? location;
-  GoToLanguageResults({required this.selectedLanguage}) : super(null);
+  GoToLanguageResults({required this.selectedLanguage}) : super();
 
   @override
   List<Object> get props => [];
 }
 
 class GoToCategoryPage extends SearchState {
-  // final Localization? location;
-  // final MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetLastWithLimit;
-  // final List<Uint8List> bytes;
-  // final List<Future<Uint8List>>? futureLangFunc;
-  // late List<Response>? itemCount;
   late MagazinePublishedGetAllLastByHotspotId? selectedCategory;
-
-  // final Localization? location;
-  GoToCategoryPage({required this.selectedCategory}) : super(null);
+  GoToCategoryPage({required this.selectedCategory}) : super();
 
   @override
   List<Object> get props => [];
@@ -74,8 +52,8 @@ class GoToCategoryPage extends SearchState {
 
 class SearchError extends SearchState {
   final String error;
+  SearchError(this.error) : super();
 
-  SearchError(this.error) : super(null);
   @override
   List<Object?> get props => [error];
 }

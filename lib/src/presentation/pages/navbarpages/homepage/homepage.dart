@@ -8,6 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/locationOffers_model.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
 import '../../../widgets/marquee.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       builder: (BuildContext context, state) {
         // print("state is home");
         // print("Navbar state is $state");
-        if (state is GoToHome) {
+        // if (state is GoToHome) {
           // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
           // print(state.magazinePublishedGetLastWithLimit!.response![0].idMagazinePublication!);
           //
@@ -440,6 +441,19 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                                         //     ),
                                                         //   ),
                                                         // ),
+                                                        Navigator.push(
+                                                          context,
+                                                          PageRouteBuilder(
+                                                            // transitionDuration:
+                                                            // Duration(seconds: 2),
+                                                            pageBuilder: (_, __, ___) => StartReader(
+                                                              magazine: NavbarState.magazinePublishedGetLastWithLimit!.response![i],
+                                                              heroTag: "",
+
+                                                              // noofpages: 5,
+                                                            ),
+                                                          ),
+                                                        ),
                                                       },
                                                       // child: ClipRRect(
                                                       //   borderRadius: BorderRadius.circular(5.0),
@@ -796,7 +810,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               ],
             ),
           );
-        }
+        // }
         return Container();
       },
     );

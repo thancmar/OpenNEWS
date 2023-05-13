@@ -22,7 +22,7 @@ class _MapOfferState extends State<MapOffer> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/images/Background.png"),
+          image: AssetImage("assets/images/background/Background.png"),
           fit: BoxFit.fill,
         ),
       ),

@@ -35,7 +35,7 @@ class _RegistrationState extends State<Registration> {
     return Stack(children: <Widget>[
       Positioned.fill(
         child: Image.asset(
-          "assets/images/Background.png",
+          "assets/images/background/Background.png",
           fit: BoxFit.fill,
           // allowDrawingOutsideViewBox: true,
         ),

@@ -119,7 +119,7 @@ class _PlayerState extends State<Player> {
           // ),
           DecoratedBox(
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/images/Background.png"), fit: BoxFit.cover),
+              image: DecorationImage(image: AssetImage("assets/images/background/Background.png"), fit: BoxFit.cover),
             ),
             child: Center(
                 child: Scaffold(

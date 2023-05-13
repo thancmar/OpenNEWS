@@ -18,12 +18,12 @@ class SplashScreen extends StatelessWidget {
       children: [
         Positioned.fill(
           child: Image.asset(
-            "assets/images/Background.png",
+            "assets/images/background/Background.png",
             fit: BoxFit.fill,
             // allowDrawingOutsideViewBox: true,
           ),
         ),
-        _buildBody(context)
+        Align(child: _buildBody(context))
       ],
       // body: _buildBody(context),
     );
@@ -48,79 +48,94 @@ class SplashScreen extends StatelessWidget {
           return StartPage(
             title: "notitle",
           );
-        } else if (state is GoToLocationSelection) {
-          // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
-          // BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
-
-          return CupertinoActionSheet(
-              title: Text(
-                'You are near these Locations',
-                style: TextStyle(fontSize: 20, color: Colors.black),
-              ),
-              message: Text(
-                'Please select one',
-                style: TextStyle(fontSize: 16, color: Colors.black),
-              ),
-              actions: <Widget>[
-                ...List.generate(
-                  state.locations_GoToLocationSelection!.length,
-                  (index) => GestureDetector(
-                    // onTap: () => setState(() => _selectedIndex = index),
-                    child: CupertinoActionSheetAction(
-                      child: Text(
-                        state.locations_GoToLocationSelection![index].nameApp!,
-                        // "$index",
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                      ),
-                      onPressed: () {
-                        print(state.locations_GoToLocationSelection![index].nameApp!);
-                        // Navigator.of(context, rootNavigator: true).pop();
-                        // currentIndex = 0;
-                        // setState(() {
-                        //   BlocProvider.of<NavbarBloc>(context).add(LocationSelected(location: state.locations_GoToLocationSelection![index]));
-                        // });
-                        BlocProvider.of<AuthBloc>(context).add(Initialize());
-                        SplashState.appbarlocation = state.locations_GoToLocationSelection![index];
-                        // BlocProvider.of<NavbarBloc>(context).add(Initialize()));
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => StartPage(
-                                    title: "notitle",
-                                  )
-                              // transitionDuration: Duration.zero,
-                              ),
-                        );
-                        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                        //   return StartPage(
-                        //     title: "notitle",
-                        //     currentLocation: state.locations_GoToLocationSelection![index],
-                        //   );
-                        // }));
-                      },
-                    ),
-                  ),
-                ),
-
-                // CupertinoActionSheetAction(
-                //   child: Text(state.location!.data![0].nameApp!),
-                //   onPressed: () {
-                //     print(state.location);
-                //     // Navigator.of(context, rootNavigator: true).pop();
-                //
-                //     setState(() {
-                //       BlocProvider.of<NavbarBloc>(context).add(
-                //         Home(),
-                //       );
-                //       currentIndex = 0;
-                //     });
-                //   },
-                // )
-              ]);
-        } else if (state is Loaded) {
+        }
+        // else if (state is GoToLocationSelection) {
+        //   // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
+        //   // BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
+        //
+        //   return CupertinoActionSheet(
+        //
+        //       title: Text(
+        //         'You are near these Locations',
+        //         style: TextStyle(fontSize: 20, color: Colors.black),
+        //       ),
+        //       message: Text(
+        //         'Please select one',
+        //         style: TextStyle(fontSize: 16, color: Colors.black),
+        //       ),
+        //       actions: <Widget>[
+        //         ...List.generate(
+        //           state.locations_GoToLocationSelection!.length,
+        //           (index) => GestureDetector(
+        //             // onTap: () => setState(() => _selectedIndex = index),
+        //             child: CupertinoActionSheetAction(
+        //               child: Text(
+        //                 state.locations_GoToLocationSelection![index].nameApp!,
+        //                 // "$index",
+        //                 style: TextStyle(fontSize: 20, color: Colors.black),
+        //               ),
+        //               onPressed: () {
+        //                 print(state.locations_GoToLocationSelection![index].nameApp!);
+        //                 // Navigator.of(context, rootNavigator: true).pop();
+        //                 // currentIndex = 0;
+        //                 // setState(() {
+        //                 //   BlocProvider.of<NavbarBloc>(context).add(LocationSelected(location: state.locations_GoToLocationSelection![index]));
+        //                 // });
+        //                 BlocProvider.of<AuthBloc>(context).add(Initialize());
+        //                 SplashState.appbarlocation = state.locations_GoToLocationSelection![index];
+        //                 // BlocProvider.of<NavbarBloc>(context).add(Initialize()));
+        //                 Navigator.pushReplacement(
+        //                   context,
+        //                   MaterialPageRoute(
+        //                       builder: (context) => StartPage(
+        //                             title: "notitle",
+        //                           )
+        //                       // transitionDuration: Duration.zero,
+        //                       ),
+        //                 );
+        //                 // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        //                 //   return StartPage(
+        //                 //     title: "notitle",
+        //                 //     currentLocation: state.locations_GoToLocationSelection![index],
+        //                 //   );
+        //                 // }));
+        //               },
+        //             ),
+        //           ),
+        //         ),
+        //
+        //         // CupertinoActionSheetAction(
+        //         //   child: Text(state.location!.data![0].nameApp!),
+        //         //   onPressed: () {
+        //         //     print(state.location);
+        //         //     // Navigator.of(context, rootNavigator: true).pop();
+        //         //
+        //         //     setState(() {
+        //         //       BlocProvider.of<NavbarBloc>(context).add(
+        //         //         Home(),
+        //         //       );
+        //         //       currentIndex = 0;
+        //         //     });
+        //         //   },
+        //         // )
+        //       ]);
+        // }
+        else if (state is Loaded) {
           print("SplashScreen state is loaded");
           // print(state.position?.latitude);
-          BlocProvider.of<AuthBloc>(context).add(Initialize());
+          // BlocProvider.of<AuthBloc>(context).add(Initialize());
+          return StartPage(
+            title: "notitle",
+          );
+          // Navigator.of(context).push(PageRouteBuilder(
+          //     pageBuilder: (BuildContext context, _, __) => StartPage(
+          //           title: "notitle",
+          //           splashbloc: BlocProvider.of<SplashBloc>(context),
+          //         )));
+        } else if (state is SplashError) {
+          print("SplashScreen state is SplashError");
+          // print(state.position?.latitude);
+          BlocProvider.of<AuthBloc>(context).emit(AuthError(state.error));
           return StartPage(
             title: "notitle",
           );
@@ -136,33 +151,5 @@ class SplashScreen extends StatelessWidget {
         // );
       },
     );
-    // return MultiBlocProvider(
-    //   providers: [
-    //     BlocProvider<SplashBloc>(
-    //       create: (BuildContext context) => SplashBloc(),
-    //     ),
-    //     BlocProvider<NavbarBloc>(
-    //       create: (BuildContext context) => NavbarBloc(magazineRepository: RepositoryProvider<MagazineRepository>(context), locationRepository: RepositoryProvider<LocationRepository>(context)),
-    //     ),
-    //   ],
-    //   child: BlocBuilder<SplashBloc, SplashState>(
-    //     builder: (context, state) {
-    //       if ((state is Initial)) {
-    //         //add lodaing state
-    //         return SplashScreenWidget();
-    //       } else if (state is Loaded) {
-    //         print(state.position.latitude);
-    //         return StartPage(
-    //           title: "notitle",
-    //           splashbloc: BlocProvider.of<SplashBloc>(context),
-    //         );
-    //       }
-    //       return StartPage(
-    //         title: "notitle",
-    //         splashbloc: BlocProvider.of<SplashBloc>(context),
-    //       );
-    //     },
-    //   ),
-    // );
   }
 }

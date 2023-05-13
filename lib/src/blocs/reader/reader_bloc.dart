@@ -9,7 +9,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:printing/printing.dart';
+// import 'package:printing/printing.dart';
 
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;

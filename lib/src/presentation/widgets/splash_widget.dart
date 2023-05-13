@@ -27,13 +27,15 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
           children: <Widget>[
             Positioned.fill(
               child: Image.asset(
-                "assets/images/Background.png",
+                "assets/images/background/Background.png",
                 fit: BoxFit.fill,
                 // allowDrawingOutsideViewBox: true,
               ),
             ),
             Positioned.fill(
-              child: const Image(image: AssetImage('assets/images/logo.png')),
+              child:  Image.asset('assets/images/logo/logo.png'
+                // ,fit: BoxFit.fitHeight,filterQuality: FilterQuality.medium,
+              ),
               // child: new Image.asset(
               //   image: "assets/images/logo.png",
               //

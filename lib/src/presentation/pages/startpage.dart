@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/parser.dart';
+// import 'package:flutter_svg/parser.dart';
 
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
@@ -70,7 +70,7 @@ class _StartPageState extends State<StartPage> {
                 child: Hero(
                   tag: 'bg',
                   child: Image.asset(
-                    "assets/images/Background.png",
+                    "assets/images/background/Background.png",
                     fit: BoxFit.cover,
                     //allowDrawingOutsideViewBox: true,
                   ),
@@ -85,12 +85,14 @@ class _StartPageState extends State<StartPage> {
                   print("AuthState $state");
                   Navigator.of(context).popUntil((route) => route.isFirst);
                   Future.delayed(Duration(milliseconds: 1), () async {
+                    BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
 
                     // BlocProvider.of<NavbarBloc>(context);
                     BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
                     // setState(() {});
                   });
+                  return Container();
                 } else if (state is UnAuthenticated) {
                   // _emailController.text = AuthState?.userDetails?.response?.email ?? '';
                   // _passwordController.text = AuthState.savedPWD;
@@ -322,7 +324,7 @@ class _StartPageState extends State<StartPage> {
                                             //   Navigator.pop(context, true);
                                             // }),
                                             // onPressed: () => Navigator.of(context).pop(true),
-                                            onPressed: () => {BlocProvider.of<AuthBloc>(context).add(Initialize())},
+                                            // onPressed: () => {BlocProvider.of<AuthBloc>(context).add(Initialize())},
                                           ),
                                           Text(
                                             "Anmelden",
@@ -545,8 +547,9 @@ class _StartPageState extends State<StartPage> {
                   );
                 } else if (state is AuthError) {
                   return AlertDialog(
-                    title: const Text('Login Error'),
-                    content: Text(state.error),
+                    title:  Text('Error',style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w500),),
+                    content: Text(state.error.toString(),style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300)
+                    ),
                     actions: <Widget>[
                       // TextButton(
                       //   onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -555,13 +558,15 @@ class _StartPageState extends State<StartPage> {
                       TextButton(
                         onPressed: () => BlocProvider.of<AuthBloc>(context).add(
                           OpenLoginPage(),
+                          // Initialize()
                         ),
-                        child: const Text('OK'),
+                        child:  Text('OK'),
                       ),
                     ],
                   );
                 }
                 // else if (state is LoadingAuth) {}
+                Navigator.of(context).popUntil((route) => route.isFirst);
                 return Container(
                     // color: Colors.red,
                     );
@@ -865,10 +870,10 @@ class _StartPageState extends State<StartPage> {
   }
 
   Future<void> parseSVG(String assetName) async {
-    final SvgParser parser = SvgParser();
+    // final SvgParser parser = SvgParser();
     final svgString = await rootBundle.loadString(assetName);
     try {
-      await parser.parse(svgString, warningsAsErrors: true);
+      // await parser.parse(svgString, warningsAsErrors: true);
       print('SVG is supported');
     } catch (e) {
       print('SVG contains unsupported features');

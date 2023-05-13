@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flip_widget/flip_widget.dart';
+// import 'package:flip_widget/flip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +48,7 @@ class Reader extends StatefulWidget {
 class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
   // bool isOnPageTurning = false;
   late final CustumPdfControllerPinch pdfPinchController;
-  GlobalKey<FlipWidgetState> _flipKey = GlobalKey();
+  // GlobalKey<FlipWidgetState> _flipKey = GlobalKey();
   // late final PdfController pdfController;
 
   get math => null;
@@ -157,7 +157,7 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/images/Background.png"),
+          image: AssetImage("assets/images/background/Background.png"),
           fit: BoxFit.fill,
         ),
       ),
@@ -176,15 +176,16 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                       reader: this.widget,
                       bloc: BlocProvider.of<ReaderBloc>(context),
                       currentPage: widget.currentPage,
+                          controller:_controller
                     ))),
                 onDoubleTap: () => {
                       // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
                       print("controller"),
                       _controller.value = Matrix4.identity(),
                       // setState(() {
-                      setState(() {
-                        pageScale = _controller.value.getMaxScaleOnAxis();
-                      }),
+                      // setState(() {
+                      //   pageScale = _controller.value.getMaxScaleOnAxis();
+                      // }),
                       // });
                     },
                 child: BlocListener<ReaderBloc, ReaderState>(
@@ -212,7 +213,7 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                         //     ? EdgeInsets.only(right: 150, bottom: 500)
                         //     : EdgeInsets.only(right: -MediaQuery.of(context).size.width * 0.3, left: -MediaQuery.of(context).size.width * 0.3),
                         // ,
-                        key: _flipKey,
+                        // key: _flipKey,
                         // constrained: false,
 
                         onInteractionUpdate: (ScaleUpdateDetails details) {

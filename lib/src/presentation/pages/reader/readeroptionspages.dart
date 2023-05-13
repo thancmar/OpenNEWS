@@ -46,7 +46,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
     );
     controller.addListener(scrollListener);
     // controller.jumpTo(5);
-    controller = PageController(viewportFraction: 0.7, initialPage: widget.currentPage.value);
+    controller = PageController(viewportFraction: 0.7, initialPage: widget.reader.currentPage.value);
 
     var visitedPages = [];
   }
@@ -77,6 +77,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    // controller = PageController(viewportFraction: 0.7, initialPage: widget.reader.currentPage.value);
     // print(ImageSizeGetter.getSize(MemoryInput(widget.reader.cover)).height);
     return OrientationBuilder(builder: (context, orientation) {
       // controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.4 : 0.15);

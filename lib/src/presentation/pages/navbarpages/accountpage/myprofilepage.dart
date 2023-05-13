@@ -16,14 +16,13 @@ class _MyProfileState extends State<MyProfile> {
   TextEditingController _lastnameController = TextEditingController(text: AuthState.userDetails?.response?.lastname);
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Background.png"),
-            fit: BoxFit.fill,
-          ),
+    return Stack(
+      children: [
+        Positioned.fill(
+          //Remove hero
+          child: Hero(tag: 'bg122', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
-        child: Scaffold(
+        Scaffold(
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -277,7 +276,9 @@ class _MyProfileState extends State<MyProfile> {
               ],
             ),
           )),
-        ));
+        ),
+      ],
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {

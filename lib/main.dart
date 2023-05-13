@@ -9,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines_flutter/pdfreadermain.dart';
+// import 'package:sharemagazines_flutter/pdfreadermain.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
@@ -102,6 +103,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var baseTheme = ThemeData(brightness:Brightness.dark,fontFamily: GoogleFonts.raleway().toString());
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
@@ -151,14 +153,16 @@ class MyApp extends StatelessWidget {
           locale: context.locale,
 
           theme: ThemeData(
+              textTheme: GoogleFonts.ralewayTextTheme(baseTheme.textTheme),
               // bottomSheetTheme: BottomSheetThemeData(
               //     backgroundColor: Colors.black.withOpacity(0)),
               //primarySwatch: Colors.blue,
+
               pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.android: CupertinoPageTransitionsBuilder(),
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
               }),
-              fontFamily: 'Raleway',
+              // fontFamily: 'Raleway',
 
               // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
               dividerColor: Colors.transparent),

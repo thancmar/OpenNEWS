@@ -263,7 +263,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         child: ListTile(
                           title: Text(
                             location,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,color: Colors.grey),
                           ),
                           trailing: GestureDetector(
                               onTap: () {
@@ -305,13 +305,13 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
                 locationmarker.nameApp,
-                style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w700),
               ),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
               child: Text(locationmarker.addressStreet + " " + locationmarker.addressHouseNr + ",\n" + locationmarker.addressZip + " " + locationmarker.addressCity,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: TextStyle(color: Colors.grey,fontSize: 16, fontWeight: FontWeight.w300)),
             ),
           ),
           Row(
@@ -335,7 +335,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     // ),
                   ),
                   child: TextButton(
-                    child: Text('Angebote'),
+                    child: Text('Angebote',style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                     onPressed: () {
                       /* ... */
                       print('Angebote');
@@ -473,6 +473,7 @@ Future<BitmapDescriptor> getBitmapDescriptorFromSVGAsset(
   String svgString = await DefaultAssetBundle.of(context).loadString(
     svgAssetLink,
   );
+  Widget svgWidget = SvgPicture.string(svgString);
   final drawableRoot = await svg.fromSvgString(
     svgString,
     'debug: $svgAssetLink',
@@ -495,7 +496,7 @@ Future<BitmapDescriptor> getBitmapDescriptorFromSVGAsset(
 String chooseMapPin(String hp_type) {
   print("hp_type");
   print(hp_type);
-  final basePath = "assets/images/pins/";
+  final basePath = "assets/images/map_pins/";
 
   switch (int.parse(hp_type)) {
     case 1:

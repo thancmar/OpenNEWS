@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'dart:typed_data';
 
@@ -29,7 +30,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   static late MagazinePublishedGetAllLastByHotspotId categoryCovers;
   static late MagazinePublishedGetAllLastByHotspotId? selectedLanguageCovers;
-  static late MagazinePublishedGetAllLastByHotspotId? searchResultCovers;
+  static late MagazinePublishedGetAllLastByHotspotId searchResultCovers;
 
   static late MagazinePublishedGetAllLastByHotspotId? frLanguageCovers;
   List<dynamic?> oldSearchResults = List.empty(growable: true);
@@ -61,6 +62,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         // oldSearchResults = temp;
         oldSearchResults = temp;
       }
+
       emit(GoToSearchPage(oldSearchResults));
     });
 
@@ -69,11 +71,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         oldSearchResults?.add(event.searchText.toLowerCase().toString());
         await dioClient.secureStorage.write(key: "oldSearchResults", value: jsonEncode(oldSearchResults));
       }
-      NavbarState navbarState = BlocProvider.of<NavbarBloc>(event.context).state;
+      // NavbarState navbarState = BlocProvider.of<NavbarBloc>(event.context).state;
+      // searchResultCovers =MagazinePublishedGetAllLastByHotspotId(response:null);
       searchResultCovers = MagazinePublishedGetAllLastByHotspotId(
-          response: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.name!.toLowerCase().contains(event.searchText.toLowerCase()) == true).toList());
-
-      emit(GoToSearchResults(searchResultCovers));
+          response: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.name!.toLowerCase().contains(event.searchText.toLowerCase().toString()) == true).toList());
+await searchResultCovers;
+      emit(GoToSearchResults(searchResults:  searchResultCovers));
     });
     on<OpenLanguageResults>((event, emit) async {
       if (event.languageText != "all") {

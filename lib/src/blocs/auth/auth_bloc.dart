@@ -111,20 +111,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<IncompleteSignInRequested>((event, emit) async {
-      print("IncompleteSignInRequested");
-      // emit(LoadingAuth());
-      // emit(UnAuthenticated());
-      // //
-
       try {
         await EasyLoading.show(
           status: 'loading...',
           maskType: EasyLoadingMaskType.black,
         );
-        String? existingemail = await dioClient.secureStorage.read(key: "emailGuest");
-        String? existingpwd = await dioClient.secureStorage.read(key: "pwdGuest");
+        String? existingemail = await dioClient.secureStorage.read(key: "email");
+        String? existingpwd = await dioClient.secureStorage.read(key: "pwd");
 
-        if (AuthState.userDetails?.response?.email != existingemail) {
+        // if (AuthState.userDetails?.response?.email != existingemail) {
           if (existingemail == null && existingpwd == null) {
             await authRepository.signInIncomplete().then((value) async => {
                   print("qwertrefgve"),
@@ -132,8 +127,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                         emit(IncompleteAuthenticated()),
                         AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
                       }),
-                  dioClient.secureStorage.write(key: "emailGuest", value: value?.response?.email),
-                  dioClient.secureStorage.write(key: "pwdGuest", value: value?.response?.password)
+                  dioClient.secureStorage.write(key: "email", value: value?.response?.email),
+                  dioClient.secureStorage.write(key: "pwd", value: value?.response?.password)
                 });
           } else {
             await authRepository.signIn(email: existingemail, password: existingpwd).then((value) async => {
@@ -141,7 +136,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
                 });
           }
-        }
+        // }
         emit(IncompleteAuthenticated());
         print("2001");
       } catch (e) {

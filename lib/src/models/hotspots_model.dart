@@ -36,8 +36,8 @@ class Response {
   String? addressHouseNr;
   String? addressZip;
   String? addressCity;
-  late double? latitude;
-  late double? longitude;
+  String? latitude;
+  String? longitude;
   String? radius;
   String? bssids;
   String? beacons;
@@ -57,18 +57,30 @@ class Response {
       this.beacons});
 
   Response.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? '';
-    nameApp = json['name_app'] ?? '';
-    type = json['type'] ?? '';
-    addressStreet = json['address_street'] ?? '';
-    addressHouseNr = json['address_house_nr'] ?? '';
-    addressZip = json['address_zip'] ?? '';
-    addressCity = json['address_city'] ?? '';
-    latitude = double.tryParse(json['latitude']);
-    longitude = double.tryParse(json['longitude']);
-    radius = json['radius'] ?? '';
-    bssids = json['bssids'] ?? '';
-    beacons = json['beacons'] ?? '';
+    // id = json['id'] ?? '';
+    // nameApp = json['name_app'] ?? '';
+    // type = json['type'] ?? '';
+    // addressStreet = json['address_street'] ?? '';
+    // addressHouseNr = json['address_house_nr'] ?? '';
+    // addressZip = json['address_zip'] ?? '';
+    // addressCity = json['address_city'] ?? '';
+    // latitude = double.tryParse(json['latitude']);
+    // longitude = double.tryParse(json['longitude']);
+    // radius = json['radius'] ?? '';
+    // bssids = json['bssids'] ?? '';
+    // beacons = json['beacons'] ?? '';
+    id = json['id'];
+    nameApp = json['name_app'] ;
+    type = json['type'] ;
+    addressStreet = json['address_street'];
+    addressHouseNr = json['address_house_nr'] ;
+    addressZip = json['address_zip'] ;
+    addressCity = json['address_city'];
+    latitude =json['latitude'];
+    longitude =json['longitude'];
+    radius = json['radius'] ;
+    bssids = json['bssids'] ;
+    beacons = json['beacons'] ;
   }
 
   Map<String, dynamic> toJson() {
