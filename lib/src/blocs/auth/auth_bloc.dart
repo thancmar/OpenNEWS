@@ -164,8 +164,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   });
         }
         // }
-        emit(IncompleteAuthenticated());
-        print("2001");
+        // emit(IncompleteAuthenticated());
+        // print("2001");
       } catch (e) {
         emit(AuthError(e.toString()));
         // emit(UnAuthenticated());

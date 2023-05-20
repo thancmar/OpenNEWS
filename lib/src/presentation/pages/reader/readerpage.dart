@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+
 // import 'package:flip_widget/flip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,26 +8,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:sharemagazines_flutter/src/blocs/reader/reader_bloc.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/reader/page.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/pdf_view_pinch.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptionspage.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreaderoption.dart';
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
-import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart'
-    as model;
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 
 class StartReader extends StatelessWidget {
   final model.Response magazine;
   final String heroTag;
-  StartReader({Key? key, required this.magazine, required this.heroTag})
-      : super(key: key);
+
+  StartReader({Key? key, required this.magazine, required this.heroTag}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (BuildContext context) => ReaderBloc(
-              magazineRepository:
-                  RepositoryProvider.of<MagazineRepository>(context),
+              magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
             ),
         child: Reader(
           magazine: this.magazine,
@@ -41,32 +41,29 @@ class Reader extends StatefulWidget {
   final model.Response magazine;
   ValueNotifier<int> currentPage;
   final String heroTag;
+  late PageController _pageController;
 
-  Reader(
-      {Key? key,
-      required this.magazine,
-      required this.currentPage,
-      required this.heroTag})
-      : super(key: key);
+  Reader({Key? key, required this.magazine, required this.currentPage, required this.heroTag}) : super(key: key);
 
   @override
   State<Reader> createState() => _ReaderState();
 }
 
-class _ReaderState extends State<Reader>
-    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
+class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
   // bool isOnPageTurning = false;
   late final CustumPdfControllerPinch pdfPinchController;
+
   // GlobalKey<FlipWidgetState> _flipKey = GlobalKey();
   // late final PdfController pdfController;
+  late List<int> pages = [];
 
   get math => null;
   late double pageScale;
-  static Matrix4 matrix4 =
-      Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController _controller = TransformationController(matrix4);
   static ValueNotifier<int> _networklHasErrorNotifier = ValueNotifier(0);
   late AnimationController? _spinKitController;
+
   callback(newValue) {
     // setState(() {
     //   print("reader callback function");
@@ -82,10 +79,18 @@ class _ReaderState extends State<Reader>
   void initState() {
     // print(widget.id);
     pageScale = _controller.value.getMaxScaleOnAxis();
+    widget._pageController = PageController(initialPage: 0);
     BlocProvider.of<ReaderBloc>(context).add(
       // OpenReader(idMagazinePublication: widget.magazine.idMagazinePublication!, dateofPublicazion: widget.magazine.dateOfPublication!, pageNo: widget.magazine.pageMax!),
       OpenReader(magazine: widget.magazine),
     );
+
+    // for (var i = 1; i <=int.parse( widget.magazine.pageMax!); i++) {
+    for (var i = 0; i <= 5; i++) {
+      pages.add(i);
+    }
+    ;
+
     // final pdfPinchController = CustumPdfControllerPinch(document: PdfDocument.openData(ReaderState.doc));
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -105,6 +110,7 @@ class _ReaderState extends State<Reader>
   void dispose() {
     // _controller.dispose();
     // pdfController.dispose();
+    widget._pageController.dispose();
     _spinKitController?.dispose();
     super.dispose();
     SystemChrome.setPreferredOrientations([
@@ -212,192 +218,199 @@ class _ReaderState extends State<Reader>
                     builder: (context, state) {
                       // if (state is ReaderOpened) {
                       return InteractiveViewer(
-                        clipBehavior: Clip.hardEdge,
-                        alignPanAxis: true,
-                        transformationController: _controller,
-                        minScale: 0.01,
-                        maxScale: 3.5,
+                          clipBehavior: Clip.hardEdge,
+                          alignPanAxis: true,
+                          transformationController: _controller,
+                          minScale: 0.01,
+                          maxScale: 3.5,
 
-                        // boundaryMargin: Orientation == Orientation.portrait
-                        //     ? EdgeInsets.only(right: 150, bottom: 500)
-                        //     : EdgeInsets.only(right: -MediaQuery.of(context).size.width * 0.3, left: -MediaQuery.of(context).size.width * 0.3),
-                        // ,
-                        // key: _flipKey,
-                        // constrained: false,
+                          // boundaryMargin: Orientation == Orientation.portrait
+                          //     ? EdgeInsets.only(right: 150, bottom: 500)
+                          //     : EdgeInsets.only(right: -MediaQuery.of(context).size.width * 0.3, left: -MediaQuery.of(context).size.width * 0.3),
+                          // ,
+                          // key: _flipKey,
+                          // constrained: false,
 
-                        onInteractionUpdate: (ScaleUpdateDetails details) {
-                          // get the scale from the ScaleUpdateDetails callback
-                          setState(() {
-                            pageScale = _controller.value.getMaxScaleOnAxis();
-                          });
-                          // print(pageScale);
-                          // print the scale here
-                        },
-                        child: Container(
-                          // width: MediaQuery.of(context).size.width,
-                          width: MediaQuery.of(context).size.width,
-                          // height: MediaQuery.of(context).size.height - 100,
-                          // color: Colors.cyan,
-                          // height: MediaQuery.of(context).size.height,
-                          //Need to calculate page width minus minus padding
-                          padding: orientation == Orientation.portrait
-                              ? EdgeInsets.only(top: 150, bottom: 150)
-                              : EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.3),
-                          //have to
-                          // adjust
-                          // later
-                          //Remove future pages all from bloc state
-                          child: Hero(
-                              tag: '${widget.heroTag}',
-                              child: Card(
-                                color: Colors.transparent,
-                                clipBehavior: Clip.hardEdge,
-                                margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                elevation: 0,
-                                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                                child: state is ReaderOpened
-                                    ? AnimatedSwitcher(
-                                        // key: UniqueKey(),
-                                        duration: Duration(milliseconds: 100),
-                                        switchOutCurve: Threshold(5),
-                                        child: ValueListenableBuilder<int>(
-                                            valueListenable: widget.currentPage,
-                                            builder: (BuildContext context,
-                                                int pageNo, Widget? child) {
-                                              return CachedNetworkImage(
-                                                  key: ValueKey(
-                                                      _networklHasErrorNotifier
-                                                          .value),
-                                                  filterQuality:
-                                                      FilterQuality.none,
-                                                  imageUrl: widget.magazine
-                                                          .idMagazinePublication! +
-                                                      "_" +
-                                                      widget.magazine
-                                                          .dateOfPublication! +
-                                                      "_" +
-                                                      pageNo.toString(),
-                                                  // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
-                                                  //     "_" +
-                                                  //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
-                                                  // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-                                                  //   // color: Colors.grey.withOpacity(0.1),
-                                                  //   decoration: BoxDecoration(
-                                                  //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                  //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                  //     color: Colors.grey.withOpacity(0.1),
-                                                  //   ),
-                                                  //   child: SpinKitFadingCircle(
-                                                  //     color: Colors.white,
-                                                  //     size: 50.0,
-                                                  //   ),
-                                                  // ),
-
-                                                  imageBuilder: (context,
-                                                          imageProvider) =>
-                                                      Container(
-                                                        height: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .height,
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        // color: Colors.red,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image: DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit: BoxFit
-                                                                  .contain),
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5.0)),
-                                                        ),
-                                                      ),
-                                                  // useOldImageOnUrlChange: true,
-                                                  // very important: keep both placeholder and errorWidget
-                                                  placeholder: (context, url) =>
-                                                      Container(
-                                                        // color: Colors.grey.withOpacity(0.1),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5.0)),
-                                                          color: Colors.grey
-                                                              .withOpacity(0.1),
-                                                        ),
-                                                        child:
-                                                            SpinKitFadingCircle(
-                                                          color: Colors.white,
-                                                          size: 50.0,
-                                                          controller:
-                                                              _spinKitController,
-                                                        ),
-                                                      ),
-                                                  errorWidget:
-                                                      (context, url, error) {
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 100),
-                                                        () {
-                                                      setState(() {
-                                                        _networklHasErrorNotifier
-                                                            .value++;
-                                                      });
-                                                    });
-                                                    return Container(
-                                                      // color: Colors.grey.withOpacity(0.1),
-
-                                                      decoration: BoxDecoration(
-                                                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    5.0)),
-                                                        color: Colors.grey
-                                                            .withOpacity(0.1),
-                                                      ),
-                                                      child:
-                                                          SpinKitFadingCircle(
-                                                        color: Colors.white,
-                                                        size: 50.0,
-                                                        controller:
-                                                            _spinKitController,
-                                                      ),
-                                                    );
-                                                  }
-                                                  // errorWidget: (context, url, error) => Container(
-                                                  //     alignment: Alignment.center,
-                                                  //     child: Icon(
-                                                  //       Icons.error,
-                                                  //       color: Colors.grey.withOpacity(0.8),
-                                                  //     )),
-                                                  );
-                                            }),
-                                        // child: Image.memory((snapshot.hasData) && widget.currentPage != 0 ? snapshot.data! : widget.cover),
-                                      )
-                                    : SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 50.0,
-                                      ),
-                              )
-                              // : Image.memory(widget.cover)),
-                              ),
-                        ),
-                      );
+                          onInteractionUpdate: (ScaleUpdateDetails details) {
+                            // get the scale from the ScaleUpdateDetails callback
+                            setState(() {
+                              pageScale = _controller.value.getMaxScaleOnAxis();
+                            });
+                            // print(pageScale);
+                            // print the scale here
+                          },
+                          // child: Container(
+                          //   // width: MediaQuery.of(context).size.width,
+                          //   width: MediaQuery.of(context).size.width,
+                          //   // height: MediaQuery.of(context).size.height - 100,
+                          //   // color: Colors.cyan,
+                          //   // height: MediaQuery.of(context).size.height,
+                          //   //Need to calculate page width minus minus padding
+                          //   padding: orientation == Orientation.portrait
+                          //       ? EdgeInsets.only(top: 150, bottom: 150)
+                          //       : EdgeInsets.only(
+                          //           right:
+                          //               MediaQuery.of(context).size.width * 0.3,
+                          //           left:
+                          //               MediaQuery.of(context).size.width * 0.3),
+                          //   //have to
+                          //   // adjust
+                          //   // later
+                          //   //Remove future pages all from bloc state
+                          //   child: Hero(
+                          //       tag: '${widget.heroTag}',
+                          //       child: Card(
+                          //         color: Colors.transparent,
+                          //         clipBehavior: Clip.hardEdge,
+                          //         margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          //         elevation: 0,
+                          //         // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                          //         child: state is ReaderOpened
+                          //             ? AnimatedSwitcher(
+                          //                 // key: UniqueKey(),
+                          //                 duration: Duration(milliseconds: 100),
+                          //                 switchOutCurve: Threshold(5),
+                          //                 child: ValueListenableBuilder<int>(
+                          //                     valueListenable: widget.currentPage,
+                          //                     builder: (BuildContext context,
+                          //                         int pageNo, Widget? child) {
+                          //                       return CachedNetworkImage(
+                          //                           key: ValueKey(
+                          //                               _networklHasErrorNotifier
+                          //                                   .value),
+                          //                           filterQuality:
+                          //                               FilterQuality.none,
+                          //                           imageUrl: widget.magazine
+                          //                                   .idMagazinePublication! +
+                          //                               "_" +
+                          //                               widget.magazine
+                          //                                   .dateOfPublication! +
+                          //                               "_" +
+                          //                               pageNo.toString(),
+                          //                           // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
+                          //                           //     "_" +
+                          //                           //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
+                          //                           // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+                          //                           //   // color: Colors.grey.withOpacity(0.1),
+                          //                           //   decoration: BoxDecoration(
+                          //                           //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                          //                           //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          //                           //     color: Colors.grey.withOpacity(0.1),
+                          //                           //   ),
+                          //                           //   child: SpinKitFadingCircle(
+                          //                           //     color: Colors.white,
+                          //                           //     size: 50.0,
+                          //                           //   ),
+                          //                           // ),
+                          //
+                          //                           imageBuilder: (context,
+                          //                                   imageProvider) =>
+                          //                               Container(
+                          //                                 height: MediaQuery.of(
+                          //                                         context)
+                          //                                     .size
+                          //                                     .height,
+                          //                                 width: MediaQuery.of(
+                          //                                         context)
+                          //                                     .size
+                          //                                     .width,
+                          //                                 // color: Colors.red,
+                          //                                 decoration:
+                          //                                     BoxDecoration(
+                          //                                   image: DecorationImage(
+                          //                                       image:
+                          //                                           imageProvider,
+                          //                                       fit: BoxFit
+                          //                                           .contain),
+                          //                                   borderRadius:
+                          //                                       BorderRadius.all(
+                          //                                           Radius
+                          //                                               .circular(
+                          //                                                   5.0)),
+                          //                                 ),
+                          //                               ),
+                          //                           // useOldImageOnUrlChange: true,
+                          //                           // very important: keep both placeholder and errorWidget
+                          //                           placeholder: (context, url) =>
+                          //                               Container(
+                          //                                 // color: Colors.grey.withOpacity(0.1),
+                          //                                 decoration:
+                          //                                     BoxDecoration(
+                          //                                   // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                          //                                   borderRadius:
+                          //                                       BorderRadius.all(
+                          //                                           Radius
+                          //                                               .circular(
+                          //                                                   5.0)),
+                          //                                   color: Colors.grey
+                          //                                       .withOpacity(0.1),
+                          //                                 ),
+                          //                                 child:
+                          //                                     SpinKitFadingCircle(
+                          //                                   color: Colors.white,
+                          //                                   size: 50.0,
+                          //                                   controller:
+                          //                                       _spinKitController,
+                          //                                 ),
+                          //                               ),
+                          //                           errorWidget:
+                          //                               (context, url, error) {
+                          //                             Future.delayed(
+                          //                                 const Duration(
+                          //                                     milliseconds: 100),
+                          //                                 () {
+                          //                               setState(() {
+                          //                                 _networklHasErrorNotifier
+                          //                                     .value++;
+                          //                               });
+                          //                             });
+                          //                             return Container(
+                          //                               // color: Colors.grey.withOpacity(0.1),
+                          //
+                          //                               decoration: BoxDecoration(
+                          //                                 // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                          //                                 borderRadius:
+                          //                                     BorderRadius.all(
+                          //                                         Radius.circular(
+                          //                                             5.0)),
+                          //                                 color: Colors.grey
+                          //                                     .withOpacity(0.1),
+                          //                               ),
+                          //                               child:
+                          //                                   SpinKitFadingCircle(
+                          //                                 color: Colors.white,
+                          //                                 size: 50.0,
+                          //                                 controller:
+                          //                                     _spinKitController,
+                          //                               ),
+                          //                             );
+                          //                           }
+                          //                           // errorWidget: (context, url, error) => Container(
+                          //                           //     alignment: Alignment.center,
+                          //                           //     child: Icon(
+                          //                           //       Icons.error,
+                          //                           //       color: Colors.grey.withOpacity(0.8),
+                          //                           //     )),
+                          //                           );
+                          //                     }),
+                          //                 // child: Image.memory((snapshot.hasData) && widget.currentPage != 0 ? snapshot.data! : widget.cover),
+                          //               )
+                          //             : SpinKitFadingCircle(
+                          //                 color: Colors.white,
+                          //                 size: 50.0,
+                          //               ),
+                          //       )
+                          //       // : Image.memory(widget.cover)),
+                          //       ),
+                          // ),
+                          child: PageView.builder(
+                              controller: widget._pageController,
+                              itemBuilder: (context, index) => ReaderPage(
+                                reader: this.widget,
+                                pageNumber: index,
+                              ))
+                          //                         ),
+                          );
                     },
                   ),
                 )),
