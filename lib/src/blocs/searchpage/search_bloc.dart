@@ -34,14 +34,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   static late MagazinePublishedGetAllLastByHotspotId? frLanguageCovers;
   List<dynamic?> oldSearchResults = List.empty(growable: true);
-  ApiClient dioClient = ApiClient(dioforImages: dio.Dio(), diofordata: dio.Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
+  ApiClient dioClient = ApiClient(
+      dioforImages: dio.Dio(),
+      diofordata: dio.Dio(),
+      networkInfo: NetworkInfo(),
+      secureStorage: FlutterSecureStorage());
 
   SearchBloc({required this.magazineRepository}) : super(LoadingSearchState()) {
     on<DeleteSearchResult>((event, emit) async {
       try {
         print("remove at ${event.index}");
         oldSearchResults.removeAt(event.index);
-        await dioClient.secureStorage.write(key: "oldSearchResults", value: jsonEncode(oldSearchResults));
+        await dioClient.secureStorage.write(
+            key: "oldSearchResults", value: jsonEncode(oldSearchResults));
       } catch (e) {
         emit(SearchError(e.toString()));
       }
@@ -54,7 +59,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     on<OpenSearch>((event, emit) async {
       print("OpenSearch");
-      String? stringOfItems = await dioClient.secureStorage.read(key: 'oldSearchResults');
+      String? stringOfItems =
+          await dioClient.secureStorage.read(key: 'oldSearchResults');
       // await dioClient.secureStorage.deleteAll();
       if (stringOfItems != null && stringOfItems.isNotEmpty) {
         List<dynamic?> temp = jsonDecode(stringOfItems);
@@ -69,19 +75,30 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<OpenSearchResults>((event, emit) async {
       if (oldSearchResults?.contains(event.searchText) == false) {
         oldSearchResults?.add(event.searchText.toLowerCase().toString());
-        await dioClient.secureStorage.write(key: "oldSearchResults", value: jsonEncode(oldSearchResults));
+        await dioClient.secureStorage.write(
+            key: "oldSearchResults", value: jsonEncode(oldSearchResults));
       }
       // NavbarState navbarState = BlocProvider.of<NavbarBloc>(event.context).state;
       // searchResultCovers =MagazinePublishedGetAllLastByHotspotId(response:null);
       searchResultCovers = MagazinePublishedGetAllLastByHotspotId(
-          response: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.name!.toLowerCase().contains(event.searchText.toLowerCase().toString()) == true).toList());
-await searchResultCovers;
-      emit(GoToSearchResults(searchResults:  searchResultCovers));
+          response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+              .where((element) =>
+                  element.name!
+                      .toLowerCase()
+                      .contains(event.searchText.toLowerCase().toString()) ==
+                  true)
+              .toList());
+      await searchResultCovers;
+      emit(GoToSearchResults(searchResults: searchResultCovers));
     });
     on<OpenLanguageResults>((event, emit) async {
       if (event.languageText != "all") {
         selectedLanguageCovers = MagazinePublishedGetAllLastByHotspotId(
-            response: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.magazineLanguage!.contains(event.languageText) == true).toList());
+            response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+                .where((element) =>
+                    element.magazineLanguage!.contains(event.languageText) ==
+                    true)
+                .toList());
       } else {
         selectedLanguageCovers = NavbarState.magazinePublishedGetLastWithLimit;
       }
@@ -89,7 +106,11 @@ await searchResultCovers;
     });
     on<OpenCategoryPage>((event, emit) async {
       categoryCovers = MagazinePublishedGetAllLastByHotspotId(
-          response: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.idsMagazineCategory!.contains(event.categoryID) == true).toList());
+          response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+              .where((element) =>
+                  element.idsMagazineCategory!.contains(event.categoryID) ==
+                  true)
+              .toList());
       emit(GoToCategoryPage(selectedCategory: categoryCovers));
     });
   }

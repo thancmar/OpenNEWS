@@ -70,7 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '67186045229',
     projectId: 'sharemagazines-flutter',
     storageBucket: 'sharemagazines-flutter.appspot.com',
-    iosClientId: '67186045229-988ch9pnoebs8shhiccv4jpgiso3en4f.apps.googleusercontent.com',
+    iosClientId:
+        '67186045229-988ch9pnoebs8shhiccv4jpgiso3en4f.apps.googleusercontent.com',
     iosBundleId: 'com.shmagflutter.sharemagazines',
   );
 }

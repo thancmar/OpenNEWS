@@ -28,7 +28,11 @@ class _MenuPageState extends State<MenuPage> {
                           height: MediaQuery.of(context).size.width * 0.1,
                           child: FloatingActionButton.extended(
                             // heroTag: 'location_offers1',
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                side: BorderSide(
+                                    color: Colors.white, width: 0.2)),
                             label: Text(
                               'Speisekarte',
                               style: TextStyle(fontSize: 12),
@@ -51,7 +55,11 @@ class _MenuPageState extends State<MenuPage> {
                           height: MediaQuery.of(context).size.width * 0.1,
                           child: FloatingActionButton.extended(
                             // heroTag: 'location_offers',
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                side: BorderSide(
+                                    color: Colors.white, width: 0.2)),
 
                             label: Text(
                               'Unser Barista',
@@ -74,7 +82,11 @@ class _MenuPageState extends State<MenuPage> {
                           height: MediaQuery.of(context).size.width * 0.1,
                           child: FloatingActionButton.extended(
                             // heroTag: 'location_offers',
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                side: BorderSide(
+                                    color: Colors.white, width: 0.2)),
                             label: Text(
                               'Kaffeesorten',
                               style: TextStyle(fontSize: 1),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-LocationGetHeader LocationGetHeaderFromJson(String str) => LocationGetHeader.fromJson(json.decode(str));
+LocationGetHeader LocationGetHeaderFromJson(String str) =>
+    LocationGetHeader.fromJson(json.decode(str));
 
 class LocationGetHeader {
   int? id;
@@ -13,7 +14,16 @@ class LocationGetHeader {
   int? titleVisible;
   int? blurVisible;
 
-  LocationGetHeader({this.id, this.welcomeText, this.text, this.filePath, this.creationDate, this.lastChange, this.titleColor, this.titleVisible, this.blurVisible});
+  LocationGetHeader(
+      {this.id,
+      this.welcomeText,
+      this.text,
+      this.filePath,
+      this.creationDate,
+      this.lastChange,
+      this.titleColor,
+      this.titleVisible,
+      this.blurVisible});
 
   LocationGetHeader.fromJson(Map<dynamic, dynamic> json) {
     // id = int.tryParse(json['id']);

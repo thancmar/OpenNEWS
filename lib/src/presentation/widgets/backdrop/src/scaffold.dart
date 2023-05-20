@@ -21,10 +21,12 @@ class Backdrop extends InheritedWidget {
   final BackdropScaffoldState data;
 
   /// Creates a [Backdrop] instance.
-  const Backdrop({Key? key, required this.data, required Widget child}) : super(key: key, child: child);
+  const Backdrop({Key? key, required this.data, required Widget child})
+      : super(key: key, child: child);
 
   /// Provides access to the state from everywhere in the widget tree.
-  static BackdropScaffoldState of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<Backdrop>()!.data;
+  static BackdropScaffoldState of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<Backdrop>()!.data;
 
   @override
   bool updateShouldNotify(Backdrop oldWidget) => oldWidget.data != data;
@@ -112,7 +114,8 @@ class BackdropScaffold extends StatefulWidget {
   ///
   /// > NOTE: This is deprecated and will be removed in future. Use
   /// > [frontLayerShape] instead.
-  @Deprecated("This member is deprecated since v0.7.1 and will be removed in future. "
+  @Deprecated(
+      "This member is deprecated since v0.7.1 and will be removed in future. "
       "Use `frontLayerShape` instead.")
   final BorderRadius? frontLayerBorderRadius;
 
@@ -351,7 +354,9 @@ class BackdropScaffold extends StatefulWidget {
     this.drawerEnableOpenDragGesture = true,
     this.endDrawerEnableOpenDragGesture = true,
     this.restorationId,
-  })  : frontLayerShape = frontLayerBorderRadius != null ? RoundedRectangleBorder(borderRadius: frontLayerBorderRadius) : frontLayerShape,
+  })  : frontLayerShape = frontLayerBorderRadius != null
+            ? RoundedRectangleBorder(borderRadius: frontLayerBorderRadius)
+            : frontLayerShape,
         frontLayerActiveFactor = frontLayerActiveFactor.clamp(0, 1).toDouble(),
         super(key: key);
 
@@ -368,7 +373,8 @@ class BackdropScaffold extends StatefulWidget {
 /// An instance of this class is automatically created with the use of
 /// [BackdropScaffold] and can be accessed using `Backdrop.of(context)` from
 /// within the widget tree below [BackdropScaffold].
-class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerProviderStateMixin {
+class BackdropScaffoldState extends State<BackdropScaffold>
+    with SingleTickerProviderStateMixin {
   bool _shouldDisposeAnimationController = false;
   late AnimationController _animationController;
   late ColorTween _backLayerScrimColorTween;
@@ -432,10 +438,14 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
   }
 
   /// Whether the back layer is concealed or not.
-  bool get isBackLayerConcealed => animationController.status == AnimationStatus.completed || animationController.status == AnimationStatus.forward;
+  bool get isBackLayerConcealed =>
+      animationController.status == AnimationStatus.completed ||
+      animationController.status == AnimationStatus.forward;
 
   /// Whether the back layer is revealed or not.
-  bool get isBackLayerRevealed => animationController.status == AnimationStatus.dismissed || animationController.status == AnimationStatus.reverse;
+  bool get isBackLayerRevealed =>
+      animationController.status == AnimationStatus.dismissed ||
+      animationController.status == AnimationStatus.reverse;
 
   /// Toggles the backdrop functionality.
   ///
@@ -478,7 +488,8 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
     return _subHeaderHeight;
   }
 
-  Animation<RelativeRect> _getPanelAnimation(BuildContext context, BoxConstraints constraints) {
+  Animation<RelativeRect> _getPanelAnimation(
+      BuildContext context, BoxConstraints constraints) {
     double backPanelHeight, frontPanelHeight;
     final availableHeight = constraints.biggest.height - _headerHeight;
     if (widget.stickyFrontLayer && _backPanelHeight < availableHeight) {
@@ -492,8 +503,13 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
     }
     return RelativeRectTween(
       begin: RelativeRect.fromLTRB(0, backPanelHeight, 0, frontPanelHeight),
-      end: RelativeRect.fromLTRB(0, availableHeight * (1 - widget.frontLayerActiveFactor), 0, 0),
-    ).animate(CurvedAnimation(parent: animationController, curve: widget.animationCurve, reverseCurve: widget.reverseAnimationCurve ?? widget.animationCurve.flipped));
+      end: RelativeRect.fromLTRB(
+          0, availableHeight * (1 - widget.frontLayerActiveFactor), 0, 0),
+    ).animate(CurvedAnimation(
+        parent: animationController,
+        curve: widget.animationCurve,
+        reverseCurve:
+            widget.reverseAnimationCurve ?? widget.animationCurve.flipped));
   }
 
   Widget _buildInactiveLayer(BuildContext context) {
@@ -508,7 +524,8 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
             children: <Widget>[
               // if subHeaderAlwaysActive then do not apply frontLayerScrim for
               // area with _subHeaderHeight
-              if (widget.subHeader != null && widget.subHeaderAlwaysActive) Container(height: _subHeaderHeight),
+              if (widget.subHeader != null && widget.subHeaderAlwaysActive)
+                Container(height: _subHeaderHeight),
               Expanded(
                 child: Container(
                   color: widget.frontLayerScrim,
@@ -527,13 +544,18 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
         FocusScope(
           canRequestFocus: isBackLayerRevealed,
           child: Material(
-            color: widget.backLayerBackgroundColor ?? Theme.of(context).primaryColor,
+            color: widget.backLayerBackgroundColor ??
+                Theme.of(context).primaryColor,
             child: Column(
               children: <Widget>[
                 Flexible(
                   child: _MeasureSize(
-                    onChange: (size) => setState(() => _backPanelHeight = size.height),
-                    child: !widget.maintainBackLayerState && isBackLayerConcealed ? Container() : widget.backLayer,
+                    onChange: (size) =>
+                        setState(() => _backPanelHeight = size.height),
+                    child:
+                        !widget.maintainBackLayerState && isBackLayerConcealed
+                            ? Container()
+                            : widget.backLayer,
                   ),
                 ),
               ],
@@ -560,7 +582,8 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
               children: <Widget>[
                 // subHeader
                 _MeasureSize(
-                  onChange: (size) => setState(() => _subHeaderHeight = size.height),
+                  onChange: (size) =>
+                      setState(() => _subHeaderHeight = size.height),
                   child: DefaultTextStyle(
                     style: Theme.of(context).textTheme.subtitle1!,
                     child: widget.subHeader ?? Container(),
@@ -635,9 +658,12 @@ class BackdropScaffoldState extends State<BackdropScaffold> with SingleTickerPro
     );
   }
 
-  Container _buildBackLayerScrim() => Container(color: _backLayerScrimColorTween.evaluate(animationController), height: _backPanelHeight);
+  Container _buildBackLayerScrim() => Container(
+      color: _backLayerScrimColorTween.evaluate(animationController),
+      height: _backPanelHeight);
 
-  bool get _hasBackLayerScrim => isBackLayerConcealed && widget.frontLayerActiveFactor < 1;
+  bool get _hasBackLayerScrim =>
+      isBackLayerConcealed && widget.frontLayerActiveFactor < 1;
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,8 @@ class SearchCloseButton extends StatefulWidget {
   final BuildContext context;
   Function callback;
 
-  SearchCloseButton({Key? key, required this.context, required this.callback}) : super(key: key);
+  SearchCloseButton({Key? key, required this.context, required this.callback})
+      : super(key: key);
 
   @override
   State<SearchCloseButton> createState() => _SearchCloseButtonState();
@@ -73,7 +74,9 @@ class _SearchCloseButtonState extends State<SearchCloseButton> {
             //   context: context,
             // ),
             child: Icon(
-              Backdrop.of(widget.context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
+              Backdrop.of(widget.context).isBackLayerConcealed == false
+                  ? Icons.search_sharp
+                  : Icons.clear,
               // _counter1 == false ? Icons.search_sharp : Icons.clear,
               // Icons.search_sharp,
               // Icomoon.fc_logo,

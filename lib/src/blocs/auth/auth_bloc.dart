@@ -23,7 +23,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
   // late ApiClient dioClient;
   late final AuthCredential credential;
-  ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
+  ApiClient dioClient = ApiClient(
+      dioforImages: Dio(),
+      diofordata: Dio(),
+      networkInfo: NetworkInfo(),
+      secureStorage: FlutterSecureStorage());
   final GetIt getIt = GetIt.instance;
 
   // final _dataController = StreamController<String>.broadcast();
@@ -34,7 +38,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<Initialize>((event, emit) async {
       emit(UnAuthenticated());
       String? emailexists = await dioClient.secureStorage.read(key: "email");
-      String? guestemailexists = await dioClient.secureStorage.read(key: "email");
+      String? guestemailexists =
+          await dioClient.secureStorage.read(key: "email");
       String? existingpwd = await dioClient.secureStorage.read(key: "pwd");
       // if (emailexists != null) {
       //   emit(Authenticated());
@@ -64,16 +69,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           status: 'loading...',
           maskType: EasyLoadingMaskType.black,
         );
-        await authRepository.signIn(email: event.email, password: event.password).then((value) async => {
-              print("link with firebase"),
-              await dioClient.secureStorage.write(key: "email", value: event.email),
-              await dioClient.secureStorage.write(key: "pwd", value: event.password),
-              // credential = EmailAuthProvider.credential(email: event.email, password: event.password),
-              // AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
-              authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email).then((value) => AuthState.userDetails = value),
-              // await AuthState.userDetails,
-              emit(Authenticated()),
-            });
+        await authRepository
+            .signIn(email: event.email, password: event.password)
+            .then((value) async => {
+                  print("link with firebase"),
+                  await dioClient.secureStorage
+                      .write(key: "email", value: event.email),
+                  await dioClient.secureStorage
+                      .write(key: "pwd", value: event.password),
+                  // credential = EmailAuthProvider.credential(email: event.email, password: event.password),
+                  // AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
+                  authRepository
+                      .getUserDetails(
+                          userID: value.response!.id,
+                          email: value.response!.email)
+                      .then((value) => AuthState.userDetails = value),
+                  // await AuthState.userDetails,
+                  emit(Authenticated()),
+                });
         // try {
         //   print("link with firebase ${FirebaseAuth.instance.currentUser?.email}");
         //   final userCredential = await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
@@ -116,26 +129,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           status: 'loading...',
           maskType: EasyLoadingMaskType.black,
         );
-        String? existingemail = await dioClient.secureStorage.read(key: "email");
-        String? existingpwd = await dioClient.secureStorage.read(key: "pwd");
+        String? existingemail =
+            await dioClient.secureStorage.read(key: "emailGuest");
+        String? existingpwd = await dioClient.secureStorage.read(key: "pwdGuest");
 
         // if (AuthState.userDetails?.response?.email != existingemail) {
-          if (existingemail == null && existingpwd == null) {
-            await authRepository.signInIncomplete().then((value) async => {
-                  print("qwertrefgve"),
-                  await authRepository.signIn(email: value?.response?.email, password: value?.response?.password).then((value) async => {
-                        emit(IncompleteAuthenticated()),
-                        AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
-                      }),
-                  dioClient.secureStorage.write(key: "email", value: value?.response?.email),
-                  dioClient.secureStorage.write(key: "pwd", value: value?.response?.password)
-                });
-          } else {
-            await authRepository.signIn(email: existingemail, password: existingpwd).then((value) async => {
-                  emit(IncompleteAuthenticated()),
-                  AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
-                });
-          }
+        if (existingemail == null && existingpwd == null) {
+          await authRepository.signInIncomplete().then((value) async => {
+                print("qwertrefgve"),
+                await authRepository
+                    .signIn(
+                        email: value?.response?.email,
+                        password: value?.response?.password)
+                    .then((value) async => {
+                          emit(IncompleteAuthenticated()),
+                          AuthState.userDetails =
+                              await authRepository.getUserDetails(
+                                  userID: value.response!.id,
+                                  email: value.response!.email),
+                        }),
+                dioClient.secureStorage
+                    .write(key: "emailGuest", value: value?.response?.email),
+                dioClient.secureStorage
+                    .write(key: "pwdGuest", value: value?.response?.password)
+              });
+        } else {
+          await authRepository
+              .signIn(email: existingemail, password: existingpwd)
+              .then((value) async => {
+                    emit(IncompleteAuthenticated()),
+                    AuthState.userDetails = await authRepository.getUserDetails(
+                        userID: value.response!.id,
+                        email: value.response!.email),
+                  });
+        }
         // }
         emit(IncompleteAuthenticated());
         print("2001");

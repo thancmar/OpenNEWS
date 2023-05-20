@@ -12,7 +12,8 @@ class News_aus_deiner_Region extends StatefulWidget {
   late int index1;
   final NavbarState state;
 
-  News_aus_deiner_Region({Key? key, required this.index1, required this.state}) : super(key: key);
+  News_aus_deiner_Region({Key? key, required this.index1, required this.state})
+      : super(key: key);
 
   @override
   State<News_aus_deiner_Region> createState() => News_aus_deiner_RegionState();
@@ -25,7 +26,8 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
       height: MediaQuery.of(context).size.width + 60, // card height
       // width: 30,
       child: PageView.builder(
-        itemCount: NavbarState.magazinePublishedGetTopLastByRange!.response!.length,
+        itemCount:
+            NavbarState.magazinePublishedGetTopLastByRange!.response!.length,
         // padEnds: true,
 
         controller: PageController(viewportFraction: 0.707),
@@ -85,7 +87,9 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                           // transitionDuration:
                           // Duration(seconds: 2),
                           pageBuilder: (_, __, ___) => StartReader(
-                            magazine: NavbarState.magazinePublishedGetTopLastByRange!.response![i],
+                            magazine: NavbarState
+                                .magazinePublishedGetTopLastByRange!
+                                .response![i],
                             // id: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication!,
                             // index: i.toString(),
                             // // coverURL: snapshot.data!,
@@ -101,9 +105,13 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                       // clipBehavior: Clip.antiAlias,
                       children: [
                         CachedNetworkImage(
-                          imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication! +
+                          imageUrl: NavbarState
+                                  .magazinePublishedGetTopLastByRange!
+                                  .response![i]
+                                  .idMagazinePublication! +
                               "_" +
-                              NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
+                              NavbarState.magazinePublishedGetTopLastByRange!
+                                  .response![i].dateOfPublication! +
                               "_0",
                           // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                           //     "_" +
@@ -124,8 +132,10 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                           imageBuilder: (context, imageProvider) => Container(
                             height: MediaQuery.of(context).size.width * 0.95,
                             decoration: BoxDecoration(
-                              image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.fill),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0)),
                             ),
                           ),
                           // useOldImageOnUrlChange: true,
@@ -135,7 +145,8 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                             height: MediaQuery.of(context).size.width * 0.95,
                             decoration: BoxDecoration(
                               // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0)),
                               color: Colors.grey.withOpacity(0.1),
                             ),
                             child: SpinKitFadingCircle(
@@ -148,7 +159,8 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                             // color: Colors.grey.withOpacity(0.1),
                             decoration: BoxDecoration(
                               // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0)),
                               color: Colors.grey.withOpacity(0.1),
                             ),
                             child: SpinKitFadingCircle(
@@ -217,12 +229,16 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                                 animationDuration: Duration(milliseconds: 10),
                                 direction: Axis.vertical,
                                 child: MarqueeWidget(
-                                  animationDuration: Duration(milliseconds: 6000),
+                                  animationDuration:
+                                      Duration(milliseconds: 6000),
                                   direction: Axis.horizontal,
                                   // crossAxisAlignment: CrossAxisAlignment.start,
                                   child: Text(
                                     // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!
+                                    NavbarState
+                                        .magazinePublishedGetTopLastByRange!
+                                        .response![i]
+                                        .name!
                                     // + "NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!"
                                     ,
                                     // " asd",
@@ -249,7 +265,11 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                                   direction: Axis.horizontal,
                                   child: Text(
                                     // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    DateFormat("d. MMMM yyyy").format(DateTime.parse(NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication!)),
+                                    DateFormat("d. MMMM yyyy").format(
+                                        DateTime.parse(NavbarState
+                                            .magazinePublishedGetTopLastByRange!
+                                            .response![i]
+                                            .dateOfPublication!)),
                                     // " asd",
                                     // "Card ${i + 1}",
                                     textAlign: TextAlign.center,

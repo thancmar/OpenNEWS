@@ -14,7 +14,8 @@ class OfferPage extends StatefulWidget {
   final LocationOffer locOffer;
   final int heroTag;
 
-  OfferPage({Key? key, required this.locOffer, required this.heroTag}) : super(key: key);
+  OfferPage({Key? key, required this.locOffer, required this.heroTag})
+      : super(key: key);
 
   @override
   State<OfferPage> createState() => _OfferPageState();
@@ -31,8 +32,12 @@ class _OfferPageState extends State<OfferPage> {
     image = null;
     // _controller!.initialize();
     // _controller = VideoPlayerController.asset('assets/test.mp4');
-    if (widget.locOffer.shm2Offer![0].type!.contains("PIC") || widget.locOffer.shm2Offer![0].type!.contains("PDF")) {
-      image = RepositoryProvider.of<LocationRepository>(context).GetLocationOfferImage(offerID: widget.locOffer.shm2Offer![0].id.toString(), filePath: widget.locOffer.shm2Offer![0].data.toString());
+    if (widget.locOffer.shm2Offer![0].type!.contains("PIC") ||
+        widget.locOffer.shm2Offer![0].type!.contains("PDF")) {
+      image = RepositoryProvider.of<LocationRepository>(context)
+          .GetLocationOfferImage(
+              offerID: widget.locOffer.shm2Offer![0].id.toString(),
+              filePath: widget.locOffer.shm2Offer![0].data.toString());
     }
     if (widget.locOffer.shm2Offer![0].type!.contains("MOV")) {
       // image = RepositoryProvider.of<LocationRepository>(context).GetLocationOfferImage(offerID: widget.locOffer.shm2Offer![0].id.toString(), filePath: widget.locOffer.shm2Offer![0].data.toString());
@@ -73,13 +78,16 @@ class _OfferPageState extends State<OfferPage> {
 
   _asyncMethod() async {
     RepositoryProvider.of<LocationRepository>(context)
-        .GetLocationOfferVideo(offerID: widget.locOffer.shm2Offer![0].id.toString(), filePath: widget.locOffer.shm2Offer![0].data.toString())
+        .GetLocationOfferVideo(
+            offerID: widget.locOffer.shm2Offer![0].id.toString(),
+            filePath: widget.locOffer.shm2Offer![0].data.toString())
         .then((value) async => {
               // print(await videoFile!.length()),
               // print(value),
               _controller = VideoPlayerController.file(
                 value,
-                videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
+                videoPlayerOptions: VideoPlayerOptions(
+                    mixWithOthers: true, allowBackgroundPlayback: false),
               ),
               _controller!.setLooping(true),
               await _controller!.initialize().then((_) {
@@ -119,7 +127,10 @@ class _OfferPageState extends State<OfferPage> {
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+          child: Hero(
+              tag: 'bg',
+              child: Image.asset("assets/images/background/Background.png",
+                  fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBody: true,
@@ -138,7 +149,13 @@ class _OfferPageState extends State<OfferPage> {
                     },
                 child: Icon(Icons.arrow_back_ios_new)),
             //HeroTag performance issue
-            title: Hero(tag: 'offer_title${widget.heroTag}', child: Text(widget.locOffer.shm2Offer![0].title!, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300))),
+            title: Hero(
+                tag: 'offer_title${widget.heroTag}',
+                child: Text(widget.locOffer.shm2Offer![0].title!,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300))),
 
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -150,7 +167,9 @@ class _OfferPageState extends State<OfferPage> {
               //     ?
               widget.locOffer.shm2Offer![0].type!.contains("MOV")
                   ? AspectRatio(
-                      aspectRatio: _controller != null ? _controller!.value.aspectRatio : 16 / 9,
+                      aspectRatio: _controller != null
+                          ? _controller!.value.aspectRatio
+                          : 16 / 9,
                       child: _controller != null
                           ? VideoPlayer(_controller!)
                           : SpinKitFadingCircle(
@@ -167,7 +186,12 @@ class _OfferPageState extends State<OfferPage> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: GestureDetector(
                               onTap: () => {
-                                if (widget.locOffer.shm2Offer![0].url!.isNotEmpty) {_launchUrl(Uri.parse(widget.locOffer.shm2Offer![0].url!))}
+                                if (widget
+                                    .locOffer.shm2Offer![0].url!.isNotEmpty)
+                                  {
+                                    _launchUrl(Uri.parse(
+                                        widget.locOffer.shm2Offer![0].url!))
+                                  }
                               },
                               child: Image.memory(
                                 // state.bytes![i],
@@ -187,14 +211,20 @@ class _OfferPageState extends State<OfferPage> {
                 padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: Text(widget.locOffer.shm2Offer![0].shortDesc!,
                     // widget.locOffer.addressStreet + " " + widget.locationDetails.addressHouseNr + ",\n" + widget.locationDetails.addressZip + " " + widget.locationDetails.addressCity,
-                    style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600)),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600)),
               ),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: Text(widget.locOffer.shm2Offer![0].longDesc!,
                     // widget.locOffer.addressStreet + " " + widget.locationDetails.addressHouseNr + ",\n" + widget.locationDetails.addressZip + " " + widget.locationDetails.addressCity,
-                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w300)),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300)),
               ),
               (widget.locOffer.shm2Offer![0].urlTitle!.isNotEmpty)
                   ? GestureDetector(
@@ -203,10 +233,15 @@ class _OfferPageState extends State<OfferPage> {
                         padding: EdgeInsets.fromLTRB(20, 10, 20, 40),
                         child: Text(
                           widget.locOffer.shm2Offer![0].urlTitle!,
-                          style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.w500, decoration: TextDecoration.underline),
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline),
                         ),
                       ),
-                      onTap: () => _launchUrl(Uri.parse(widget.locOffer.shm2Offer![0].url!)))
+                      onTap: () => _launchUrl(
+                          Uri.parse(widget.locOffer.shm2Offer![0].url!)))
                   : Container(),
             ]),
           ),

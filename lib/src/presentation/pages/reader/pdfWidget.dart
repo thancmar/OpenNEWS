@@ -33,7 +33,8 @@ class PDFWidget {
       }
     }();
 
-    final defaultBuilder = builders as CustumPdfViewPinchBuilders<DefaultBuilderOptions>;
+    final defaultBuilder =
+        builders as CustumPdfViewPinchBuilders<DefaultBuilderOptions>;
     final options = defaultBuilder.options;
 
     return AnimatedSwitcher(
@@ -43,7 +44,8 @@ class PDFWidget {
     );
   }
 
-  static Widget transitionBuilder(Widget child, Animation<double> animation) => FadeTransition(opacity: animation, child: child);
+  static Widget transitionBuilder(Widget child, Animation<double> animation) =>
+      FadeTransition(opacity: animation, child: child);
 
   // static PhotoViewGalleryPageOptions pageBuilder(
   //   BuildContext context,

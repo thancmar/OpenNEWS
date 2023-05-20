@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-MagazineCategoryGetAllActive MagazineCategoryGetAllActiveFromJson(String str) => MagazineCategoryGetAllActive.fromJson(json.decode(str));
+MagazineCategoryGetAllActive MagazineCategoryGetAllActiveFromJson(String str) =>
+    MagazineCategoryGetAllActive.fromJson(json.decode(str));
 
 class MagazineCategoryGetAllActive {
   List<Response>? response;

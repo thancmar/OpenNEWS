@@ -178,13 +178,15 @@ class BackdropAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleTextStyle,
     this.systemOverlayStyle,
   })  : assert(elevation == null || elevation >= 0.0),
-        preferredSize = Size.fromHeight((toolbarHeight ?? kToolbarHeight) + (bottom?.preferredSize.height ?? 0)),
+        preferredSize = Size.fromHeight((toolbarHeight ?? kToolbarHeight) +
+            (bottom?.preferredSize.height ?? 0)),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: leading ?? (automaticallyImplyLeading ? const BackdropToggleButton() : null),
+      leading: leading ??
+          (automaticallyImplyLeading ? const BackdropToggleButton() : null),
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: title,
       actions: actions,

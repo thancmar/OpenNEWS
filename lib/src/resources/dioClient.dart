@@ -44,8 +44,12 @@ class ApiClient {
     dioforImages.interceptors.add(CookieManager(cokkies));
     diofordata.interceptors.add(CookieManager(cokkies));
     //Important line, might have to modify later
-    dioforImages.httpClientAdapter = DefaultHttpClientAdapter()..onHttpClientCreate = (httpClient) => httpClient..maxConnectionsPerHost = 30;
-    diofordata.httpClientAdapter = DefaultHttpClientAdapter()..onHttpClientCreate = (httpClient) => httpClient..maxConnectionsPerHost = 30;
+    dioforImages.httpClientAdapter = DefaultHttpClientAdapter()
+      ..onHttpClientCreate =
+          (httpClient) => httpClient..maxConnectionsPerHost = 50;
+    diofordata.httpClientAdapter = DefaultHttpClientAdapter()
+      ..onHttpClientCreate =
+          (httpClient) => httpClient..maxConnectionsPerHost =50;
     dioforImages.interceptors.add(InterceptorsWrapper(onError: (e, handler) {
       print(e.message);
       handler.next(e);

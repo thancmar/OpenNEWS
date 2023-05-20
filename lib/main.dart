@@ -66,13 +66,15 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]).then((value) => runApp(EasyLocalization(
       supportedLocales: [Locale('en'), Locale('de')],
-      path: 'assets/translations', // <-- change the path of the translation files
+      path:
+          'assets/translations', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
       child: MyApp())));
 
   runApp(EasyLocalization(
       supportedLocales: [Locale('en'), Locale('de')],
-      path: 'assets/translations', // <-- change the path of the translation files
+      path:
+          'assets/translations', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
       child: MyApp()));
   configLoading();
@@ -103,16 +105,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var baseTheme = ThemeData(brightness:Brightness.dark,fontFamily: GoogleFonts.raleway().toString());
+    var baseTheme = ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: GoogleFonts.raleway().toString());
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
-        RepositoryProvider<HotspotRepository>(create: (context) => HotspotRepository()),
+        RepositoryProvider<AuthRepository>(
+            create: (context) => AuthRepository()),
+        RepositoryProvider<HotspotRepository>(
+            create: (context) => HotspotRepository()),
         RepositoryProvider<MagazineRepository>(
           create: (context) => MagazineRepository(),
           lazy: false,
         ),
-        RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
+        RepositoryProvider<LocationRepository>(
+            create: (context) => LocationRepository()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -124,13 +131,23 @@ class MyApp extends StatelessWidget {
             ),
           ),
           BlocProvider<SplashBloc>(
-              create: (context) => SplashBloc(authRepository: RepositoryProvider.of<AuthRepository>(context), locationRepository: RepositoryProvider.of<LocationRepository>(context))),
+              create: (context) => SplashBloc(
+                  authRepository:
+                      RepositoryProvider.of<AuthRepository>(context),
+                  locationRepository:
+                      RepositoryProvider.of<LocationRepository>(context))),
           BlocProvider<NavbarBloc>(
               create: (context) => NavbarBloc(
-                  magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
-                  locationRepository: RepositoryProvider.of<LocationRepository>(context),
-                  hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
-          BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
+                  magazineRepository:
+                      RepositoryProvider.of<MagazineRepository>(context),
+                  locationRepository:
+                      RepositoryProvider.of<LocationRepository>(context),
+                  hotspotRepository:
+                      RepositoryProvider.of<HotspotRepository>(context))),
+          BlocProvider<SearchBloc>(
+              create: (context) => SearchBloc(
+                  magazineRepository:
+                      RepositoryProvider.of<MagazineRepository>(context))),
           // BlocProvider<AuthBloc>(
           //   create: (context) => AuthBloc(
           //     //no need of Authbloc here

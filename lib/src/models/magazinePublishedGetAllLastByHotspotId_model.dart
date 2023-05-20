@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-MagazinePublishedGetAllLastByHotspotId MagazinePublishedGetLastWithLimitFromJson(String str) => MagazinePublishedGetAllLastByHotspotId.fromJson(json.decode(str));
+MagazinePublishedGetAllLastByHotspotId
+    MagazinePublishedGetLastWithLimitFromJson(String str) =>
+        MagazinePublishedGetAllLastByHotspotId.fromJson(json.decode(str));
 
 class MagazinePublishedGetAllLastByHotspotId {
   List<Response>? response;

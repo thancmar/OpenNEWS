@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-GetUserDetails GetUserDetailsFromJson(String str) => GetUserDetails.fromJson(json.decode(str));
+GetUserDetails GetUserDetailsFromJson(String str) =>
+    GetUserDetails.fromJson(json.decode(str));
 
 class GetUserDetails {
   Response? response;
@@ -8,7 +9,9 @@ class GetUserDetails {
   GetUserDetails({this.response});
 
   GetUserDetails.fromJson(Map<String, dynamic> json) {
-    response = json['response'] != null ? new Response.fromJson(json['response']) : null;
+    response = json['response'] != null
+        ? new Response.fromJson(json['response'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {

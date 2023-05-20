@@ -22,7 +22,10 @@ class HotspotRepository {
       };
       var queryString = Uri(queryParameters: data).query;
       var response = await getIt<ApiClient>().diofordata.post(
-            ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+            ApiConstants.baseUrl +
+                ApiConstants.usersEndpoint +
+                '?' +
+                queryString,
             data: data,
           );
       switch (response.statusCode) {

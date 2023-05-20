@@ -16,12 +16,21 @@ import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
 class MagazineRepository {
-  Future<MagazinePublishedGetAllLastByHotspotId> magazinePublishedGetAllLastByHotspotId({required String? id_hotspot, required CookieJar cookieJar}) async {
+  Future<MagazinePublishedGetAllLastByHotspotId>
+      magazinePublishedGetAllLastByHotspotId(
+          {required String? id_hotspot, required CookieJar cookieJar}) async {
     print("magazinePublishedGetAllLastByHotspotId $id_hotspot");
     final getIt = GetIt.instance;
-    ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
+    ApiClient dioClient = ApiClient(
+        dioforImages: Dio(),
+        diofordata: Dio(),
+        networkInfo: NetworkInfo(),
+        secureStorage: FlutterSecureStorage());
 
-    Map<String, dynamic> data = {'f': 'magazinePublishedGetAllLastByHotspotId', 'json': '{"id_hotspot": "$id_hotspot"}'};
+    Map<String, dynamic> data = {
+      'f': 'magazinePublishedGetAllLastByHotspotId',
+      'json': '{"id_hotspot": "$id_hotspot"}'
+    };
 
     var queryString = Uri(queryParameters: data).query;
 
@@ -36,9 +45,11 @@ class MagazineRepository {
     if (response.statusCode == 200) {
       // final Map parsed = json.decode(response.data);
       print("magazinePublishedGetLastWithLimit sucess");
-      if (await dioClient.secureStorage.read(key: "allmagazines") == (response.data)) {
+      if (await dioClient.secureStorage.read(key: "allmagazines") ==
+          (response.data)) {
         // print('dsfsf');
-        dioClient.secureStorage.write(key: "allmagazines", value: response.data);
+        dioClient.secureStorage
+            .write(key: "allmagazines", value: response.data);
         return MagazinePublishedGetLastWithLimitFromJson(response.data);
       }
       ;
@@ -52,12 +63,21 @@ class MagazineRepository {
     }
   }
 
-  Future<MagazinePublishedGetAllLastByHotspotId> magazinePublishedGetTopLastByRange({required String? id_hotspot, required CookieJar cookieJar}) async {
+  Future<MagazinePublishedGetAllLastByHotspotId>
+      magazinePublishedGetTopLastByRange(
+          {required String? id_hotspot, required CookieJar cookieJar}) async {
     print("magazinePublishedGetTopLastByRange $id_hotspot");
     final getIt = GetIt.instance;
-    ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
+    ApiClient dioClient = ApiClient(
+        dioforImages: Dio(),
+        diofordata: Dio(),
+        networkInfo: NetworkInfo(),
+        secureStorage: FlutterSecureStorage());
 
-    Map<String, dynamic> data = {'f': 'magazinePublishedGetTopLastByRange', 'json': '{"id_hotspot": "$id_hotspot"}'};
+    Map<String, dynamic> data = {
+      'f': 'magazinePublishedGetTopLastByRange',
+      'json': '{"id_hotspot": "$id_hotspot"}'
+    };
     print(data);
     var queryString = Uri(queryParameters: data).query;
 
@@ -73,9 +93,11 @@ class MagazineRepository {
       print("magazinePublishedGetTopLastByRange sucess");
       // print(response.data);
       // print(response!.data);
-      if (await dioClient.secureStorage.read(key: "allmagazinesbyrange") == (response.data)) {
+      if (await dioClient.secureStorage.read(key: "allmagazinesbyrange") ==
+          (response.data)) {
         // print('dsfsf');
-        dioClient.secureStorage.write(key: "allmagazinesbyrange", value: response.data);
+        dioClient.secureStorage
+            .write(key: "allmagazinesbyrange", value: response.data);
         return MagazinePublishedGetLastWithLimitFromJson(response.data);
       }
       ;
@@ -129,7 +151,10 @@ class MagazineRepository {
     }
   }
 
-  Future<Uint8List> GetPage({required String? page, required String id_mag_pub, required String date_of_publication}) async {
+  Future<Uint8List> GetPage(
+      {required String? page,
+      required String id_mag_pub,
+      required String date_of_publication}) async {
     // print("GetPage $id_mag_pub $page");
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
@@ -138,11 +163,17 @@ class MagazineRepository {
     };
     var queryString = Uri(queryParameters: queryParame).query;
     // var file = await DefaultCacheManager().getSingleFile(id_mag_pub + "_" + date_of_publication!);
-    print("sdfdjkbsf $id_mag_pub");
+    // print("sdfdjkbsf $id_mag_pub");
 
     // await DefaultCacheManager().emptyCache();
-    var response = await getIt<ApiClient>().dioforImages.get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
-    await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication + "_" + "0", Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 7));
+    var response = await getIt<ApiClient>().diofordata.get(
+        ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
+        options: Options(responseType: ResponseType.bytes));
+    await DefaultCacheManager().putFile(
+        id_mag_pub + "_" + date_of_publication + "_" + "0",
+        Uint8List.fromList(response.data),
+        fileExtension: "jpeg",
+        maxAge: Duration(days: 7));
     return Uint8List.fromList(response.data);
 
     // print("cache response ${file2.da}");
@@ -150,7 +181,11 @@ class MagazineRepository {
     // print("cache ${file.}")
   }
 
-  GetPagesforReader({required int page, required String? id_mag_pub, required String? date_of_publication, required CancelToken? readerCancelToken}) async {
+  GetPagesforReader(
+      {required int page,
+      required String? id_mag_pub,
+      required String? date_of_publication,
+      required CancelToken? readerCancelToken}) async {
     // print("GetPage $id_mag_pub $page");
     try {
       final getIt = GetIt.instance;
@@ -159,7 +194,7 @@ class MagazineRepository {
         'id_mag_pub': id_mag_pub!,
       };
       var queryString = Uri(queryParameters: queryParame).query;
-      print("page does not exist ${id_mag_pub} ${page}");
+      // print("page does not exist ${id_mag_pub} ${page}");
       //
       //   await DefaultCacheManager().
       //       .getFileFromCache(id_mag_pub + "_" + date_of_publication! + "_" + page)
@@ -169,11 +204,18 @@ class MagazineRepository {
       //       .diofordata
       //       .get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
       // });
-      print("sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
-      var response = await getIt<ApiClient>().diofordata.get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
+      // print(
+      //     "sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
+      var response = await getIt<ApiClient>().diofordata.get(
+          ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
+          options: Options(responseType: ResponseType.bytes));
       switch (response.statusCode) {
         case 200:
-          await DefaultCacheManager().putFile(id_mag_pub + "_" + date_of_publication! + "_" + page.toString(), Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 7));
+          await DefaultCacheManager().putFile(
+              id_mag_pub + "_" + date_of_publication! + "_" + page.toString(),
+              Uint8List.fromList(response.data),
+              fileExtension: "jpeg",
+              maxAge: Duration(days: 7));
           return;
         default:
           throw Exception(response.data);
@@ -187,7 +229,11 @@ class MagazineRepository {
     }
   }
 
-  GetThumbnailforReader({required int page, required String? id_mag_pub, required String? date_of_publication, required CancelToken? readerCancelToken}) async {
+  GetThumbnailforReader(
+      {required int page,
+      required String? id_mag_pub,
+      required String? date_of_publication,
+      required CancelToken? readerCancelToken}) async {
     // print("GetPage $id_mag_pub $page");
     try {
       final getIt = GetIt.instance;
@@ -196,7 +242,7 @@ class MagazineRepository {
         'id_mag_pub': id_mag_pub!,
       };
       var queryString = Uri(queryParameters: queryParame).query;
-      print("page does not exist ${id_mag_pub} ${page}");
+      // print("page does not exist ${id_mag_pub} ${page}");
       //
       //   await DefaultCacheManager().
       //       .getFileFromCache(id_mag_pub + "_" + date_of_publication! + "_" + page)
@@ -206,12 +252,24 @@ class MagazineRepository {
       //       .diofordata
       //       .get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
       // });
-      print("sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
-      var response = await getIt<ApiClient>().diofordata.get(ApiConstants.baseUrl + ApiConstants.getCoverJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes));
+      print(
+          "sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
+      var response = await getIt<ApiClient>().dioforImages.get(
+          ApiConstants.baseUrl + ApiConstants.getCoverJPEG + '?' + queryString,
+          options: Options(responseType: ResponseType.bytes));
       switch (response.statusCode) {
         case 200:
-          await DefaultCacheManager()
-              .putFile(id_mag_pub + "_" + date_of_publication! + "_" + page.toString() + "_" + "thumbnail", Uint8List.fromList(response.data), fileExtension: "jpeg", maxAge: Duration(days: 7));
+          await DefaultCacheManager().putFile(
+              id_mag_pub +
+                  "_" +
+                  date_of_publication! +
+                  "_" +
+                  page.toString() +
+                  "_" +
+                  "thumbnail",
+              Uint8List.fromList(response.data),
+              fileExtension: "jpeg",
+              maxAge: Duration(days: 7));
           return;
         default:
           throw Exception(response.data);
@@ -225,8 +283,10 @@ class MagazineRepository {
     }
   }
 
-  Future<Uint8List> GetPagesAsPDFforReader({required String? id_mag_pub, required CancelToken? readerCancelToken}) async {
-    print("GetPagesAsPDFforReader $id_mag_pub $id_mag_pub");
+  Future<Uint8List> GetPagesAsPDFforReader(
+      {required String? id_mag_pub,
+      required CancelToken? readerCancelToken}) async {
+    // print("GetPagesAsPDFforReader $id_mag_pub $id_mag_pub");
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
       'type': "pdf",
@@ -235,9 +295,10 @@ class MagazineRepository {
     };
     var queryString = Uri(queryParameters: queryParame).query;
 
-    var response = await getIt<ApiClient>()
-        .diofordata
-        .get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
+    var response = await getIt<ApiClient>().diofordata.get(
+        ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
+        options: Options(responseType: ResponseType.bytes),
+        cancelToken: readerCancelToken);
 
     return Uint8List.fromList(response.data);
   }

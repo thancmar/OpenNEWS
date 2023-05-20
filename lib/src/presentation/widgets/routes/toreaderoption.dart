@@ -6,10 +6,14 @@ class ReaderOptionRoute extends PageRouteBuilder {
       : super(
             // transitionDuration: Duration(seconds: 2),
             opaque: false,
-            pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
               return widget;
             },
-            transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+            transitionsBuilder: (BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child) {
               return new ScaleTransition(
                 scale: new Tween<double>(
                   begin: 1.50,

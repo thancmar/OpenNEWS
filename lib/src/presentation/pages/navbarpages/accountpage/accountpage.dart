@@ -8,7 +8,10 @@ class AccountPage extends StatefulWidget {
   State<AccountPage> createState() => _AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<AccountPage> {
+class _AccountPageState extends State<AccountPage>
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<AccountPage> {
   double widget1Opacity = 0.0;
   //Count the amount of time the Hero animation
   AnimationController? controller;

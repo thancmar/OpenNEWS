@@ -55,25 +55,41 @@ class _MapOfferState extends State<MapOffer> {
                   Container(
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                    child: Text(widget.locationDetails.nameApp, style: TextStyle(fontSize: 26, color: Colors.white, fontWeight: FontWeight.w600)),
+                    child: Text(widget.locationDetails.nameApp,
+                        style: TextStyle(
+                            fontSize: 26,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600)),
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 20),
                     child: Text(
-                        widget.locationDetails.addressStreet + " " + widget.locationDetails.addressHouseNr + ",\n" + widget.locationDetails.addressZip + " " + widget.locationDetails.addressCity,
-                        style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w300)),
+                        widget.locationDetails.addressStreet +
+                            " " +
+                            widget.locationDetails.addressHouseNr +
+                            ",\n" +
+                            widget.locationDetails.addressZip +
+                            " " +
+                            widget.locationDetails.addressCity,
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300)),
                   ),
                   FutureBuilder<LocationOffers>(
                       future: NavbarState.maplocationoffers,
                       builder: (context, snapshot) {
-                        print("NavbarState.maplocationoffers snapdata is ${snapshot.data}");
+                        print(
+                            "NavbarState.maplocationoffers snapdata is ${snapshot.data}");
                         if (snapshot.hasData) {
                           // print(snapshot.data!.locationOffer!.length);
 
                           return Column(
                             children: [
-                              for (int i = 0; i < snapshot.data!.locationOffer!.length; i++)
+                              for (int i = 0;
+                                  i < snapshot.data!.locationOffer!.length;
+                                  i++)
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: GestureDetector(
@@ -81,8 +97,10 @@ class _MapOfferState extends State<MapOffer> {
                                       Navigator.push(
                                         context,
                                         PageRouteBuilder(
-                                          pageBuilder: (_, __, ___) => OfferPage(
-                                            locOffer: snapshot.data!.locationOffer![i],
+                                          pageBuilder: (_, __, ___) =>
+                                              OfferPage(
+                                            locOffer: snapshot
+                                                .data!.locationOffer![i],
                                             heroTag: i,
                                           ),
                                         ),
@@ -90,8 +108,10 @@ class _MapOfferState extends State<MapOffer> {
                                     },
                                     child: Container(
                                       // color: Colors.yellow,
-                                      width: MediaQuery.of(context).size.width - 40,
-                                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      padding:
+                                          EdgeInsets.fromLTRB(20, 20, 20, 20),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
                                         color: Colors.white.withOpacity(0.1),
@@ -103,7 +123,14 @@ class _MapOfferState extends State<MapOffer> {
                                       alignment: Alignment.centerLeft,
                                       child: Hero(
                                           tag: 'offer_title$i',
-                                          child: Text(snapshot.data!.locationOffer![i].shm2Offer![0].title!, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300))),
+                                          child: Text(
+                                              snapshot.data!.locationOffer![i]
+                                                  .shm2Offer![0].title!,
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                  fontWeight:
+                                                      FontWeight.w300))),
                                     ),
                                   ),
                                 ),
@@ -117,7 +144,12 @@ class _MapOfferState extends State<MapOffer> {
                         //   );
                         // }
                         else
-                          return Container(child: Text('No loaction offers', style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300))
+                          return Container(
+                              child: Text('No loaction offers',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300))
 
                               // color: Colors.red,
                               // width: 20,

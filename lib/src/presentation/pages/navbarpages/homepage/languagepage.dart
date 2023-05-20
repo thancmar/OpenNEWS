@@ -15,20 +15,24 @@ import '../../reader/readerpage.dart';
 class LanguagePage extends StatefulWidget {
   final String titleText;
   final String language;
-  const LanguagePage({Key? key, required this.titleText, required this.language}) : super(key: key);
+  const LanguagePage(
+      {Key? key, required this.titleText, required this.language})
+      : super(key: key);
 
   @override
   State<LanguagePage> createState() => _LanguagePageState();
 }
 
-class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClientMixin<LanguagePage> {
+class _LanguagePageState extends State<LanguagePage>
+    with AutomaticKeepAliveClientMixin<LanguagePage> {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.language));
+    BlocProvider.of<SearchBloc>(context)
+        .add(OpenLanguageResults(context, widget.language));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
 
@@ -45,7 +49,10 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+          child: Hero(
+              tag: 'bg',
+              child: Image.asset("assets/images/background/Background.png",
+                  fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBodyBehindAppBar: true,
@@ -108,7 +115,12 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
               print("$state");
               if (state is GoToLanguageResults) {
                 return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 45,
+                            crossAxisSpacing: 15,
+                            childAspectRatio: 0.7),
                     itemCount: state.selectedLanguage!.response?.length,
                     // itemCount: 10,
                     // itemCount: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "en").toList().length,
@@ -179,7 +191,8 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                   // transitionDuration:
                                   // Duration(seconds: 2),
                                   pageBuilder: (_, __, ___) => StartReader(
-                                    magazine: state.selectedLanguage!.response![index],
+                                    magazine: state
+                                        .selectedLanguage!.response![index],
                                     heroTag: "",
 
                                     // noofpages: 5,
@@ -192,7 +205,14 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                               alignment: Alignment.center,
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: state.selectedLanguage!.response![index].idMagazinePublication! + "_" + state.selectedLanguage!.response![index].dateOfPublication! + "_0",
+                                  imageUrl: state
+                                          .selectedLanguage!
+                                          .response![index]
+                                          .idMagazinePublication! +
+                                      "_" +
+                                      state.selectedLanguage!.response![index]
+                                          .dateOfPublication! +
+                                      "_0",
                                   // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                                   //     "_" +
                                   //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
@@ -209,10 +229,14 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                   //   ),
                                   // ),
 
-                                  imageBuilder: (context, imageProvider) => Container(
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
                                     decoration: BoxDecoration(
-                                      image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.fill),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                     ),
                                   ),
                                   useOldImageOnUrlChange: true,
@@ -221,7 +245,8 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                       // color: Colors.grey.withOpacity(0.05),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
@@ -230,11 +255,13 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                       size: 50.0,
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) => Container(
+                                  errorWidget: (context, url, error) =>
+                                      Container(
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
                                     child: SpinKitFadingCircle(
@@ -254,13 +281,18 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                   // top: -50,
                                   bottom: -35,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 - 20,
+                                  width: MediaQuery.of(context).size.width / 2 -
+                                      20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        DateFormat("d. MMMM yyyy").format(DateTime.parse(state.selectedLanguage!.response![index].dateOfPublication!)),
+                                        DateFormat("d. MMMM yyyy").format(
+                                            DateTime.parse(state
+                                                .selectedLanguage!
+                                                .response![index]
+                                                .dateOfPublication!)),
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,
@@ -277,14 +309,16 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                                   // top: -50,
                                   bottom: -20,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 - 20,
+                                  width: MediaQuery.of(context).size.width / 2 -
+                                      20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       // crossAxisAlignment: CrossAxisAlignment.start,
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        state.selectedLanguage!.response![index].name!,
+                                        state.selectedLanguage!.response![index]
+                                            .name!,
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,
@@ -377,19 +411,19 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                               ],
                             ),
                           )
-                        // : Container(
-                        //     color: Colors.grey.withOpacity(0.1),
-                        //     child: SpinKitFadingCircle(
-                        //       color: Colors.white,
-                        //       size: 50.0,
-                        //     ),
-                        //   ),
-                      );
+                          // : Container(
+                          //     color: Colors.grey.withOpacity(0.1),
+                          //     child: SpinKitFadingCircle(
+                          //       color: Colors.white,
+                          //       size: 50.0,
+                          //     ),
+                          //   ),
+                          );
                     });
               }
               return Container(
-                // color: Colors.red,
-              );
+                  // color: Colors.red,
+                  );
             },
           ),
           // body: BlocBuilder<SearchBloc, SearchState>(

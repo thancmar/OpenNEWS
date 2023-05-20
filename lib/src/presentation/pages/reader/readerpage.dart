@@ -12,18 +12,21 @@ import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptio
 import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreaderoption.dart';
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
-import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart'
+    as model;
 
 class StartReader extends StatelessWidget {
   final model.Response magazine;
   final String heroTag;
-  StartReader({Key? key, required this.magazine, required this.heroTag}) : super(key: key);
+  StartReader({Key? key, required this.magazine, required this.heroTag})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (BuildContext context) => ReaderBloc(
-              magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
+              magazineRepository:
+                  RepositoryProvider.of<MagazineRepository>(context),
             ),
         child: Reader(
           magazine: this.magazine,
@@ -39,13 +42,19 @@ class Reader extends StatefulWidget {
   ValueNotifier<int> currentPage;
   final String heroTag;
 
-  Reader({Key? key, required this.magazine, required this.currentPage, required this.heroTag}) : super(key: key);
+  Reader(
+      {Key? key,
+      required this.magazine,
+      required this.currentPage,
+      required this.heroTag})
+      : super(key: key);
 
   @override
   State<Reader> createState() => _ReaderState();
 }
 
-class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
+class _ReaderState extends State<Reader>
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
   // bool isOnPageTurning = false;
   late final CustumPdfControllerPinch pdfPinchController;
   // GlobalKey<FlipWidgetState> _flipKey = GlobalKey();
@@ -53,7 +62,8 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
 
   get math => null;
   late double pageScale;
-  static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  static Matrix4 matrix4 =
+      Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController _controller = TransformationController(matrix4);
   static ValueNotifier<int> _networklHasErrorNotifier = ValueNotifier(0);
   late AnimationController? _spinKitController;
@@ -173,11 +183,10 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                     context,
                     ReaderOptionRoute(
                         widget: ReaderOptionsPage(
-                      reader: this.widget,
-                      bloc: BlocProvider.of<ReaderBloc>(context),
-                      currentPage: widget.currentPage,
-                          controller:_controller
-                    ))),
+                            reader: this.widget,
+                            bloc: BlocProvider.of<ReaderBloc>(context),
+                            currentPage: widget.currentPage,
+                            controller: _controller))),
                 onDoubleTap: () => {
                       // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
                       print("controller"),
@@ -233,7 +242,11 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                           //Need to calculate page width minus minus padding
                           padding: orientation == Orientation.portrait
                               ? EdgeInsets.only(top: 150, bottom: 150)
-                              : EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3, left: MediaQuery.of(context).size.width * 0.3),
+                              : EdgeInsets.only(
+                                  right:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.3),
                           //have to
                           // adjust
                           // later
@@ -253,11 +266,21 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                                         switchOutCurve: Threshold(5),
                                         child: ValueListenableBuilder<int>(
                                             valueListenable: widget.currentPage,
-                                            builder: (BuildContext context, int pageNo, Widget? child) {
+                                            builder: (BuildContext context,
+                                                int pageNo, Widget? child) {
                                               return CachedNetworkImage(
-                                                  key: ValueKey(_networklHasErrorNotifier.value),
-                                                  filterQuality: FilterQuality.none,
-                                                  imageUrl: widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + pageNo.toString(),
+                                                  key: ValueKey(
+                                                      _networklHasErrorNotifier
+                                                          .value),
+                                                  filterQuality:
+                                                      FilterQuality.none,
+                                                  imageUrl: widget.magazine
+                                                          .idMagazinePublication! +
+                                                      "_" +
+                                                      widget.magazine
+                                                          .dateOfPublication! +
+                                                      "_" +
+                                                      pageNo.toString(),
                                                   // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                                                   //     "_" +
                                                   //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
@@ -274,34 +297,65 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                                                   //   ),
                                                   // ),
 
-                                                  imageBuilder: (context, imageProvider) => Container(
-                                                        height: MediaQuery.of(context).size.height,
-                                                        width: MediaQuery.of(context).size.width,
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
+                                                      Container(
+                                                        height: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .height,
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
                                                         // color: Colors.red,
-                                                        decoration: BoxDecoration(
-                                                          image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          image: DecorationImage(
+                                                              image:
+                                                                  imageProvider,
+                                                              fit: BoxFit
+                                                                  .contain),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5.0)),
                                                         ),
                                                       ),
                                                   // useOldImageOnUrlChange: true,
                                                   // very important: keep both placeholder and errorWidget
-                                                  placeholder: (context, url) => Container(
+                                                  placeholder: (context, url) =>
+                                                      Container(
                                                         // color: Colors.grey.withOpacity(0.1),
-                                                        decoration: BoxDecoration(
+                                                        decoration:
+                                                            BoxDecoration(
                                                           // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                          color: Colors.grey.withOpacity(0.1),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5.0)),
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
                                                         ),
-                                                        child: SpinKitFadingCircle(
+                                                        child:
+                                                            SpinKitFadingCircle(
                                                           color: Colors.white,
                                                           size: 50.0,
-                                                          controller: _spinKitController,
+                                                          controller:
+                                                              _spinKitController,
                                                         ),
                                                       ),
-                                                  errorWidget: (context, url, error) {
-                                                    Future.delayed(const Duration(milliseconds: 100), () {
+                                                  errorWidget:
+                                                      (context, url, error) {
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 100),
+                                                        () {
                                                       setState(() {
-                                                        _networklHasErrorNotifier.value++;
+                                                        _networklHasErrorNotifier
+                                                            .value++;
                                                       });
                                                     });
                                                     return Container(
@@ -309,13 +363,19 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
 
                                                       decoration: BoxDecoration(
                                                         // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                        color: Colors.grey.withOpacity(0.1),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    5.0)),
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
                                                       ),
-                                                      child: SpinKitFadingCircle(
+                                                      child:
+                                                          SpinKitFadingCircle(
                                                         color: Colors.white,
                                                         size: 50.0,
-                                                        controller: _spinKitController,
+                                                        controller:
+                                                            _spinKitController,
                                                       ),
                                                     );
                                                   }

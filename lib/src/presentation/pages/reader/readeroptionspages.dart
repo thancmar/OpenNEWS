@@ -13,20 +13,31 @@ class ReaderOptionsPages extends StatefulWidget {
   final Reader reader;
   ValueNotifier<bool> isOnPageTurning;
   ValueNotifier<int> currentPage;
-  ReaderOptionsPages({Key? key, required this.isOnPageTurning, required this.bloc, required this.reader, required this.currentPage}) : super(key: key);
+  ReaderOptionsPages(
+      {Key? key,
+      required this.isOnPageTurning,
+      required this.bloc,
+      required this.reader,
+      required this.currentPage})
+      : super(key: key);
 
   @override
   State<ReaderOptionsPages> createState() => _ReaderOptionsPagesState();
 }
 
-class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ReaderOptionsPages> {
+class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<ReaderOptionsPages> {
   int _index = 0;
   // var controller;
   static late PageController controller = PageController();
   static late List<ValueNotifier<int>> _networklHasErrorNotifier;
 
-  late List<bool> toggleImageLoaded = List.filled(int.parse(widget.reader.magazine.pageMax!), false);
-  late List<Key> _reloader = List.filled(int.parse(widget.reader.magazine.pageMax!), GlobalKey());
+  late List<bool> toggleImageLoaded =
+      List.filled(int.parse(widget.reader.magazine.pageMax!), false);
+  late List<Key> _reloader =
+      List.filled(int.parse(widget.reader.magazine.pageMax!), GlobalKey());
   // int current = 0;
   // bool isOnPageTurning = false;
   Timer? timer;
@@ -38,7 +49,9 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
 
   @override
   void initState() {
-    _networklHasErrorNotifier = List.filled(int.parse(widget.reader.magazine.pageMax!), ValueNotifier(0), growable: true);
+    _networklHasErrorNotifier = List.filled(
+        int.parse(widget.reader.magazine.pageMax!), ValueNotifier(0),
+        growable: true);
     super.initState();
     _spinKitController = AnimationController(
       vsync: this,
@@ -46,24 +59,32 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
     );
     controller.addListener(scrollListener);
     // controller.jumpTo(5);
-    controller = PageController(viewportFraction: 0.7, initialPage: widget.reader.currentPage.value);
+    controller = PageController(
+        viewportFraction: 0.7, initialPage: widget.reader.currentPage.value);
 
     var visitedPages = [];
   }
 
   void scrollListener() {
     // print(controller.page?.round());
-    if (visitedPages.contains(controller.page?.round()) == false) {
-      visitedPages.add(controller.page!.round());
-      // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round()));
-      // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 1));
-      // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 2));
-      // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 3));
-      widget.bloc.add(DownloadThumbnail(magazine: widget.reader.magazine, pageNo: controller.page!.round()));
-      widget.bloc.add(DownloadThumbnail(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 1));
-      widget.bloc.add(DownloadThumbnail(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 2));
-      widget.bloc.add(DownloadThumbnail(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 3));
-    }
+    // if (visitedPages.contains(controller.page?.round()) == false) {
+    //   visitedPages.add(controller.page!.round());
+    //   // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round()));
+    //   // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 1));
+    //   // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 2));
+    //   // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: controller.page!.round() + 3));
+    //   widget.bloc.add(DownloadThumbnail(
+    //       magazine: widget.reader.magazine, pageNo: controller.page!.round()));
+    //   widget.bloc.add(DownloadThumbnail(
+    //       magazine: widget.reader.magazine,
+    //       pageNo: controller.page!.round() + 1));
+    //   widget.bloc.add(DownloadThumbnail(
+    //       magazine: widget.reader.magazine,
+    //       pageNo: controller.page!.round() + 2));
+    //   widget.bloc.add(DownloadThumbnail(
+    //       magazine: widget.reader.magazine,
+    //       pageNo: controller.page!.round() + 3));
+    // }
   }
 
   @override
@@ -81,14 +102,20 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
     // print(ImageSizeGetter.getSize(MemoryInput(widget.reader.cover)).height);
     return OrientationBuilder(builder: (context, orientation) {
       // controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.4 : 0.15);
-      controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15);
+      controller = PageController(
+          viewportFraction:
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? 0.45
+                  : 0.15);
       controller.addListener(scrollListener);
       return SizedBox(
         // width: 500,
         // width: double.infinity,
 
         // height: double.infinity,
-        height: (MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.height * 0.28 : MediaQuery.of(context).size.height * 0.450),
+        height: (MediaQuery.of(context).orientation == Orientation.portrait
+            ? MediaQuery.of(context).size.height * 0.28
+            : MediaQuery.of(context).size.height * 0.450),
         // width: MediaQuery.of(context).size.width + 01000,
         // width: 50,
         // height: 250, // card height
@@ -142,29 +169,52 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
                                 // widget.callback(i),
                                 // widget.reader.currentPage = i,
                                 print("page $i"),
-                                widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: i)),
+                                widget.bloc.add(DownloadPage(
+                                    magazine: widget.reader.magazine,
+                                    pageNo: i)),
 
                                 setState(() {
                                   widget.reader.currentPage.value = i;
                                 }),
                               },
                               child: CachedNetworkImage(
-                                  key: ValueKey(_networklHasErrorNotifier[i].value),
+                                  key: ValueKey(
+                                      _networklHasErrorNotifier[i].value),
                                   filterQuality: FilterQuality.low,
                                   // height: double.infinity,
-                                  imageUrl: widget.reader.magazine.idMagazinePublication! + "_" + widget.reader.magazine.dateOfPublication! + "_" + i.toString() + "_" + "thumbnail",
+                                  imageUrl: widget.reader.magazine
+                                          .idMagazinePublication! +
+                                      "_" +
+                                      widget
+                                          .reader.magazine.dateOfPublication! +
+                                      "_" +
+                                      i.toString() +
+                                      "_" +
+                                      "thumbnail",
                                   imageBuilder: (context, imageProvider) {
                                     return Stack(
                                       children: [
                                         Align(
                                           alignment: Alignment.center,
                                           child: Container(
-                                            padding: i == pageNo ? EdgeInsets.fromLTRB(10, 10, 10, 10) : EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                            padding: i == pageNo
+                                                ? EdgeInsets.fromLTRB(
+                                                    10, 10, 10, 10)
+                                                : EdgeInsets.fromLTRB(
+                                                    5, 0, 5, 0),
                                             // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            decoration: i == pageNo ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue) : BoxDecoration(),
+                                            decoration: i == pageNo
+                                                ? BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5.0)),
+                                                    color: Colors.blue)
+                                                : BoxDecoration(),
                                             // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5.0)),
                                               child: Image(
                                                   alignment: Alignment.center,
                                                   image: imageProvider,
@@ -177,24 +227,41 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
                                         ),
                                         Align(
                                           alignment: Alignment.bottomCenter,
-                                          child: LayoutBuilder(builder: (ctx, constraints) {
+                                          child: LayoutBuilder(
+                                              builder: (ctx, constraints) {
                                             return Padding(
-                                              padding: const EdgeInsets.all(15.0),
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
                                               child: Container(
                                                 // padding: EdgeInsets.only(bottom: 20),
                                                 // alignment: Alignment.center,
                                                 // constraints: flase,
 
                                                 decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                                                    color: Colors.black.withOpacity(0.8),
-                                                    border: i == pageNo ? Border.all(color: Colors.transparent, width: 5.10) : Border.all(color: Colors.transparent, width: 0)),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(5)),
+                                                    color: Colors.black
+                                                        .withOpacity(0.8),
+                                                    border: i == pageNo
+                                                        ? Border.all(
+                                                            color: Colors
+                                                                .transparent,
+                                                            width: 5.10)
+                                                        : Border.all(
+                                                            color: Colors
+                                                                .transparent,
+                                                            width: 0)),
                                                 // color: Colors.black.withOpacity(0.8),
                                                 // height: constraints.maxHeight * 0.10,
                                                 // width: constraints.maxWidth * 0.10,
 
-                                                padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                                                child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                                padding: EdgeInsets.fromLTRB(
+                                                    4, 4, 4, 4),
+                                                child: Text((i + 1).toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: Colors.white)),
                                               ),
                                             );
                                           }),
@@ -211,7 +278,8 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
 
                                           decoration: BoxDecoration(
                                             // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0)),
                                             color: Colors.grey.withOpacity(0.1),
                                           ),
                                           child: SpinKitFadingCircle(
@@ -222,7 +290,8 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
                                         ),
                                       ),
                                   errorWidget: (context, url, error) {
-                                    Future.delayed(const Duration(milliseconds: 500), () {
+                                    Future.delayed(
+                                        const Duration(milliseconds: 500), () {
                                       setState(() {
                                         _networklHasErrorNotifier[i].value++;
                                       });
@@ -235,7 +304,8 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages> with SingleTick
                                         decoration: BoxDecoration(
                                           // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
 
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0)),
                                           color: Colors.grey.withOpacity(0.1),
                                         ),
                                         child: SpinKitFadingCircle(

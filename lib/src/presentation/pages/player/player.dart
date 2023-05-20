@@ -19,7 +19,11 @@ class StartPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (BuildContext context) => PlayerBloc(hotspotRepository: RepositoryProvider.of<HotspotRepository>(context)), child: Player());
+    return BlocProvider(
+        create: (BuildContext context) => PlayerBloc(
+            hotspotRepository:
+                RepositoryProvider.of<HotspotRepository>(context)),
+        child: Player());
   }
 }
 
@@ -94,7 +98,8 @@ class _PlayerState extends State<Player> {
   Widget build(BuildContext context) {
     // super.build(context);
 
-    return BlocBuilder<PlayerBloc, PlayerState>(builder: (BuildContext context, state) {
+    return BlocBuilder<PlayerBloc, PlayerState>(
+        builder: (BuildContext context, state) {
       int currentIndex = state is PlayerOpened //|| state is HomeLoaded
           ? 0
           // : state is GoToMenu
@@ -119,7 +124,9 @@ class _PlayerState extends State<Player> {
           // ),
           DecoratedBox(
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/images/background/Background.png"), fit: BoxFit.cover),
+              image: DecorationImage(
+                  image: AssetImage("assets/images/background/Background.png"),
+                  fit: BoxFit.cover),
             ),
             child: Center(
                 child: Scaffold(
@@ -289,7 +296,8 @@ class _PlayerState extends State<Player> {
               // ),
 
               backgroundColor: Colors.transparent,
-              floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
               floatingActionButton: Padding(
                 // padding: const EdgeInsets.only(bottom: _keyheight.currentContext?.size?.height ?? 0.0),
                 padding: EdgeInsets.only(bottom: 15),
@@ -314,7 +322,8 @@ class _PlayerState extends State<Player> {
               body: Stack(
                 children: [
                   ClipPath(
-                    clipper: PlayerBodyPainter(index: currentIndex, context: context, key: _keyheight),
+                    clipper: PlayerBodyPainter(
+                        index: currentIndex, context: context, key: _keyheight),
                     // clipBehavior: Clip.hardEdge,
                     child: PageView(
                       // controller: _pageController,

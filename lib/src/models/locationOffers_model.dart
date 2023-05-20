@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-LocationOffers LocationOffersFromJson(String str) => LocationOffers.fromJson(json.decode(str));
+LocationOffers LocationOffersFromJson(String str) =>
+    LocationOffers.fromJson(json.decode(str));
 
 class LocationOffers {
   List<LocationOffer>? locationOffer;
@@ -38,7 +39,13 @@ class LocationOffer {
   int? status;
   List<Shm2Offer>? shm2Offer;
 
-  LocationOffer({this.id, this.order, this.idLocation, this.idOffer, this.status, this.shm2Offer});
+  LocationOffer(
+      {this.id,
+      this.order,
+      this.idLocation,
+      this.idOffer,
+      this.status,
+      this.shm2Offer});
 
   LocationOffer.fromJson(Map<String, dynamic> json) {
     id = json['id'];

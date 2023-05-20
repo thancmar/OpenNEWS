@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-HotspotsGetAllActive HotspotsGetAllActiveFromJson(String str) => HotspotsGetAllActive.fromJson(json.decode(str));
+HotspotsGetAllActive HotspotsGetAllActiveFromJson(String str) =>
+    HotspotsGetAllActive.fromJson(json.decode(str));
 
 class HotspotsGetAllActive {
   List<Response>? response;
@@ -70,17 +71,17 @@ class Response {
     // bssids = json['bssids'] ?? '';
     // beacons = json['beacons'] ?? '';
     id = json['id'];
-    nameApp = json['name_app'] ;
-    type = json['type'] ;
+    nameApp = json['name_app'];
+    type = json['type'];
     addressStreet = json['address_street'];
-    addressHouseNr = json['address_house_nr'] ;
-    addressZip = json['address_zip'] ;
+    addressHouseNr = json['address_house_nr'];
+    addressZip = json['address_zip'];
     addressCity = json['address_city'];
-    latitude =json['latitude'];
-    longitude =json['longitude'];
-    radius = json['radius'] ;
-    bssids = json['bssids'] ;
-    beacons = json['beacons'] ;
+    latitude = json['latitude'];
+    longitude = json['longitude'];
+    radius = json['radius'];
+    bssids = json['bssids'];
+    beacons = json['beacons'];
   }
 
   Map<String, dynamic> toJson() {

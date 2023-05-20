@@ -28,7 +28,7 @@ class GoToSearchPage extends SearchState {
 
 class GoToSearchResults extends SearchState {
   final MagazinePublishedGetAllLastByHotspotId searchResults;
-  GoToSearchResults( {required this.searchResults}) : super();
+  GoToSearchResults({required this.searchResults}) : super();
 
   @override
   List<MagazinePublishedGetAllLastByHotspotId> get props => [searchResults];

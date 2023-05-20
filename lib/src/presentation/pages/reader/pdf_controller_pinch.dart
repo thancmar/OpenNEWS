@@ -1,7 +1,8 @@
 part of 'pdf_view_pinch.dart';
 
 /// Pages control
-class CustumPdfControllerPinch extends TransformationController with BasePdfController {
+class CustumPdfControllerPinch extends TransformationController
+    with BasePdfController {
   CustumPdfControllerPinch({
     required this.document,
     // required this.currentPageNumber,
@@ -11,7 +12,8 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
   }) : assert(viewportFraction > 0.0);
 
   @override
-  final ValueNotifier<PdfLoadingState> loadingState = ValueNotifier(PdfLoadingState.loading);
+  final ValueNotifier<PdfLoadingState> loadingState =
+      ValueNotifier(PdfLoadingState.loading);
 
   /// Document future for showing in [CustumPdfViewPinch]
   Future<PdfDocument> document;
@@ -78,7 +80,8 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
     assert(_state != null);
 
     if (!await hasPdfSupport()) {
-      _state!._loadingError = Exception('This device does not support the display of PDF documents');
+      _state!._loadingError = Exception(
+          'This device does not support the display of PDF documents');
 
       loadingState.value = PdfLoadingState.error;
       return;
@@ -112,7 +115,8 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
 
       loadingState.value = PdfLoadingState.success;
     } catch (error) {
-      _state!._loadingError = error is Exception ? error : Exception('Unknown error');
+      _state!._loadingError =
+          error is Exception ? error : Exception('Unknown error');
       loadingState.value = PdfLoadingState.error;
     }
   }
@@ -272,7 +276,14 @@ class CustumPdfControllerPinch extends TransformationController with BasePdfCont
   }
 }
 
-enum _PdfPageLoadingStatus { notInitialized, initializing, initialized, pageLoading, pageLoaded, disposed }
+enum _PdfPageLoadingStatus {
+  notInitialized,
+  initializing,
+  initialized,
+  pageLoading,
+  pageLoaded,
+  disposed
+}
 
 /// Internal page control structure.
 class _PdfPageState {

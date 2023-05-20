@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 // import 'package:flutter_map/flutter_map.dart';
 import 'package:get_it/get_it.dart';
 
@@ -29,6 +30,7 @@ import '../../models/place_map.dart';
 import '../../resources/dioClient.dart';
 
 part 'navbar_event.dart';
+
 part 'navbar_state.dart';
 
 // enum NavbarItems { Home, Menu, Map, Account }
@@ -43,10 +45,13 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
   bool statechanged = false;
   late List<Future<Uint8List>> getTop = List.empty(growable: true);
+
   // Position? position = null;
   final GetIt getIt = GetIt.instance;
+
   // static late Future<LocationOffers>? maplocationoffers;
   var cookieJar = CookieJar();
+
   // GetIt getIt = GetIt.instance;
   CancelToken cancelToken = CancelToken();
   ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
@@ -62,107 +67,127 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
     print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
 
-    await locationRepository.checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-          // if (index != 0)
-          if (locationID != 0)
-            {
-              NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: locationID.toString()),
-              NavbarState.locationheader?.then((value) => {
-                    // NavbarState.locationheader = value,
+    await locationRepository
+        .checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude)
+        .then((value) async => {
+              // if (index != 0)
+              if (locationID != 0)
+                {
+                  NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: locationID.toString()),
+                  NavbarState.locationheader?.then((value) => {
+                        // NavbarState.locationheader = value,
 
-                    if (value.filePath != "") {NavbarState.locationImage = locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())}
-                  }),
-              NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
-              NavbarState.locationoffers?.then((value) => {
-                    // NavbarState.locationheader = value,
-                    if (value.locationOffer!.length > 0)
-                      {
-                        value.locationOffer?.forEach((element) {
-                          NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
-                        })
-                      }
-                  }),
-              await magazineRepository.magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((value) => {
-                    NavbarState.magazinePublishedGetTopLastByRange = value,
-                    // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
-                    for (var i = 0; i < value.response!.length; i++)
-                      {
-                        for (var k = 1; k < int.parse(value.response![i].pageMax!); k++)
+                        if (value.filePath != "")
                           {
-                            DefaultCacheManager().getFileFromCache(value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + k.toString()).then((valueCache) => {
-                                  if (valueCache == null)
-                                    {
-                                      magazineRepository.GetPagesforReader(
-                                          page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
-
-                                      // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
-                                      // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
-                                      //     page: '0',
-                                      //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
-                                      //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
-                                      // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
-                                    },
-                                }),
-                            // magazineRepository.GetPagesforReader(
-                            //     page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
+                            NavbarState.locationImage =
+                                locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())
                           }
-                        // await DefaultCacheManager()
-                        //     .getFileFromCache(value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + i.toString())
-                        //     .then((value) async => {
-                        //           if (value == null)
-                        //             {
-                        //               print("empty")
-                        //               // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
-                        //               // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
-                        //               //     page: '0',
-                        //               //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
-                        //               //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
-                        //               // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
-                        //             },
-                        //         }),
-                      },
-                    // event?.timer?.cancel(),
-                    // EasyLoading.dismiss(),
-                  })
-            },
-          await magazineRepository.magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((data) {
-            NavbarState.magazinePublishedGetLastWithLimit = data;
-            // dioClient.secureStorage.write(key: "allmagazines", value: data);
-
-            for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
-              //To show on the searchpage
-              switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
-                case "de":
-                  NavbarState.counterDE = NavbarState.counterDE + 1;
-                  break;
-                case "en":
-                  NavbarState.counterEN++;
-                  break;
-                case "fr":
-                  NavbarState.counterFR++;
-                  break;
-                case "es":
-                  NavbarState.counterES++;
-                  break;
-              }
-              DefaultCacheManager()
-                  .getFileFromCache(
-                      NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! + "_" + NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! + "_0")
-                  .then((value) => {
-                        if (value?.file.lengthSync() == null)
+                      }),
+                  NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
+                  NavbarState.locationoffers?.then((value) => {
+                        // NavbarState.locationheader = value,
+                        if (value.locationOffer!.length > 0)
                           {
-                            // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
-                            magazineRepository.GetPage(
-                                page: '0',
-                                id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                                date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!)
+                            value.locationOffer?.forEach((element) {
+                              NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(
+                                  offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                            })
                           }
-                      });
-            }
-            // event?.timer?.cancel();
-            // await EasyLoading.dismiss();
-          }),
-        });
+                      }),
+                  await magazineRepository
+                      .magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar)
+                      .then((value) => {
+                            NavbarState.magazinePublishedGetTopLastByRange = value,
+                            // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
+                            for (var i = 0; i < value.response!.length; i++)
+                              {
+                                for (var k = 1; k < int.parse(value.response![i].pageMax!); k++)
+                                  {
+                                    DefaultCacheManager()
+                                        .getFileFromCache(value.response![i].idMagazinePublication! +
+                                            "_" +
+                                            value.response![i].dateOfPublication! +
+                                            "_" +
+                                            k.toString())
+                                        .then((valueCache) => {
+                                              if (valueCache == null)
+                                                {
+                                                  magazineRepository.GetPagesforReader(
+                                                      page: k,
+                                                      id_mag_pub: value.response![i].idMagazinePublication,
+                                                      date_of_publication: value.response![i].dateOfPublication,
+                                                      readerCancelToken: cancelToken)
+
+                                                  // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
+                                                  // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
+                                                  //     page: '0',
+                                                  //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
+                                                  //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
+                                                  // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
+                                                },
+                                            }),
+                                    // magazineRepository.GetPagesforReader(
+                                    //     page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
+                                  }
+                                // await DefaultCacheManager()
+                                //     .getFileFromCache(value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + i.toString())
+                                //     .then((value) async => {
+                                //           if (value == null)
+                                //             {
+                                //               print("empty")
+                                //               // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
+                                //               // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
+                                //               //     page: '0',
+                                //               //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
+                                //               //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
+                                //               // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
+                                //             },
+                                //         }),
+                              },
+                            // event?.timer?.cancel(),
+                            // EasyLoading.dismiss(),
+                          })
+                },
+              await magazineRepository.magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar).then((data) {
+                NavbarState.magazinePublishedGetLastWithLimit = data;
+                // dioClient.secureStorage.write(key: "allmagazines", value: data);
+
+                for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
+                  //To show on the searchpage
+                  switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
+                    case "de":
+                      NavbarState.counterDE = NavbarState.counterDE + 1;
+                      break;
+                    case "en":
+                      NavbarState.counterEN++;
+                      break;
+                    case "fr":
+                      NavbarState.counterFR++;
+                      break;
+                    case "es":
+                      NavbarState.counterES++;
+                      break;
+                  }
+                  DefaultCacheManager()
+                      .getFileFromCache(NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! +
+                          "_" +
+                          NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! +
+                          "_0")
+                      .then((value) => {
+                            if (value?.file.lengthSync() == null)
+                              {
+                                // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
+                                magazineRepository.GetPage(
+                                    page: '0',
+                                    id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
+                                    date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!)
+                              }
+                          });
+                }
+                // event?.timer?.cancel();
+                // await EasyLoading.dismiss();
+              }),
+            });
   }
 
   NavbarBloc({required this.magazineRepository, required this.locationRepository, required this.hotspotRepository}) : super(Loading()) {
@@ -175,10 +200,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           maskType: EasyLoadingMaskType.black,
         );
         (await dioClient.secureStorage.read(key: "allmagazines").then((value) => {
-          if(value!=null){
-            NavbarState.magazinePublishedGetLastWithLimit =MagazinePublishedGetLastWithLimitFromJson(value)
-          }
-        }));
+              if (value != null) {NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetLastWithLimitFromJson(value)}
+            }));
         // NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetLastWithLimitFromJson(await dioClient.secureStorage.read(key: "allmagazines"));
         // NavbarState.magazinePublishedGetTopLastByRange = MagazinePublishedGetLastWithLimitFromJson(await dioClient.secureStorage.read(key: "allmagazinesbyrange") ?? '');
 
@@ -212,8 +235,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 addressCity: data.response![i].addressCity!,
                 // latitude: data.response![i].latitude!,
                 // longitude: data.response![i].longitude!);
-                latitude: double.tryParse( data.response![i].latitude!)!,
-                longitude: double.tryParse( data.response![i].longitude!)!);
+                latitude: double.tryParse(data.response![i].latitude!)!,
+                longitude: double.tryParse(data.response![i].longitude!)!);
             NavbarState.allMapMarkers.add(temp);
           }
         });
@@ -226,20 +249,21 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 emit(NavbarError("Geolocator error"))
               });
         }
-        if(SplashState.allNearbyLocations.length >1){
+        if (SplashState.allNearbyLocations.length > 1) {
           await EasyLoading.dismiss();
-         emit(GoToLocationSelection(SplashState.allNearbyLocations));
-        }else{
-        // appbarlocation = event.currentPosition!;
-       await  GetAllMagazinesCover(int.parse(event.currentPosition?.idLocation ?? "0"), event).then((valueGetAllMagazinesCover) async => {
-              // add(Menu()),
-              // add(Home(event.currentPosition)),
-              // event.timer?.cancel(),
-              await EasyLoading.dismiss(),
-          emit(NavbarLoaded()),
-              // emit(GoToHome(currentLocation: appbarlocation!)),
-              print('EasyLoading dismiss 1'),
-            });}
+          emit(GoToLocationSelection(SplashState.allNearbyLocations));
+        } else {
+          // appbarlocation = event.currentPosition!;
+          await GetAllMagazinesCover(int.parse(event.currentPosition?.idLocation ?? "0"), event).then((valueGetAllMagazinesCover) async => {
+                // add(Menu()),
+                // add(Home(event.currentPosition)),
+                // event.timer?.cancel(),
+                await EasyLoading.dismiss(),
+                emit(NavbarLoaded()),
+                // emit(GoToHome(currentLocation: appbarlocation!)),
+                print('EasyLoading dismiss 1'),
+              });
+        }
       } catch (e) {
         // statechanged = false;
         await EasyLoading.dismiss();
@@ -277,7 +301,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
               // add(Home(event.location!)),
               // event.timer?.cancel(),
               await EasyLoading.dismiss(),
-          emit(NavbarLoaded()),
+              emit(NavbarLoaded()),
               print('EasyLoading dismiss 112'),
             });
       } on Exception catch (e) {
@@ -296,65 +320,54 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     // );
     bool updateLocation = true;
     // print("bloc LocationRefresh ${appbarlocation != Data()}");
-    await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then((value) async => {
-          // print("bloc LocationRefresh ${appbarlocation!.idLocation}"),
-          // print("bloc LocationRefresh ${appbarlocation.idLocation} ${value!.data!}"),
-          updateLocation = value!.data!.length == 0 ? false : true,
-          for (int i = 0; i < value!.data!.length; i++)
-            {
-              if (SplashState.appbarlocation!.idLocation == value.data![i].idLocation)
-                {
-                  updateLocation = false,
-                  await EasyLoading.dismiss(),
-                }
-            },
-          if (updateLocation == true)
-            {
-              add(Initialize123(currentPosition: value!.data![0])),
-            },
-          // else {add(Initialize123())},
-          // if (appbarlocation!.idLocation == null)
-          //   {
-          //     if (value!.data!.length > 0) {add(Initialize123())}
-          //   }
-          // else
-          //   {
-          //     // nearbyLocationIDs = [],
-          //     // for (int i = 0; i < value!.data!.length; i++) {},
-          //     if (
-          //     // timer?.isActive == true ||
-          //     value!.data!.length == 0)
-          //       {
-          //         add(Initialize123()),
-          //       },
-          //     for (int i = 0; i < value!.data!.length; i++)
-          //       {
-          //         if (appbarlocation!.idLocation == value.data![i].idLocation)
-          //           {
-          //             await EasyLoading.dismiss(),
-          //
-          //           }
-          //       },
+    await locationRepository.checklocation(null, NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude).then(
+          (value) async => {
+            // print("bloc LocationRefresh ${appbarlocation!.idLocation}"),
+            // print("bloc LocationRefresh ${appbarlocation.idLocation} ${value!.data!}"),
+            // updateLocation = value!.data!.length == 0 ? false : true,
+            if (value!.data!.length == 0)
+              {
+                if (SplashState.appbarlocation!.idLocation == null) {updateLocation = false} else {updateLocation = true}
+              }
+            else
+              {
+                updateLocation = !value!.data!.any((element) => element.idLocation == SplashState.appbarlocation!.idLocation),
+              },
 
-          // if (value!.data!.length == 0)
-          //   {
-          //     add(Initialize123(event.timer)),
-          //   },
+            // final String as = SplashState.appbarlocation!.idLocation;
+            // for (int i = 0; i < value!.data!.length; i++)
+            //   {
+            //     if (SplashState.appbarlocation!.idLocation == value.data![i].idLocation)
+            //       {
+            //         updateLocation = false,
+            //         await EasyLoading.dismiss(),
+            //       }
+            //   },
+            if (updateLocation == true)
+              {
+                if (value!.data!.length == 0)
+                  {
+                    SplashState.appbarlocation = Data(),
+                    SplashState.allNearbyLocations = value.data!,
+                    add(Initialize123(currentPosition: Data())),
+                  }
+                else if (value!.data!.length == 1)
+                  {
+                    SplashState.appbarlocation = value?.data?[0],
+                    SplashState.allNearbyLocations = value.data!,
+                    add(Initialize123(currentPosition: value!.data![0])),
+                  }else if (value!.data!.length > 1){
+                    SplashState.appbarlocation = Data(),
+                    SplashState.allNearbyLocations = value.data!,
+                    add(Initialize123(currentPosition: Data())),
+                  },
+                // await EasyLoading.dismiss(),
+                // emit(GoToLocationSelection(SplashState.allNearbyLocations)),
+              },
+          },
 
-          // if (value!.data!.contains("appbarlocation") == false)
-          //   {
-          //     add(Initialize123(event.timer)),
-          //   }
-          // else
-          //   {
-          //     // event.timer?.cancel(),
-          //     // await EasyLoading.dismiss(),
-          //   }
-          // },
-          // {add(Initialize123(event.timer))},
-          statechanged = false,
-          // timer?.cancel(),
-          await EasyLoading.dismiss(),
-        });
+          // await EasyLoading.dismiss(),
+          // }
+        );
   }
 }

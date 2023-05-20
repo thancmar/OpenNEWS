@@ -45,15 +45,17 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                       PageRouteBuilder(
                           pageBuilder: (_, __, ___) => MyProfile(),
                           // transitionDuration: Duration(milliseconds: 500),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
                             const begin = Offset(0.0, 1.0);
                             const end = Offset.zero;
                             const curve = Curves.decelerate;
-                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            final tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
                             final offsetAnimation = animation.drive(tween);
-                            return SlideTransition(position: animation.drive(tween), child: child);
-                          }
-                          ),
+                            return SlideTransition(
+                                position: animation.drive(tween), child: child);
+                          }),
                     ),
                     // Navigator.of(context).push(PageRouteBuilder(
                     //   // transitionDuration:
@@ -625,7 +627,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                       child: ExpansionTile(
                         maintainState: true,
                         onExpansionChanged: (isExpanded) {
-                          BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
+                          BlocProvider.of<AuthBloc>(context)
+                              .add(SignOutRequested());
                           // BlocProvider.of<NavbarBloc>(context).;
                           Navigator.pushReplacement(
                             context,

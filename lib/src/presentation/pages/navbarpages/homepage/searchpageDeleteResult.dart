@@ -17,7 +17,8 @@ class _SearchResultState extends State<SearchResult> {
     return InkWell(
       onTap: () {
         // state.searchResults?.removeAt(i);
-        BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(widget.index));
+        BlocProvider.of<SearchBloc>(context)
+            .add(DeleteSearchResult(widget.index));
         setState(() {});
       },
       child: Align(

@@ -40,8 +40,10 @@ class PlayerNavBarPainter extends CustomPainter {
     // path.cubicTo((size.width * 0.55), controlHeight, startofBezier, controlHeight, centerPoint, controlHeight);
     // path.cubicTo(startofBend, 0, startofBend, controlHeight, (size.width * 0.55), controlHeight);
     // path.cubicTo((size.width * 0.50), controlHeight, endofBend, controlHeight, (size.width * 0.5), 0);
-    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
-    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0, endofBezier, 0);
+    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+        centerPoint, controlHeight);
+    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+        endofBezier, 0);
     path.lineTo(size.width, 0);
     // path.lineTo(size.width, size.height);
     // path.lineTo(0, size.height);
@@ -130,8 +132,10 @@ class PlayerNavBarClipper extends CustomClipper<Path> {
     // print(size.height);
     path.moveTo(0, 0);
     path.lineTo(startofBezier, 0);
-    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight, centerPoint, controlHeight);
-    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0, endofBezier, 0);
+    path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+        centerPoint, controlHeight);
+    path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+        endofBezier, 0);
     path.lineTo(size.width, 0);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-Localization LocalizationFromJson(String str) => Localization.fromJson(json.decode(str));
+Localization LocalizationFromJson(String str) =>
+    Localization.fromJson(json.decode(str));
 // Data DataFromJson(String str) => Data.fromJson(json.decode(str));
 
 class Localization {

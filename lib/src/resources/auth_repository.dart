@@ -135,8 +135,15 @@ class AuthRepository {
   }) async {
     try {
       final getIt = GetIt.instance;
-      Map data = {'f': 'readerLogin', 'json': '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'};
-      final response = await getIt<ApiClient>().diofordata.post(ApiConstants.baseUrl + ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.plain));
+      Map data = {
+        'f': 'readerLogin',
+        'json':
+            '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'
+      };
+      final response = await getIt<ApiClient>().diofordata.post(
+          ApiConstants.baseUrl + ApiConstants.usersEndpoint,
+          data: data,
+          options: Options(responseType: ResponseType.plain));
       switch (response.statusCode) {
         case 200:
           if (json.decode(response.data)['response']['code'] == 107) {
@@ -187,7 +194,10 @@ class AuthRepository {
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     print("getUserDetails");
     final getIt = GetIt.instance;
-    Map data = {'f': 'readerGetByIdAndEmail', 'json': '{"id_reader": "$userID", "email":"$email"}'};
+    Map data = {
+      'f': 'readerGetByIdAndEmail',
+      'json': '{"id_reader": "$userID", "email":"$email"}'
+    };
 
     var response = await getIt<ApiClient>().diofordata.post(
           ApiConstants.baseUrl + ApiConstants.usersEndpoint,
@@ -211,12 +221,14 @@ class AuthRepository {
 
   Future<void> signOut() async {
     Map data = {'f': 'readerLogin'};
-    final response = await http.post(Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint), body: data);
+    final response = await http.post(
+        Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint),
+        body: data);
     if (response.statusCode == 200) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('email', '');
-      prefs.setString('pw', '');
-      prefs.setString('cookie', '');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // prefs.setString('email', '');
+      // prefs.setString('pw', '');
+      // prefs.setString('cookie', '');
       return;
     } else {
       throw Exception("Failed to logout");

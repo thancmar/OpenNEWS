@@ -15,20 +15,25 @@ import '../../reader/readerpage.dart';
 class CategoryPage extends StatefulWidget {
   final String titleText;
   final String categoryID;
-  CategoryPage({Key? key, required this.titleText, required this.categoryID}) : super(key: key);
+  CategoryPage({Key? key, required this.titleText, required this.categoryID})
+      : super(key: key);
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<CategoryPage> {
+class _CategoryPageState extends State<CategoryPage>
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<CategoryPage> {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SearchBloc>(context).add(OpenCategoryPage(context, widget.categoryID));
+    BlocProvider.of<SearchBloc>(context)
+        .add(OpenCategoryPage(context, widget.categoryID));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
   //
@@ -45,7 +50,10 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+          child: Hero(
+              tag: 'bg',
+              child: Image.asset("assets/images/background/Background.png",
+                  fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBodyBehindAppBar: true,
@@ -110,7 +118,12 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
               print("$state");
               if (state is GoToCategoryPage) {
                 return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 45,
+                            crossAxisSpacing: 15,
+                            childAspectRatio: 0.7),
                     itemCount: state.selectedCategory!.response?.length,
                     // itemCount: 10,
                     // itemCount: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "en").toList().length,
@@ -181,7 +194,8 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                                   // transitionDuration:
                                   // Duration(seconds: 2),
                                   pageBuilder: (_, __, ___) => StartReader(
-                                    magazine: state.selectedCategory!.response![index],
+                                    magazine: state
+                                        .selectedCategory!.response![index],
                                     heroTag: "",
 
                                     // noofpages: 5,
@@ -194,7 +208,14 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                               alignment: Alignment.center,
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: state.selectedCategory!.response![index].idMagazinePublication! + "_" + state.selectedCategory!.response![index].dateOfPublication! + "_0",
+                                  imageUrl: state
+                                          .selectedCategory!
+                                          .response![index]
+                                          .idMagazinePublication! +
+                                      "_" +
+                                      state.selectedCategory!.response![index]
+                                          .dateOfPublication! +
+                                      "_0",
                                   // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                                   //     "_" +
                                   //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
@@ -211,10 +232,14 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                                   //   ),
                                   // ),
 
-                                  imageBuilder: (context, imageProvider) => Container(
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
                                     decoration: BoxDecoration(
-                                      image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.fill),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                     ),
                                   ),
                                   useOldImageOnUrlChange: true,
@@ -223,7 +248,8 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                       // color: Colors.grey.withOpacity(0.05),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
@@ -232,11 +258,13 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                                       size: 50.0,
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) => Container(
+                                  errorWidget: (context, url, error) =>
+                                      Container(
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
                                     child: SpinKitFadingCircle(
@@ -256,13 +284,18 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                                   // top: -50,
                                   bottom: -35,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 - 20,
+                                  width: MediaQuery.of(context).size.width / 2 -
+                                      20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        DateFormat("d. MMMM yyyy").format(DateTime.parse(state.selectedCategory!.response![index].dateOfPublication!)),
+                                        DateFormat("d. MMMM yyyy").format(
+                                            DateTime.parse(state
+                                                .selectedCategory!
+                                                .response![index]
+                                                .dateOfPublication!)),
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,
@@ -279,14 +312,16 @@ class _CategoryPageState extends State<CategoryPage> with SingleTickerProviderSt
                                   // top: -50,
                                   bottom: -20,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 - 20,
+                                  width: MediaQuery.of(context).size.width / 2 -
+                                      20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       // crossAxisAlignment: CrossAxisAlignment.start,
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        state.selectedCategory!.response![index].name!,
+                                        state.selectedCategory!.response![index]
+                                            .name!,
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,

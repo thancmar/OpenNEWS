@@ -8,7 +8,8 @@ import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptionspages.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 
-import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart'
+    as model;
 
 class ReaderOptionsPage extends StatefulWidget {
   // final model.Response magazine;
@@ -21,13 +22,20 @@ class ReaderOptionsPage extends StatefulWidget {
   // print("dsfs");
   // int current = 0;
   ValueNotifier<int> currentPage;
-  ReaderOptionsPage({required this.reader, required this.bloc, required this.currentPage,required this.controller}) : super();
+  ReaderOptionsPage(
+      {required this.reader,
+      required this.bloc,
+      required this.currentPage,
+      required this.controller})
+      : super();
   @override
   State<ReaderOptionsPage> createState() => _ReaderOptionsPageState();
 }
 
-class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKeepAliveClientMixin<ReaderOptionsPage> {
-  static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+class _ReaderOptionsPageState extends State<ReaderOptionsPage>
+    with AutomaticKeepAliveClientMixin<ReaderOptionsPage> {
+  static Matrix4 matrix4 =
+      Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   ValueNotifier<bool> isOnPageTurning = ValueNotifier<bool>(false);
 
   @override
@@ -47,7 +55,8 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.40), // this is the main reason of transparency at next screen.
+      backgroundColor: Colors.black.withOpacity(
+          0.40), // this is the main reason of transparency at next screen.
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
@@ -61,7 +70,8 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             // setState(() {
             //   pageScale = _controller.value.getMaxScaleOnAxis();
             // }),
-            widget.controller.value = Matrix4.identity(),//To resize the loading icon
+            widget.controller.value =
+                Matrix4.identity(), //To resize the loading icon
             widget.bloc.add(CloseReader()),
             // BlocProvider.of<ReaderBloc>(context).add(CloseReader()),
             // BlocProvider
@@ -99,7 +109,8 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => {
-              if (isOnPageTurning.value = true) {Navigator.of(context).pop(), print("single tap reader")}
+              if (isOnPageTurning.value = true)
+                {Navigator.of(context).pop(), print("single tap reader")}
             },
             // onDoubleTap: () => {
             //   // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}

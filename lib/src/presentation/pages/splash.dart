@@ -43,7 +43,8 @@ class SplashScreen extends StatelessWidget {
           // return Navigator.of(context).push(PageRouteBuilder(pageBuilder: (BuildContext context, _, __) => SplashScreenWidget()));
         } else if (state is SkipLogin) {
           // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
-          BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
+          BlocProvider.of<AuthBloc>(context)
+              .add(SignInRequested(state.email, state.pwd));
 
           return StartPage(
             title: "notitle",

@@ -33,9 +33,9 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
               ),
             ),
             Positioned.fill(
-              child:  Image.asset('assets/images/logo/logo.png'
-                // ,fit: BoxFit.fitHeight,filterQuality: FilterQuality.medium,
-              ),
+              child: Image.asset('assets/images/logo/logo.png'
+                  // ,fit: BoxFit.fitHeight,filterQuality: FilterQuality.medium,
+                  ),
               // child: new Image.asset(
               //   image: "assets/images/logo.png",
               //

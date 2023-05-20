@@ -11,31 +11,31 @@ class Initialize123 extends NavbarEvent {
   List<Object> get props => [];
 }
 
-class Home extends NavbarEvent {
-  Data? location;
-
-  Home([Data? this.location]);
-  List<Object> get props => [];
-}
-
-class Menu extends NavbarEvent {
-  Menu();
-  List<Object> get props => [];
-}
-
-class Map extends NavbarEvent {
-  Map();
-  List<Object> get props => [];
-}
+// class Home extends NavbarEvent {
+//   Data? location;
+//
+//   Home([Data? this.location]);
+//   List<Object> get props => [];
+// }
+//
+// class Menu extends NavbarEvent {
+//   Menu();
+//   List<Object> get props => [];
+// }
+//
+// class Map extends NavbarEvent {
+//   Map();
+//   List<Object> get props => [];
+// }
+//
+// class AccountEvent extends NavbarEvent {
+//   AccountEvent();
+//   List<Object> get props => [];
+// }
 
 class GetMapOffer extends NavbarEvent {
   final Place loc;
   GetMapOffer({required this.loc});
-  List<Object> get props => [];
-}
-
-class AccountEvent extends NavbarEvent {
-  AccountEvent();
   List<Object> get props => [];
 }
 

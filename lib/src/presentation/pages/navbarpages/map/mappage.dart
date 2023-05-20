@@ -143,7 +143,10 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 
           onCameraIdle: manager.updateMap,
           initialCameraPosition: CameraPosition(
-            target: NavbarState.currentPosition != null ? LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude) : _center,
+            target: NavbarState.currentPosition != null
+                ? LatLng(NavbarState.currentPosition!.latitude,
+                    NavbarState.currentPosition!.longitude)
+                : _center,
             zoom: NavbarState.currentPosition != null ? 15.0 : 6.0,
           ),
           myLocationEnabled: true,
@@ -239,7 +242,9 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       // var newlatlang = LatLng(51.00, 10.00);
 
                       //move map camera to selected place with animation
-                      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: newlatlang, zoom: 17)));
+                      mapController.animateCamera(
+                          CameraUpdate.newCameraPosition(
+                              CameraPosition(target: newlatlang, zoom: 17)));
                     }
                   },
                   child: Padding(
@@ -254,7 +259,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                               color: Colors.grey.withOpacity(0.5),
                               // spreadRadius: 7,
                               // blurRadius: 7,
-                              offset: Offset(0, 1), // changes position of shadow
+                              offset:
+                                  Offset(0, 1), // changes position of shadow
                             ),
                           ],
                         ),
@@ -263,14 +269,23 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         child: ListTile(
                           title: Text(
                             location,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,color: Colors.grey),
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey),
                           ),
                           trailing: GestureDetector(
                               onTap: () {
                                 //still need to implement
                                 if (NavbarState.currentPosition != null) {
-                                  final p = CameraPosition(target: LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude), zoom: 15);
-                                  mapController.animateCamera(CameraUpdate.newCameraPosition(p));
+                                  final p = CameraPosition(
+                                      target: LatLng(
+                                          NavbarState.currentPosition!.latitude,
+                                          NavbarState
+                                              .currentPosition!.longitude),
+                                      zoom: 15);
+                                  mapController.animateCamera(
+                                      CameraUpdate.newCameraPosition(p));
                                 }
                               },
                               child: Icon(
@@ -305,13 +320,26 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Text(
                 locationmarker.nameApp,
-                style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700),
               ),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Text(locationmarker.addressStreet + " " + locationmarker.addressHouseNr + ",\n" + locationmarker.addressZip + " " + locationmarker.addressCity,
-                  style: TextStyle(color: Colors.grey,fontSize: 16, fontWeight: FontWeight.w300)),
+              child: Text(
+                  locationmarker.addressStreet +
+                      " " +
+                      locationmarker.addressHouseNr +
+                      ",\n" +
+                      locationmarker.addressZip +
+                      " " +
+                      locationmarker.addressCity,
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300)),
             ),
           ),
           Row(
@@ -335,11 +363,14 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     // ),
                   ),
                   child: TextButton(
-                    child: Text('Angebote',style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    child: Text('Angebote',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
                     onPressed: () {
                       /* ... */
                       print('Angebote');
-                      BlocProvider.of<NavbarBloc>(context).add(GetMapOffer(loc: locationmarker));
+                      BlocProvider.of<NavbarBloc>(context)
+                          .add(GetMapOffer(loc: locationmarker));
                       Navigator.push(
                         context,
                         PageRouteBuilder(
@@ -378,7 +409,11 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                   ),
                   child: TextButton(
                     child: Icon(Icons.directions),
-                    onPressed: () => openMapsSheet(context, locationmarker.nameApp!, locationmarker.latitude, locationmarker.longitude),
+                    onPressed: () => openMapsSheet(
+                        context,
+                        locationmarker.nameApp!,
+                        locationmarker.latitude,
+                        locationmarker.longitude),
                   ),
                 ),
               ),
@@ -400,7 +435,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     mapController.animateCamera(CameraUpdate.newCameraPosition(p));
   }
 
-  Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
+  Future<Marker> Function(Cluster<Place>) get _markerBuilder =>
+      (cluster) async {
         mapController = await _controller.future;
         Completer<GoogleMapController> completer = Completer();
 
@@ -411,7 +447,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               if (cluster.isMultiple == true) {
                 setState(() {
                   print(cluster.location);
-                  animateTo(cluster.location.latitude, cluster.location.longitude);
+                  animateTo(
+                      cluster.location.latitude, cluster.location.longitude);
                   showlocationdetail = false;
                 });
               } else {
@@ -439,8 +476,12 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
   final Canvas canvas = Canvas(pictureRecorder);
   print("_getMarkerBitmap text");
   print(text);
-  final Paint paint1 = Paint()..color = int.parse(text!) < 10 ? Colors.blue.withOpacity(0.4) : Colors.purple.withOpacity(0.4);
-  final Paint paint2 = Paint()..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
+  final Paint paint1 = Paint()
+    ..color = int.parse(text!) < 10
+        ? Colors.blue.withOpacity(0.4)
+        : Colors.purple.withOpacity(0.4);
+  final Paint paint2 = Paint()
+    ..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
 
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.6, paint2);
@@ -450,7 +491,10 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
     TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
     painter.text = TextSpan(
       text: text,
-      style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.normal),
+      style: TextStyle(
+          fontSize: size / 3,
+          color: Colors.white,
+          fontWeight: FontWeight.normal),
     );
     painter.layout();
     painter.paint(
