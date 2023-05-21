@@ -1,11 +1,50 @@
 {
   "welcome":"Herzlichen Willkommen",
-  "welcome_text":"Lorem ipsum dolor sit amit, consectetur adipiscing elit.",
-  "msg_named":"Easy localization is written in the {lang} language",
-  "msg_mixed":"{} are written in the {lang} language",
-  "home":{
-    "info_for_your_location":"Info for your Location",
-    "female":"Hello girl :) {}",
-    "other":"Hello {}"
-  }
+  "welcomeText":"Lorem ipsum dolor sit amit, consectetur adipiscing elit.",
+  "inCompleteSignIn":"Ohne Account lesen",
+  "logIn": "Anmelden",
+  "permissionLocationServices":"Bitte schalten Sie die Standortdienste ein",
+  "selectOne":"Bitte wählen Sie eine aus",
+  "goToLocationSettings":"Standorteinstellungen",
+  "notNow":"Später",
+
+  "selectLocations":"Sie sind in der Nähe dieser Locations",
+
+  "selectLanguage":"Sprache auswählen",
+
+  "error":"Etwas ist schief gelaufen",
+
+  "notAtLocation": "Keine Location in der Nähe",
+  "locationInformation": "Infos zu deiner Location ",
+  "regionalTitle": "News aus deiner Region",
+  "catalog": "Catalog",
+
+  "myProfile": "Mein Profil ",
+  "toLogin": "Zum Einloggen",
+  "rateUs": "Bewerte uns!",
+  "settings": "Einstellungen",
+  "changePasword": "Passwort ändern",
+  "notifications": "Benachrichtigungen",
+  "language": "Sprache",
+  "information": "Informationen",
+  "impressum": "Impressum",
+  "datenschutz": "Datenschutz",
+  "agb": "AGB",
+  "help": "Hilfe",
+  "contact": "Kontakte",
+  "logout": "Abmelden",
+  "version": "Version 1.0.0",
+  "designedBy" : "Designed By ",
+
+  "offers" : "Angebote",
+  "noLocationOffers" : "Keine Location-Angebotes",
+
+  "toRegistration": "Du hast noch keinen Account?",
+  "registerNow": "Jetzt registrieren!",
+
+  "mapsearch": "Location suchen"
+
+
+
+
 }

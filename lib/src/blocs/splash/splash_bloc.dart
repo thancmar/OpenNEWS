@@ -6,7 +6,9 @@ import 'package:flutter/foundation.dart';
 
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
@@ -15,6 +17,7 @@ import 'package:meta/meta.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sharemagazines_flutter/src/presentation/widgets/loading.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 
@@ -37,14 +40,22 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc({required this.authRepository, required this.locationRepository}) : super(Initial()) {
     on<NavigateToHomeEvent>((event, emit) async {
       try {
-        getIt.registerSingleton<ApiClient>(
-            ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage()),
-            signalsReady: true);
-        String? emailExists = await dioClient.secureStorage.read(key: "emailGuest");
-        String? existingpwd = await dioClient.secureStorage.read(key: "pwdGuest");
-        if(await dioClient.secureStorage.read(key: "email")!=null&&await dioClient.secureStorage.read(key: "email")!=null){
+        if (!getIt.isRegistered<ApiClient>()) {
+          getIt.registerSingleton<ApiClient>(
+              ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage()),
+              signalsReady: true);
+          getIt.registerSingleton<LoadingAnimation>(LoadingAnimation(), signalsReady: true);
+        }
+
+        // await DefaultCacheManager().emptyCache();
+        // dioClient.secureStorage.deleteAll();
+        String? emailExists;
+        String? existingpwd;
+        String? emailExistsIncomplete = await dioClient.secureStorage.read(key: "emailGuest");
+        String? existingpwdIncomplete = await dioClient.secureStorage.read(key: "pwdGuest");
+        if (await dioClient.secureStorage.read(key: "email") != null && await dioClient.secureStorage.read(key: "email") != null) {
           emailExists = await dioClient.secureStorage.read(key: "email");
-           existingpwd = await dioClient.secureStorage.read(key: "pwd");
+          existingpwd = await dioClient.secureStorage.read(key: "pwd");
         }
         // await dioClient.secureStorage.deleteAll();
         bool serviceEnabled;
@@ -80,9 +91,15 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           permission = await Geolocator.requestPermission();
           await locationRepository.checklocation(null, null, null).then((value) async => {
                 print("debug"),
-            if (value!.data!.length != 0) {SplashState.appbarlocation = value?.data?[0], SplashState.allNearbyLocations = value.data!},
-
-            if (emailExists != null && existingpwd != null) {emit(SkipLogin(emailExists, existingpwd))} else {emit(Loaded())}
+                if (value!.data!.length != 0) {
+                  // SplashState.appbarlocation = value?.data?[0],
+                  SplashState.allNearbyLocations = value.data!},
+                if (emailExists != null && existingpwd != null)
+                  {emit(SkipLogin(emailExists, existingpwd))}
+                else if (emailExistsIncomplete != null && existingpwdIncomplete != null)
+                  {emit(SkipLoginIncomplete(emailExistsIncomplete, existingpwdIncomplete))}
+                else
+                  {emit(Loaded())}
               });
         } else {
           Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -96,8 +113,15 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           //     });
           await locationRepository.checklocation(null, currentPosition.latitude, currentPosition.longitude).then((value) async => {
                 print("debug"),
-                if (value!.data!.length != 0) {SplashState.appbarlocation = value?.data?[0], SplashState.allNearbyLocations = value.data!},
-                if (emailExists != null && existingpwd != null) {emit(SkipLogin(emailExists, existingpwd))} else {emit(Loaded())}
+                if (value!.data!.length != 0) {
+                  // SplashState.appbarlocation = value?.data?[0],
+                  SplashState.allNearbyLocations = value.data!},
+                if (emailExists != null && existingpwd != null)
+                  {emit(SkipLogin(emailExists, existingpwd))}
+                else if (emailExistsIncomplete != null && existingpwdIncomplete != null)
+                  {emit(SkipLoginIncomplete(emailExistsIncomplete, existingpwdIncomplete))}
+                else
+                  {emit(Loaded())}
               });
         }
       } catch (error) {

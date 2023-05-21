@@ -8,7 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:sharemagazines_flutter/pdfreadermain.dart';
@@ -18,6 +18,8 @@ import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/splash.dart';
+import 'package:sharemagazines_flutter/src/presentation/widgets/customloading.dart';
+import 'package:sharemagazines_flutter/src/presentation/widgets/src/easy_loading.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
@@ -28,6 +30,7 @@ import 'package:get_it/get_it.dart';
 // import 'firebase_options.dart';
 
 // import 'firebase_options.dart';
+
 
 Future<void> main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -84,19 +87,20 @@ Future<void> main() async {
 void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
-    ..indicatorType = EasyLoadingIndicatorType.wanderingCubes
-    ..loadingStyle = EasyLoadingStyle.light
-    ..indicatorSize = 55.0
-    ..radius = 10.0
-    ..progressColor = Colors.yellow
-    ..backgroundColor = Colors.green
+    // ..indicatorType = EasyLoadingIndicatorType.wanderingCubes
+    ..indicatorType= EasyLoadingIndicatorType.shmg
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorSize = 115.0
+    ..radius = 30.0
+    ..progressColor = Colors.blue
+    ..backgroundColor = Colors.transparent
     ..indicatorColor = Colors.yellow
-    ..textColor = Colors.yellow
-    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..textColor = Colors.white
+    // ..maskColor = Colors.blue.withOpacity(0.5)
+    ..maskColor = Colors.transparent
     ..userInteractions = false
     ..dismissOnTap = false;
-
-  // ..customAnimation = CustomAnimation();
+    // ..customAnimation = CustomAnimation();
 }
 
 class MyApp extends StatelessWidget {
@@ -106,8 +110,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var baseTheme = ThemeData(
-        brightness: Brightness.dark,
-        fontFamily: GoogleFonts.raleway().toString());
+        brightness: Brightness.light,
+
+
+        fontFamily: GoogleFonts.raleway(color: Colors.red).toString());
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(
@@ -173,8 +180,7 @@ class MyApp extends StatelessWidget {
               textTheme: GoogleFonts.ralewayTextTheme(baseTheme.textTheme),
               // bottomSheetTheme: BottomSheetThemeData(
               //     backgroundColor: Colors.black.withOpacity(0)),
-              //primarySwatch: Colors.blue,
-
+              //primarySwatch: Colors.blue
               pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.android: CupertinoPageTransitionsBuilder(),
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),

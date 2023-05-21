@@ -14,7 +14,7 @@ class OpenReader extends ReaderEvent {
   // final String idMagazinePublication;
   // final String dateofPublicazion;
   // final String pageNo;
-  final model.Response magazine;
+  final model.ResponseMagazine magazine;
   OpenReader({required this.magazine});
 }
 
@@ -22,7 +22,7 @@ class DownloadPage extends ReaderEvent {
   // final String idMagazinePublication;
   // final String dateofPublicazion;
   // final String pageNo;
-  final model.Response magazine;
+  final model.ResponseMagazine magazine;
   final int pageNo;
   DownloadPage({required this.magazine, required this.pageNo});
 }
@@ -31,7 +31,7 @@ class DownloadThumbnail extends ReaderEvent {
   // final String idMagazinePublication;
   // final String dateofPublicazion;
   // final String pageNo;
-  final model.Response magazine;
+  final model.ResponseMagazine magazine;
   final int pageNo;
   DownloadThumbnail({required this.magazine, required this.pageNo});
 }

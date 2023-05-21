@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
+
+// import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +19,7 @@ import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
 
 import 'package:sharemagazines_flutter/src/models/place_map.dart';
+
 
 import 'mapOfferpage.dart';
 
@@ -36,9 +40,12 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   List<Marker> myMarkers = <Marker>[];
   late ClusterManager manager;
   Completer<GoogleMapController> _controller = Completer();
-  String location = "Search Location";
+  // String location = ("mapsearch").tr();
+  String location = "Search";
   late bool showlocationdetail = false;
   late Place locationmarker;
+  bool isAutocompleteOpen = false;
+
 
   Timer? _timer;
   late double _progress;
@@ -176,7 +183,18 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               child: InkWell(
                   // focusColor: Colors.red,
                   onTap: () async {
+                    setState(() {
+                      isAutocompleteOpen = true;
+                    });
+                    isAutocompleteOpen = true;
                     var place = await PlacesAutocomplete.show(
+                        // theme: ThemeData(
+                        //   textTheme: TextTheme(
+                        //     // Change the font of the body text
+                        //     bodyText2: TextStyle(fontFamily: 'YourFontFamily', fontSize: 16),
+                        //   ),
+                        // ),
+                      // decoration: InputDecoration(fillColor: Colors.red),
                         // decoration: BoxDecoration(
                         //     boxShadow: [
                         //       BoxShadow(
@@ -215,6 +233,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         // mode: Mode.values[15],
                         types: [],
                         strictbounds: false,
+                        overlayBorderRadius: BorderRadius.circular(15.0),
+                        mode: Mode.overlay,
                         components: [Component(Component.country, 'de')],
                         //google_map_webservice package
                         onError: (err) {
@@ -245,54 +265,65 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       mapController.animateCamera(
                           CameraUpdate.newCameraPosition(
                               CameraPosition(target: newlatlang, zoom: 17)));
-                    }
+                    };
+                    // isAutocompleteOpen = false;
+                    setState(() {
+                      isAutocompleteOpen = false;
+                    });
                   },
-                  child: Padding(
-                    // padding: EdgeInsets.all(15),
-                    padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-                    child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              // spreadRadius: 7,
-                              // blurRadius: 7,
-                              offset:
-                                  Offset(0, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width - 40,
-                        child: ListTile(
-                          title: Text(
-                            location,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey),
+                  child: Visibility(
+                    visible: !isAutocompleteOpen,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: Padding(
+                      // padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                // spreadRadius: 7,
+                                // blurRadius: 7,
+
+                                offset:
+                                    Offset(0, 1), // changes position of shadow
+                              ),
+                            ],
                           ),
-                          trailing: GestureDetector(
-                              onTap: () {
-                                //still need to implement
-                                if (NavbarState.currentPosition != null) {
-                                  final p = CameraPosition(
-                                      target: LatLng(
-                                          NavbarState.currentPosition!.latitude,
-                                          NavbarState
-                                              .currentPosition!.longitude),
-                                      zoom: 15);
-                                  mapController.animateCamera(
-                                      CameraUpdate.newCameraPosition(p));
-                                }
-                              },
-                              child: Icon(
-                                Icons.location_searching,
-                              )),
-                          dense: true,
-                        )),
+                          padding: EdgeInsets.all(0),
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: ListTile(
+                            title: Text(
+                              location,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey),
+                            ),
+                            trailing: GestureDetector(
+                                onTap: () {
+                                  //still need to implement
+                                  if (NavbarState.currentPosition != null) {
+                                    final p = CameraPosition(
+                                        target: LatLng(
+                                            NavbarState.currentPosition!.latitude,
+                                            NavbarState
+                                                .currentPosition!.longitude),
+                                        zoom: 15);
+                                    mapController.animateCamera(
+                                        CameraUpdate.newCameraPosition(p));
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.location_searching,
+                                )),
+                            dense: true,
+
+                          )),
+                    ),
                   ))),
         ),
         showlocationdetail == true
@@ -317,13 +348,16 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
           ListTile(
             // leading: Icon(Icons.album),
             title: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
-              child: Text(
-                locationmarker.nameApp,
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700),
+              padding:  EdgeInsets.fromLTRB(10, 20, 10, 5),
+              child: Hero(
+                tag:  locationmarker.nameApp,
+                child: Text(
+                  locationmarker.nameApp,
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700),
+                ),
               ),
             ),
             subtitle: Padding(
@@ -363,7 +397,9 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     // ),
                   ),
                   child: TextButton(
-                    child: Text('Angebote',
+                    child: Text(
+                        // ("offers").tr(),
+                        "offers",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500)),
                     onPressed: () {
@@ -371,21 +407,28 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       print('Angebote');
                       BlocProvider.of<NavbarBloc>(context)
                           .add(GetMapOffer(loc: locationmarker));
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (_, __, ___) {
-                            return MapOffer(
-                              locationDetails: locationmarker,
-                            );
-                          },
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => MapOffer(
+                            locationDetails: locationmarker,
+                          ),
                         ),
-                      ).then((_) {
-                        // print("after searchpage state $state");
-                        // setState(() {
-                        //   showSearchPage = false;
-                        // });
-                      });
+                      );
+                      // Navigator.push(
+                      //   context,
+                      //   PageRouteBuilder(
+                      //     pageBuilder: (_, __, ___) {
+                      //       return MapOffer(
+                      //         locationDetails: locationmarker,
+                      //       );
+                      //     },
+                      //   ),
+                      // ).then((_) {
+                      //   // print("after searchpage state $state");
+                      //   // setState(() {
+                      //   //   showSearchPage = false;
+                      //   // });
+                      // });
                     },
                   ),
                 ),
@@ -489,6 +532,7 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
 
   if (text != null) {
     TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+      // (textDirection: TextDirection.ltr);
     painter.text = TextSpan(
       text: text,
       style: TextStyle(

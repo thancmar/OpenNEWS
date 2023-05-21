@@ -15,9 +15,13 @@ class HotspotsGetAllActive {
       json['response'].forEach((v) {
         response!.add(Response.fromJson(v));
       });
-    } else {
-      null;
+      // if (json['response'] != null) {
+      //   response = [Response.fromJson(json['response'])];
+      // }
     }
+    // else {
+    //   null;
+    // }
   }
 
   Map<String, dynamic> toJson() {

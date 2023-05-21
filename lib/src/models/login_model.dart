@@ -51,7 +51,7 @@ class LoginModel {
   LoginModel.fromJson(Map<String, dynamic> json) {
     response = json['response'] != null
         ? new Response.fromJson(json['response'])
-        : null;
+        : throw Exception("Login Failed");
   }
 
   Map<String, dynamic> toJson() {
@@ -84,7 +84,7 @@ class Response {
       this.isTokenValid});
 
   Response.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json.containsKey('id') ? json['id'] : throw Exception('Login response missing id field');
     email = json['email'];
     mode = json['mode'];
     versionAndroid = json['version_android'];

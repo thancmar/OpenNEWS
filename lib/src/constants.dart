@@ -1,5 +1,5 @@
 class ApiConstants {
-  static String baseUrl = 'https://app.sharemagazines.de/';
+  static String baseUrl = 'https://app.sharemagazines.de';
 
   static String usersEndpoint = '/sharemagazines/interface/json_main.php';
   static String getCoverJPEG = '/sharemagazines/interface/file.php';

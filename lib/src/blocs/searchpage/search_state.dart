@@ -1,6 +1,7 @@
 part of 'search_bloc.dart';
 
 abstract class SearchState extends Equatable {
+  static List<dynamic> oldSearchResults = [];
   // final List<Future<Uint8List>>? searchResultCovers;
   // final List<Future<Uint8List>>? futureLangFunc;
   // List<dynamic>? oldSearchResults = List.empty(growable: true);
@@ -8,13 +9,6 @@ abstract class SearchState extends Equatable {
   SearchState();
 // @override
 // List<Object> get props => [this.navbarItem, this.index];
-}
-
-class LoadingSearchState extends SearchState {
-  LoadingSearchState() : super();
-
-  @override
-  List<Object> get props => [];
 }
 
 class GoToSearchPage extends SearchState {

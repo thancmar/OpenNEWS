@@ -11,6 +11,9 @@ class MagazineCategoryGetAllActive {
 
   MagazineCategoryGetAllActive.fromJson(Map<String, dynamic> json) {
     if (json['response'] != null) {
+      // response = (json['response'] as List)
+      //     .map((v) => Response.fromJson(v as Map<String, dynamic>))
+      //     .toList();
       response = <Response>[];
       json['response'].forEach((v) {
         response!.add(Response.fromJson(v));

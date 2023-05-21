@@ -1,10 +1,46 @@
 {
   "welcome":"Welcome",
-  "welcome_text":"Welcome Text",
-  "msg_mixed":"{} are written in the {lang} language",
-  "home":{
-    "info_for_your_location":"Info for your Location",
-    "female":"Hello girl :) {}",
-    "other":"Hello {}"
-  }
+  "welcomeText":"Lorem ipsum dolor sit amit, consectetur adipiscing elit.",
+  "inCompleteSignIn":"Read without an account",
+  "logIn": "Log In",
+  "permissionLocationServices":"Please turn on location services",
+  "selectOne":"Please select one",
+  "goToLocationSettings":"Go to Location settings",
+  "notNow":"Later",
+
+  "selectLocations":"You are near these Locations",
+
+  "selectLanguage":"Select Language",
+
+  "error":"There was a problem",
+
+  "notAtLocation": "No location Nearby",
+  "locationInformation": "Information about your location ",
+  "regionalTitle": "News from your region",
+  "catalog": "Catalog",
+
+  "myProfile": "My profile ",
+  "toLogin": "To Login",
+  "rateUs": "Rate Us",
+  "settings": "Settings",
+  "changePasword": "Change Passwort",
+  "notifications": "Notifications",
+  "language": "Language",
+  "information": "Information",
+  "impressum": "Legal Notice",
+  "datenschutz": "Privacy",
+  "agb": "Terms and Conditions",
+  "help": "Help",
+  "contact": "Contact",
+  "logout": "Log Out",
+  "version": "Version 1.0.0",
+  "designedBy" : "Designsed By ",
+
+  "offers" : "Offers",
+  "noLocationOffers" : "No loaction offers",
+
+  "toRegistration": "You don't have an account yet?",
+  "registerNow": "Sign up!",
+
+  "mapsearch": "Search Location"
 }

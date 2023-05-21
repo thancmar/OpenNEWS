@@ -15,30 +15,28 @@ import '../../reader/readerpage.dart';
 class LanguagePage extends StatefulWidget {
   final String titleText;
   final String language;
-  const LanguagePage(
-      {Key? key, required this.titleText, required this.language})
-      : super(key: key);
+
+  const LanguagePage({Key? key, required this.titleText, required this.language}) : super(key: key);
 
   @override
   State<LanguagePage> createState() => _LanguagePageState();
 }
 
-class _LanguagePageState extends State<LanguagePage>
-    with AutomaticKeepAliveClientMixin<LanguagePage> {
+class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClientMixin<LanguagePage> {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SearchBloc>(context)
-        .add(OpenLanguageResults(context, widget.language));
+    BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.language));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
 
   @override
   void dispose() {
     super.dispose();
+    BlocProvider.of<SearchBloc>(context).add(OpenSearch());//NOT working
     // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.titleText));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
@@ -49,10 +47,7 @@ class _LanguagePageState extends State<LanguagePage>
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(
-              tag: 'bg',
-              child: Image.asset("assets/images/background/Background.png",
-                  fit: BoxFit.cover)),
+          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBodyBehindAppBar: true,
@@ -115,12 +110,8 @@ class _LanguagePageState extends State<LanguagePage>
               print("$state");
               if (state is GoToLanguageResults) {
                 return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 45,
-                            crossAxisSpacing: 15,
-                            childAspectRatio: 0.7),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
                     itemCount: state.selectedLanguage!.response?.length,
                     // itemCount: 10,
                     // itemCount: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "en").toList().length,
@@ -143,75 +134,25 @@ class _LanguagePageState extends State<LanguagePage>
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () => {
-                              // Navigator.of(context).push(
-                              //   PageRouteBuilder(
-                              //     transitionDuration: Duration(milliseconds: 1000),
-                              //     pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                              //       return StartReader(
-                              //         id: state.selectedCategory!.response![index].idMagazinePublication!,
-                              //         index: index.toString(),
-                              //         heroTag: "",
-                              //         coverURL: state.selectedCategory!.response?[index].idMagazinePublication!,
-                              //         // cover: snapshot.data!,
-                              //         noofpages: state.selectedCategory!.response![index].pageMax!,
-                              //         readerTitle: state.selectedCategory!.response![index].name!,
-                              //
-                              //         // noofpages: 5,
-                              //       );
-                              //     },
-                              //     transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                              //       return Align(
-                              //         child: FadeTransition(
-                              //           opacity: new CurvedAnimation(parent: animation, curve: Curves.easeIn),
-                              //           child: child,
-                              //         ),
-                              //       );
-                              //     },
-                              //   ),
-                              // )
-                              // Navigator.push(
-                              //   context,
-                              //   PageRouteBuilder(
-                              //     // transitionDuration:
-                              //     // Duration(seconds: 2),
-                              //     pageBuilder: (_, __, ___) => StartReader(
-                              //       id: state.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                              //       index: i.toString(),
-                              //       cover: snapshot.data!,
-                              //       noofpages: state.magazinePublishedGetLastWithLimit!.response![i].pageMax!,
-                              //       readerTitle: state.magazinePublishedGetLastWithLimit!.response![i].name!,
-                              //
-                              //       // noofpages: 5,
-                              //     ),
-                              //   ),
-                              // ),
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  // transitionDuration:
-                                  // Duration(seconds: 2),
-                                  pageBuilder: (_, __, ___) => StartReader(
-                                    magazine: state
-                                        .selectedLanguage!.response![index],
-                                    heroTag: "",
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => StartReader(
+                                    magazine: state.selectedLanguage!.response![index],
+                                    heroTag: "language_$index",
 
                                     // noofpages: 5,
                                   ),
                                 ),
-                              ),
+                              )
                             },
                             child: Stack(
                               clipBehavior: Clip.none,
                               alignment: Alignment.center,
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: state
-                                          .selectedLanguage!
-                                          .response![index]
-                                          .idMagazinePublication! +
+                                  imageUrl: state.selectedLanguage!.response![index].idMagazinePublication! +
                                       "_" +
-                                      state.selectedLanguage!.response![index]
-                                          .dateOfPublication! +
+                                      state.selectedLanguage!.response![index].dateOfPublication! +
                                       "_0",
                                   // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                                   //     "_" +
@@ -229,14 +170,13 @@ class _LanguagePageState extends State<LanguagePage>
                                   //   ),
                                   // ),
 
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                  imageBuilder: (context, imageProvider) => Hero(
+                                    tag: "language_$index",
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      ),
                                     ),
                                   ),
                                   useOldImageOnUrlChange: true,
@@ -245,8 +185,7 @@ class _LanguagePageState extends State<LanguagePage>
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                       // color: Colors.grey.withOpacity(0.05),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
@@ -255,13 +194,11 @@ class _LanguagePageState extends State<LanguagePage>
                                       size: 50.0,
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
+                                  errorWidget: (context, url, error) => Container(
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
                                     child: SpinKitFadingCircle(
@@ -281,18 +218,14 @@ class _LanguagePageState extends State<LanguagePage>
                                   // top: -50,
                                   bottom: -35,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 -
-                                      20,
+                                  width: MediaQuery.of(context).size.width / 2 - 20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        DateFormat("d. MMMM yyyy").format(
-                                            DateTime.parse(state
-                                                .selectedLanguage!
-                                                .response![index]
-                                                .dateOfPublication!)),
+                                        DateFormat("d. MMMM yyyy")
+                                            .format(DateTime.parse(state.selectedLanguage!.response![index].dateOfPublication!)),
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,
@@ -309,16 +242,14 @@ class _LanguagePageState extends State<LanguagePage>
                                   // top: -50,
                                   bottom: -20,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 -
-                                      20,
+                                  width: MediaQuery.of(context).size.width / 2 - 20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       // crossAxisAlignment: CrossAxisAlignment.start,
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        state.selectedLanguage!.response![index]
-                                            .name!,
+                                        state.selectedLanguage!.response![index].name!,
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,

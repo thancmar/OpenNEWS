@@ -2,32 +2,34 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter/material.dart';
+
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:rive/rive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../models/userDetails_model.dart';
+import '../../presentation/widgets/src/easy_loading.dart';
 import '../../resources/dioClient.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+
   // late ApiClient dioClient;
-  late final AuthCredential credential;
-  ApiClient dioClient = ApiClient(
-      dioforImages: Dio(),
-      diofordata: Dio(),
-      networkInfo: NetworkInfo(),
-      secureStorage: FlutterSecureStorage());
+  // late final AuthCredential credential;
+  ApiClient dioClient = ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
   final GetIt getIt = GetIt.instance;
 
   // final _dataController = StreamController<String>.broadcast();
@@ -38,9 +40,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<Initialize>((event, emit) async {
       emit(UnAuthenticated());
       String? emailexists = await dioClient.secureStorage.read(key: "email");
-      String? guestemailexists =
-          await dioClient.secureStorage.read(key: "email");
+      String? guestemailexists = await dioClient.secureStorage.read(key: "email");
       String? existingpwd = await dioClient.secureStorage.read(key: "pwd");
+      AuthState.savedEmail = await dioClient.secureStorage.read(key: "email");
+      AuthState.savedPWD = await dioClient.secureStorage.read(key: "pwd");
+      // emit(LoadingAuth());
       // if (emailexists != null) {
       //   emit(Authenticated());
       //   return;
@@ -52,7 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // AuthState.savedEmail = await dioClient.secureStorage.read(key: "email") ?? "asdsadddadsfdscvdfvfd";
       // print("sdfdsf ${AuthState.savedEmail}");
       // AuthState.savedPWD = await dioClient.secureStorage.read(key: "pw") ?? "";
-      emit(UnAuthenticated());
+      // emit(UnAuthenticated());
     });
 
     // When User Presses the SignIn Button, we will send the SignInRequested Event to the AuthBloc to handle it and emit the Authenticated State if the user is authenticated
@@ -65,28 +69,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // dioClient = ApiClient(dio: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage());
         // getIt.registerSingleton(() => ApiClient(dio: getIt<Dio>(), networkInfo: getIt<NetworkInfo>(), secureStorage: getIt<FlutterSecureStorage>()));
         // print(getIt.isRegistered());
-        await EasyLoading.show(
-          status: 'loading...',
-          maskType: EasyLoadingMaskType.black,
-        );
-        await authRepository
-            .signIn(email: event.email, password: event.password)
-            .then((value) async => {
-                  print("link with firebase"),
-                  await dioClient.secureStorage
-                      .write(key: "email", value: event.email),
-                  await dioClient.secureStorage
-                      .write(key: "pwd", value: event.password),
-                  // credential = EmailAuthProvider.credential(email: event.email, password: event.password),
-                  // AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
-                  authRepository
-                      .getUserDetails(
-                          userID: value.response!.id,
-                          email: value.response!.email)
-                      .then((value) => AuthState.userDetails = value),
-                  // await AuthState.userDetails,
-                  emit(Authenticated()),
-                });
+        // await EasyLoading.show(
+        //   status: 'loading...',
+        //   maskType: EasyLoadingMaskType.black,
+        // );
+
+        await authRepository.signIn(email: event.email, password: event.password).then((value) async => {
+              print("link with firebase"),
+              dioClient.secureStorage.write(key: "email", value: event.email),
+              dioClient.secureStorage.write(key: "pwd", value: event.password),
+              // credential = EmailAuthProvider.credential(email: event.email, password: event.password),
+              // AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
+              await authRepository
+                  .getUserDetails(userID: value.response!.id, email: value.response!.email)
+                  .then((value) => AuthState.userDetails = value!),
+              // await AuthState.userDetails,
+              emit(Authenticated()),
+            });
+
         // try {
         //   print("link with firebase ${FirebaseAuth.instance.currentUser?.email}");
         //   final userCredential = await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
@@ -118,9 +118,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         emit(AuthError(e.toString()));
         // emit(UnAuthenticated());
-        emit(AuthError(e.toString()));
       }
-      await EasyLoading.dismiss();
     });
 
     on<IncompleteSignInRequested>((event, emit) async {
@@ -129,39 +127,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           status: 'loading...',
           maskType: EasyLoadingMaskType.black,
         );
-        String? existingemail =
-            await dioClient.secureStorage.read(key: "emailGuest");
-        String? existingpwd = await dioClient.secureStorage.read(key: "pwdGuest");
 
+        // RiveAnimation.asset(
+        //   'assets/loading.riv',
+        //   fit: BoxFit.cover,
+        // );
+        String? existingemail = await dioClient.secureStorage.read(key: "emailGuest");
+        String? existingpwd = await dioClient.secureStorage.read(key: "pwdGuest");
+        // emit(LoadingAuth());
         // if (AuthState.userDetails?.response?.email != existingemail) {
         if (existingemail == null && existingpwd == null) {
           await authRepository.signInIncomplete().then((value) async => {
                 print("qwertrefgve"),
-                await authRepository
-                    .signIn(
-                        email: value?.response?.email,
-                        password: value?.response?.password)
-                    .then((value) async => {
-                          emit(IncompleteAuthenticated()),
-                          AuthState.userDetails =
-                              await authRepository.getUserDetails(
-                                  userID: value.response!.id,
-                                  email: value.response!.email),
-                        }),
-                dioClient.secureStorage
-                    .write(key: "emailGuest", value: value?.response?.email),
-                dioClient.secureStorage
-                    .write(key: "pwdGuest", value: value?.response?.password)
+                dioClient.secureStorage.write(key: "emailGuest", value: value?.response?.email),
+                dioClient.secureStorage.write(key: "pwdGuest", value: value?.response?.password),
+                await authRepository.signIn(email: value?.response?.email, password: value?.response?.password).then((valueIncomplete) async => {
+                      await authRepository.signIn(email: value?.response?.email, password: value?.response?.password).then((value) async => {}),
+                      // emit(IncompleteAuthenticated()),
+                      await EasyLoading.dismiss(),
+                      AuthState.inCompleteUserDetails =
+                          await authRepository.getUserDetails(userID: valueIncomplete.response!.id, email: valueIncomplete.response!.email),
+                  emit(IncompleteAuthenticated()),
+                    }),
               });
         } else {
-          await authRepository
-              .signIn(email: existingemail, password: existingpwd)
-              .then((value) async => {
-                    emit(IncompleteAuthenticated()),
-                    AuthState.userDetails = await authRepository.getUserDetails(
-                        userID: value.response!.id,
-                        email: value.response!.email),
-                  });
+          await authRepository.signIn(email: existingemail, password: existingpwd).then((value) async => {
+                await EasyLoading.dismiss(),
+
+                AuthState.inCompleteUserDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
+            emit(IncompleteAuthenticated()),
+              });
         }
         // }
         // emit(IncompleteAuthenticated());
@@ -171,8 +166,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // emit(UnAuthenticated());
         emit(AuthError(e.toString()));
       }
-      // await EasyLoading.dismiss();
-      // await EasyLoading.dismiss();
     });
 
     // When User Presses the SignUp Button, we will send the SignUpRequest Event to the AuthBloc to handle it and emit the Authenticated() State if no error occurs
@@ -203,32 +196,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<OpenLoginPage>((event, emit) async {
-      AuthState.savedEmail = await dioClient.secureStorage.read(key: "email");
-      AuthState.savedPWD = await dioClient.secureStorage.read(key: "pwd");
-      emit(GoToLoginPage());
+      
+      try {
+        emit(GoToLoginPage());
+        AuthState.savedEmail = await dioClient.secureStorage.read(key: "email");
+        AuthState.savedPWD = await dioClient.secureStorage.read(key: "pwd");
+      } on Exception catch (e) {
+        emit(AuthError(e.toString()));
+        // TODO
+      }
+     
     });
 
-    on<SignInWithGoogle>((event, emit) async {
-      final response = await authRepository.signInWithGoogle();
-      print("Google response ${response}");
-      if (response) {
-        emit(AuthenticatedWithGoogle());
-      } else {
-        emit(UnAuthenticated());
-      }
-      // emit(GoToLoginPage());
-    });
-
-    on<SignUpWithGoogle>((event, emit) async {
-      final response = await authRepository.signInWithGoogle();
-      print("Google response ${response}");
-      if (response) {
-        emit(AuthenticatedWithGoogle());
-      } else {
-        emit(UnAuthenticated());
-      }
-      // emit(GoToLoginPage());
-    });
+    // on<SignInWithGoogle>((event, emit) async {
+    //   final response = await authRepository.signInWithGoogle();
+    //   print("Google response ${response}");
+    //   if (response) {
+    //     emit(AuthenticatedWithGoogle());
+    //   } else {
+    //     emit(UnAuthenticated());
+    //   }
+    //   // emit(GoToLoginPage());
+    // });
+    //
+    // on<SignUpWithGoogle>((event, emit) async {
+    //   final response = await authRepository.signInWithGoogle();
+    //   print("Google response ${response}");
+    //   if (response) {
+    //     emit(AuthenticatedWithGoogle());
+    //   } else {
+    //     emit(UnAuthenticated());
+    //   }
+    //   // emit(GoToLoginPage());
+    // });
 
     on<SignUpWithApple>((event, emit) async {
       final credential = await SignInWithApple.getAppleIDCredential(
@@ -263,12 +263,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // When User Presses the SignOut Button, we will send the SignOutRequested Event to the AuthBloc to handle it and emit the UnAuthenticated State
     on<SignOutRequested>((event, emit) async {
       // emit(Loading());
-      dioClient.secureStorage.delete(key: "email");
+      // dioClient.secureStorage.delete(key: "email");
       dioClient.secureStorage.delete(key: "pwd");
       AuthState.userDetails = GetUserDetails();
       emit(UnAuthenticated());
     });
   }
+
   dispose() {
     // _dataController.close();
   }

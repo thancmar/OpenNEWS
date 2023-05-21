@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/adapter.dart';
+// import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -51,25 +51,28 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       try {
         // for (var i = 0; i < int.parse(event.magazine.pageMax!); i++) {
         for (var i = 0; i < int.parse(event.magazine.pageMax!); i++) {
-          // await DefaultCacheManager()
-          //     .getFileFromCache(event.magazine.idMagazinePublication! +
-          //         "_" +
-          //         event.magazine.dateOfPublication! +
-          //         "_" +
-          //         i.toString())
-          //     .then((value) async => {
-          //           if (value?.file.lengthSync() == null)
-          //             {
-          //               print(
-          //                   "page does not exist2 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value}"),
-          //               magazineRepository.GetPagesforReader(
-          //                   page: i,
-          //                   id_mag_pub: event.magazine.idMagazinePublication,
-          //                   date_of_publication:
-          //                       event.magazine.dateOfPublication,
-          //                   readerCancelToken: cancelToken),
-          //             }
-          //         });
+          if(i<=3){
+            await DefaultCacheManager()
+                .getFileFromCache(event.magazine.idMagazinePublication! +
+                    "_" +
+                    event.magazine.dateOfPublication! +
+                    "_" +
+                    i.toString())
+                .then((value) async => {
+                      if (value?.file.lengthSync() == null)
+                        {
+                          print(
+                              "page does not exist2 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value}"),
+                          magazineRepository.GetPagesforReader(
+                              page: i,
+                              id_mag_pub: event.magazine.idMagazinePublication,
+                              date_of_publication:
+                                  event.magazine.dateOfPublication,
+                              readerCancelToken: cancelToken),
+                        }
+                    });
+          }
+
           await DefaultCacheManager()
               .getFileFromCache(event.magazine.idMagazinePublication! +
                   "_" +

@@ -1,4 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import '../../../blocs/navbar/navbar_bloc.dart';
+import '../../../models/magazineCategoryGetAllActive.dart';
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
+import '../../widgets/marquee.dart';
+import '../reader/readerpage.dart';
+import 'homepage/homepage.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key}) : super(key: key);
@@ -7,108 +21,162 @@ class MenuPage extends StatefulWidget {
   State<MenuPage> createState() => _MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<MenuPage> {
+  @override
+  bool get wantKeepAlive => true;
+
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await BlocProvider.of<NavbarBloc>(context).checkLocation();
+    _refreshController.refreshCompleted();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                SingleChildScrollView(
-                  physics: RangeMaintainingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.40,
-                          height: MediaQuery.of(context).size.width * 0.1,
-                          child: FloatingActionButton.extended(
-                            // heroTag: 'location_offers1',
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                side: BorderSide(
-                                    color: Colors.white, width: 0.2)),
-                            label: Text(
-                              'Speisekarte',
-                              style: TextStyle(fontSize: 12),
-                            ), // <-- Text
-                            backgroundColor: Colors.grey.withOpacity(0.1),
-                            icon: Icon(
-                              // <-- Icon
-                              Icons.menu_book,
-                              size: 16.0,
-                            ),
-                            onPressed: () {},
-                            // extendedPadding: EdgeInsets.all(50),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.40,
-                          height: MediaQuery.of(context).size.width * 0.1,
-                          child: FloatingActionButton.extended(
-                            // heroTag: 'location_offers',
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                side: BorderSide(
-                                    color: Colors.white, width: 0.2)),
+    super.build(context);
+    Size size = MediaQuery.of(context).size;
+    return BlocBuilder<NavbarBloc, NavbarState>(builder: (BuildContext context, state) {
+      return SafeArea(
+        child: SmartRefresher(
+          enablePullDown: true,
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount:
+                  NavbarState.magazineCategoryGetAllActive?.response!.length,
+              itemBuilder: (context, i) {
+                MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(response: []);
 
-                            label: Text(
-                              'Unser Barista',
-                              style: TextStyle(fontSize: 12),
-                            ), // <-- Text
-                            backgroundColor: Colors.grey.withOpacity(0.1),
-                            icon: Icon(
-                              // <-- Icon
-                              Icons.account_box,
-                              size: 16.0,
+                // }
+
+                return ValueListenableBuilder<MagazinePublishedGetAllLastByHotspotId>(
+                  valueListenable: NavbarState.bookmarks,
+                  builder: (context, value, child){
+                    if (value.response!.isNotEmpty && i ==0){
+                      // if (NavbarState.bookmarks.value.response!.length! > 0) {
+                      //   items = NavbarState.bookmarks.value;
+                      // } else {
+
+                      items = MagazinePublishedGetAllLastByHotspotId(
+                          response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+                              .where(
+                                  (element) => element.idsMagazineCategory!.contains(NavbarState.magazineCategoryGetAllActive!.response![i].id!) == true)
+                          // .toSet()
+                              .toList());
+                    //   return Column(
+                    //       // crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //       children: <Widget>[
+                    //         Align(
+                    //           alignment: Alignment.center,
+                    //           child: Padding(
+                    //             // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                    //             padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+                    //
+                    //             child: Text(
+                    //               'Bookmarks',
+                    //               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    //               textAlign: TextAlign.center,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         ListMagazineCover(
+                    //           cover: value,
+                    //         ), Align(
+                    //           alignment: Alignment.center,
+                    //           child: Padding(
+                    //             // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                    //             padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+                    //
+                    //             child: Text(
+                    //               // 'Meistgelesene Artikel',
+                    //               //   element.idsMagazineCategory!,
+                    //               NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                    //               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    //               textAlign: TextAlign.center,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         ListMagazineCover(
+                    //           cover: items,
+                    //         ),
+                    //
+                    //         //Add as padding
+                    //       ],
+                    //     );
+                    }
+                    return Column(
+                      // crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                            padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+
+                            child: Text(
+                              // 'Meistgelesene Artikel',
+                              //   element.idsMagazineCategory!,
+                              NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
                             ),
-                            onPressed: () {},
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.40,
-                          height: MediaQuery.of(context).size.width * 0.1,
-                          child: FloatingActionButton.extended(
-                            // heroTag: 'location_offers',
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                side: BorderSide(
-                                    color: Colors.white, width: 0.2)),
-                            label: Text(
-                              'Kaffeesorten',
-                              style: TextStyle(fontSize: 1),
-                            ), // <-- Text
-                            backgroundColor: Colors.grey.withOpacity(0.1),
-                            icon: Icon(
-                              // <-- Icon
-                              Icons.coffee,
-                              size: 16.0,
-                            ),
-                            onPressed: () {},
-                          ),
+                        ListMagazineCover(
+                          cover: items,
+                          heroTag: 'newWidget',
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                        if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!)
+                          Container(
+                            height: size.height * 0.1,
+                            color: Colors.transparent,
+                          )
+
+                        //Add as padding
+                      ],
+                    );
+
+                  },
+                  // child: Column(
+                  //   // crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //   children: <Widget>[
+                  //     Align(
+                  //       alignment: Alignment.center,
+                  //       child: Padding(
+                  //         // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                  //         padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+                  //
+                  //         child: Text(
+                  //           // 'Meistgelesene Artikel',
+                  //           //   element.idsMagazineCategory!,
+                  //           NavbarState.bookmarks.value.response!.length! > 0 && i == 0
+                  //               ? "Bookmarks"
+                  //               : NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                  //           style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                  //           textAlign: TextAlign.center,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     ListMagazineCover(
+                  //       cover: items,
+                  //     ),
+                  //     if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!)
+                  //       Container(
+                  //         height: size.height * 0.1,
+                  //         color: Colors.transparent,
+                  //       )
+                  //
+                  //     //Add as padding
+                  //   ],
+                  // ),
+                );
+              }),
+        ),
+      );
+    });
   }
 }

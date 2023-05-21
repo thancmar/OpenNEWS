@@ -12,9 +12,9 @@ import 'package:sharemagazines_flutter/src/models/registrierung_model.dart';
 import 'package:sharemagazines_flutter/src/models/userDetails_model.dart';
 import 'package:sharemagazines_flutter/src/resources/dioClient.dart';
 import 'package:get_it/get_it.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
-final FirebaseAuth _fbAuth = FirebaseAuth.instance;
+// final FirebaseAuth _fbAuth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class AuthRepository {
@@ -34,7 +34,7 @@ class AuthRepository {
       required String account_owner,
       required String creation_date,
       required String origin}) async {
-    Map data = {
+    Map<String, dynamic> data = {
       'f': 'readerAdd',
       'json':
           '{"email": "$email", "password":"$password", "firstname":"$firstname", "lastname":"$lastname", "date_of_birth":"$date_of_birth", "sex":"$sex","address_street":"$address_street" ,"address_house_nr":"$address_house_nr","address_zip":"$address_zip","address_city":"$address_city","phone":"$phone","iban":"$iban","account_owner":"$account_owner","creation_date":"","origin":"$origin"}'
@@ -74,6 +74,7 @@ class AuthRepository {
       throw Exception("Failed to login");
     }
   }
+
   // Future<User> signInWithGoogle() async {
   //   // Trigger the authentication flow
   //   final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
@@ -96,34 +97,35 @@ class AuthRepository {
   //   return user;
   // }
 
-  Future<bool> signInWithGoogle() async {
-    try {
-      // final user = FirebaseAuth.instance.currentUser!;
-      // final GoogleSignInAccount? user = GoogleSignIn().currentUser ?? await GoogleSignIn().signIn();
-      print("GoogleSignIn().currentUser ${GoogleSignIn().currentUser}");
-      final GoogleSignInAccount? user = await GoogleSignIn().signIn();
-      print("GoogleSignIn().signIn() ${user}");
-      // if (user != null) {
-      //   await GoogleSignIn().signOut();
-      // }
-      print("signInWithGoogle");
-      final GoogleSignInAuthentication? googleAuth = await user?.authentication;
-      print("signInWithGoogle");
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      print(FirebaseAuth.instance.currentUser?.email);
-      return true;
-    } catch (e) {
-      print('An Error Occurred $e');
-      return false;
-    }
-  }
+  // Future<bool> signInWithGoogle() async {
+  //   try {
+  //     // final user = FirebaseAuth.instance.currentUser!;
+  //     // final GoogleSignInAccount? user = GoogleSignIn().currentUser ?? await GoogleSignIn().signIn();
+  //     print("GoogleSignIn().currentUser ${GoogleSignIn().currentUser}");
+  //     final GoogleSignInAccount? user = await GoogleSignIn().signIn();
+  //     print("GoogleSignIn().signIn() ${user}");
+  //     // if (user != null) {
+  //     //   await GoogleSignIn().signOut();
+  //     // }
+  //     print("signInWithGoogle");
+  //     final GoogleSignInAuthentication? googleAuth = await user?.authentication;
+  //     print("signInWithGoogle");
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth?.accessToken,
+  //       idToken: googleAuth?.idToken,
+  //     );
+  //
+  //     await FirebaseAuth.instance.signInWithCredential(credential);
+  //     print(FirebaseAuth.instance.currentUser?.email);
+  //     return true;
+  //   } catch (e) {
+  //     print('An Error Occurred $e');
+  //     return false;
+  //   }
+  // }
 
   Future<void> handleSignOut() => GoogleSignIn().disconnect();
+
   // Future<void> signOut() async {
   //   final _googleSignIn = GoogleSignIn();
   //   _googleSignIn.disconnect();
@@ -135,35 +137,38 @@ class AuthRepository {
   }) async {
     try {
       final getIt = GetIt.instance;
-      Map data = {
+      Map<String, dynamic> data = {
         'f': 'readerLogin',
-        'json':
-            '{"email": "$email", "password":"$password", "version":"5", "client":"ios", "lang":"en", "token":"","fingerprint":"AABBCC"}'
+        'json': '{"email": "$email", "password":"$password", "version":"5", "client":"web", "lang":"en", "token":"","fingerprint":"aaabb"}'
       };
-      final response = await getIt<ApiClient>().diofordata.post(
-          ApiConstants.baseUrl + ApiConstants.usersEndpoint,
-          data: data,
-          options: Options(responseType: ResponseType.plain));
+      final response = await getIt<ApiClient>()
+          .diofordata
+          .post(ApiConstants.baseUrl + ApiConstants.usersEndpoint, data: data, options: Options(responseType: ResponseType.json));
       switch (response.statusCode) {
         case 200:
-          if (json.decode(response.data)['response']['code'] == 107) {
-            print("107");
-            throw Exception("Invalid login data");
+          if (json.decode(response.data)['response']['code'] != null) {
+            throw Exception("Failed to login with code ${json.decode(response.data)['response']['code']}");
           } else {
             return LoginModelFromJson(response.data);
           }
         default:
           throw Exception("Failed to login. Code ${response.statusCode}");
       }
+    } on TypeError catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to parse the response");
     } on SocketException catch (e) {
       rethrow;
+    } catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to login. Code ${e}");
     }
   }
 
   Future<IncompleteLoginModel?> signInIncomplete() async {
     try {
       final getIt = GetIt.instance;
-      Map data = {
+      Map<String, dynamic> data = {
         'f': 'incompleteReaderAdd',
       };
       var response = await getIt<ApiClient>().diofordata.post(
@@ -173,8 +178,8 @@ class AuthRepository {
       switch (response.statusCode) {
         case 200:
           print(json.decode(response.data)['response']['code']);
-          if (json.decode(response.data)['response']['code'] == 103) {
-            throw Exception("Failed to login with code 103");
+          if (json.decode(response.data)['response']['code'] != null) {
+            throw Exception("Failed to login with code ${json.decode(response.data)['response']['code']}");
           } else {
             return IncompleteLoginModelFromJson(response.data);
           }
@@ -186,7 +191,7 @@ class AuthRepository {
     }
   }
 
-  Future<GetUserDetails?> getUserDetails({
+  Future<GetUserDetails> getUserDetails({
     required String? userID,
     required String? email,
     // required ApiClient client,
@@ -194,10 +199,7 @@ class AuthRepository {
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     print("getUserDetails");
     final getIt = GetIt.instance;
-    Map data = {
-      'f': 'readerGetByIdAndEmail',
-      'json': '{"id_reader": "$userID", "email":"$email"}'
-    };
+    Map<String, dynamic> data = {'f': 'readerGetByIdAndEmail', 'json': '{"id_reader": "$userID", "email":"$email"}'};
 
     var response = await getIt<ApiClient>().diofordata.post(
           ApiConstants.baseUrl + ApiConstants.usersEndpoint,
@@ -220,10 +222,8 @@ class AuthRepository {
   }
 
   Future<void> signOut() async {
-    Map data = {'f': 'readerLogin'};
-    final response = await http.post(
-        Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint),
-        body: data);
+    Map<String, dynamic> data = {'f': 'readerLogin'};
+    final response = await http.post(Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint), body: data);
     if (response.statusCode == 200) {
       // SharedPreferences prefs = await SharedPreferences.getInstance();
       // prefs.setString('email', '');

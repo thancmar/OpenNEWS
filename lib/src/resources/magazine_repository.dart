@@ -206,7 +206,7 @@ class MagazineRepository {
       // });
       // print(
       //     "sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
-      var response = await getIt<ApiClient>().diofordata.get(
+      var response = await getIt<ApiClient>().dioforImages.get(
           ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
           options: Options(responseType: ResponseType.bytes));
       switch (response.statusCode) {

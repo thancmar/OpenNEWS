@@ -9,10 +9,13 @@ import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/registrationpage.dart';
+import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 
 import '../../blocs/navbar/navbar_bloc.dart';
 
 import '../validators/emailvalidator.dart';
+import '../widgets/loading.dart';
+
 // import 'package:sharemagazines_flutter/src/presentation/pages/login.dart';
 // import 'package:sharemagazines_flutter/src/presentation/pages/map_page.dart';
 
@@ -27,12 +30,18 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   final _formKey = GlobalKey<FormState>();
+
   // TextEditingController _emailController = TextEditingController();
-  TextEditingController _emailController =
-      TextEditingController(text: AuthState.savedEmail);
-  TextEditingController _passwordController =
-      TextEditingController(text: AuthState.savedPWD);
+  TextEditingController _emailController = TextEditingController(text: AuthState.savedEmail);
+  TextEditingController _passwordController = TextEditingController(text: AuthState.savedPWD);
   var focusUserID = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Navigator.of(context).popUntil((route) => route.isFirst);
+    // BlocProvider.of<AuthBloc>(context).add(Initialize());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,245 +88,236 @@ class _StartPageState extends State<StartPage> {
                 ),
               ),
               BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-                if (state is Authenticated ||
-                    state is IncompleteAuthenticated ||
-                    state is AuthenticatedWithGoogle) {
+                if (state is Authenticated || state is IncompleteAuthenticated || state is AuthenticatedWithGoogle) {
                   // Navigating to the dashboard screen if the user is authenticated
                   // Navigator.pushReplacement(
                   //     context, MaterialPageRoute(builder: (context) => MainPage()));+
 
                   print("AuthState $state");
                   Navigator.of(context).popUntil((route) => route.isFirst);
-                  Future.delayed(Duration(milliseconds: 1), () async {
-                    BlocProvider.of<NavbarBloc>(context).add(Initialize123(
-                        currentPosition: SplashState.appbarlocation));
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => MainPage()),
-                        (Route<dynamic> route) => false);
+                  Future.delayed(Duration(milliseconds: 5), () async {
+                    BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: Data()));
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
 
                     // BlocProvider.of<NavbarBloc>(context);
-                    BlocProvider.of<NavbarBloc>(context).add(Initialize123(
-                        currentPosition: SplashState.appbarlocation));
+                    // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
                     // setState(() {});
                   });
                   return Container();
-                } else if (state is UnAuthenticated) {
-                  // _emailController.text = AuthState?.userDetails?.response?.email ?? '';
-                  // _passwordController.text = AuthState.savedPWD;
-                  return Positioned(
-                    top: constraints.constrainHeight() / 2,
-                    height: constraints.constrainHeight() / 2,
-                    width: constraints.constrainWidth(),
-
-                    // left: constraints.constrainWidth() / 2,
-                    // child: FlutterLogo(),
-                    // key: _widgetKey,
-                    child: Container(
-                      // key: _widgetKey,
-                      margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
-                      decoration: new BoxDecoration(
-                          border:
-                              Border.all(color: Colors.blueAccent, width: 0.10),
-                          borderRadius: new BorderRadius.circular(20.0),
-                          color: Colors.transparent
-                          // color: Colors.red,
-                          ),
-                      child: SingleChildScrollView(
-                        // key: _widgetKey,
-                        child: new Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  20.0, 25.0, 20.0, 20.0),
-                              child: Text(
-                                ('welcome').tr(),
-                                // "Herzlich willkommen",
-                                textAlign: TextAlign.left,
-                                // textScaleFactor: ScaleSize.textScaleFactor(context),
-                                style: TextStyle(
-                                  // fontFamily: "Raleway",
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  // fontSize: 24,
-                                  fontSize: size.width * 0.065,
-                                  //fontStyle: FontStyle.,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  20.0, 0, 20.0, 20.0),
-                              child: Text(
-                                ('welcome_text').tr(),
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
-                                  // fontSize: 16,
-                                  fontSize: size.width * 0.05,
-                                  //fontStyle: FontStyle.,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(size.width * 0.06, 0,
-                                  size.width * 0.06, size.height * 0.02),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // if (AuthState.userDetails?.response?.id != null) {
-                                  //   Navigator.of(context).popUntil((route) => route.isFirst);
-                                  // }
-                                  BlocProvider.of<AuthBloc>(context).add(
-                                    IncompleteSignInRequested(),
-                                  );
-                                  // Future.delayed(Duration(milliseconds: 1), () async {
-                                  //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                  //
-                                  // });
-                                  // }
-                                  // _authenticateincomplete(context);
-                                  // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
-                                  //   if (NavbarState.ap is! Loading) {
-                                  //     Navigator.of(context).popUntil((route) => route.isFirst);
-                                  //     Future.delayed(Duration(milliseconds: 1), () async {
-                                  //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                  //     });
-                                  //     return;
-                                  //   }
-                                  // });
-
-                                  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  //primary: Colors.green,
-                                  onPrimary: Colors.white,
-                                  shadowColor: Colors.blueAccent,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(14.0)),
-                                  minimumSize: Size(size.width - 40,
-                                      size.height * 0.075), //////// HERE
-                                ),
-                                child: Text(
-                                  "Ohne Account lesen",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    // fontSize: 18,
-                                    fontSize: size.width * 0.06,
-                                    //fontStyle: FontStyle.,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(size.width * 0.06, 0,
-                                  size.width * 0.06, size.height * 0.02),
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   PageRouteBuilder(
-                                  //     pageBuilder: (context, animation1, animation2) => LoginPage(
-                                  //       // title: 'Login',
-                                  //       splashbloc: widget.splashbloc,
-                                  //     ),
-                                  //     transitionDuration: Duration.zero,
-                                  //   ),
-                                  // );
-                                  BlocProvider.of<AuthBloc>(context)
-                                      .add(OpenLoginPage());
-
-                                  // Navigator.pushReplacement(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => MainPage()));
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  //primary: Colors.,
-                                  //onPrimary: Colors.white,
-                                  //shadowColor: Colors.blueAccent,
-                                  // elevation: 3,
-                                  side: BorderSide(
-                                      width: 0.10, color: Colors.white),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(14.0)),
-                                  minimumSize: Size(size.width - 40,
-                                      size.height * 0.075), //////// HERE
-                                ),
-                                child: Text(
-                                  "Anmelden",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: size.width * 0.06,
-                                    //fontStyle: FontStyle.,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(size.width * 0.06, 0,
-                                  size.width * 0.06, size.height * 0.005),
-                              child: Text(
-                                "Du hast noch keinen Account?",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: size.width * 0.04,
-                                  //fontStyle: FontStyle.,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    print("I was tapped!");
-                                    Future.delayed(Duration(milliseconds: 50),
-                                        () {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Registration()),
-                                          (Route<dynamic> route) => true);
-                                    });
-                                    // Navigator.push(
-                                    //   context,
-                                    //   PageRouteBuilder(
-                                    //     pageBuilder:
-                                    //         (context, animation1, animation2) =>
-                                    //             Registration(
-                                    //                 // title: 'Login',
-                                    //                 ),
-                                    //     transitionDuration: Duration.zero,
-                                    //   ),
-                                    // );
-                                  },
-                                  child: Text(
-                                    "Jetzt registrieren!",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: size.width * 0.045,
-                                      //fontStyle: FontStyle.,
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                } else if (state is GoToLoginPage) {
+                }
+                // else if (state is UnAuthenticated) {
+                //   // _emailController.text = AuthState?.userDetails?.response?.email ?? '';
+                //   // _passwordController.text = AuthState.savedPWD;
+                //   return Positioned(
+                //     top: constraints.constrainHeight() / 2,
+                //     height: constraints.constrainHeight() / 2,
+                //     width: constraints.constrainWidth(),
+                //
+                //     // left: constraints.constrainWidth() / 2,
+                //     // child: FlutterLogo(),
+                //     // key: _widgetKey,
+                //     child: Container(
+                //       // key: _widgetKey,
+                //       margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
+                //       decoration: new BoxDecoration(
+                //           border: Border.all(color: Colors.blueAccent, width: 0.10),
+                //           borderRadius: new BorderRadius.circular(20.0),
+                //           color: Colors.transparent
+                //           // color: Colors.red,
+                //           ),
+                //       child: SingleChildScrollView(
+                //         // key: _widgetKey,
+                //         child: new Column(
+                //           crossAxisAlignment: CrossAxisAlignment.stretch,
+                //           children: <Widget>[
+                //             // Padding(
+                //             //   padding: const EdgeInsets.all(25.0),
+                //             //   child: Container( height: 300,child: LoadingAnimation()),
+                //             // ),
+                //             Padding(
+                //               padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
+                //               child: Text(
+                //                 ('welcome').tr(),
+                //                 // "Herzlich willkommen",
+                //                 textAlign: TextAlign.left,
+                //                 // textScaleFactor: ScaleSize.textScaleFactor(context),
+                //                 style: TextStyle(
+                //                   // fontFamily: "Raleway",
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.w700,
+                //                   // fontSize: 24,
+                //                   fontSize: size.width * 0.065,
+                //                   //fontStyle: FontStyle.,
+                //                 ),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
+                //               child: Text(
+                //                 ('welcome_text').tr(),
+                //                 textAlign: TextAlign.left,
+                //                 style: TextStyle(
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.w300,
+                //                   // fontSize: 16,
+                //                   fontSize: size.width * 0.05,
+                //                   //fontStyle: FontStyle.,
+                //                 ),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
+                //               child: ElevatedButton(
+                //                 onPressed: () {
+                //                   // if (AuthState.userDetails?.response?.id != null) {
+                //                   //   Navigator.of(context).popUntil((route) => route.isFirst);
+                //                   // }
+                //                   BlocProvider.of<AuthBloc>(context).add(
+                //                     IncompleteSignInRequested(),
+                //                   );
+                //                   // Navigator.of(context).popUntil((route) => route.isFirst);
+                //                   // Future.delayed(Duration(milliseconds: 3), () async {
+                //                   //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                //                   //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                //                   //
+                //                   //   // BlocProvider.of<NavbarBloc>(context);
+                //                   //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                //                   //   // setState(() {});
+                //                   // });
+                //                   // BlocProvider.of<AuthBloc>(context).add(
+                //                   //   IncompleteSignInRequested(),
+                //                   // );
+                //                   // Future.delayed(Duration(milliseconds: 1), () async {
+                //                   //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                //                   //
+                //                   // });
+                //                   // }
+                //                   // _authenticateincomplete(context);
+                //                   // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
+                //                   //   if (NavbarState.ap is! Loading) {
+                //                   //     Navigator.of(context).popUntil((route) => route.isFirst);
+                //                   //     Future.delayed(Duration(milliseconds: 1), () async {
+                //                   //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                //                   //     });
+                //                   //     return;
+                //                   //   }
+                //                   // });
+                //
+                //                   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
+                //                 },
+                //                 style: ElevatedButton.styleFrom(
+                //                   //primary: Colors.green,
+                //                   onPrimary: Colors.white,
+                //                   shadowColor: Colors.blueAccent,
+                //                   elevation: 3,
+                //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                //                   minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                //                 ),
+                //                 child: Text(
+                //                   "Ohne Account lesen",
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontWeight: FontWeight.w400,
+                //                     // fontSize: 18,
+                //                     fontSize: size.width * 0.06,
+                //                     //fontStyle: FontStyle.,
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
+                //               child: OutlinedButton(
+                //                 onPressed: () {
+                //                   // Navigator.push(
+                //                   //   context,
+                //                   //   PageRouteBuilder(
+                //                   //     pageBuilder: (context, animation1, animation2) => LoginPage(
+                //                   //       // title: 'Login',
+                //                   //       splashbloc: widget.splashbloc,
+                //                   //     ),
+                //                   //     transitionDuration: Duration.zero,
+                //                   //   ),
+                //                   // );
+                //                   BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
+                //
+                //                   // Navigator.pushReplacement(
+                //                   //     context,
+                //                   //     MaterialPageRoute(
+                //                   //         builder: (context) => MainPage()));
+                //                 },
+                //                 style: OutlinedButton.styleFrom(
+                //                   //primary: Colors.,
+                //                   //onPrimary: Colors.white,
+                //                   //shadowColor: Colors.blueAccent,
+                //                   // elevation: 3,
+                //                   side: BorderSide(width: 0.10, color: Colors.white),
+                //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                //                   minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                //                 ),
+                //                 child: Text(
+                //                   "Anmelden",
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontWeight: FontWeight.w400,
+                //                     fontSize: size.width * 0.06,
+                //                     //fontStyle: FontStyle.,
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.005),
+                //               child: Text(
+                //                 "Du hast noch keinen Account?",
+                //                 textAlign: TextAlign.center,
+                //                 style: TextStyle(
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.w300,
+                //                   fontSize: size.width * 0.04,
+                //                   //fontStyle: FontStyle.,
+                //                 ),
+                //               ),
+                //             ),
+                //             Padding(
+                //                 padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
+                //                 child: InkWell(
+                //                   onTap: () {
+                //                     print("I was tapped!");
+                //                     Future.delayed(Duration(milliseconds: 50), () {
+                //                       Navigator.pushAndRemoveUntil(
+                //                           context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
+                //                     });
+                //                     // Navigator.push(
+                //                     //   context,
+                //                     //   PageRouteBuilder(
+                //                     //     pageBuilder:
+                //                     //         (context, animation1, animation2) =>
+                //                     //             Registration(
+                //                     //                 // title: 'Login',
+                //                     //                 ),
+                //                     //     transitionDuration: Duration.zero,
+                //                     //   ),
+                //                     // );
+                //                   },
+                //                   child: Text(
+                //                     "Jetzt registrieren!",
+                //                     textAlign: TextAlign.center,
+                //                     style: TextStyle(
+                //                       color: Colors.blue,
+                //                       fontWeight: FontWeight.w300,
+                //                       fontSize: size.width * 0.045,
+                //                       //fontStyle: FontStyle.,
+                //                     ),
+                //                   ),
+                //                 )),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   );
+                // }
+                else if (state is GoToLoginPage) {
                   return Positioned.fill(
                     // top: constraints.constrainHeight() / 2,
                     // height: constraints.constrainHeight() / 2,
@@ -325,23 +325,15 @@ class _StartPageState extends State<StartPage> {
                     // left: constraints.constrainWidth() / 2,
                     child: SafeArea(
                       child: Align(
-                        alignment:
-                            MediaQuery.of(context).viewInsets.bottom > 0.0
-                                ? Alignment.topCenter
-                                : Alignment.bottomCenter,
+                        alignment: MediaQuery.of(context).viewInsets.bottom > 0.0 ? Alignment.topCenter : Alignment.bottomCenter,
                         child: SizedBox(
                           height: constraints.constrainHeight() / 2,
                           width: constraints.constrainWidth(),
                           child: Container(
                             // margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
-                            margin: EdgeInsets.fromLTRB(
-                                size.width * 0.045,
-                                size.height * 0.025,
-                                size.width * 0.045,
-                                size.height * 0.025),
+                            margin: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.025, size.width * 0.045, size.height * 0.025),
                             decoration: new BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.blueAccent, width: 0.10),
+                              border: Border.all(color: Colors.blueAccent, width: 0.10),
                               borderRadius: new BorderRadius.circular(20.0),
                               // color: Colors.red,
                             ),
@@ -354,20 +346,17 @@ class _StartPageState extends State<StartPage> {
                                     flex: 2,
                                     child: Padding(
                                       // padding:  EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 0.0),
-                                      padding: EdgeInsets.fromLTRB(
-                                          size.width * 0.045,
-                                          size.height * 0.01,
-                                          size.width * 0.045,
-                                          size.height * 0.001),
+                                      padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.01, size.width * 0.045, size.height * 0.001),
 
                                       child: Row(
                                         children: [
                                           BackButton(
                                             color: Colors.white,
+                                            onPressed: () {
+                                              // Navigator.pop(context, true);
 
-                                            // onPressed: () {
-                                            //   Navigator.pop(context, true);
-                                            // }),
+                                              BlocProvider.of<AuthBloc>(context).add(Initialize());
+                                            },
                                             // onPressed: () => Navigator.of(context).pop(true),
                                             // onPressed: () => {BlocProvider.of<AuthBloc>(context).add(Initialize())},
                                           ),
@@ -388,48 +377,30 @@ class _StartPageState extends State<StartPage> {
                                   Expanded(
                                     flex: 3,
                                     child: Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                          size.width * 0.045,
-                                          size.height * 0.005,
-                                          size.width * 0.045,
-                                          size.height * 0.005),
+                                      padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.005, size.width * 0.045, size.height * 0.005),
                                       child: TextFormField(
                                         controller: _emailController,
-                                        validator: (value) =>
-                                            validateEmail(value),
+                                        validator: (value) => validateEmail(value),
                                         style: TextStyle(color: Colors.white),
-                                        // initialValue: state.savedEmail ?? "",
-                                        onEditingComplete: () =>
-                                            FocusScope.of(context).nextFocus(),
+                                        // initialValue: state.savedEmail ,
+                                        onEditingComplete: () => FocusScope.of(context).nextFocus(),
                                         decoration: InputDecoration(
                                           //Maybe we need it
                                           // contentPadding: const EdgeInsets.symmetric(
                                           //     vertical: 20.0, horizontal: 10.0),
-                                          floatingLabelStyle:
-                                              TextStyle(color: Colors.blue),
+                                          floatingLabelStyle: TextStyle(color: Colors.blue),
                                           labelText: "E-Mail oder Benutzernam",
-                                          labelStyle: TextStyle(
-                                              fontSize: size.width * 0.045,
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight
-                                                  .w300), //, height: 3.8),
+                                          labelStyle: TextStyle(fontSize: size.width * 0.045, color: Colors.grey, fontWeight: FontWeight.w300),
+                                          //, height: 3.8),
                                           border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 5),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10.0))),
+                                              borderSide: BorderSide(color: Colors.white, width: 5),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                           errorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.red, width: 1)),
-                                          enabledBorder:
-                                              const OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Colors.grey, width: 1.0),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0)),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                                          enabledBorder: const OutlineInputBorder(
+                                            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                           ),
                                         ),
                                       ),
@@ -462,11 +433,7 @@ class _StartPageState extends State<StartPage> {
                                   Expanded(
                                     flex: 3,
                                     child: Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                          size.width * 0.045,
-                                          size.height * 0.005,
-                                          size.width * 0.045,
-                                          size.height * 0.005),
+                                      padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.005, size.width * 0.045, size.height * 0.005),
                                       child: TextFormField(
                                         controller: _passwordController,
                                         // validator: (value) {
@@ -496,32 +463,20 @@ class _StartPageState extends State<StartPage> {
                                           //Maybe we need it
                                           // contentPadding: const EdgeInsets.symmetric(
                                           //     vertical: 20.0, horizontal: 10.0),
-                                          floatingLabelStyle:
-                                              TextStyle(color: Colors.blue),
+                                          floatingLabelStyle: TextStyle(color: Colors.blue),
                                           labelText: "Passwort",
 
-                                          labelStyle: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight
-                                                  .w300), //, height: 3.8),
+                                          labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300),
+                                          //, height: 3.8),
                                           border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 5),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10.0))),
+                                              borderSide: BorderSide(color: Colors.white, width: 5),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                           errorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.red, width: 1)),
-                                          enabledBorder:
-                                              const OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Colors.grey, width: 1.0),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0)),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                                          enabledBorder: const OutlineInputBorder(
+                                            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                           ),
                                         ),
                                       ),
@@ -551,11 +506,7 @@ class _StartPageState extends State<StartPage> {
                                   Expanded(
                                     flex: 2,
                                     child: Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                          size.width * 0.045,
-                                          size.height * 0.005,
-                                          size.width * 0.045,
-                                          size.height * 0.005),
+                                      padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.005, size.width * 0.045, size.height * 0.005),
                                       child: InkWell(
                                         // onTap: () {
                                         //   print("I was tapped!");
@@ -577,23 +528,14 @@ class _StartPageState extends State<StartPage> {
                                     flex: 3,
                                     child: Padding(
                                       // padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-                                      padding: EdgeInsets.fromLTRB(
-                                          size.width * 0.045,
-                                          size.height * 0.005,
-                                          size.width * 0.045,
-                                          size.height * 0.025),
+                                      padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.005, size.width * 0.045, size.height * 0.025),
 
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            FocusManager.instance.primaryFocus
-                                                ?.unfocus();
-                                            BlocProvider.of<AuthBloc>(context)
-                                                .add(
-                                              SignInRequested(
-                                                  _emailController.text,
-                                                  _passwordController.text),
+                                          if (_formKey.currentState!.validate()) {
+                                            FocusManager.instance.primaryFocus?.unfocus();
+                                            BlocProvider.of<AuthBloc>(context).add(
+                                              SignInRequested(_emailController.text, _passwordController.text),
                                             );
                                           }
                                           // Navigator.pushReplacement(
@@ -623,13 +565,9 @@ class _StartPageState extends State<StartPage> {
                                           shadowColor: Colors.blueAccent,
                                           elevation: 3,
                                           // side: BorderSide(width: 0.10, color: Colors.white),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.height * 0.015)),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(size.height * 0.015)),
                                           // minimumSize: Size(100, 60), //////// HERE
-                                          minimumSize: Size(size.width - 40,
-                                              size.height * 0.075),
+                                          minimumSize: Size(size.width - 40, size.height * 0.075),
                                         ),
                                         child: Text(
                                           "Anmelden",
@@ -651,20 +589,17 @@ class _StartPageState extends State<StartPage> {
                       ),
                     ),
                   );
+                  // }
+                  // else if (state is LoadingAuth) {
+                  //   return Container(color: Colors.blue,height: 200  ,width: 200,);
+                  // return LoadingAnimation();
                 } else if (state is AuthError) {
                   return AlertDialog(
                     title: Text(
                       'Error',
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500),
+                      style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w500),
                     ),
-                    content: Text(state.error.toString(),
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w300)),
+                    content: Text(state.error.toString(), style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300)),
                     actions: <Widget>[
                       // TextButton(
                       //   onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -680,11 +615,227 @@ class _StartPageState extends State<StartPage> {
                     ],
                   );
                 }
+                return Positioned(
+                  top: constraints.constrainHeight() / 2,
+                  height: constraints.constrainHeight() / 2,
+                  width: constraints.constrainWidth(),
+
+                  // left: constraints.constrainWidth() / 2,
+                  // child: FlutterLogo(),
+                  // key: _widgetKey,
+                  child: Container(
+                    // key: _widgetKey,
+                    margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
+                    decoration: new BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent, width: 0.10),
+                        borderRadius: new BorderRadius.circular(20.0),
+                        color: Colors.transparent
+                        // color: Colors.red,
+                        ),
+                    child: SingleChildScrollView(
+                      // key: _widgetKey,
+                      child: new Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          // Padding(
+                          //   padding: const EdgeInsets.all(25.0),
+                          //   child: Container( height: 300,child: LoadingAnimation()),
+                          // ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
+                            child: Text(
+                              ('welcome').tr(),
+                              // "Herzlich willkommen",
+                              textAlign: TextAlign.left,
+                              // textScaleFactor: ScaleSize.textScaleFactor(context),
+                              style: TextStyle(
+                                // fontFamily: "Raleway",
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                // fontSize: 24,
+                                fontSize: size.width * 0.065,
+                                //fontStyle: FontStyle.,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
+                            child: Text(
+                              ('welcomeText').tr(),
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                                // fontSize: 16,
+                                fontSize: size.width * 0.05,
+                                //fontStyle: FontStyle.,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Navigator.of(context).pop();
+                                // Navigator.of(context).popUntil((route) => route.isFirst);
+                                var sd = AuthState.inCompleteUserDetails;
+                                if (AuthState.inCompleteUserDetails?.response != null && Navigator.of(context).canPop()== true) {
+                                  // Navigator.of(context).popUntil((route) => route.isFirst,);
+                                  Navigator.pop(context, 'popped');
+
+                                }else{
+                                BlocProvider.of<AuthBloc>(context).add(
+                                  IncompleteSignInRequested(),
+                                );}
+                                // Navigator.of(context).popUntil((route) => route.isFirst);
+                                // Future.delayed(Duration(milliseconds: 3), () async {
+                                //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                                //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                //
+                                //   // BlocProvider.of<NavbarBloc>(context);
+                                //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                                //   // setState(() {});
+                                // });
+                                // BlocProvider.of<AuthBloc>(context).add(
+                                //   IncompleteSignInRequested(),
+                                // );
+                                // Future.delayed(Duration(milliseconds: 1), () async {
+                                //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                //
+                                // });
+                                // }
+                                // _authenticateincomplete(context);
+                                // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
+                                //   if (NavbarState.ap is! Loading) {
+                                //     Navigator.of(context).popUntil((route) => route.isFirst);
+                                //     Future.delayed(Duration(milliseconds: 1), () async {
+                                //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                //     });
+                                //     return;
+                                //   }
+                                // });
+
+                                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                //primary: Colors.green,
+                                onPrimary: Colors.white,
+                                shadowColor: Colors.blueAccent,
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                                minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                              ),
+                              child: MarqueeWidget(
+                                child: Text(
+                                  ("inCompleteSignIn").tr(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    
+                                    fontWeight: FontWeight.w400,
+                                    // fontSize: 18,
+                                    fontSize: size.width * 0.06,
+                                    //fontStyle: FontStyle.,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                // Navigator.push(
+                                //   context,
+                                //   PageRouteBuilder(
+                                //     pageBuilder: (context, animation1, animation2) => LoginPage(
+                                //       // title: 'Login',
+                                //       splashbloc: widget.splashbloc,
+                                //     ),
+                                //     transitionDuration: Duration.zero,
+                                //   ),
+                                // );
+                                BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
+
+                                // Navigator.pushReplacement(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => MainPage()));
+                              },
+                              style: OutlinedButton.styleFrom(
+                                //primary: Colors.,
+                                //onPrimary: Colors.white,
+                                //shadowColor: Colors.blueAccent,
+                                // elevation: 3,
+                                side: BorderSide(width: 0.10, color: Colors.white),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                                minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                              ),
+                              child: Text(
+                                ("logIn").tr(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: size.width * 0.06,
+                                  //fontStyle: FontStyle.,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.005),
+                            child: Text(
+                             ("toRegistration").tr(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                                fontSize: size.width * 0.04,
+                                //fontStyle: FontStyle.,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
+                              child: InkWell(
+                                onTap: () {
+                                  print("I was tapped!");
+                                  Future.delayed(Duration(milliseconds: 50), () {
+                                    Navigator.pushAndRemoveUntil(
+                                        context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
+                                  });
+                                  // Navigator.push(
+                                  //   context,
+                                  //   PageRouteBuilder(
+                                  //     pageBuilder:
+                                  //         (context, animation1, animation2) =>
+                                  //             Registration(
+                                  //                 // title: 'Login',
+                                  //                 ),
+                                  //     transitionDuration: Duration.zero,
+                                  //   ),
+                                  // );
+                                },
+                                child: Text(
+                                  "Jetzt registrieren!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: size.width * 0.045,
+                                    //fontStyle: FontStyle.,
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
                 // else if (state is LoadingAuth) {}
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                return Container(
-                    // color: Colors.red,
-                    );
+                // Navigator.of(context).popUntil((route) => route.isFirst);
+                // return Container(
+                // color: Colors.red,
+                // );
               })
             ],
           );

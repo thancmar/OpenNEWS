@@ -5,15 +5,15 @@ MagazinePublishedGetAllLastByHotspotId
         MagazinePublishedGetAllLastByHotspotId.fromJson(json.decode(str));
 
 class MagazinePublishedGetAllLastByHotspotId {
-  List<Response>? response;
+  List<ResponseMagazine>? response;
 
   MagazinePublishedGetAllLastByHotspotId({required this.response});
 
   MagazinePublishedGetAllLastByHotspotId.fromJson(Map<String, dynamic> json) {
     if (json['response'] != null) {
-      response = <Response>[];
+      response = <ResponseMagazine>[];
       json!['response'].forEach((v) {
-        response!.add(Response.fromJson(v));
+        response!.add(ResponseMagazine.fromJson(v));
       });
     } else {
       null;
@@ -31,7 +31,7 @@ class MagazinePublishedGetAllLastByHotspotId {
   }
 }
 
-class Response {
+class ResponseMagazine {
   String? name;
   String? idPublisher;
   String? idMagazineType;
@@ -45,7 +45,7 @@ class Response {
   bool? advertisement;
   String? coverUrl;
 
-  Response(
+  ResponseMagazine(
       {this.name,
       this.idPublisher,
       this.idMagazineType,
@@ -59,7 +59,7 @@ class Response {
       this.advertisement,
       this.coverUrl});
 
-  Response.fromJson(Map<String, dynamic> json) {
+  ResponseMagazine.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     idPublisher = json['id_publisher'];
     idMagazineType = json['id_magazine_type'];

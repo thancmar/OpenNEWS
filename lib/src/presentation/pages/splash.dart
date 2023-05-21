@@ -35,18 +35,44 @@ class SplashScreen extends StatelessWidget {
         print("bloc builder splash");
         if ((state is Initial)) {
           //add lodaing state
+          BlocProvider.of<SplashBloc>(context).add(
+            NavigateToHomeEvent(),
+          );
           return SplashScreenWidget();
           //return StartPage(
           // title: "notitle",
           //splashbloc: BlocProvider.of<SplashBloc>(context),
           //);
           // return Navigator.of(context).push(PageRouteBuilder(pageBuilder: (BuildContext context, _, __) => SplashScreenWidget()));
-        } else if (state is SkipLogin) {
+        }
+        // else if (state is SkipLogin) {
+        //   // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
+        //   BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
+        //
+        //   return StartPage(
+        //     title: "notitle",
+        //   );
+        // }
+        else if (state is SkipLogin) {
           // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
-          BlocProvider.of<AuthBloc>(context)
-              .add(SignInRequested(state.email, state.pwd));
-
+          BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
+          // Navigator.pushAndRemoveUntil(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const StartPage(
+          //       title: "notitle",
+          //     ),
+          //     // transitionDuration: Duration.zero,
+          //   ),
+          //   (_) => false,
+          // );
           return StartPage(
+            title: "notitle",
+          );
+        } else if (state is SkipLoginIncomplete) {
+          // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
+          BlocProvider.of<AuthBloc>(context).add(IncompleteSignInRequested());
+          return const StartPage(
             title: "notitle",
           );
         }
@@ -125,7 +151,9 @@ class SplashScreen extends StatelessWidget {
           print("SplashScreen state is loaded");
           // print(state.position?.latitude);
           // BlocProvider.of<AuthBloc>(context).add(Initialize());
-          return StartPage(
+
+
+          return const StartPage(
             title: "notitle",
           );
           // Navigator.of(context).push(PageRouteBuilder(
@@ -134,10 +162,10 @@ class SplashScreen extends StatelessWidget {
           //           splashbloc: BlocProvider.of<SplashBloc>(context),
           //         )));
         } else if (state is SplashError) {
-          print("SplashScreen state is SplashError");
+          print(state.error);
           // print(state.position?.latitude);
           BlocProvider.of<AuthBloc>(context).emit(AuthError(state.error));
-          return StartPage(
+          return const StartPage(
             title: "notitle",
           );
           // Navigator.of(context).push(PageRouteBuilder(

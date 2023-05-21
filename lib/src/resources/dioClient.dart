@@ -1,5 +1,5 @@
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -20,10 +20,11 @@ class ApiClient {
 
   /// The base options for all requests with this Dio client.
   final BaseOptions baseOptions = BaseOptions(
-    // connectTimeout: 5000,
-    // receiveTimeout: 3000,
+    // connectTimeout: Duration(seconds: 5),
+    // receiveTimeout: Duration(seconds: 10),
     // receiveDataWhenStatusError: true,
-    followRedirects: true,
+    followRedirects: false,
+    // maxRedirects : 500,
 
     // headers: ,
     headers: {"content-Type": "application/x-www-form-urlencoded"},
@@ -44,12 +45,17 @@ class ApiClient {
     dioforImages.interceptors.add(CookieManager(cokkies));
     diofordata.interceptors.add(CookieManager(cokkies));
     //Important line, might have to modify later
-    dioforImages.httpClientAdapter = DefaultHttpClientAdapter()
-      ..onHttpClientCreate =
-          (httpClient) => httpClient..maxConnectionsPerHost = 50;
-    diofordata.httpClientAdapter = DefaultHttpClientAdapter()
-      ..onHttpClientCreate =
-          (httpClient) => httpClient..maxConnectionsPerHost =50;
+    (diofordata.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+      // client.badCertificateCallback = (cert, host, port) => true;
+
+      client.maxConnectionsPerHost=50;
+    };
+    (dioforImages.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+      // client.badCertificateCallback = (cert, host, port) => true;
+      client.maxConnectionsPerHost=50;
+    };
+    // dioforImages.httpClientAdapter = DefaultHttpClientAdapter()..onHttpClientCreate = (httpClient) => httpClient..maxConnectionsPerHost = 50;
+    // diofordata.httpClientAdapter = DefaultHttpClientAdapter()..onHttpClientCreate = (httpClient) => httpClient..maxConnectionsPerHost = 50;
     dioforImages.interceptors.add(InterceptorsWrapper(onError: (e, handler) {
       print(e.message);
       handler.next(e);

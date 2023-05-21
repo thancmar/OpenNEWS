@@ -15,34 +15,34 @@ import '../../reader/readerpage.dart';
 class CategoryPage extends StatefulWidget {
   final String titleText;
   final String categoryID;
-  CategoryPage({Key? key, required this.titleText, required this.categoryID})
-      : super(key: key);
+
+  CategoryPage({Key? key, required this.titleText, required this.categoryID}) : super(key: key);
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage>
-    with
-        SingleTickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<CategoryPage> {
+class _CategoryPageState extends State<CategoryPage> with  AutomaticKeepAliveClientMixin<CategoryPage> {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SearchBloc>(context)
-        .add(OpenCategoryPage(context, widget.categoryID));
+    BlocProvider.of<SearchBloc>(context).add(OpenCategoryPage(context, widget.categoryID));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
-  //
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.titleText));
-  //   // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
-  // }
+
+
+  @override
+  void dispose() {
+    // BlocProvider.of<SearchBloc>(context).add(OpenSearch());
+    // Navigator.pop(context, true);
+    super.dispose();
+    BlocProvider.of<SearchBloc>(context).add(OpenSearch());
+    // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.titleText));
+    // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +50,7 @@ class _CategoryPageState extends State<CategoryPage>
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(
-              tag: 'bg',
-              child: Image.asset("assets/images/background/Background.png",
-                  fit: BoxFit.cover)),
+          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBodyBehindAppBar: true,
@@ -71,6 +68,7 @@ class _CategoryPageState extends State<CategoryPage>
                 onTap: () {
                   BlocProvider.of<SearchBloc>(context).add(OpenSearch());
                   Navigator.pop(context, true);
+                  // Navigator.maybePop(context, true);
                   // NavigatorObserver();
                   // BlocProvider.of<SearchBloc>(context).add(OpenSearch());
                 },
@@ -118,12 +116,8 @@ class _CategoryPageState extends State<CategoryPage>
               print("$state");
               if (state is GoToCategoryPage) {
                 return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 45,
-                            crossAxisSpacing: 15,
-                            childAspectRatio: 0.7),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
                     itemCount: state.selectedCategory!.response?.length,
                     // itemCount: 10,
                     // itemCount: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "en").toList().length,
@@ -146,75 +140,27 @@ class _CategoryPageState extends State<CategoryPage>
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () => {
-                              // Navigator.of(context).push(
-                              //   PageRouteBuilder(
-                              //     transitionDuration: Duration(milliseconds: 1000),
-                              //     pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                              //       return StartReader(
-                              //         id: state.selectedCategory!.response![index].idMagazinePublication!,
-                              //         index: index.toString(),
-                              //         heroTag: "",
-                              //         coverURL: state.selectedCategory!.response?[index].idMagazinePublication!,
-                              //         // cover: snapshot.data!,
-                              //         noofpages: state.selectedCategory!.response![index].pageMax!,
-                              //         readerTitle: state.selectedCategory!.response![index].name!,
-                              //
-                              //         // noofpages: 5,
-                              //       );
-                              //     },
-                              //     transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                              //       return Align(
-                              //         child: FadeTransition(
-                              //           opacity: new CurvedAnimation(parent: animation, curve: Curves.easeIn),
-                              //           child: child,
-                              //         ),
-                              //       );
-                              //     },
-                              //   ),
-                              // )
-                              // Navigator.push(
-                              //   context,
-                              //   PageRouteBuilder(
-                              //     // transitionDuration:
-                              //     // Duration(seconds: 2),
-                              //     pageBuilder: (_, __, ___) => StartReader(
-                              //       id: state.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                              //       index: i.toString(),
-                              //       cover: snapshot.data!,
-                              //       noofpages: state.magazinePublishedGetLastWithLimit!.response![i].pageMax!,
-                              //       readerTitle: state.magazinePublishedGetLastWithLimit!.response![i].name!,
-                              //
-                              //       // noofpages: 5,
-                              //     ),
-                              //   ),
-                              // ),
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  // transitionDuration:
-                                  // Duration(seconds: 2),
-                                  pageBuilder: (_, __, ___) => StartReader(
-                                    magazine: state
-                                        .selectedCategory!.response![index],
-                                    heroTag: "",
+                              // To open Reader
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => StartReader(
+                                    magazine: state.selectedCategory!.response![index],
+                                    heroTag: "category_$index",
 
                                     // noofpages: 5,
                                   ),
                                 ),
-                              ),
+                              )
+
                             },
                             child: Stack(
                               clipBehavior: Clip.none,
                               alignment: Alignment.center,
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: state
-                                          .selectedCategory!
-                                          .response![index]
-                                          .idMagazinePublication! +
+                                  imageUrl: state.selectedCategory!.response![index].idMagazinePublication! +
                                       "_" +
-                                      state.selectedCategory!.response![index]
-                                          .dateOfPublication! +
+                                      state.selectedCategory!.response![index].dateOfPublication! +
                                       "_0",
                                   // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
                                   //     "_" +
@@ -232,24 +178,22 @@ class _CategoryPageState extends State<CategoryPage>
                                   //   ),
                                   // ),
 
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                  imageBuilder: (context, imageProvider) => Hero(
+                                    tag: "category_$index",
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                      ),
                                     ),
                                   ),
-                                  useOldImageOnUrlChange: true,
+                                  // useOldImageOnUrlChange: true,
                                   // very important: keep both placeholder and errorWidget
                                   placeholder: (context, url) => Container(
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                       // color: Colors.grey.withOpacity(0.05),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
@@ -258,13 +202,11 @@ class _CategoryPageState extends State<CategoryPage>
                                       size: 50.0,
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
+                                  errorWidget: (context, url, error) => Container(
                                     // color: Colors.grey.withOpacity(0.1),
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                       color: Colors.grey.withOpacity(0.1),
                                     ),
                                     child: SpinKitFadingCircle(
@@ -284,18 +226,14 @@ class _CategoryPageState extends State<CategoryPage>
                                   // top: -50,
                                   bottom: -35,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 -
-                                      20,
+                                  width: MediaQuery.of(context).size.width / 2 - 20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        DateFormat("d. MMMM yyyy").format(
-                                            DateTime.parse(state
-                                                .selectedCategory!
-                                                .response![index]
-                                                .dateOfPublication!)),
+                                        DateFormat("d. MMMM yyyy")
+                                            .format(DateTime.parse(state.selectedCategory!.response![index].dateOfPublication!)),
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,
@@ -312,16 +250,14 @@ class _CategoryPageState extends State<CategoryPage>
                                   // top: -50,
                                   bottom: -20,
                                   // height: -50,
-                                  width: MediaQuery.of(context).size.width / 2 -
-                                      20,
+                                  width: MediaQuery.of(context).size.width / 2 - 20,
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: MarqueeWidget(
                                       // crossAxisAlignment: CrossAxisAlignment.start,
                                       child: Text(
                                         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                        state.selectedCategory!.response![index]
-                                            .name!,
+                                        state.selectedCategory!.response![index].name!,
                                         // " asd",
                                         // "Card ${i + 1}",
                                         textAlign: TextAlign.center,
@@ -425,7 +361,8 @@ class _CategoryPageState extends State<CategoryPage>
                     });
               }
               return Container(
-                  // color: Colors.red,
+                // height: 100,
+                //   color: Colors.red,
                   );
             },
           ),

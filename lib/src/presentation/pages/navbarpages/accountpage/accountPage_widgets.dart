@@ -1,7 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_store/open_store.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/login_model.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/myprofilepage.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 
@@ -11,20 +15,36 @@ import '../../../../models/location_model.dart';
 import '../../startpage.dart';
 
 class AccountPageWidgets extends StatefulWidget {
-  const AccountPageWidgets({Key? key}) : super(key: key);
+  final PageController pageController;
+  final Function onClick;
+
+  const AccountPageWidgets({Key? key, required this.pageController, required this.onClick}) : super(key: key);
 
   @override
   State<AccountPageWidgets> createState() => _AccountPageWidgetsState();
 }
 
+
 class _AccountPageWidgetsState extends State<AccountPageWidgets> {
+  late List<Locale> suporttedLanguages;
+
+
+  @override
+  void initState() {
+    super.initState();
+    // suporttedLanguages = EasyLocalization.of(context)!.supportedLocales;
+    // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
+  }
+
   @override
   Widget build(BuildContext context) {
+    suporttedLanguages = EasyLocalization.of(context)!.supportedLocales;
     return ListView(
       // shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
       children: <Widget>[
-        AuthState.userDetails?.response?.firstname != ''
+        BlocProvider.of<AuthBloc>(context).state is Authenticated
+            // AuthState.userDetails?.response?.email?.isEmpty == false
             ? Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
                 child: InkWell(
@@ -45,16 +65,13 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                       PageRouteBuilder(
                           pageBuilder: (_, __, ___) => MyProfile(),
                           // transitionDuration: Duration(milliseconds: 500),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             const begin = Offset(0.0, 1.0);
                             const end = Offset.zero;
                             const curve = Curves.decelerate;
-                            final tween = Tween(begin: begin, end: end)
-                                .chain(CurveTween(curve: curve));
+                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
                             final offsetAnimation = animation.drive(tween);
-                            return SlideTransition(
-                                position: animation.drive(tween), child: child);
+                            return SlideTransition(position: animation.drive(tween), child: child);
                           }),
                     ),
                     // Navigator.of(context).push(PageRouteBuilder(
@@ -99,7 +116,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
                             child: Text(
-                              'Herzlich Willkommen',
+                              ( "welcome").tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 // fontWeight: FontWeight.bold,
@@ -131,7 +148,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                                     ),
                                     alignment: PlaceholderAlignment.middle),
                                 TextSpan(
-                                  text: "My profile ",
+                                  text: ( "myProfile").tr(),
                                 ),
                               ]),
                             ),
@@ -143,7 +160,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 ),
               )
             : Container(),
-        AuthState.userDetails?.response?.firstname == ''
+        BlocProvider.of<AuthBloc>(context).state is! Authenticated
+            // AuthState.userDetails?.response?.email?.isEmpty == true
             ? Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
                 child: AnimatedOpacity(
@@ -172,18 +190,45 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                       minLeadingWidth: 0,
                       child: ExpansionTile(
                         maintainState: true,
-                        onExpansionChanged: (isExpanded) {
+                        onExpansionChanged: (isExpanded) async {
                           BlocProvider.of<AuthBloc>(context).add(Initialize());
                           // BlocProvider.of<NavbarBloc>(context).close();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => StartPage(
+                          // BlocProvider.of<NavbarBloc>(context).add(checkLocation());
+
+                          // BlocProvider.of<NavbarBloc>(context).checkLocation().then((value) =>  BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition:NavbarState.appbarlocation)));
+
+                          // BlocProvider.of<AuthBloc>(context).add(Initialize());
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => new StartPage(
+                          //       title: "notitle",
+                          //     ),
+                          //     // transitionDuration: Duration.zero,
+                          //   ),
+                          // );
+                          // Navigator.of(context).push(
+                          //   CupertinoPageRoute(
+                          //     builder: (context) => const  StartPage(
+                          //             title: "notitle",
+                          //           ),
+                          //   ),
+                          //         // (Route<dynamic> route) => false
+                          // );
+                          var result = await Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const StartPage(
                                 title: "notitle",
                               ),
-                              // transitionDuration: Duration.zero,
                             ),
+                            // (Route<dynamic> route) => false
                           );
+
+                          if (result == 'popped') {
+                            // print('The NextScreen was popped');
+                            widget.onClick(0);
+                            // widget.pageController.animateTo(1.0, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
+                          }
                         },
 
                         controlAffinity: ListTileControlAffinity.platform,
@@ -198,7 +243,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           color: Colors.transparent,
                         ),
                         title: Text(
-                          'To Login',
+                          ( "toLogin").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             // fontWeight: FontWeight.bold,
@@ -236,11 +281,19 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: ListTileTheme(
                 minLeadingWidth: 0,
-                child: const ExpansionTile(
+                child: ExpansionTile(
                   maintainState: true,
                   controlAffinity: ListTileControlAffinity.platform,
                   // textColor: Colors.red,
+
                   backgroundColor: Colors.transparent,
+                  //
+                  onExpansionChanged: (isExpanded) {
+                    OpenStore.instance.open(
+                      // androidAppBundleId: "com.example.new_project",
+                      appStoreId: "sharemagazinesSKU",
+                    );
+                  },
                   leading: Icon(
                     Icons.star,
                     color: Colors.white,
@@ -250,7 +303,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                     color: Colors.transparent,
                   ),
                   title: Text(
-                    'Rate Us',
+    ( "rateUs").tr(),
                     style: TextStyle(
                       fontSize: 16,
                       // fontWeight: FontWeight.bold,
@@ -297,7 +350,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
 
                 backgroundColor: Colors.transparent,
                 title: Text(
-                  'Einstellungen',
+                  ( "settings").tr(),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -313,7 +366,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'Passwort ändern',
+                          ( "changePasword").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             // fontWeight: FontWeight.bold,
@@ -346,7 +399,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'Benachrichtigungen',
+                          ( "notifications").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -357,6 +410,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: InkWell(
                       onTap: () => {
+
+                        BlocProvider.of<NavbarBloc>(context).add(OpenLanguageSelection(languageOptions: suporttedLanguages))
                         // Navigator.pop(context, Department.treasury);
                         // SimpleDialog(
                         //   // <-- SEE HERE
@@ -390,7 +445,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           ),
                           minLeadingWidth: 10,
                           title: Text(
-                            'Sprache',
+                            ( "language").tr(),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white,
@@ -427,7 +482,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               // horizontalTitleGap: 0.0,
               minLeadingWidth: 0,
-              child: const ExpansionTile(
+              child:  ExpansionTile(
                 initiallyExpanded: true,
                 // textColor: Colors.red,
 
@@ -439,7 +494,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
 
                 backgroundColor: Colors.transparent,
                 title: Text(
-                  'Informationen',
+                  ("information").tr(),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -449,13 +504,13 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: ListTile(
-                        leading: const Icon(
+                        leading:  Icon(
                           Icons.account_box,
                           color: Colors.white,
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'Impressum',
+                          ( "impressum").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             // fontWeight: FontWeight.bold,
@@ -466,13 +521,13 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: ListTile(
-                        leading: const Icon(
+                        leading:  Icon(
                           Icons.lock,
                           color: Colors.white,
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'Datenschutz',
+                          ( "datenschutz").tr(),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.white,
@@ -482,13 +537,13 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: ListTile(
-                        leading: const Icon(
+                        leading:  Icon(
                           Icons.link,
                           color: Colors.white,
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'AGB',
+                          ("agb").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -504,7 +559,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'Hilfe',
+                          ("help").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -520,7 +575,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         minLeadingWidth: 10,
                         title: Text(
-                          'Kontakte',
+                          ("contact").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -597,7 +652,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
         //     // ),
         //   ),
         // ),
-        AuthState.userDetails?.response?.firstname != ''
+        BlocProvider.of<AuthBloc>(context).state is Authenticated
+            // AuthState.userDetails?.response?.firstname != ''
             ? Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
                 child: AnimatedOpacity(
@@ -627,8 +683,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                       child: ExpansionTile(
                         maintainState: true,
                         onExpansionChanged: (isExpanded) {
-                          BlocProvider.of<AuthBloc>(context)
-                              .add(SignOutRequested());
+                          BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
                           // BlocProvider.of<NavbarBloc>(context).;
                           Navigator.pushReplacement(
                             context,
@@ -653,7 +708,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           color: Colors.transparent,
                         ),
                         title: Text(
-                          'Abmelden',
+                          ("logout").tr(),
                           style: TextStyle(
                             fontSize: 16,
                             // fontWeight: FontWeight.bold,
@@ -672,14 +727,14 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
             child: Column(
               children: [
                 Text(
-                  "Version 2.01",
+                  ("version").tr(),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  "Designed by 28apps Software GmbH",
+                  ("designedBy").tr(),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
