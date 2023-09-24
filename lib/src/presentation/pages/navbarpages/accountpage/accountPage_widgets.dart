@@ -376,19 +376,24 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                    child: ListTile(
-                        leading: const Icon(
-                          Icons.email,
-                          color: Colors.white,
-                        ),
-                        minLeadingWidth: 10,
-                        title: Text(
-                          'E-Mail ändern',
-                          style: TextStyle(
-                            fontSize: 16,
+                    child: InkWell(
+                        onTap: () => {
+
+                        },
+                      child: ListTile(
+                          leading: const Icon(
+                            Icons.email,
                             color: Colors.white,
                           ),
-                        )),
+                          minLeadingWidth: 10,
+                          title: Text(
+                            'E-Mail ändern',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          )),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -684,6 +689,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         maintainState: true,
                         onExpansionChanged: (isExpanded) {
                           BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
+                          // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: Data()));
+
                           // BlocProvider.of<NavbarBloc>(context).;
                           Navigator.pushReplacement(
                             context,

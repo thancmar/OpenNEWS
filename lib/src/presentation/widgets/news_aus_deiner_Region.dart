@@ -18,15 +18,29 @@ class News_aus_deiner_Region extends StatefulWidget {
   State<News_aus_deiner_Region> createState() => News_aus_deiner_RegionState();
 }
 
-class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
-   int index1=0;
+class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<News_aus_deiner_Region>{
+  int index1 = 0;
+  static late List<ValueNotifier<int>> _networklHasErrorNotifier;
+  late AnimationController? _spinKitController;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  void initState() {
+    _networklHasErrorNotifier = List.filled( NavbarState.magazinePublishedGetTopLastByRange!.response!.length, ValueNotifier(0), growable: true);
+    super.initState();
+    _spinKitController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SizedBox(
       // height: MediaQuery.of(context).size.width + 60, // card height
-      height: size.aspectRatio*1000,
+      height: size.aspectRatio * 1000,
       // height: double.infinity,
       // width: 30,
       child: PageView.builder(
@@ -37,7 +51,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
         onPageChanged: (int index) => setState(() => index1 = index),
         itemBuilder: (_, i) {
           return Transform.scale(
-              scale: i ==index1 ? 1 : 0.85,
+              scale: i == index1 ? 1 : 0.85,
               alignment: Alignment.bottomCenter,
 
               // alignment: AlignmentGeometry(),
@@ -76,58 +90,63 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                       // clipBehavior: Clip.antiAlias,
                       children: [
                         CachedNetworkImage(
-                          imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication! +
-                              "_" +
-                              NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
-                              "_0",
-
-                          imageBuilder: (context, imageProvider) => Hero(
-                            tag: "News_aus_deiner_Region_$i",
-                            child: Container(
-                              height: size.aspectRatio * 900,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                              ),
-                            ),
-                          ),
-                          // useOldImageOnUrlChange: true,
-                          // very important: keep both placeholder and errorWidget
-                          placeholder: (context, url) => Container(
-                            // color: Colors.grey.withOpacity(0.1),
-                            height: size.aspectRatio * 700,
-                            decoration: BoxDecoration(
-                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                              color: Colors.grey.withOpacity(0.1),
-                            ),
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 50.0,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            height: size.aspectRatio * 700,
-                            // color: Colors.grey.withOpacity(0.1),
-                            decoration: BoxDecoration(
-                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                              color: Colors.grey.withOpacity(0.1),
-                            ),
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 50.0,
-                            ),
-                          ),
-
-                        ),
-
+                            key: ValueKey(_networklHasErrorNotifier[i].value),
+                            imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication! +
+                                "_" +
+                                NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
+                                "_0",
+                            imageBuilder: (context, imageProvider) => Hero(
+                                  tag: "News_aus_deiner_Region_$i",
+                                  child: Container(
+                                    height: size.aspectRatio * 900,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                    ),
+                                  ),
+                                ),
+                            // useOldImageOnUrlChange: true,
+                            // very important: keep both placeholder and errorWidget
+                            placeholder: (context, url) => Container(
+                                  // color: Colors.grey.withOpacity(0.1),
+                                  height: size.aspectRatio * 700,
+                                  decoration: BoxDecoration(
+                                    // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                    color: Colors.grey.withOpacity(0.1),
+                                  ),
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 50.0,
+                                    controller: _spinKitController,
+                                  ),
+                                ),
+                            errorWidget: (context, url, error) {
+                              Future.delayed(const Duration(milliseconds: 500), () {
+                                setState(() {
+                                  _networklHasErrorNotifier[i].value++;
+                                });
+                              });
+                              return Container(
+                                height: size.aspectRatio * 700,
+                                // color: Colors.grey.withOpacity(0.1),
+                                decoration: BoxDecoration(
+                                  // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  color: Colors.grey.withOpacity(0.1),
+                                ),
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 50.0,
+                                  controller: _spinKitController,
+                                ),
+                              );
+                            }),
                       ],
                     ),
                   ),
                   Column(
                     children: [
-
                       i == index1
                           ? Align(
                               alignment: Alignment.center,
@@ -188,12 +207,10 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region> {
                               ),
                             )
                           : Container(),
-
                     ],
                   ),
                 ],
-              )
-              );
+              ));
         },
       ),
     );

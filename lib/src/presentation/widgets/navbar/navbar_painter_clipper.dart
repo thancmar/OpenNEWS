@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class NavbarPainter extends CustomPainter {
   final int index;
-  const NavbarPainter(this.index);
+  final bool showQR;
+  const NavbarPainter(this.index, this.showQR);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -56,6 +57,109 @@ class NavbarPainter extends CustomPainter {
   }
 }
 
+class NavbarQRPainter extends CustomPainter {
+  final int index;
+  final BuildContext context;
+  final GlobalKey navbarkey;
+  final GlobalKey? fabkey;
+  const NavbarQRPainter(this.index, this.fabkey,this.context,this.navbarkey);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey //Color(0x00ffffff)
+      ..strokeWidth = 0.2
+      ..style = PaintingStyle.stroke;
+
+    double bendWidth = 15.0;
+    double bezierWidth = 10.0;
+
+    double startofBend =
+        ((((index + 1) / 5) * size.width) - ((1 / 5) * size.width) / 2) -
+            1 -
+            bendWidth / 2;
+    double startofBezier = startofBend - bezierWidth;
+    double endofBend =
+        (((((index + 1) / 5) * size.width) - ((1 / 5) * size.width) / 2) + 1) +
+            bendWidth / 2;
+    double endofBezier = endofBend + bezierWidth;
+
+    double controlHeight = 9.0;
+    double centerPoint =
+        (((index + 1) / 5) * size.width) - ((1 / 5) * size.width) / 2;
+
+    double leftControlPoint1 = startofBend;
+    double leftControlPoint2 = startofBend;
+    double rightControlPoint1 = endofBend;
+    double rightControlPoint2 = endofBend;
+
+    Path path = Path();
+    final RenderBox renderBoxNavbar = navbarkey.currentContext!.findRenderObject() as RenderBox;
+    // final RenderBox fabRenderBox = fabkey!.currentContext!.findRenderObject() as RenderBox;
+    // final fabSize = fabRenderBox.size;
+    path.fillType = PathFillType.evenOdd;
+    path.moveTo(0, 0);
+    // path.lineTo(startofBezier, 0);
+    // path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+    //     centerPoint, controlHeight);
+    // path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+    //     endofBezier, 0);
+
+// When index is less than 2
+    if (index < 2) {
+      // Draw index notch first
+      path.lineTo(startofBezier, 0);
+      path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+          centerPoint, controlHeight);
+      path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+          endofBezier, 0);
+    }
+    if(fabkey?.currentContext !=null)
+    {
+      final RenderBox fabRenderBox = fabkey!.currentContext!.findRenderObject() as RenderBox;
+      final fabSize = fabRenderBox.size;
+      // Positioning for the center notch
+      // double centerNotchWidth = fabSize.width+70;  // Get width from FAB size
+      double centerNotchWidth = size.width / 5+50; // Get width from FAB size
+      double centerStart = (size.width / 2) - centerNotchWidth / 2;
+      double centerEnd = (size.width / 2) + centerNotchWidth / 2;
+      // double centerNotchDepth = fabSize.height / 2;  // Half of the FAB's height
+      double centerNotchDepth = renderBoxNavbar.size.height * 0.3; // Half of the FAB's height
+
+      // Drawing the center notch for FloatingActionButton to match its circular shape
+      path.lineTo(centerStart, size.height - renderBoxNavbar.size.height);
+      path.cubicTo(centerStart + centerNotchWidth / 4, size.height - renderBoxNavbar.size.height, centerStart + centerNotchWidth / 4,
+          size.height - renderBoxNavbar.size.height + centerNotchDepth, size.width / 2, size.height - renderBoxNavbar.size.height + centerNotchDepth);
+      path.cubicTo(centerEnd - centerNotchWidth / 4, size.height - renderBoxNavbar.size.height + centerNotchDepth, centerEnd - centerNotchWidth / 4,
+          size.height - renderBoxNavbar.size.height, centerEnd, size.height - renderBoxNavbar.size.height);
+    }
+
+    // When index is 3 or 4
+    if (index >= 2) {
+      // Draw index notch after FAB
+      path.lineTo(startofBezier, 0);
+      path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+          centerPoint, controlHeight);
+      path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+          endofBezier, 0);
+    }
+
+
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.lineTo(0, 0);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
 class NavbarClipper extends CustomClipper<Path> {
   final int index;
   const NavbarClipper(this.index);
@@ -97,6 +201,99 @@ class NavbarClipper extends CustomClipper<Path> {
         centerPoint, controlHeight);
     path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
         endofBezier, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.lineTo(0, 0);
+    path.close();
+    // canvas.drawPath(path, paint);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}
+
+class NavbarQRClipper extends CustomClipper<Path> {
+  final int index;
+  final GlobalKey navbarkey;
+  final GlobalKey? fabkey;
+  const NavbarQRClipper(this.index, this.fabkey,this.navbarkey);
+
+  @override
+  getClip(Size size) {
+    // final paint = Paint()
+    //   ..color = Colors.white //Color(0x00ffffff)
+    //   ..strokeWidth = 0.2
+    //   ..style = PaintingStyle.stroke;
+    double bendWidth = 15.0;
+    double bezierWidth = 10.0;
+
+    double startofBend =
+        ((((index + 1) / 5) * size.width) - ((1 / 5) * size.width) / 2) -
+            1 -
+            bendWidth / 2;
+    double startofBezier = startofBend - bezierWidth;
+    double endofBend =
+        (((((index + 1) / 5) * size.width) - ((1 / 5) * size.width) / 2) + 1) +
+            bendWidth / 2;
+    double endofBezier = endofBend + bezierWidth;
+
+    double controlHeight = 9.0;
+    double centerPoint =
+        (((index + 1) / 5) * size.width) - ((1 / 5) * size.width) / 2;
+
+    double leftControlPoint1 = startofBend;
+    double leftControlPoint2 = startofBend;
+    double rightControlPoint1 = endofBend;
+    double rightControlPoint2 = endofBend;
+
+    Path path = Path();
+    path.fillType = PathFillType.evenOdd;
+    // print(size.height);
+    path.moveTo(0, 0);
+    if (index < 2) {
+      // Draw index notch first
+      path.lineTo(startofBezier, 0);
+      path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+          centerPoint, controlHeight);
+      path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+          endofBezier, 0);
+    }
+
+
+    if(fabkey?.currentContext !=null)
+    {
+      final RenderBox renderBoxNavbar = navbarkey.currentContext!.findRenderObject() as RenderBox;
+      final RenderBox fabRenderBox = fabkey!.currentContext!.findRenderObject() as RenderBox;
+      final fabSize = fabRenderBox.size;
+      // Positioning for the center notch
+      // double centerNotchWidth = fabSize.width+70;  // Get width from FAB size
+      double centerNotchWidth = size.width / 5+50; // Get width from FAB size
+      double centerStart = (size.width / 2) - centerNotchWidth / 2;
+      double centerEnd = (size.width / 2) + centerNotchWidth / 2;
+      // double centerNotchDepth = fabSize.height / 2;  // Half of the FAB's height
+      double centerNotchDepth = renderBoxNavbar.size.height * 0.3; // Half of the FAB's height
+
+      // Drawing the center notch for FloatingActionButton to match its circular shape
+      path.lineTo(100+centerStart, size.height - renderBoxNavbar.size.height);
+      path.cubicTo(centerStart + centerNotchWidth / 4, size.height - renderBoxNavbar.size.height, centerStart + centerNotchWidth / 4,
+          size.height - renderBoxNavbar.size.height + centerNotchDepth, size.width / 2, size.height - renderBoxNavbar.size.height + centerNotchDepth);
+      path.cubicTo(centerEnd - centerNotchWidth / 4, size.height - renderBoxNavbar.size.height + centerNotchDepth, centerEnd - centerNotchWidth / 4,
+          size.height - renderBoxNavbar.size.height, centerEnd, size.height - renderBoxNavbar.size.height);
+    }
+    // When index is 3 or 4
+    if (index >= 2) {
+      // Draw index notch after FAB
+      path.lineTo(startofBezier, 0);
+      path.cubicTo(leftControlPoint1, 0, leftControlPoint2, controlHeight,
+          centerPoint, controlHeight);
+      path.cubicTo(rightControlPoint1, controlHeight, rightControlPoint2, 0,
+          endofBezier, 0);
+    }
+
     path.lineTo(size.width, 0);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);

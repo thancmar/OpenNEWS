@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptio
 import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../widgets/routes/toreaderoption.dart';
 
 class ReaderOptionsPage extends StatefulWidget {
@@ -39,6 +41,7 @@ class ReaderOptionsPage extends StatefulWidget {
 class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKeepAliveClientMixin<ReaderOptionsPage> {
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   ValueNotifier<bool> isOnPageTurning = ValueNotifier<bool>(false);
+  ValueNotifier<bool> showMagazineDetails = ValueNotifier<bool>(false);
 
   @override
   bool get wantKeepAlive => true;
@@ -104,11 +107,17 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
                 setState(() {
                   if (NavbarState.bookmarks.value.response!
                       .any((element) => element.idMagazinePublication == widget.reader.magazine.idMagazinePublication)) {
-                    NavbarState.bookmarks.value.response!.remove(widget.reader.magazine);
+                    // Removing the item from the list
+                    NavbarState.bookmarks.value = MagazinePublishedGetAllLastByHotspotId(
+                        response: NavbarState.bookmarks.value.response!
+                            .where((element) => element.idMagazinePublication != widget.reader.magazine.idMagazinePublication)
+                            .toList());
                   } else {
-                    NavbarState.bookmarks.value.response!.add(widget.reader.magazine);
-                    NavbarState.bookmarks.value.response = NavbarState.bookmarks.value.response!.toSet().toList();
+                    // Adding the item to the list using the spread operator
+                    NavbarState.bookmarks.value =
+                        MagazinePublishedGetAllLastByHotspotId(response: [...NavbarState.bookmarks.value.response!, widget.reader.magazine]);
                   }
+                  BlocProvider.of<NavbarBloc>(context).add(Bookmark());
                 })
               },
               child: Icon(NavbarState.bookmarks.value.response!
@@ -118,13 +127,14 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             ),
           ),
           GestureDetector(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-              settings: RouteSettings(),
-              builder: (context) => ReaderOptionsPageInformation(
-                reader: this.widget.reader,
-                currentPage: widget.currentPage,
-              ),
-            )),
+            // onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            //   settings: RouteSettings(),
+            //   builder: (context) => ReaderOptionsPageInformation(
+            //     reader: this.widget.reader,
+            //     currentPage: widget.currentPage,
+            //   ),
+            // )),
+            onTap: () => {showMagazineDetails.value = !showMagazineDetails.value},
             // onTap: () => Navigator.pushReplacement(
             //     context,
             //     ReaderOptionRoute(
@@ -145,11 +155,49 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
       body: Stack(
         //mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ValueListenableBuilder<bool>(
+                  valueListenable: showMagazineDetails,
+                  builder: (BuildContext context, bool counterValue, Widget? child) {
+                    return counterValue
+                        ? BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              // height: double.infinity,
+                              width: double.infinity,
+                              margin: EdgeInsets.only(bottom: 50), // Create space at the bottom
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(15.0), // This provides the circular corners
+                              ),
+                              // color: Colors.grey.withOpacity(0.3),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(height: 20.0),
+                                  Text(widget.reader.magazine.name!, style: TextStyle(fontSize: 16, color: Colors.white)),
+                                  SizedBox(height: 8.0), // Add space
+                                  Text("Pages - " + widget.reader.magazine.pageMax!, style: TextStyle(fontSize: 16, color: Colors.white)),
+                                  SizedBox(height: 8.0), // Add space
+                                  Text("Language - " + widget.reader.magazine.magazineLanguage!, style: TextStyle(fontSize: 16, color: Colors.white)),
+                                  SizedBox(height: 8.0),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container();
+                  }),
+            ),
+          ),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => {
               if (isOnPageTurning.value = true) {Navigator.of(context).pop(), print("single tap reader")}
             },
+
             // onDoubleTap: () => {
             //   // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
             //
@@ -196,54 +244,5 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
         ],
       ),
     );
-  }
-}
-
-class ReaderOptionsPageInformation extends StatefulWidget {
-  final Reader reader;
-
-  ValueNotifier<double> currentPage;
-
-  ReaderOptionsPageInformation({Key? key, required this.reader, required this.currentPage}) : super(key: key);
-
-  @override
-  State<ReaderOptionsPageInformation> createState() => _ReaderOptionsPageInformationState();
-}
-
-class _ReaderOptionsPageInformationState extends State<ReaderOptionsPageInformation> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        color: Colors.transparent,
-        child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.40),
-          appBar: AppBar(
-            // actionsIconTheme: IconThemeData(
-            // size: 25,
-            // ),
-            actions: [
-              GestureDetector(
-                // onTap: () => Navigator.push(
-                //     context,
-                //     ReaderOptionRoute(
-                //         widget: ReaderOptionsPageInformation(
-                //       reader: this.widget.reader,
-                //       currentPage: widget.currentPage,
-                //     ))),
-                child: Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Icon(Icons.info_outline),
-                ),
-              ),
-            ],
-            // titleSpacing: 0,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          body: Container(
-            height: 200,
-            color: Colors.red,
-          ),
-        ));
   }
 }

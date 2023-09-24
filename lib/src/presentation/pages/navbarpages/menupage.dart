@@ -46,71 +46,48 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
           child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
-              itemCount:
-                  NavbarState.magazineCategoryGetAllActive?.response!.length,
+              itemCount: NavbarState.magazineCategoryGetAllActive?.response!.length,
               itemBuilder: (context, i) {
                 MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(response: []);
+                MagazinePublishedGetAllLastByHotspotId bookmarks;
 
-                // }
-
+                items = MagazinePublishedGetAllLastByHotspotId(
+                    response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+                        .where((element) => element.idsMagazineCategory!.contains(NavbarState.magazineCategoryGetAllActive!.response![i].id!) == true)
+                        // .toSet()
+                        .toList());
                 return ValueListenableBuilder<MagazinePublishedGetAllLastByHotspotId>(
                   valueListenable: NavbarState.bookmarks,
-                  builder: (context, value, child){
-                    if (value.response!.isNotEmpty && i ==0){
-                      // if (NavbarState.bookmarks.value.response!.length! > 0) {
-                      //   items = NavbarState.bookmarks.value;
-                      // } else {
-
-                      items = MagazinePublishedGetAllLastByHotspotId(
-                          response: NavbarState.magazinePublishedGetLastWithLimit!.response!
-                              .where(
-                                  (element) => element.idsMagazineCategory!.contains(NavbarState.magazineCategoryGetAllActive!.response![i].id!) == true)
-                          // .toSet()
-                              .toList());
-                    //   return Column(
-                    //       // crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //       children: <Widget>[
-                    //         Align(
-                    //           alignment: Alignment.center,
-                    //           child: Padding(
-                    //             // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
-                    //             padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
-                    //
-                    //             child: Text(
-                    //               'Bookmarks',
-                    //               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                    //               textAlign: TextAlign.center,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         ListMagazineCover(
-                    //           cover: value,
-                    //         ), Align(
-                    //           alignment: Alignment.center,
-                    //           child: Padding(
-                    //             // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
-                    //             padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
-                    //
-                    //             child: Text(
-                    //               // 'Meistgelesene Artikel',
-                    //               //   element.idsMagazineCategory!,
-                    //               NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                    //               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                    //               textAlign: TextAlign.center,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         ListMagazineCover(
-                    //           cover: items,
-                    //         ),
-                    //
-                    //         //Add as padding
-                    //       ],
-                    //     );
+                  builder: (context, value, child) {
+                    if (value.response!.isNotEmpty && i == 0) {
+                      bookmarks = value;
+                    } else {
+                      bookmarks = MagazinePublishedGetAllLastByHotspotId(response: []);
                     }
                     return Column(
                       // crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
+                        if (value.response!.isNotEmpty && i == 0)
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                              padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+
+                              child: Text(
+                                // 'Meistgelesene Artikel',
+                                //   element.idsMagazineCategory!,
+                                "Bookmarks",
+                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        if (value.response!.isNotEmpty && i == 0)
+                          ListMagazineCover(
+                            cover: bookmarks,
+                            heroTag: 'menu_bookmarks',
+                          ),
                         Align(
                           alignment: Alignment.center,
                           child: Padding(
@@ -128,7 +105,7 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
                         ),
                         ListMagazineCover(
                           cover: items,
-                          heroTag: 'newWidget',
+                          heroTag: 'menu_$i',
                         ),
                         if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!)
                           Container(
@@ -139,40 +116,7 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
                         //Add as padding
                       ],
                     );
-
                   },
-                  // child: Column(
-                  //   // crossAxisAlignment: CrossAxisAlignment.stretch,
-                  //   children: <Widget>[
-                  //     Align(
-                  //       alignment: Alignment.center,
-                  //       child: Padding(
-                  //         // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
-                  //         padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
-                  //
-                  //         child: Text(
-                  //           // 'Meistgelesene Artikel',
-                  //           //   element.idsMagazineCategory!,
-                  //           NavbarState.bookmarks.value.response!.length! > 0 && i == 0
-                  //               ? "Bookmarks"
-                  //               : NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                  //           style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                  //           textAlign: TextAlign.center,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     ListMagazineCover(
-                  //       cover: items,
-                  //     ),
-                  //     if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!)
-                  //       Container(
-                  //         height: size.height * 0.1,
-                  //         color: Colors.transparent,
-                  //       )
-                  //
-                  //     //Add as padding
-                  //   ],
-                  // ),
                 );
               }),
         ),

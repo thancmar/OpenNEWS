@@ -4,42 +4,19 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/categoriepage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/searchpageDeleteResult.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/searchpage/search_bloc.dart';
-import '../../../../resources/magazine_repository.dart';
 import '../../../widgets/marquee.dart';
-import '../../../widgets/routes/gotoSearchPage.dart';
 import '../../reader/readerpage.dart';
 import 'languagepage.dart';
 
-// class StartSearch extends StatelessWidget {
-//   // final String id;
-//   // final String index;
-//   // final Uint8List cover;
-//   // final String noofpages;
-//
-//   StartSearch({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     print("StartSearch StatelessWidget ");
-//     return BlocProvider(
-//         create: (BuildContext context) => SearchBloc(
-//               magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
-//             ),
-//         child: SearchPage());
-//   }
-// //   return Container();
-// }
 
 class SearchPage extends StatefulWidget {
   SearchPage({Key? key}) : super(key: key);
@@ -66,45 +43,8 @@ class _SearchPageState extends State<SearchPage>
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addObserver(this);
-    // BlocProvider.of<SearchBloc>(context).add(Initialize());
-    BlocProvider.of<SearchBloc>(context).add(OpenSearch());
-    // counterALL = BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimi!.response!.length;
-    // super.initState();
-    // // data = BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.magazineLanguage;
-    //
-    // // filteredList = [];
-    // // for( magazineLanguage in BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.){
-    // //   if (item['locationForDisplay'] != null && item['locationForDisplay']['latitude'] != null && item['locationForDisplay']['longitude'] != null
-    // //   ) {
-    // //     filteredList.add(item);
-    // //   }
-    // // }
-    // for (var i = 0; i < BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length; i++) {
-    //   if (BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("de")) {
-    //     // print(BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].name!);
-    //     // futureFunc.add(BlocProvider.of<NavbarBloc>(context).state.futureFunc![i]);
-    //     counterDE++;
-    //   }
-    //   if (BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("en")) {
-    //     // print(BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].name!);
-    //     // futureFunc.add(BlocProvider.of<NavbarBloc>(context).state.futureFunc![i]);
-    //     counterEN++;
-    //   }
-    //   if (BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("fr")) {
-    //     // print(BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].name!);
-    //     // futureFunc.add(BlocProvider.of<NavbarBloc>(context).state.futureFunc![i]);
-    //     counterFR++;
-    //   }
-    //   // if (BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage!.toLowerCase().contains("sp")) {
-    //   //   // print(BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response![i].name!);
-    //   //   // futureFunc.add(BlocProvider.of<NavbarBloc>(context).state.futureFunc![i]);
-    //   //   counterSP++;
-    //   // }
-    //   // futureFunc.add(magazineRepository.GetPage(page: '0', id_mag_pub: magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication!));
-    //   // print(futureFunc[i]);
-    // }
-    // controller.addListener(zoomListener);
+     BlocProvider.of<SearchBloc>(context).add(OpenSearch());
+
   }
 
   @override
@@ -118,23 +58,6 @@ class _SearchPageState extends State<SearchPage>
     super.build(context);
     Size size = MediaQuery.of(context).size;
 
-    // return BlocBuilder<NavbarBloc, NavbarState>(
-    //   builder: (BuildContext context, state) {
-    // if (state is GoToSearch) {
-    //   return SafeArea(
-    //       child: Stack(
-    //     children: <Widget>[
-    //       Padding(
-    //         padding: EdgeInsets.only(left: 10),
-    //         child: Icon(
-    //           Icons.search,
-    //           color: Colors.white,
-    //           size: 40,
-    //         ),
-    //       ),
-    //     ],
-    //   ));
-    // }
     return Stack(
       children: [
         Positioned.fill(
@@ -196,6 +119,11 @@ class _SearchPageState extends State<SearchPage>
                           style: TextStyle(fontSize: 18, color: Colors.white.withOpacity(0.5)),
                           controller: _searchController,
                           cursorColor: Colors.white,
+                          onChanged: (text) {
+                            // Handle the search logic here
+                            handleSearchClick(_searchController.text, state, false);
+                            // FocusManager.instance.primaryFocus?.unfocus();
+                          },
                           onTap: () {
                             if (_searchController.selection == TextSelection.fromPosition(TextPosition(offset: _searchController.text.length - 1))) {
                               setState(() {
@@ -281,1095 +209,458 @@ class _SearchPageState extends State<SearchPage>
             ),
             body: SingleChildScrollView(
               child: Column(
-                children:
-                    // state is GoToSearchPage
-//                     ? <Widget>[
-//                         Align(
-//                           alignment: Alignment.topLeft,
-//                           child: Padding(
-//                             padding: EdgeInsets.fromLTRB(30, 10, 30, 20),
-//                             child: Text(
-//                               'Kategorien',
-//                               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-//                               textAlign: TextAlign.right,
-//                             ),
-//                           ),
-//                         ),
-//                         SizedBox(
-//                           height: MediaQuery.of(context).size.height * 0.17,
-//                           child: PageView.builder(
-//                             controller: controller,
-//
-//                             itemCount: NavbarState.magazineCategoryGetAllActive!.response!.length,
-//                             allowImplicitScrolling: false,
-//                             // pageSnapping: false,
-//                             scrollDirection: Axis.horizontal,
-//                             dragStartBehavior: DragStartBehavior.start,
-//                             pageSnapping: false,
-//                             padEnds: false,
-// // scrollBehavior: ScrollBehavior.,
-//
-//                             itemBuilder: (context, i) {
-//                               return Transform.scale(
-//                                 scale: 0.95,
-//                                 alignment: Alignment.center,
-//                                 child: GestureDetector(
-//                                   onTap: () => {
-//                                     print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
-//                                     // Navigator.push(
-//                                     //     context,
-//                                     //     CupertinoRoute(
-//                                     //         exitPage: SearchPage(),
-//                                     //         enterPage: CategoryPage(
-//                                     //           titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-//                                     //           categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-//                                     //         ))),
-//                                     Navigator.of(context).push(
-//                                       CupertinoPageRoute(
-//                                         builder: (context) => CategoryPage(
-//                                           titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-//                                           categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-//                                         ),
-//                                       ),
-//                                     )
-//                                     // Navigator.of(context).push(
-//                                     //   PageRouteBuilder(
-//                                     //     // transitionDuration:
-//                                     //     // Duration(seconds: 2),
-//                                     //     maintainState: true,
-//                                     //     pageBuilder: (_, __, ___) =>
-//                                     //         CategoryPage(
-//                                     //           titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-//                                     //           categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-//                                     //         ),
-//                                     //     // transitionsBuilder: (context, animation, secondaryAnimation, child) {
-//                                     //     //   const begin1 = Offset(1.0, 0.0);
-//                                     //     //   const begin2 = Offset(1.0, 0.0);
-//                                     //     //   // const end = Offset.zero;
-//                                     //     //   const end = Offset(0.0, 0.0);
-//                                     //     //   const curve = Curves.ease;
-//                                     //     //   final tween = Tween(begin: begin1, end: end).chain(CurveTween(curve: curve));
-//                                     //     //   // final offsetAnimation = animation.drive(tween);
-//                                     //     //   // final _scale = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
-//                                     //     //   final _scaleAnimation = TweenSequence(
-//                                     //     //     <TweenSequenceItem<Offset>>[
-//                                     //     //       TweenSequenceItem<Offset>(
-//                                     //     //         tween: Tween(begin: begin1, end: end).chain(CurveTween(curve: curve)),
-//                                     //     //         weight: 80.0,
-//                                     //     //       ),
-//                                     //     //       // TweenSequenceItem<Offset>(
-//                                     //     //       //   tween: Tween(begin: begin2, end: end).chain(CurveTween(curve: curve)),
-//                                     //     //       //   weight: 50.0,
-//                                     //     //       // ),
-//                                     //     //     ],
-//                                     //     //   ).animate(animation);
-//                                     //     //   // return SlideTransition(position: animation.drive(tween), child: child);
-//                                     //     //   return SlideTransition(position: _scaleAnimation, child: Container(color: Colors.red, width: 20, child: child));
-//                                     //     // }
-//                                     //   ),
-//                                     // ),
-//                                     // Navigator.of(context).push(
-//                                     //   MaterialPageRoute(builder: (context) {
-//                                     //     return CategoryPage(
-//                                     //       titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-//                                     //       categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-//                                     //     );
-//                                     //   }),
-//                                     // ),
-//                                   },
-//                                   child: Column(
-//                                     children: [
-//                                       Container(
-//                                         height: MediaQuery.of(context).size.height * 0.13,
-//                                         // width: 100,
-//                                         // color: Colors.green,
-//                                         child: Card(
-//                                           color: Colors.transparent,
-//
-//                                           // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
-//                                           shape: CircleBorder(
-//                                             side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
-//                                             // borderRadius: BorderRadius.circular(100),
-//                                           ),
-//
-//                                           clipBehavior: Clip.hardEdge,
-//                                           // margin: EdgeInsets.all(10.0),
-//                                           child: ClipRRect(
-//                                             // borderRadius: BorderRadius.circular(11.0),
-//                                             child: Image.memory(
-//                                               // state.bytes![i],
-//
-//                                               base64.decode(NavbarState.magazineCategoryGetAllActive!.response![i].image!),
-//                                               fit: BoxFit.cover,
-//                                               alignment: Alignment.center,
-//
-//                                               // scale: 0.001,
-//                                               // filterQuality: FilterQuality.high,
-//                                               // colorBlendMode: BlendMode.colorBurn,
-//                                               // height: MediaQuery.of(context).size.height * 0.1,
-//                                               // width: MediaQuery.of(context).size.width * 0.9,
-//                                               // height: 20,
-//                                             ),
-//                                           ),
-//                                           // child: Icon(
-//                                           //   Icons.ac_unit,
-//                                           //   size: 50,
-//                                           //   color: Colors.amber,
-//                                           // ),
-//                                         ),
-//                                       ),
-//                                       // Spacer(),
-//                                       Hero(
-//                                         tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-//                                         child: Text(
-//                                           NavbarState.magazineCategoryGetAllActive!.response![i].name!
-//                                           // +                                    " " +
-//                                           // NavbarState.magazineCategoryGetAllActive!.response![i].id!
-//                                           ,
-//                                           style: TextStyle(color: Colors.white),
-//                                           textAlign: TextAlign.center,
-//                                         ),
-//                                       ), // Spacer()
-//                                     ],
-//                                   ),
-//                                 ),
-//                               );
-//                             },
-//                           ),
-//                         ),
-//                         state.searchResults?.length != 0
-//                             ? Align(
-//                                 alignment: Alignment.topLeft,
-//                                 child: Padding(
-//                                   padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-//                                   child: Text(
-//                                     'Letzte Suchanfragen',
-//                                     style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-//                                     textAlign: TextAlign.right,
-//                                   ),
-//                                 ),
-//                               )
-//                             : Container(),
-//                         // for (var i = 0; i < state.searchResults!.length; i++)
-//                         for (var i = state.searchResults!.length - 1; i >= max(0, state.searchResults!.length - 5); i--)
-//                           Container(
-//                             child: Padding(
-//                               padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
-//                               child: Row(
-//                                 children: <Widget>[
-//                                   Icon(
-//                                     Icons.access_time_sharp,
-//                                     color: Colors.white,
-//                                     size: 30,
-//                                   ),
-//                                   Expanded(
-//                                     child: GestureDetector(
-//                                       onTap: () {
-//                                         // Navigator.pop(context);
-//                                         handleSearchClick(state.searchResults?[i], state, false);
-//                                         _searchController.text = state.searchResults?[i];
-//                                       },
-//                                       child: Container(
-//                                         child: Padding(
-//                                           padding: const EdgeInsets.only(left: 10),
-//                                           child: Text(
-//                                             // 'hamburg',
-//                                             // state.searchResults!.isNotEmpty ? state.searchResults![i] : "",
-//                                             state.searchResults?[i],
-//                                             style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-//                                             textAlign: TextAlign.left,
-//                                           ),
-//                                         ),
-//                                       ),
-//                                     ),
-//                                   ),
-//                                   // SearchResult(
-//                                   //   index: i,
-//                                   // )
-//                                   InkWell(
-//                                     onTap: () {
-//                                       // state.searchResults?.removeAt(i);
-//                                       BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
-//                                       setState(() {});
-//                                     },
-//                                     child: Align(
-//                                       alignment: Alignment.centerRight,
-//                                       child: Container(
-//                                         child: Padding(
-//                                             padding: const EdgeInsets.only(left: 0),
-//                                             child: Icon(
-//                                               Icons.close_outlined,
-//                                               color: Colors.white,
-//                                               // size: 30,
-//                                             )),
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ),
-//                           ),
-//                         Align(
-//                           alignment: Alignment.topLeft,
-//                           child: Padding(
-//                             padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-//                             child: Text(
-//                               'Choose a language',
-//                               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-//                               textAlign: TextAlign.right,
-//                             ),
-//                           ),
-//                         ),
-//                         SingleChildScrollView(
-//                           padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
-//                           physics: RangeMaintainingScrollPhysics(),
-//                           scrollDirection: Axis.horizontal,
-//                           child: Row(
-//                             children: [
-//                               Padding(
-//                                 padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
-//                                 child: Container(
-//                                   // width: MediaQuery.of(context).size.width * 0.40,
-//                                   height: MediaQuery.of(context).size.width * 0.1,
-//
-//                                   child: FloatingActionButton.extended(
-//                                     // heroTag: 'location_offers',
-//                                     key: UniqueKey(),
-//                                     heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-//                                     splashColor: Colors.white,
-//
-//                                     shape: RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-//
-//                                     label: Text(
-//                                       'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-//                                       // 'All($counterALL)',
-//                                       // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
-//                                       style: TextStyle(fontSize: 12),
-//                                     ),
-//                                     // <-- Text
-//                                     backgroundColor: Colors.grey.withOpacity(0.1),
-//                                     // icon: Icon(
-//                                     //   // <-- Icon
-//                                     //   Icons.menu_book,
-//                                     //   size: 16.0,
-//                                     // ),
-//                                     onPressed: () {
-//                                       print("!breakpoint");
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-//                                       Navigator.of(context).push(
-//                                         PageRouteBuilder(
-//                                           // transitionDuration:
-//                                           // Duration(seconds: 2),
-//
-//                                           pageBuilder: (_, __, ___) {
-//                                             // return StartSearch();
-//
-//                                             return LanguagePage(
-//                                               titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-//                                               language: "all",
-//                                             );
-//                                           },
-//                                         ),
-//                                       );
-//                                     },
-//                                     // extendedPadding: EdgeInsets.all(50),
-//                                   ),
-//                                 ),
-//                               ),
-//                               Padding(
-//                                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-//                                 child: Container(
-//                                   // width: MediaQuery.of(context).size.width * 0.40,
-//                                   height: MediaQuery.of(context).size.width * 0.1,
-//                                   child: FloatingActionButton.extended(
-//                                     // heroTag: 'location_offers',
-//                                     key: UniqueKey(),
-//                                     heroTag: 'German(${NavbarState.counterDE})',
-//
-//                                     shape: RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-//
-//                                     label: Text(
-//                                       'German(${NavbarState.counterDE})',
-//                                       style: TextStyle(fontSize: 12),
-//                                     ),
-//                                     // <-- Text
-//                                     backgroundColor: Colors.grey.withOpacity(0.1),
-//                                     // icon: Icon(
-//                                     //   // <-- Icon
-//                                     //   Icons.account_box,
-//                                     //   size: 16.0,
-//                                     // ),
-//                                     onPressed: () {
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-//
-//                                       Navigator.of(context).push(
-//                                         PageRouteBuilder(
-//                                           // transitionDuration:
-//                                           // Duration(seconds: 2),
-//
-//                                           pageBuilder: (_, __, ___) {
-//                                             // return StartSearch();
-//
-//                                             return LanguagePage(
-//                                               titleText: 'German(${NavbarState.counterDE})',
-//                                               language: "de",
-//                                             );
-//                                           },
-//                                           // maintainState: true,
-//
-//                                           // transitionDuration: Duration(milliseconds: 1000),
-//                                           // transitionsBuilder: (context, animation, anotherAnimation, child) {
-//                                           //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
-//                                           //   return ScaleTransition(
-//                                           //     scale: animation,
-//                                           //     alignment: Alignment.topRight,
-//                                           //     child: child,
-//                                           //   );
-//                                           // }
-//                                         ),
-//                                       );
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "de"));
-//                                     },
-//                                   ),
-//                                 ),
-//                               ),
-//                               Padding(
-//                                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-//                                 child: Container(
-//                                   // width: MediaQuery.of(context).size.width * 0.40,
-//                                   height: MediaQuery.of(context).size.width * 0.1,
-//                                   child: FloatingActionButton.extended(
-//                                     // heroTag: 'location_offers',
-//                                     key: UniqueKey(),
-//                                     heroTag: 'English(${NavbarState.counterEN})',
-//                                     shape: RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-//                                     label: Text(
-//                                       'English(${NavbarState.counterEN})',
-//                                       style: TextStyle(fontSize: 12),
-//                                     ),
-//                                     // <-- Text
-//                                     backgroundColor: Colors.grey.withOpacity(0.1),
-//                                     // icon: Icon(
-//                                     //   // <-- Icon
-//                                     //   Icons.coffee,
-//                                     //   size: 16.0,
-//                                     // ),
-//                                     onPressed: () {
-//                                       Navigator.of(context).push(
-//                                         PageRouteBuilder(
-//                                           // transitionDuration:
-//                                           // Duration(seconds: 2),
-//
-//                                           pageBuilder: (_, __, ___) {
-//                                             // return StartSearch();
-//
-//                                             return LanguagePage(
-//                                               titleText: 'English(${NavbarState.counterEN})',
-//                                               language: "en",
-//                                             );
-//                                           },
-//                                         ),
-//                                       );
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "en"));
-//                                     },
-//                                   ),
-//                                 ),
-//                               ),
-//                               Padding(
-//                                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-//                                 child: Container(
-//                                   // width: MediaQuery.of(context).size.width * 0.40,
-//                                   height: MediaQuery.of(context).size.width * 0.1,
-//                                   child: FloatingActionButton.extended(
-//                                     // heroTag: 'location_offers',
-//                                     key: UniqueKey(),
-//                                     heroTag: 'French(${NavbarState.counterFR})',
-//                                     shape: RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-//                                     label: Text(
-//                                       'French(${NavbarState.counterFR})',
-//                                       style: TextStyle(fontSize: 12),
-//                                     ),
-//                                     // <-- Text
-//                                     backgroundColor: Colors.grey.withOpacity(0.1),
-//                                     // icon: Icon(
-//                                     //   // <-- Icon
-//                                     //   Icons.coffee,
-//                                     //   size: 16.0,
-//                                     // ),
-//                                     onPressed: () {
-//                                       Navigator.of(context).push(
-//                                         PageRouteBuilder(
-//                                           // transitionDuration:
-//                                           // Duration(seconds: 2),
-//
-//                                           pageBuilder: (_, __, ___) {
-//                                             // return StartSearch();
-//
-//                                             return LanguagePage(
-//                                               titleText: 'French(${NavbarState.counterFR})',
-//                                               language: "fr",
-//                                             );
-//                                           },
-//                                         ),
-//                                       );
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
-//                                     },
-//                                   ),
-//                                 ),
-//                               ),
-//                               Padding(
-//                                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-//                                 child: Container(
-//                                   // width: MediaQuery.of(context).size.width * 0.40,
-//                                   height: MediaQuery.of(context).size.width * 0.1,
-//                                   child: FloatingActionButton.extended(
-//                                     // heroTag: 'location_offers',
-//                                     key: UniqueKey(),
-//                                     heroTag: 'Spanish(${NavbarState.counterES})',
-//                                     shape: RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
-//                                     label: Text(
-//                                       'Spanish(${NavbarState.counterES})',
-//                                       style: TextStyle(fontSize: 12),
-//                                     ),
-//                                     // <-- Text
-//                                     backgroundColor: Colors.grey.withOpacity(0.1),
-//                                     // icon: Icon(
-//                                     //   // <-- Icon
-//                                     //   Icons.coffee,
-//                                     //   size: 16.0,
-//                                     // ),
-//                                     onPressed: () {
-//                                       Navigator.of(context).push(
-//                                         PageRouteBuilder(
-//                                           // transitionDuration:
-//                                           // Duration(seconds: 2),
-//
-//                                           pageBuilder: (_, __, ___) {
-//                                             // return StartSearch();
-//
-//                                             return LanguagePage(
-//                                               titleText: 'Spanish(${NavbarState.counterES})',
-//                                               language: "es",
-//                                             );
-//                                           },
-//                                         ),
-//                                       );
-//                                       // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
-//                                     },
-//                                   ),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                         Align(
-//                           alignment: Alignment.topLeft,
-//                           child: Padding(
-//                             padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-//                             child: Text(
-//                               'Versuchen Sie, nach zu suchen',
-//                               style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-//                               textAlign: TextAlign.right,
-//                             ),
-//                           ),
-//                         ),
-//                         Padding(
-//                           padding: EdgeInsets.fromLTRB(30, 5, 30, 00),
-//                           child: Row(
-//                             children: <Widget>[
-//                               Icon(
-//                                 Icons.search,
-//                                 color: Colors.white,
-//                                 size: 30,
-//                               ),
-//                               Padding(
-//                                 padding: const EdgeInsets.only(left: 10),
-//                                 child: Text(
-//                                   'die beliebtesten Channel',
-//                                   style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-//                                   textAlign: TextAlign.right,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                         Padding(
-//                           padding: EdgeInsets.fromLTRB(30, 5, 30, 20),
-//                           child: Row(
-//                             children: <Widget>[
-//                               Icon(
-//                                 Icons.search,
-//                                 color: Colors.white,
-//                                 size: 30,
-//                               ),
-//                               Flexible(
-//                                 child: Padding(
-//                                   padding: const EdgeInsets.only(left: 10),
-//                                   child: Text(
-//                                     'magazinen, die Sie gelesen haben',
-//                                     style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-//                                   ),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       ]
-//                     :
-                    state is GoToSearchResults
-                        ? <Widget>[SearchResults(context, state)]
-                        : state is SearchError
-                            ? <Widget>[
-                                Container(
-                                  child: Text(state.error,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      )),
-                                )
-                              ]
-                            : <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(30, 10, 30, 20),
-                                    child: Text(
-                                      'Kategorien',
-                                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  ),
+                children: state is GoToSearchResults
+                    ? <Widget>[SearchResults(context, state)]
+                    : state is SearchError
+                        ? <Widget>[
+                            Container(
+                              child: Text(state.error,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  )),
+                            )
+                          ]
+                        : <Widget>[
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(30, 10, 30, 20),
+                                child: Text(
+                                  'Kategorien',
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.right,
                                 ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height * 0.17,
-                                  child: PageView.builder(
-                                    controller: controller,
-
-                                    itemCount: NavbarState.magazineCategoryGetAllActive?.response!.length,
-                                    allowImplicitScrolling: false,
-                                    // pageSnapping: false,
-                                    scrollDirection: Axis.horizontal,
-                                    dragStartBehavior: DragStartBehavior.start,
-                                    pageSnapping: false,
-                                    padEnds: false,
-// scrollBehavior: ScrollBehavior.,
-
-                                    itemBuilder: (context, i) {
-                                      return Transform.scale(
-                                        scale: 0.95,
-                                        alignment: Alignment.center,
-                                        child: GestureDetector(
-                                          onTap: () => {
-                                            // print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
-
-                                            Navigator.of(context).push(
-                                              CupertinoPageRoute(
-                                                builder: (context) => CategoryPage(
-                                                  titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                                  categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                              ),
+                            ),
+                            CategoryImage(controller: controller),
+                            SearchState.oldSearchResults.isEmpty == false
+                                ? Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                                          child: Text(
+                                            'Letzte Suchanfragen',
+                                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.right,
+                                          ),
+                                        ),
+                                      ),
+                                      // for (var i = 0; i < SearchState.oldSearchResults.length; i++)
+                                      // if (SearchState.oldSearchResults?.length != 0)
+                                      for (var i = SearchState.oldSearchResults!.length - 1;
+                                          i >= max(0, SearchState.oldSearchResults!.length! - 5);
+                                          i--)
+                                        Container(
+                                          child: Padding(
+                                            padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.access_time_sharp,
+                                                  color: Colors.white,
+                                                  size: 30,
                                                 ),
-                                              ),
-                                            )
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: MediaQuery.of(context).size.height * 0.13,
-                                                // width: 100,
-                                                // color: Colors.green,
-                                                child: Card(
-                                                  color: Colors.transparent,
-
-                                                  // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
-                                                  shape: CircleBorder(
-                                                    side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
-                                                    // borderRadius: BorderRadius.circular(100),
-                                                  ),
-
-                                                  clipBehavior: Clip.hardEdge,
-                                                  // margin: EdgeInsets.all(10.0),
-                                                  child: ClipRRect(
-                                                    // borderRadius: BorderRadius.circular(11.0),
-                                                    child: Image.memory(
-                                                      // state.bytes![i],
-
-                                                      base64.decode(NavbarState.magazineCategoryGetAllActive!.response![i].image!),
-                                                      fit: BoxFit.cover,
-                                                      alignment: Alignment.center,
-
-                                                      // scale: 0.001,
-                                                      // filterQuality: FilterQuality.high,
-                                                      // colorBlendMode: BlendMode.colorBurn,
-                                                      // height: MediaQuery.of(context).size.height * 0.1,
-                                                      // width: MediaQuery.of(context).size.width * 0.9,
-                                                      // height: 20,
+                                                Expanded(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      // Navigator.pop(context);
+                                                      handleSearchClick(SearchState.oldSearchResults?[i], state, false);
+                                                      _searchController.text = SearchState.oldSearchResults?[i];
+                                                    },
+                                                    child: Container(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 10),
+                                                        child: Text(
+                                                          // 'hamburg',
+                                                          // state.searchResults!.isNotEmpty ? state.searchResults![i] : "",
+                                                          SearchState.oldSearchResults?[i],
+                                                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
+                                                          textAlign: TextAlign.left,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                  // child: Icon(
-                                                  //   Icons.ac_unit,
-                                                  //   size: 50,
-                                                  //   color: Colors.amber,
-                                                  // ),
                                                 ),
-                                              ),
-                                              // Spacer(),
-                                              Hero(
-                                                tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                                                child: Text(
-                                                  NavbarState.magazineCategoryGetAllActive!.response![i].name!
-                                                  // +                                    " " +
-                                                  // NavbarState.magazineCategoryGetAllActive!.response![i].id!
-                                                  ,
-                                                  style: TextStyle(color: Colors.white),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ), // Spacer()
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SearchState.oldSearchResults.isEmpty == false
-                                    ?
-                                Column(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Padding(
-                                              padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                                              child: Text(
-                                                'Letzte Suchanfragen',
-                                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            ),
-                                          ),
-                                          // for (var i = 0; i < SearchState.oldSearchResults.length; i++)
-                                            // if (SearchState.oldSearchResults?.length != 0)
-                                            for (var i = SearchState.oldSearchResults!.length - 1;
-                                                i >= max(0, SearchState.oldSearchResults!.length! - 5);
-                                                i--)
-                                              Container(
-                                                child: Padding(
-                                                  padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.access_time_sharp,
-                                                        color: Colors.white,
-                                                        size: 30,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            // Navigator.pop(context);
-                                                            handleSearchClick(SearchState.oldSearchResults?[i], state, false);
-                                                            _searchController.text = SearchState.oldSearchResults?[i];
-                                                          },
-                                                          child: Container(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(left: 10),
-                                                              child: Text(
-                                                                // 'hamburg',
-                                                                // state.searchResults!.isNotEmpty ? state.searchResults![i] : "",
-                                                                SearchState.oldSearchResults?[i],
-                                                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-                                                                textAlign: TextAlign.left,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      // SearchResult(
-                                                      //   index: i,
-                                                      // )
-                                                      InkWell(
-                                                        onTap: () {
-                                                          // state.searchResults?.removeAt(i);
-                                                          BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
-                                                          setState(() {});
-                                                        },
-                                                        child: Align(
-                                                          alignment: Alignment.centerRight,
-                                                          child: Container(
-                                                            child: Padding(
-                                                                padding: const EdgeInsets.only(left: 0),
-                                                                child: Icon(
-                                                                  Icons.close_outlined,
-                                                                  color: Colors.white,
-                                                                  // size: 30,
-                                                                )),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                        ],
-                                      )
-                                    : Container(),
-                                // if (SearchState.oldSearchResults?.length != 0) {Container()},
-
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                                    child: Text(
-                                      'Choose a language',
-                                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
-                                  physics: RangeMaintainingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
-                                        child: Container(
-                                          // width: MediaQuery.of(context).size.width * 0.40,
-                                          height: MediaQuery.of(context).size.width * 0.1,
-
-                                          child: FloatingActionButton.extended(
-                                            // heroTag: 'location_offers',
-                                            key: UniqueKey(),
-                                            heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                            splashColor: Colors.white,
-                                            elevation: 1,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                side: BorderSide(color: Colors.white, width: 0.2)),
-
-                                            label: Text(
-                                              'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                              // 'All($counterALL)',
-                                              // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            // <-- Text
-                                            backgroundColor: Colors.grey.withOpacity(0.1),
-                                            // icon: Icon(
-                                            //   // <-- Icon
-                                            //   Icons.menu_book,
-                                            //   size: 16.0,
-                                            // ),
-                                            onPressed: () {
-                                              print("!breakpoint");
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-                                              Navigator.of(context).push(
-                                                CupertinoPageRoute(
-                                                  builder: (context) => LanguagePage(
-                                                    titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                                    language: "all",
-                                                  ),
-                                                ),
-                                              );
-                                              // Navigator.of(context).push(
-                                              //   PageRouteBuilder(
-                                              //     // transitionDuration:
-                                              //     // Duration(seconds: 2),
-                                              //
-                                              //     pageBuilder: (_, __, ___) {
-                                              //       // return StartSearch();
-                                              //
-                                              //       return LanguagePage(
-                                              //         titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
-                                              //         language: "all",
-                                              //       );
-                                              //     },
-                                              //   ),
-                                              // );
-                                            },
-                                            // extendedPadding: EdgeInsets.all(50),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                                        child: Container(
-                                          // width: MediaQuery.of(context).size.width * 0.40,
-                                          height: MediaQuery.of(context).size.width * 0.1,
-                                          child: FloatingActionButton.extended(
-                                            // heroTag: 'location_offers',
-                                            key: UniqueKey(),
-                                            heroTag: 'German(${NavbarState.counterDE})',
-                                            elevation: 1,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                side: BorderSide(color: Colors.white, width: 0.2)),
-
-                                            label: Text(
-                                              'German(${NavbarState.counterDE})',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            // <-- Text
-                                            backgroundColor: Colors.grey.withOpacity(0.1),
-                                            // icon: Icon(
-                                            //   // <-- Icon
-                                            //   Icons.account_box,
-                                            //   size: 16.0,
-                                            // ),
-                                            onPressed: () {
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
-                                              Navigator.of(context).push(
-                                                CupertinoPageRoute(
-                                                  builder: (context) => LanguagePage(
-                                                    titleText: 'German(${NavbarState.counterDE})',
-                                                    language: "de",
-                                                  ),
-                                                ),
-                                              );
-                                              // Navigator.of(context).push(
-                                              //   PageRouteBuilder(
-                                              //     // transitionDuration:
-                                              //     // Duration(seconds: 2),
-                                              //
-                                              //     pageBuilder: (_, __, ___) {
-                                              //       // return StartSearch();
-                                              //
-                                              //       return LanguagePage(
-                                              //         titleText: 'German(${NavbarState.counterDE})',
-                                              //         language: "de",
-                                              //       );
-                                              //     },
-                                              //     // maintainState: true,
-                                              //
-                                              //     // transitionDuration: Duration(milliseconds: 1000),
-                                              //     // transitionsBuilder: (context, animation, anotherAnimation, child) {
-                                              //     //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
-                                              //     //   return ScaleTransition(
-                                              //     //     scale: animation,
-                                              //     //     alignment: Alignment.topRight,
-                                              //     //     child: child,
-                                              //     //   );
-                                              //     // }
-                                              //   ),
-                                              // );
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "de"));
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                                        child: Container(
-                                          // width: MediaQuery.of(context).size.width * 0.40,
-                                          height: MediaQuery.of(context).size.width * 0.1,
-                                          child: FloatingActionButton.extended(
-                                            // heroTag: 'location_offers',
-                                            key: UniqueKey(),
-                                            heroTag: 'English(${NavbarState.counterEN})',
-                                            elevation: 1,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                side: BorderSide(color: Colors.white, width: 0.2)),
-                                            label: Text(
-                                              'English(${NavbarState.counterEN})',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            // <-- Text
-                                            backgroundColor: Colors.grey.withOpacity(0.1),
-                                            // icon: Icon(
-                                            //   // <-- Icon
-                                            //   Icons.coffee,
-                                            //   size: 16.0,
-                                            // ),
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                CupertinoPageRoute(
-                                                  builder: (context) => LanguagePage(
-                                                    titleText: 'English(${NavbarState.counterEN})',
-                                                    language: "en",
-                                                  ),
-                                                ),
-                                              );
-                                              // Navigator.of(context).push(
-                                              //   PageRouteBuilder(
-                                              //     // transitionDuration:
-                                              //     // Duration(seconds: 2),
-                                              //
-                                              //     pageBuilder: (_, __, ___) {
-                                              //       // return StartSearch();
-                                              //
-                                              //       return LanguagePage(
-                                              //         titleText: 'English(${NavbarState.counterEN})',
-                                              //         language: "en",
-                                              //       );
-                                              //     },
-                                              //   ),
-                                              // );
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "en"));
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                                        child: Container(
-                                          // width: MediaQuery.of(context).size.width * 0.40,
-                                          height: MediaQuery.of(context).size.width * 0.1,
-                                          child: FloatingActionButton.extended(
-                                            // heroTag: 'location_offers',
-                                            key: UniqueKey(),
-                                            heroTag: 'French(${NavbarState.counterFR})',
-                                            elevation: 1,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                side: BorderSide(color: Colors.white, width: 0.2)),
-                                            label: Text(
-                                              'French(${NavbarState.counterFR})',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            // <-- Text
-                                            backgroundColor: Colors.grey.withOpacity(0.1),
-                                            // icon: Icon(
-                                            //   // <-- Icon
-                                            //   Icons.coffee,
-                                            //   size: 16.0,
-                                            // ),
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                CupertinoPageRoute(
-                                                  builder: (context) => LanguagePage(
-                                                    titleText: 'French(${NavbarState.counterFR})',
-                                                    language: "fr",
-                                                  ),
-                                                ),
-                                              );
-                                              // Navigator.of(context).push(
-                                              //   PageRouteBuilder(
-                                              //     // transitionDuration:
-                                              //     // Duration(seconds: 2),
-                                              //
-                                              //     pageBuilder: (_, __, ___) {
-                                              //       // return StartSearch();
-                                              //
-                                              //       return LanguagePage(
-                                              //         titleText: 'French(${NavbarState.counterFR})',
-                                              //         language: "fr",
-                                              //       );
-                                              //     },
-                                              //   ),
-                                              // );
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-                                        child: Container(
-                                          // width: MediaQuery.of(context).size.width * 0.40,
-                                          height: MediaQuery.of(context).size.width * 0.1,
-                                          child: FloatingActionButton.extended(
-                                            // heroTag: 'location_offers',
-                                            key: UniqueKey(),
-                                            heroTag: 'Spanish(${NavbarState.counterES})',
-                                            elevation: 1,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                side: BorderSide(color: Colors.white, width: 0.2)),
-                                            label: Text(
-                                              'Spanish(${NavbarState.counterES})',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            // <-- Text
-                                            backgroundColor: Colors.grey.withOpacity(0.1),
-                                            // icon: Icon(
-                                            //   // <-- Icon
-                                            //   Icons.coffee,
-                                            //   size: 16.0,
-                                            // ),
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                PageRouteBuilder(
-                                                  // transitionDuration:
-                                                  // Duration(seconds: 2),
-
-                                                  pageBuilder: (_, __, ___) {
-                                                    // return StartSearch();
-
-                                                    return LanguagePage(
-                                                      titleText: 'Spanish(${NavbarState.counterES})',
-                                                      language: "es",
-                                                    );
+                                                // SearchResult(
+                                                //   index: i,
+                                                // )
+                                                InkWell(
+                                                  onTap: () {
+                                                    // state.searchResults?.removeAt(i);
+                                                    BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
+                                                    setState(() {});
                                                   },
+                                                  child: Align(
+                                                    alignment: Alignment.centerRight,
+                                                    child: Container(
+                                                      child: Padding(
+                                                          padding: const EdgeInsets.only(left: 0),
+                                                          child: Icon(
+                                                            Icons.close_outlined,
+                                                            color: Colors.white,
+                                                            // size: 30,
+                                                          )),
+                                                    ),
+                                                  ),
                                                 ),
-                                              );
-                                              // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
-                                            },
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
                                     ],
-                                  ),
+                                  )
+                                : Container(),
+                            // if (SearchState.oldSearchResults?.length != 0) {Container()},
+
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                                child: Text(
+                                  'Choose a language',
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.right,
                                 ),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
+                              physics: RangeMaintainingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
+                                    child: Container(
+                                      // width: MediaQuery.of(context).size.width * 0.40,
+                                      height: MediaQuery.of(context).size.width * 0.1,
+
+                                      child: FloatingActionButton.extended(
+                                        // heroTag: 'location_offers',
+                                        key: UniqueKey(),
+                                        heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                        splashColor: Colors.white,
+                                        elevation: 1,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+
+                                        label: Text(
+                                          'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                          // 'All($counterALL)',
+                                          // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        // <-- Text
+                                        backgroundColor: Colors.grey.withOpacity(0.1),
+                                        // icon: Icon(
+                                        //   // <-- Icon
+                                        //   Icons.menu_book,
+                                        //   size: 16.0,
+                                        // ),
+                                        onPressed: () {
+                                          print("!breakpoint");
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => LanguagePage(
+                                                titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                                language: "all",
+                                              ),
+                                            ),
+                                          );
+                                          // Navigator.of(context).push(
+                                          //   PageRouteBuilder(
+                                          //     // transitionDuration:
+                                          //     // Duration(seconds: 2),
+                                          //
+                                          //     pageBuilder: (_, __, ___) {
+                                          //       // return StartSearch();
+                                          //
+                                          //       return LanguagePage(
+                                          //         titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                          //         language: "all",
+                                          //       );
+                                          //     },
+                                          //   ),
+                                          // );
+                                        },
+                                        // extendedPadding: EdgeInsets.all(50),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                    child: Container(
+                                      // width: MediaQuery.of(context).size.width * 0.40,
+                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      child: FloatingActionButton.extended(
+                                        // heroTag: 'location_offers',
+                                        key: UniqueKey(),
+                                        heroTag: 'German(${NavbarState.counterDE})',
+                                        elevation: 1,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+
+                                        label: Text(
+                                          'German(${NavbarState.counterDE})',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        // <-- Text
+                                        backgroundColor: Colors.grey.withOpacity(0.1),
+                                        // icon: Icon(
+                                        //   // <-- Icon
+                                        //   Icons.account_box,
+                                        //   size: 16.0,
+                                        // ),
+                                        onPressed: () {
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "all"));
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => LanguagePage(
+                                                titleText: 'German(${NavbarState.counterDE})',
+                                                language: "de",
+                                              ),
+                                            ),
+                                          );
+                                          // Navigator.of(context).push(
+                                          //   PageRouteBuilder(
+                                          //     // transitionDuration:
+                                          //     // Duration(seconds: 2),
+                                          //
+                                          //     pageBuilder: (_, __, ___) {
+                                          //       // return StartSearch();
+                                          //
+                                          //       return LanguagePage(
+                                          //         titleText: 'German(${NavbarState.counterDE})',
+                                          //         language: "de",
+                                          //       );
+                                          //     },
+                                          //     // maintainState: true,
+                                          //
+                                          //     // transitionDuration: Duration(milliseconds: 1000),
+                                          //     // transitionsBuilder: (context, animation, anotherAnimation, child) {
+                                          //     //   // animation = CurvedAnimation(curve: curveList[index], parent: animation);
+                                          //     //   return ScaleTransition(
+                                          //     //     scale: animation,
+                                          //     //     alignment: Alignment.topRight,
+                                          //     //     child: child,
+                                          //     //   );
+                                          //     // }
+                                          //   ),
+                                          // );
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "de"));
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                    child: Container(
+                                      // width: MediaQuery.of(context).size.width * 0.40,
+                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      child: FloatingActionButton.extended(
+                                        // heroTag: 'location_offers',
+                                        key: UniqueKey(),
+                                        heroTag: 'English(${NavbarState.counterEN})',
+                                        elevation: 1,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                        label: Text(
+                                          'English(${NavbarState.counterEN})',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        // <-- Text
+                                        backgroundColor: Colors.grey.withOpacity(0.1),
+                                        // icon: Icon(
+                                        //   // <-- Icon
+                                        //   Icons.coffee,
+                                        //   size: 16.0,
+                                        // ),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => LanguagePage(
+                                                titleText: 'English(${NavbarState.counterEN})',
+                                                language: "en",
+                                              ),
+                                            ),
+                                          );
+                                          // Navigator.of(context).push(
+                                          //   PageRouteBuilder(
+                                          //     // transitionDuration:
+                                          //     // Duration(seconds: 2),
+                                          //
+                                          //     pageBuilder: (_, __, ___) {
+                                          //       // return StartSearch();
+                                          //
+                                          //       return LanguagePage(
+                                          //         titleText: 'English(${NavbarState.counterEN})',
+                                          //         language: "en",
+                                          //       );
+                                          //     },
+                                          //   ),
+                                          // );
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "en"));
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                    child: Container(
+                                      // width: MediaQuery.of(context).size.width * 0.40,
+                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      child: FloatingActionButton.extended(
+                                        // heroTag: 'location_offers',
+                                        key: UniqueKey(),
+                                        heroTag: 'French(${NavbarState.counterFR})',
+                                        elevation: 1,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                        label: Text(
+                                          'French(${NavbarState.counterFR})',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        // <-- Text
+                                        backgroundColor: Colors.grey.withOpacity(0.1),
+                                        // icon: Icon(
+                                        //   // <-- Icon
+                                        //   Icons.coffee,
+                                        //   size: 16.0,
+                                        // ),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => LanguagePage(
+                                                titleText: 'French(${NavbarState.counterFR})',
+                                                language: "fr",
+                                              ),
+                                            ),
+                                          );
+                                          // Navigator.of(context).push(
+                                          //   PageRouteBuilder(
+                                          //     // transitionDuration:
+                                          //     // Duration(seconds: 2),
+                                          //
+                                          //     pageBuilder: (_, __, ___) {
+                                          //       // return StartSearch();
+                                          //
+                                          //       return LanguagePage(
+                                          //         titleText: 'French(${NavbarState.counterFR})',
+                                          //         language: "fr",
+                                          //       );
+                                          //     },
+                                          //   ),
+                                          // );
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                                    child: Container(
+                                      // width: MediaQuery.of(context).size.width * 0.40,
+                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      child: FloatingActionButton.extended(
+                                        // heroTag: 'location_offers',
+                                        key: UniqueKey(),
+                                        heroTag: 'Spanish(${NavbarState.counterES})',
+                                        elevation: 1,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                                        label: Text(
+                                          'Spanish(${NavbarState.counterES})',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        // <-- Text
+                                        backgroundColor: Colors.grey.withOpacity(0.1),
+                                        // icon: Icon(
+                                        //   // <-- Icon
+                                        //   Icons.coffee,
+                                        //   size: 16.0,
+                                        // ),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            PageRouteBuilder(
+                                              // transitionDuration:
+                                              // Duration(seconds: 2),
+
+                                              pageBuilder: (_, __, ___) {
+                                                // return StartSearch();
+
+                                                return LanguagePage(
+                                                  titleText: 'Spanish(${NavbarState.counterES})',
+                                                  language: "es",
+                                                );
+                                              },
+                                            ),
+                                          );
+                                          // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, "fr"));
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                                child: Text(
+                                  'Versuchen Sie, nach zu suchen',
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(30, 5, 30, 00),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.search,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
                                     child: Text(
-                                      'Versuchen Sie, nach zu suchen',
-                                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                      'die beliebtesten Channel',
+                                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
                                       textAlign: TextAlign.right,
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(30, 5, 30, 00),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.search,
-                                        color: Colors.white,
-                                        size: 30,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          'die beliebtesten Channel',
-                                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-                                          textAlign: TextAlign.right,
-                                        ),
-                                      ),
-                                    ],
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(30, 5, 30, 20),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.search,
+                                    color: Colors.white,
+                                    size: 30,
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(30, 5, 30, 20),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.search,
-                                        color: Colors.white,
-                                        size: 30,
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        'magazinen, die Sie gelesen haben',
+                                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
                                       ),
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            'magazinen, die Sie gelesen haben',
-                                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                            ),
+                          ],
               ),
             ),
           );
@@ -1390,315 +681,247 @@ class _SearchPageState extends State<SearchPage>
   }
 
   Widget SearchResults(BuildContext context, GoToSearchResults state) {
-    return
-        // Align(
-        //   alignment: Alignment.topLeft,
-        //   child: Padding(
-        //     padding: EdgeInsets.fromLTRB(30, 15, 30, 20),
-        //     child: Text(
-        //       'Magazines',
-        //       style: TextStyle(color: Colors.white, fontSize: 20),
-        //       textAlign: TextAlign.right,
-        //     ),
-        //   ),
-        // ),
-        Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: GridView.builder(
-          gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
-          itemCount: state.searchResults!.response?.length,
-          // itemCount: 5,
-          // itemCount: 10,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      onPanDown: (details) => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: GridView.builder(
+            gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 45, crossAxisSpacing: 15, childAspectRatio: 0.7),
+            itemCount: state.searchResults!.response?.length,
+            physics: RangeMaintainingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                  color: Colors.transparent,
+                  // clipBehavior: Clip.hardEdge,
+                  // borderOnForeground: true,
+                  // margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  // elevation: 0,
+                  // semanticContainer: false,
 
-          // itemCount: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "en").toList().length,
-          physics: RangeMaintainingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            // print("SearchBloc ${BlocProvider.of<SearchBloc>(context).state.futureLangFunc?.length}");
-            // print(NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
-            //     "_" +
-            //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!);
-            return Card(
-                color: Colors.transparent,
-                // clipBehavior: Clip.hardEdge,
-                // borderOnForeground: true,
-                // margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                // elevation: 0,
-                // semanticContainer: false,
+                  ///maybe 0?
+                  // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => StartReader(
+                            magazine: state.searchResults!.response![index],
+                            heroTag: "searchresult_$index",
 
-                ///maybe 0?
-                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => {
-                    // Navigator.of(context).push(
-                    //   PageRouteBuilder(
-                    //     transitionDuration: Duration(milliseconds: 1000),
-                    //     pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                    //       return StartReader(
-                    //         id: state.selectedCategory!.response![index].idMagazinePublication!,
-                    //         index: index.toString(),
-                    //         heroTag: "",
-                    //         coverURL: state.selectedCategory!.response?[index].idMagazinePublication!,
-                    //         // cover: snapshot.data!,
-                    //         noofpages: state.selectedCategory!.response![index].pageMax!,
-                    //         readerTitle: state.selectedCategory!.response![index].name!,
-                    //
-                    //         // noofpages: 5,
-                    //       );
-                    //     },
-                    //     transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                    //       return Align(
-                    //         child: FadeTransition(
-                    //           opacity: new CurvedAnimation(parent: animation, curve: Curves.easeIn),
-                    //           child: child,
-                    //         ),
-                    //       );
-                    //     },
-                    //   ),
-                    // )
-                    // Navigator.push(
-                    //   context,
-                    //   PageRouteBuilder(
-                    //     // transitionDuration:
-                    //     // Duration(seconds: 2),
-                    //     pageBuilder: (_, __, ___) => StartReader(
-                    //       id: state.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                    //       index: i.toString(),
-                    //       cover: snapshot.data!,
-                    //       noofpages: state.magazinePublishedGetLastWithLimit!.response![i].pageMax!,
-                    //       readerTitle: state.magazinePublishedGetLastWithLimit!.response![i].name!,
-                    //
-                    //       // noofpages: 5,
-                    //     ),
-                    //   ),
-                    // ),
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => StartReader(
-                          magazine: state.searchResults!.response![index],
-                          heroTag: "",
-
-                          // noofpages: 5,
+                            // noofpages: 5,
+                          ),
                         ),
-                      ),
-                    )
-                    // Navigator.push(
-                    //   context,
-                    //   PageRouteBuilder(
-                    //     // transitionDuration:
-                    //     // Duration(seconds: 2),
-                    //     pageBuilder: (_, __, ___) => StartReader(
-                    //       magazine: state.searchResults!.response![index],
-                    //       heroTag: "",
-                    //
-                    //       // noofpages: 5,
-                    //     ),
-                    //   ),
-                    // ),
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.center,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: state.searchResults!.response![index].idMagazinePublication! +
-                            "_" +
-                            state.searchResults!.response![index].dateOfPublication! +
-                            "_0",
-                        // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
-                        //     "_" +
-                        //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
-                        // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-                        //   // color: Colors.grey.withOpacity(0.1),
-                        //   decoration: BoxDecoration(
-                        //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                        //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        //     color: Colors.grey.withOpacity(0.1),
-                        //   ),
-                        //   child: SpinKitFadingCircle(
-                        //     color: Colors.white,
-                        //     size: 50.0,
+                      )
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: state.searchResults!.response![index].idMagazinePublication! +
+                              "_" +
+                              state.searchResults!.response![index].dateOfPublication! +
+                              "_0",
+                          // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
+                          //     "_" +
+                          //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
+                          // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+                          //   // color: Colors.grey.withOpacity(0.1),
+                          //   decoration: BoxDecoration(
+                          //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                          //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          //     color: Colors.grey.withOpacity(0.1),
+                          //   ),
+                          //   child: SpinKitFadingCircle(
+                          //     color: Colors.white,
+                          //     size: 50.0,
+                          //   ),
+                          // ),
+
+                          imageBuilder: (context, imageProvider) => Hero(
+                            tag: 'searchresult_$index',
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              ),
+                            ),
+                          ),
+                          useOldImageOnUrlChange: true,
+                          // very important: keep both placeholder and errorWidget
+                          placeholder: (context, url) => Container(
+                            // color: Colors.grey.withOpacity(0.1),
+                            decoration: BoxDecoration(
+                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              // color: Colors.grey.withOpacity(0.05),
+                              color: Colors.grey.withOpacity(0.1),
+                            ),
+                            child: SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 50.0,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            // color: Colors.grey.withOpacity(0.1),
+                            decoration: BoxDecoration(
+                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              color: Colors.grey.withOpacity(0.1),
+                            ),
+                            child: SpinKitFadingCircle(
+                              color: Colors.white,
+                              // size: 50.0,
+                            ),
+                          ),
+                          // errorWidget: (context, url, error) => Container(
+                          //     alignment: Alignment.center,
+                          //     child: Icon(
+                          //       Icons.error,
+                          //       color: Colors.grey.withOpacity(0.8),
+                          //     )),
+                        ),
+                        // Spacer(),
+                        Positioned(
+                          // top: -50,
+                          bottom: -35,
+                          // height: -50,
+                          width: MediaQuery.of(context).size.width / 2 - 20,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MarqueeWidget(
+                              child: Text(
+                                // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                DateFormat("d. MMMM yyyy").format(DateTime.parse(state.searchResults!.response![index].dateOfPublication!)),
+                                // " asd",
+                                // "Card ${i + 1}",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          // top: -50,
+                          bottom: -20,
+                          // height: -50,
+                          width: MediaQuery.of(context).size.width / 2 - 20,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MarqueeWidget(
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Text(
+                                // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                state.searchResults!.response![index].name!,
+                                // " asd",
+                                // "Card ${i + 1}",
+                                textAlign: TextAlign.center,
+
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // return GestureDetector(
+                        //   behavior: HitTestBehavior.translucent,
+                        //   onTap: () => {
+                        //     // Navigator.push(
+                        //     //     context,
+                        //     //     new ReaderRoute(
+                        //     //         widget: StartReader(
+                        //     //       id: state
+                        //     //           .magazinePublishedGetLastWithLimit
+                        //     //           .response![i + 1]
+                        //     //           .idMagazinePublication!,
+                        //     //       tagindex: i,
+                        //     //       cover: state.bytes[i],
+                        //     //     ))),
+                        //     // print('Asf'),
+                        //     Navigator.push(
+                        //       context,
+                        //       PageRouteBuilder(
+                        //         // transitionDuration:
+                        //         // Duration(seconds: 2),
+                        //         pageBuilder: (_, __, ___) => StartReader(
+                        //           id: state.magazinePublishedGetLastWithLimit.response![i + 1].idMagazinePublication!,
+                        //
+                        //           index: i.toString(),
+                        //           cover: state.bytes![i],
+                        //           noofpages: state.magazinePublishedGetLastWithLimit.response![i + 1].pageMax!,
+                        //           readerTitle: state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                        //
+                        //           // noofpages: 5,
+                        //         ),
+                        //       ),
+                        //     )
+                        //     // Navigator.push(context,
+                        //     //     MaterialPageRoute(
+                        //     //         builder: (context) {
+                        //     //   return StartReader(
+                        //     //     id: state
+                        //     //         .magazinePublishedGetLastWithLimit
+                        //     //         .response![i + 1]
+                        //     //         .idMagazinePublication!,
+                        //     //     index: i,
+                        //     //   );
+                        //     // }))
+                        //   },
+                        //   child: Image.memory(
+                        //       // state.bytes![i],
+                        //       snapshot.data!
+                        //       // fit: BoxFit.fill,
+                        //       // frameBuilder: ((context, child, frame, wasSynchronouslyLoaded) {
+                        //       //   if (wasSynchronouslyLoaded) return child;
+                        //       //   return AnimatedSwitcher(
+                        //       //     duration: const Duration(milliseconds: 200),
+                        //       //     child: frame != null
+                        //       //         ? child
+                        //       //         : SizedBox(
+                        //       //             height: 60,
+                        //       //             width: 60,
+                        //       //             child: CircularProgressIndicator(strokeWidth: 6),
+                        //       //           ),
+                        //       //   );
+                        //       // }),
+                        //       ),
+                        // );
+
+                        // Align(
+                        //   alignment: Alignment.bottomCenter,
+                        //   child: Text(
+                        //     state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                        //     // " asd",
+                        //     // "Card ${i + 1}",
+                        //     textAlign: TextAlign.center,
+                        //
+                        //     style: TextStyle(fontSize: 32, color: Colors.white, backgroundColor: Colors.transparent),
                         //   ),
                         // ),
-
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                        ),
-                        useOldImageOnUrlChange: true,
-                        // very important: keep both placeholder and errorWidget
-                        placeholder: (context, url) => Container(
-                          // color: Colors.grey.withOpacity(0.1),
-                          decoration: BoxDecoration(
-                            // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            // color: Colors.grey.withOpacity(0.05),
-                            color: Colors.grey.withOpacity(0.1),
-                          ),
-                          child: SpinKitFadingCircle(
-                            color: Colors.white,
-                            size: 50.0,
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          // color: Colors.grey.withOpacity(0.1),
-                          decoration: BoxDecoration(
-                            // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            color: Colors.grey.withOpacity(0.1),
-                          ),
-                          child: SpinKitFadingCircle(
-                            color: Colors.white,
-                            // size: 50.0,
-                          ),
-                        ),
-                        // errorWidget: (context, url, error) => Container(
-                        //     alignment: Alignment.center,
-                        //     child: Icon(
-                        //       Icons.error,
-                        //       color: Colors.grey.withOpacity(0.8),
-                        //     )),
-                      ),
-                      // Spacer(),
-                      Positioned(
-                        // top: -50,
-                        bottom: -35,
-                        // height: -50,
-                        width: MediaQuery.of(context).size.width / 2 - 20,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: MarqueeWidget(
-                            child: Text(
-                              // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                              DateFormat("d. MMMM yyyy").format(DateTime.parse(state.searchResults!.response![index].dateOfPublication!)),
-                              // " asd",
-                              // "Card ${i + 1}",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                                backgroundColor: Colors.transparent,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        // top: -50,
-                        bottom: -20,
-                        // height: -50,
-                        width: MediaQuery.of(context).size.width / 2 - 20,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: MarqueeWidget(
-                            // crossAxisAlignment: CrossAxisAlignment.start,
-                            child: Text(
-                              // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                              state.searchResults!.response![index].name!,
-                              // " asd",
-                              // "Card ${i + 1}",
-                              textAlign: TextAlign.center,
-
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                                backgroundColor: Colors.transparent,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // return GestureDetector(
-                      //   behavior: HitTestBehavior.translucent,
-                      //   onTap: () => {
-                      //     // Navigator.push(
-                      //     //     context,
-                      //     //     new ReaderRoute(
-                      //     //         widget: StartReader(
-                      //     //       id: state
-                      //     //           .magazinePublishedGetLastWithLimit
-                      //     //           .response![i + 1]
-                      //     //           .idMagazinePublication!,
-                      //     //       tagindex: i,
-                      //     //       cover: state.bytes[i],
-                      //     //     ))),
-                      //     // print('Asf'),
-                      //     Navigator.push(
-                      //       context,
-                      //       PageRouteBuilder(
-                      //         // transitionDuration:
-                      //         // Duration(seconds: 2),
-                      //         pageBuilder: (_, __, ___) => StartReader(
-                      //           id: state.magazinePublishedGetLastWithLimit.response![i + 1].idMagazinePublication!,
-                      //
-                      //           index: i.toString(),
-                      //           cover: state.bytes![i],
-                      //           noofpages: state.magazinePublishedGetLastWithLimit.response![i + 1].pageMax!,
-                      //           readerTitle: state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                      //
-                      //           // noofpages: 5,
-                      //         ),
-                      //       ),
-                      //     )
-                      //     // Navigator.push(context,
-                      //     //     MaterialPageRoute(
-                      //     //         builder: (context) {
-                      //     //   return StartReader(
-                      //     //     id: state
-                      //     //         .magazinePublishedGetLastWithLimit
-                      //     //         .response![i + 1]
-                      //     //         .idMagazinePublication!,
-                      //     //     index: i,
-                      //     //   );
-                      //     // }))
-                      //   },
-                      //   child: Image.memory(
-                      //       // state.bytes![i],
-                      //       snapshot.data!
-                      //       // fit: BoxFit.fill,
-                      //       // frameBuilder: ((context, child, frame, wasSynchronouslyLoaded) {
-                      //       //   if (wasSynchronouslyLoaded) return child;
-                      //       //   return AnimatedSwitcher(
-                      //       //     duration: const Duration(milliseconds: 200),
-                      //       //     child: frame != null
-                      //       //         ? child
-                      //       //         : SizedBox(
-                      //       //             height: 60,
-                      //       //             width: 60,
-                      //       //             child: CircularProgressIndicator(strokeWidth: 6),
-                      //       //           ),
-                      //       //   );
-                      //       // }),
-                      //       ),
-                      // );
-
-                      // Align(
-                      //   alignment: Alignment.bottomCenter,
-                      //   child: Text(
-                      //     state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                      //     // " asd",
-                      //     // "Card ${i + 1}",
-                      //     textAlign: TextAlign.center,
-                      //
-                      //     style: TextStyle(fontSize: 32, color: Colors.white, backgroundColor: Colors.transparent),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                )
-                // : Container(
-                //     color: Colors.grey.withOpacity(0.1),
-                //     child: SpinKitFadingCircle(
-                //       color: Colors.white,
-                //       size: 50.0,
-                //     ),
-                //   ),
-                );
-          }),
+                      ],
+                    ),
+                  )
+                  // : Container(
+                  //     color: Colors.grey.withOpacity(0.1),
+                  //     child: SpinKitFadingCircle(
+                  //       color: Colors.white,
+                  //       size: 50.0,
+                  //     ),
+                  //   ),
+                  );
+            }),
+      ),
     );
   }
 
@@ -1733,5 +956,126 @@ class _SearchPageState extends State<SearchPage>
     //     setState(() {});
     //   }
     // }
+  }
+}
+
+class CategoryImage extends StatefulWidget {
+  const CategoryImage({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final PageController controller;
+
+  @override
+  State<CategoryImage> createState() => _CategoryImageState();
+}
+
+class _CategoryImageState extends State<CategoryImage> {
+  late List<Uint8List> decodedImages;
+
+  @override
+  void initState() {
+    super.initState();
+    print('CategoryImage initialized');
+    decodedImages = NavbarState.magazineCategoryGetAllActive!.response!.map((item) => base64.decode(item.image!)).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.17,
+      child: PageView.builder(
+        controller: widget.controller,
+
+        itemCount: NavbarState.magazineCategoryGetAllActive?.response!.length,
+        allowImplicitScrolling: false,
+        // pageSnapping: false,
+        scrollDirection: Axis.horizontal,
+        dragStartBehavior: DragStartBehavior.start,
+        pageSnapping: false,
+        padEnds: false,
+// scrollBehavior: ScrollBehavior.,
+
+        itemBuilder: (context, i) {
+          return Transform.scale(
+            scale: 0.95,
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () => {
+                // print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
+
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => CategoryPage(
+                      titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                      categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
+                    ),
+                  ),
+                )
+              },
+              child: Column(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.13,
+                    // width: 100,
+                    // color: Colors.green,
+                    child: Card(
+                      color: Colors.transparent,
+
+                      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
+                      shape: CircleBorder(
+                        side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
+                        // borderRadius: BorderRadius.circular(100),
+                      ),
+
+                      clipBehavior: Clip.hardEdge,
+                      // margin: EdgeInsets.all(10.0),
+                      child: ClipRRect(
+                        // borderRadius: BorderRadius.circular(11.0),
+
+                        child: Image.memory(
+                          // state.bytes![i],
+
+                          decodedImages[i],
+                          key: ValueKey(NavbarState.magazineCategoryGetAllActive!.response![i].id!), // assuming id is unique
+
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+
+                          // scale: 0.001,
+                          // filterQuality: FilterQuality.high,
+                          // colorBlendMode: BlendMode.colorBurn,
+                          // height: MediaQuery.of(context).size.height * 0.1,
+                          // width: MediaQuery.of(context).size.width * 0.9,
+                          // height: 20,
+                        ),
+                      ),
+                      // child: Icon(
+                      //   Icons.ac_unit,
+                      //   size: 50,
+                      //   color: Colors.amber,
+                      // ),
+                    ),
+                  ),
+                  // Spacer(),
+                  Hero(
+                    tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                    child: Text(
+                      NavbarState.magazineCategoryGetAllActive!.response![i].name!
+                      // +                                    " " +
+                      // NavbarState.magazineCategoryGetAllActive!.response![i].id!
+                      ,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ), // Spacer()
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

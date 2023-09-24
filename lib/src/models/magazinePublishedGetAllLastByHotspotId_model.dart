@@ -31,7 +31,7 @@ class MagazinePublishedGetAllLastByHotspotId {
   }
 }
 
-class ResponseMagazine {
+  class ResponseMagazine {
   String? name;
   String? idPublisher;
   String? idMagazineType;

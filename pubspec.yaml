@@ -119,6 +119,7 @@ dependencies:
   google_fonts: ^4.0.4
   qr_code_scanner: ^1.0.1
   uuid: ^3.0.7
+  flutter_local_notifications: ^15.1.1
 
 dev_dependencies:
   flutter_test:
@@ -163,6 +164,7 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - assets/covers/
     - assets/translations/
    # - assets/PDFtest.pdf
    # - assets/test.mp4

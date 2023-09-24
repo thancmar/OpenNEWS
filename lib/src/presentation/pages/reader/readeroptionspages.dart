@@ -60,6 +60,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
   void dispose() {
     timer?.cancel();
     _spinKitController?.dispose();
+
     // controller.
     super.dispose();
   }
@@ -100,177 +101,182 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
           trackVisibility: false,
           // padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
           // shape: ,
-child:  Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: PageView.builder(
-          itemCount: int.parse(widget.reader.magazine.pageMax!),
-          padEnds: false,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: PageView.builder(
+              itemCount: int.parse(widget.reader.magazine.pageMax!),
+              padEnds: false,
 
-          // allowImplicitScrolling: false,
+              // allowImplicitScrolling: false,
 // findChildIndexCallback: ,
-          controller: controller,
+              controller: controller,
 // clipBehavior: Clip.hardEdge,
-          // onPageChanged: (int index) => setState(() => {}),
-          allowImplicitScrolling: false,
-          pageSnapping: false,
-          itemBuilder: (_, i) {
-            // print(widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + i.toString());
-            return ValueListenableBuilder<double>(
-                valueListenable: widget.reader.currentPage,
-                builder: (BuildContext context, double pageNo, Widget? child) {
-                  return BlocBuilder<ReaderBloc, ReaderState>(
-                    bloc: widget.bloc,
-                    builder: (context, state) {
-                      // print(state);
-                      // if (state is ReaderOpened) {
-                      // return ClipRRect(
-                      //   borderRadius: BorderRadius.circular(5.0),
-                      //   child: Image.memory(
-                      //     state.doc[i],
-                      //   ),
-                      // );
-                      // return Container();
-                      return Stack(children: [
-                        GestureDetector(
-                          onTap: () => {
-                            // widget.callback(i),
-                            // widget.reader.currentPage = i,
-                            print("page $i"),
-                            widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: i)),
+              // onPageChanged: (int index) => setState(() => {}),
+              allowImplicitScrolling: false,
+              pageSnapping: false,
+              itemBuilder: (_, i) {
+                // print(widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + i.toString());
+                return ValueListenableBuilder<double>(
+                    valueListenable: widget.reader.currentPage,
+                    builder: (BuildContext context, double pageNo, Widget? child) {
+                      return BlocBuilder<ReaderBloc, ReaderState>(
+                        bloc: widget.bloc,
+                        builder: (context, state) {
+                          // print(state);
+                          // if (state is ReaderOpened) {
+                          // return ClipRRect(
+                          //   borderRadius: BorderRadius.circular(5.0),
+                          //   child: Image.memory(
+                          //     state.doc[i],
+                          //   ),
+                          // );
+                          // return Container();
+                          return Stack(children: [
+                            GestureDetector(
+                              onTap: () => {
+                                if (mounted)
+                                  {
+                                    widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: i)),
+                                    setState(() {
+                                      // widget.reader.currentPage.value = i;
 
-                            setState(() {
-                              // widget.reader.currentPage.value = i;
+                                      widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                                    })
+                                  }
+                              },
+                              child: CachedNetworkImage(
+                                  key: ValueKey(_networklHasErrorNotifier[i].value),
+                                  filterQuality: FilterQuality.low,
+                                  // height: double.infinity,
+                                  imageUrl: widget.reader.magazine.idMagazinePublication! +
+                                      "_" +
+                                      widget.reader.magazine.dateOfPublication! +
+                                      "_" +
+                                      i.toString() +
+                                      "_" +
+                                      "thumbnail",
+                                  imageBuilder: (context, imageProvider) {
+                                    return Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            padding: i == widget.reader.pageController.page
+                                                ? EdgeInsets.fromLTRB(10, 10, 10, 10)
+                                                : EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                            // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            // decoration: i == pageNo
+                                            decoration: i == widget.reader.pageController.page
+                                                ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue)
+                                                : BoxDecoration(),
+                                            // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                              child: Image(
+                                                  alignment: Alignment.center,
+                                                  image: imageProvider,
+                                                  // scale: i == pageNo ? MediaQuery.of(context).size.aspectRatio * 4 : 1,
+                                                  //   scale: i == pageNo ? 2 : 1,
+                                                  //   // fit: i == pageNo ? BoxFit.fitWidth : BoxFit.fitWidth
+                                                  fit: BoxFit.fitWidth),
+                                            ),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: LayoutBuilder(builder: (ctx, constraints) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(15.0),
+                                              child: Container(
+                                                // padding: EdgeInsets.only(bottom: 20),
+                                                // alignment: Alignment.center,
+                                                // constraints: flase,
 
-                              widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                            }),
-                          },
-                          child: CachedNetworkImage(
-                              key: ValueKey(_networklHasErrorNotifier[i].value),
-                              filterQuality: FilterQuality.low,
-                              // height: double.infinity,
-                              imageUrl: widget.reader.magazine.idMagazinePublication! +
-                                  "_" +
-                                  widget.reader.magazine.dateOfPublication! +
-                                  "_" +
-                                  i.toString() +
-                                  "_" +
-                                  "thumbnail",
-                              imageBuilder: (context, imageProvider) {
-                                return Stack(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        padding: i == widget.reader.pageController.page ? EdgeInsets.fromLTRB(10, 10, 10, 10) : EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                        // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                        // decoration: i == pageNo
-                                        decoration: i == widget.reader.pageController.page
-                                            ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue)
-                                            : BoxDecoration(),
-                                        // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                          child: Image(
-                                              alignment: Alignment.center,
-                                              image: imageProvider,
-                                              // scale: i == pageNo ? MediaQuery.of(context).size.aspectRatio * 4 : 1,
-                                              //   scale: i == pageNo ? 2 : 1,
-                                              //   // fit: i == pageNo ? BoxFit.fitWidth : BoxFit.fitWidth
-                                              fit: BoxFit.fitWidth),
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                                    color: Colors.black.withOpacity(0.8),
+                                                    border: i == pageNo
+                                                        ? Border.all(color: Colors.transparent, width: 5.10)
+                                                        : Border.all(color: Colors.transparent, width: 0)),
+                                                // color: Colors.black.withOpacity(0.8),
+                                                // height: constraints.maxHeight * 0.10,
+                                                // width: constraints.maxWidth * 0.10,
+
+                                                padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
+                                                child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  // useOldImageOnUrlChange: true,
+                                  // very important: keep both placeholder and errorWidget
+                                  placeholder: (context, url) => Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Container(
+                                          // color: Colors.grey.withOpacity(0.1),
+
+                                          decoration: BoxDecoration(
+                                            // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                            color: Colors.grey.withOpacity(0.1),
+                                          ),
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 50.0,
+                                            controller: _spinKitController,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: LayoutBuilder(builder: (ctx, constraints) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(15.0),
-                                          child: Container(
-                                            // padding: EdgeInsets.only(bottom: 20),
-                                            // alignment: Alignment.center,
-                                            // constraints: flase,
+                                  errorWidget: (context, url, error) {
+                                    Future.delayed(const Duration(milliseconds: 500), () {
+                                      timer = Timer(Duration(seconds: 5), () {
+                                        if (mounted) {
+                                          setState(() {
+                                            _networklHasErrorNotifier[i].value++;
+                                          });
+                                        }
+                                      });
+                                    });
+                                    return Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Container(
+                                        // color: Colors.grey.withOpacity(0.1),
 
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                                color: Colors.black.withOpacity(0.8),
-                                                border: i == pageNo
-                                                    ? Border.all(color: Colors.transparent, width: 5.10)
-                                                    : Border.all(color: Colors.transparent, width: 0)),
-                                            // color: Colors.black.withOpacity(0.8),
-                                            // height: constraints.maxHeight * 0.10,
-                                            // width: constraints.maxWidth * 0.10,
+                                        decoration: BoxDecoration(
+                                          // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
 
-                                            padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                                            child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                );
-                              },
-                              // useOldImageOnUrlChange: true,
-                              // very important: keep both placeholder and errorWidget
-                              placeholder: (context, url) => Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Container(
-                                  // color: Colors.grey.withOpacity(0.1),
-
-                                  decoration: BoxDecoration(
-                                    // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                    color: Colors.grey.withOpacity(0.1),
-                                  ),
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 50.0,
-                                    controller: _spinKitController,
-                                  ),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) {
-                                Future.delayed(const Duration(milliseconds: 500), () {
-                                  setState(() {
-                                    _networklHasErrorNotifier[i].value++;
-                                  });
-                                });
-                                return Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Container(
-                                    // color: Colors.grey.withOpacity(0.1),
-
-                                    decoration: BoxDecoration(
-                                      // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                      color: Colors.grey.withOpacity(0.1),
-                                    ),
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 50.0,
-                                      controller: _spinKitController,
-                                      // itemBuilder: (BuildContext context, int value) => {},
-                                    ),
-                                  ),
-                                );
-                              }),
-                        ),
-                      ]);
-                      // } else {
-                      //   return Container(
-                      //     color: Colors.grey.withOpacity(0.2),
-                      //     child: SpinKitFadingCircle(
-                      //       color: Colors.white,
-                      //       size: 50.0,
-                      //     ),
-                      //   );
-                      // }
-                    },
-                  );
-                });
-          },
-        ),
-      ),
+                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          color: Colors.grey.withOpacity(0.1),
+                                        ),
+                                        child: SpinKitFadingCircle(
+                                          color: Colors.white,
+                                          size: 50.0,
+                                          controller: _spinKitController,
+                                          // itemBuilder: (BuildContext context, int value) => {},
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ]);
+                          // } else {
+                          //   return Container(
+                          //     color: Colors.grey.withOpacity(0.2),
+                          //     child: SpinKitFadingCircle(
+                          //       color: Colors.white,
+                          //       size: 50.0,
+                          //     ),
+                          //   );
+                          // }
+                        },
+                      );
+                    });
+              },
+            ),
+          ),
 //           child: PageView.builder(
 //             itemCount: int.parse(widget.reader.magazine.pageMax!),
 //             scrollDirection: Axis.horizontal,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'dart:typed_data';
@@ -77,9 +78,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       NavbarState.locationoffersImages?.clear();
       NavbarState.locationImage = null;
 
-      await magazineRepository.magazineCategoryGetAllActive().then((value) async => {
-        NavbarState.magazineCategoryGetAllActive = value
-      });
+      await magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
       print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
 
       await locationRepository
@@ -177,6 +176,10 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
                   for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
                     //To show on the searchpage
+                    // After every 50 iterations, delay for 1 second
+                    if ((i + 1) % 100 == 0) {
+                       Future.delayed(Duration(seconds: 1));
+                    }
                     switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
                       case "de":
                         NavbarState.counterDE = NavbarState.counterDE + 1;
@@ -275,6 +278,18 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         NavbarState.languageResultsDE?.clear();
         NavbarState.languageResultsEN?.clear();
         NavbarState.languageResultsFR?.clear();
+
+        String? stringOfItems = await dioClient.secureStorage.read(key: 'bookmarks');
+        if (stringOfItems != null && stringOfItems.isNotEmpty) {
+          Map<String, dynamic> decodedJson = jsonDecode(stringOfItems);
+          MagazinePublishedGetAllLastByHotspotId retrievedBookmarks = MagazinePublishedGetAllLastByHotspotId.fromJson(decodedJson);
+          NavbarState.bookmarks.value = retrievedBookmarks;
+        }
+
+
+
+
+        // NavbarState.bookmarks =  await dioClient.secureStorage.read(key: "bookmarks");
         // NavbarState.hotspotList = await hotspotRepository.GetAllActiveHotspots();
         // await NavbarState.hotspotList;
         // appbarlocation = Data();
@@ -394,7 +409,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         //     // user manually enable it in the system settings.
         //     openAppSettings();
         //   }
-          emit(GoToLanguageSelection(languageOptions: event.languageOptions));
+        emit(GoToLanguageSelection(languageOptions: event.languageOptions));
         // }
       } catch (error) {
         print("GetMapOffer error - $error");
@@ -415,8 +430,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         //     emit(NavbarLoaded()),
         //   });
         // } else {
-          await EasyLoading.dismiss();
-          emit(NavbarLoaded());
+        await EasyLoading.dismiss();
+        emit(NavbarLoaded());
         // }
       } on Exception catch (e) {
         await EasyLoading.dismiss();
@@ -458,6 +473,18 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         emit(NavbarError(e.toString()));
         print(e);
       }
+    });
+
+    on<Bookmark>((event, emit) async {
+      try {
+        String serializedBookmarks = jsonEncode(NavbarState.bookmarks.value.toJson());
+        await dioClient.secureStorage.write(key: "bookmarks", value: serializedBookmarks);
+
+      } catch (error) {
+        print("error - $error");
+        emit(NavbarError(error.toString()));
+      }
+      ;
     });
   }
 

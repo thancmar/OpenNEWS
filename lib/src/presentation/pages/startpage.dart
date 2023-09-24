@@ -5,16 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_svg/parser.dart';
 
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
-import 'package:sharemagazines_flutter/src/models/location_model.dart';
+import 'package:sharemagazines_flutter/src/presentation/clip.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/coveranimmation.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/registrationpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
 
 import '../../blocs/navbar/navbar_bloc.dart';
-
+import '../../models/location_model.dart';
 import '../validators/emailvalidator.dart';
-import '../widgets/loading.dart';
+import '../widgets/marquee.dart';
 
 // import 'package:sharemagazines_flutter/src/presentation/pages/login.dart';
 // import 'package:sharemagazines_flutter/src/presentation/pages/map_page.dart';
@@ -28,8 +27,39 @@ class StartPage extends StatefulWidget {
   State<StartPage> createState() => _StartPageState();
 }
 
-class _StartPageState extends State<StartPage> {
+class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  GlobalKey _widgetKey = GlobalKey();
+  late final AnimationController _controller = AnimationController(
+    duration:  Duration(seconds: 5),
+    vsync: this,
+  )..repeat(reverse: true);
+  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+    // begin: Offset.zero,
+    begin: Offset(-0.1, -0.1),
+    end: Offset(-0.5, -0.50),
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.linear,
+  ));
+  late final AnimationController covercontroller = AnimationController(
+    // duration: const Duration(seconds: 10),
+
+    vsync: this,
+  );
+    // ..repeat(reverse: true);
+
+  List<Widget> generateAlternatingWidgets(int count) {
+    List<Widget> widgets = [];
+    for (int i = 0; i < count; i++) {
+      if (i % 2 == 0) {
+        widgets.add(coverWidget());
+      } else {
+        widgets.add(coverWidget2());
+      }
+    }
+    return widgets;
+  }
 
   // TextEditingController _emailController = TextEditingController();
   TextEditingController _emailController = TextEditingController(text: AuthState.savedEmail);
@@ -87,6 +117,43 @@ class _StartPageState extends State<StartPage> {
                   ),
                 ),
               ),
+
+              (MediaQuery.of(context).viewInsets.bottom > 0.0 )
+                  ? Container()
+                  : Positioned(
+                      top: 0,
+                      left: 0,
+                      child: ClipPath(
+                        clipper: InnerClipper(
+                          height: constraints.constrainHeight() / 2,
+                          width: constraints.constrainWidth(),
+                          borderRadius: 20,
+                          borderWidth: 0.10,
+                          // Match with BoxDecoration borderWidth
+                          padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
+                          // padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.01, size.width * 0.045, size.height * 0.001),
+                        ),
+                        child: Container(
+                          color: Colors.transparent,
+                          height: constraints.constrainHeight(),
+                          width: constraints.constrainWidth(),
+                          child: AnimatedBackground(
+                            // controller: covercontroller,
+                          ),
+                        ),
+                        // child: AnimatedBackground()
+                        // child: SlideTransition(
+                        //   position: _offsetAnimation,
+                        //   child: Wrap(
+                        //
+                        //     spacing: 15.0,       // horizontal spacing
+                        //     runSpacing: 10.0,   // vertical spacing
+                        //     children: generateAlternatingWidgets(20),
+                        //   ),
+                        // )
+                      ),
+                    ),
+              // AnimatedBackground(),
               BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                 if (state is Authenticated || state is IncompleteAuthenticated || state is AuthenticatedWithGoogle) {
                   // Navigating to the dashboard screen if the user is authenticated
@@ -104,234 +171,18 @@ class _StartPageState extends State<StartPage> {
                     // setState(() {});
                   });
                   return Container();
-                }
-                // else if (state is UnAuthenticated) {
-                //   // _emailController.text = AuthState?.userDetails?.response?.email ?? '';
-                //   // _passwordController.text = AuthState.savedPWD;
-                //   return Positioned(
-                //     top: constraints.constrainHeight() / 2,
-                //     height: constraints.constrainHeight() / 2,
-                //     width: constraints.constrainWidth(),
-                //
-                //     // left: constraints.constrainWidth() / 2,
-                //     // child: FlutterLogo(),
-                //     // key: _widgetKey,
-                //     child: Container(
-                //       // key: _widgetKey,
-                //       margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
-                //       decoration: new BoxDecoration(
-                //           border: Border.all(color: Colors.blueAccent, width: 0.10),
-                //           borderRadius: new BorderRadius.circular(20.0),
-                //           color: Colors.transparent
-                //           // color: Colors.red,
-                //           ),
-                //       child: SingleChildScrollView(
-                //         // key: _widgetKey,
-                //         child: new Column(
-                //           crossAxisAlignment: CrossAxisAlignment.stretch,
-                //           children: <Widget>[
-                //             // Padding(
-                //             //   padding: const EdgeInsets.all(25.0),
-                //             //   child: Container( height: 300,child: LoadingAnimation()),
-                //             // ),
-                //             Padding(
-                //               padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
-                //               child: Text(
-                //                 ('welcome').tr(),
-                //                 // "Herzlich willkommen",
-                //                 textAlign: TextAlign.left,
-                //                 // textScaleFactor: ScaleSize.textScaleFactor(context),
-                //                 style: TextStyle(
-                //                   // fontFamily: "Raleway",
-                //                   color: Colors.white,
-                //                   fontWeight: FontWeight.w700,
-                //                   // fontSize: 24,
-                //                   fontSize: size.width * 0.065,
-                //                   //fontStyle: FontStyle.,
-                //                 ),
-                //               ),
-                //             ),
-                //             Padding(
-                //               padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
-                //               child: Text(
-                //                 ('welcome_text').tr(),
-                //                 textAlign: TextAlign.left,
-                //                 style: TextStyle(
-                //                   color: Colors.white,
-                //                   fontWeight: FontWeight.w300,
-                //                   // fontSize: 16,
-                //                   fontSize: size.width * 0.05,
-                //                   //fontStyle: FontStyle.,
-                //                 ),
-                //               ),
-                //             ),
-                //             Padding(
-                //               padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
-                //               child: ElevatedButton(
-                //                 onPressed: () {
-                //                   // if (AuthState.userDetails?.response?.id != null) {
-                //                   //   Navigator.of(context).popUntil((route) => route.isFirst);
-                //                   // }
-                //                   BlocProvider.of<AuthBloc>(context).add(
-                //                     IncompleteSignInRequested(),
-                //                   );
-                //                   // Navigator.of(context).popUntil((route) => route.isFirst);
-                //                   // Future.delayed(Duration(milliseconds: 3), () async {
-                //                   //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
-                //                   //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                //                   //
-                //                   //   // BlocProvider.of<NavbarBloc>(context);
-                //                   //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
-                //                   //   // setState(() {});
-                //                   // });
-                //                   // BlocProvider.of<AuthBloc>(context).add(
-                //                   //   IncompleteSignInRequested(),
-                //                   // );
-                //                   // Future.delayed(Duration(milliseconds: 1), () async {
-                //                   //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                //                   //
-                //                   // });
-                //                   // }
-                //                   // _authenticateincomplete(context);
-                //                   // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
-                //                   //   if (NavbarState.ap is! Loading) {
-                //                   //     Navigator.of(context).popUntil((route) => route.isFirst);
-                //                   //     Future.delayed(Duration(milliseconds: 1), () async {
-                //                   //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                //                   //     });
-                //                   //     return;
-                //                   //   }
-                //                   // });
-                //
-                //                   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
-                //                 },
-                //                 style: ElevatedButton.styleFrom(
-                //                   //primary: Colors.green,
-                //                   onPrimary: Colors.white,
-                //                   shadowColor: Colors.blueAccent,
-                //                   elevation: 3,
-                //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-                //                   minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
-                //                 ),
-                //                 child: Text(
-                //                   "Ohne Account lesen",
-                //                   style: TextStyle(
-                //                     color: Colors.white,
-                //                     fontWeight: FontWeight.w400,
-                //                     // fontSize: 18,
-                //                     fontSize: size.width * 0.06,
-                //                     //fontStyle: FontStyle.,
-                //                   ),
-                //                 ),
-                //               ),
-                //             ),
-                //             Padding(
-                //               padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
-                //               child: OutlinedButton(
-                //                 onPressed: () {
-                //                   // Navigator.push(
-                //                   //   context,
-                //                   //   PageRouteBuilder(
-                //                   //     pageBuilder: (context, animation1, animation2) => LoginPage(
-                //                   //       // title: 'Login',
-                //                   //       splashbloc: widget.splashbloc,
-                //                   //     ),
-                //                   //     transitionDuration: Duration.zero,
-                //                   //   ),
-                //                   // );
-                //                   BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
-                //
-                //                   // Navigator.pushReplacement(
-                //                   //     context,
-                //                   //     MaterialPageRoute(
-                //                   //         builder: (context) => MainPage()));
-                //                 },
-                //                 style: OutlinedButton.styleFrom(
-                //                   //primary: Colors.,
-                //                   //onPrimary: Colors.white,
-                //                   //shadowColor: Colors.blueAccent,
-                //                   // elevation: 3,
-                //                   side: BorderSide(width: 0.10, color: Colors.white),
-                //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-                //                   minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
-                //                 ),
-                //                 child: Text(
-                //                   "Anmelden",
-                //                   style: TextStyle(
-                //                     color: Colors.white,
-                //                     fontWeight: FontWeight.w400,
-                //                     fontSize: size.width * 0.06,
-                //                     //fontStyle: FontStyle.,
-                //                   ),
-                //                 ),
-                //               ),
-                //             ),
-                //             Padding(
-                //               padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.005),
-                //               child: Text(
-                //                 "Du hast noch keinen Account?",
-                //                 textAlign: TextAlign.center,
-                //                 style: TextStyle(
-                //                   color: Colors.white,
-                //                   fontWeight: FontWeight.w300,
-                //                   fontSize: size.width * 0.04,
-                //                   //fontStyle: FontStyle.,
-                //                 ),
-                //               ),
-                //             ),
-                //             Padding(
-                //                 padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-                //                 child: InkWell(
-                //                   onTap: () {
-                //                     print("I was tapped!");
-                //                     Future.delayed(Duration(milliseconds: 50), () {
-                //                       Navigator.pushAndRemoveUntil(
-                //                           context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
-                //                     });
-                //                     // Navigator.push(
-                //                     //   context,
-                //                     //   PageRouteBuilder(
-                //                     //     pageBuilder:
-                //                     //         (context, animation1, animation2) =>
-                //                     //             Registration(
-                //                     //                 // title: 'Login',
-                //                     //                 ),
-                //                     //     transitionDuration: Duration.zero,
-                //                     //   ),
-                //                     // );
-                //                   },
-                //                   child: Text(
-                //                     "Jetzt registrieren!",
-                //                     textAlign: TextAlign.center,
-                //                     style: TextStyle(
-                //                       color: Colors.blue,
-                //                       fontWeight: FontWeight.w300,
-                //                       fontSize: size.width * 0.045,
-                //                       //fontStyle: FontStyle.,
-                //                     ),
-                //                   ),
-                //                 )),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   );
-                // }
-                else if (state is GoToLoginPage) {
-                  return Positioned.fill(
-                    // top: constraints.constrainHeight() / 2,
-                    // height: constraints.constrainHeight() / 2,
-                    // width: constraints.constrainWidth(),
-                    // left: constraints.constrainWidth() / 2,
-                    child: SafeArea(
-                      child: Align(
-                        alignment: MediaQuery.of(context).viewInsets.bottom > 0.0 ? Alignment.topCenter : Alignment.bottomCenter,
-                        child: SizedBox(
-                          height: constraints.constrainHeight() / 2,
-                          width: constraints.constrainWidth(),
+                } else if (state is GoToLoginPage) {
+                  return Stack(
+                    children: [
+                      Positioned(
+                        top: MediaQuery.of(context).viewInsets.bottom > 0.0 ? 50 : constraints.constrainHeight() / 2,
+                        height: constraints.constrainHeight() / 2,
+                        width: constraints.constrainWidth(),
+                        child: Align(
+                          alignment: MediaQuery.of(context).viewInsets.bottom > 0.0 ? Alignment.topCenter : Alignment.bottomCenter,
                           child: Container(
-                            // margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
-                            margin: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.025, size.width * 0.045, size.height * 0.025),
+                            margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
+                            // margin: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.025, size.width * 0.045, size.height * 0.025),
                             decoration: new BoxDecoration(
                               border: Border.all(color: Colors.blueAccent, width: 0.10),
                               borderRadius: new BorderRadius.circular(20.0),
@@ -345,8 +196,8 @@ class _StartPageState extends State<StartPage> {
                                   Expanded(
                                     flex: 2,
                                     child: Padding(
-                                      // padding:  EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 0.0),
-                                      padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.01, size.width * 0.045, size.height * 0.001),
+                                      padding: EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 0.0),
+                                      // padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.01, size.width * 0.045, size.height * 0.001),
 
                                       child: Row(
                                         children: [
@@ -587,7 +438,7 @@ class _StartPageState extends State<StartPage> {
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   );
                   // }
                   // else if (state is LoadingAuth) {
@@ -615,221 +466,245 @@ class _StartPageState extends State<StartPage> {
                     ],
                   );
                 }
-                return Positioned(
-                  top: constraints.constrainHeight() / 2,
-                  height: constraints.constrainHeight() / 2,
-                  width: constraints.constrainWidth(),
+                return Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    //     Positioned(
+                    //       top: 0,
+                    //       left: 0,
+                    //       child: ClipPath(
+                    //
+                    //           clipper: TsClip1(_widgetKey),
+                    //           // child: AnimatedBackground(),
+                    //         child: Container(),
+                    //           // child: SlideTransition(
+                    //           //   position: _offsetAnimation,
+                    //           //   child: Wrap(
+                    //           //
+                    //           //     spacing: 15.0,       // horizontal spacing
+                    //           //     runSpacing: 10.0,   // vertical spacing
+                    //           //     children: generateAlternatingWidgets(20),
+                    //           //   ),
+                    //           // )
+                    // ),
+                    //     ),
+                    Positioned(
+                      top: constraints.constrainHeight() / 2,
+                      height: constraints.constrainHeight() / 2,
+                      width: constraints.constrainWidth(),
 
-                  // left: constraints.constrainWidth() / 2,
-                  // child: FlutterLogo(),
-                  // key: _widgetKey,
-                  child: Container(
-                    // key: _widgetKey,
-                    margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.blueAccent, width: 0.10),
-                        borderRadius: new BorderRadius.circular(20.0),
-                        color: Colors.transparent
-                        // color: Colors.red,
-                        ),
-                    child: SingleChildScrollView(
+                      // left: constraints.constrainWidth() / 2,
+                      // child: FlutterLogo(),
                       // key: _widgetKey,
-                      child: new Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          // Padding(
-                          //   padding: const EdgeInsets.all(25.0),
-                          //   child: Container( height: 300,child: LoadingAnimation()),
-                          // ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
-                            child: Text(
-                              ('welcome').tr(),
-                              // "Herzlich willkommen",
-                              textAlign: TextAlign.left,
-                              // textScaleFactor: ScaleSize.textScaleFactor(context),
-                              style: TextStyle(
-                                // fontFamily: "Raleway",
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                // fontSize: 24,
-                                fontSize: size.width * 0.065,
-                                //fontStyle: FontStyle.,
-                              ),
+                      child: Container(
+                        // key: _widgetKey,
+                        margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.blueAccent, width: 0.10),
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: Colors.transparent
+                            // color: Colors.red,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
-                            child: Text(
-                              ('welcomeText').tr(),
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300,
-                                // fontSize: 16,
-                                fontSize: size.width * 0.05,
-                                //fontStyle: FontStyle.,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Navigator.of(context).pop();
-                                // Navigator.of(context).popUntil((route) => route.isFirst);
-                                var sd = AuthState.inCompleteUserDetails;
-                                if (AuthState.inCompleteUserDetails?.response != null && Navigator.of(context).canPop()== true) {
-                                  // Navigator.of(context).popUntil((route) => route.isFirst,);
-                                  Navigator.pop(context, 'popped');
-
-                                }else{
-                                BlocProvider.of<AuthBloc>(context).add(
-                                  IncompleteSignInRequested(),
-                                );}
-                                // Navigator.of(context).popUntil((route) => route.isFirst);
-                                // Future.delayed(Duration(milliseconds: 3), () async {
-                                //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
-                                //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                //
-                                //   // BlocProvider.of<NavbarBloc>(context);
-                                //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
-                                //   // setState(() {});
-                                // });
-                                // BlocProvider.of<AuthBloc>(context).add(
-                                //   IncompleteSignInRequested(),
-                                // );
-                                // Future.delayed(Duration(milliseconds: 1), () async {
-                                //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                //
-                                // });
-                                // }
-                                // _authenticateincomplete(context);
-                                // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
-                                //   if (NavbarState.ap is! Loading) {
-                                //     Navigator.of(context).popUntil((route) => route.isFirst);
-                                //     Future.delayed(Duration(milliseconds: 1), () async {
-                                //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                //     });
-                                //     return;
-                                //   }
-                                // });
-
-                                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
-                              },
-                              style: ElevatedButton.styleFrom(
-                                //primary: Colors.green,
-                                onPrimary: Colors.white,
-                                shadowColor: Colors.blueAccent,
-                                elevation: 3,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-                                minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
-                              ),
-                              child: MarqueeWidget(
+                        child: SingleChildScrollView(
+                          key: _widgetKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              // Padding(
+                              //   padding: const EdgeInsets.all(25.0),
+                              //   child: Container( height: 300,child: LoadingAnimation()),
+                              // ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
                                 child: Text(
-                                  ("inCompleteSignIn").tr(),
+                                  ('welcome').tr(),
+                                  // "Herzlich willkommen",
+                                  textAlign: TextAlign.left,
+                                  // textScaleFactor: ScaleSize.textScaleFactor(context),
+                                  style: TextStyle(
+                                    // fontFamily: "Raleway",
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    // fontSize: 24,
+                                    fontSize: size.width * 0.065,
+                                    //fontStyle: FontStyle.,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
+                                child: Text(
+                                  ('welcomeText').tr(),
+                                  textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.white,
-                                    
-                                    fontWeight: FontWeight.w400,
-                                    // fontSize: 18,
-                                    fontSize: size.width * 0.06,
+                                    fontWeight: FontWeight.w300,
+                                    // fontSize: 16,
+                                    fontSize: size.width * 0.05,
                                     //fontStyle: FontStyle.,
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
-                            child: OutlinedButton(
-                              onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   PageRouteBuilder(
-                                //     pageBuilder: (context, animation1, animation2) => LoginPage(
-                                //       // title: 'Login',
-                                //       splashbloc: widget.splashbloc,
-                                //     ),
-                                //     transitionDuration: Duration.zero,
-                                //   ),
-                                // );
-                                BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Navigator.of(context).pop();
+                                    // Navigator.of(context).popUntil((route) => route.isFirst);
+                                    var sd = AuthState.inCompleteUserDetails;
+                                    if (AuthState.inCompleteUserDetails?.response != null && Navigator.of(context).canPop() == true) {
+                                      // Navigator.of(context).popUntil((route) => route.isFirst,);
+                                      Navigator.pop(context, 'popped');
+                                    } else {
+                                      BlocProvider.of<AuthBloc>(context).add(
+                                        IncompleteSignInRequested(),
+                                      );
+                                    }
+                                    // Navigator.of(context).popUntil((route) => route.isFirst);
+                                    // Future.delayed(Duration(milliseconds: 3), () async {
+                                    //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                                    //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                    //
+                                    //   // BlocProvider.of<NavbarBloc>(context);
+                                    //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                                    //   // setState(() {});
+                                    // });
+                                    // BlocProvider.of<AuthBloc>(context).add(
+                                    //   IncompleteSignInRequested(),
+                                    // );
+                                    // Future.delayed(Duration(milliseconds: 1), () async {
+                                    //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                    //
+                                    // });
+                                    // }
+                                    // _authenticateincomplete(context);
+                                    // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
+                                    //   if (NavbarState.ap is! Loading) {
+                                    //     Navigator.of(context).popUntil((route) => route.isFirst);
+                                    //     Future.delayed(Duration(milliseconds: 1), () async {
+                                    //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                    //     });
+                                    //     return;
+                                    //   }
+                                    // });
 
-                                // Navigator.pushReplacement(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => MainPage()));
-                              },
-                              style: OutlinedButton.styleFrom(
-                                //primary: Colors.,
-                                //onPrimary: Colors.white,
-                                //shadowColor: Colors.blueAccent,
-                                // elevation: 3,
-                                side: BorderSide(width: 0.10, color: Colors.white),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-                                minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
-                              ),
-                              child: Text(
-                                ("logIn").tr(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: size.width * 0.06,
-                                  //fontStyle: FontStyle.,
+                                    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    //primary: Colors.green,
+                                    onPrimary: Colors.white,
+                                    shadowColor: Colors.blueAccent,
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                                    minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                                  ),
+                                  child: MarqueeWidget(
+                                    child: Text(
+                                      ("inCompleteSignIn").tr(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+
+                                        fontWeight: FontWeight.w400,
+                                        // fontSize: 18,
+                                        fontSize: size.width * 0.06,
+                                        //fontStyle: FontStyle.,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.005),
-                            child: Text(
-                             ("toRegistration").tr(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300,
-                                fontSize: size.width * 0.04,
-                                //fontStyle: FontStyle.,
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    // Navigator.push(
+                                    //   context,
+                                    //   PageRouteBuilder(
+                                    //     pageBuilder: (context, animation1, animation2) => LoginPage(
+                                    //       // title: 'Login',
+                                    //       splashbloc: widget.splashbloc,
+                                    //     ),
+                                    //     transitionDuration: Duration.zero,
+                                    //   ),
+                                    // );
+                                    BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
+
+                                    // Navigator.pushReplacement(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => MainPage()));
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    //primary: Colors.,
+                                    //onPrimary: Colors.white,
+                                    //shadowColor: Colors.blueAccent,
+                                    // elevation: 3,
+                                    side: BorderSide(width: 0.10, color: Colors.white),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                                    minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                                  ),
+                                  child: Text(
+                                    ("logIn").tr(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: size.width * 0.06,
+                                      //fontStyle: FontStyle.,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-                              child: InkWell(
-                                onTap: () {
-                                  print("I was tapped!");
-                                  Future.delayed(Duration(milliseconds: 50), () {
-                                    Navigator.pushAndRemoveUntil(
-                                        context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
-                                  });
-                                  // Navigator.push(
-                                  //   context,
-                                  //   PageRouteBuilder(
-                                  //     pageBuilder:
-                                  //         (context, animation1, animation2) =>
-                                  //             Registration(
-                                  //                 // title: 'Login',
-                                  //                 ),
-                                  //     transitionDuration: Duration.zero,
-                                  //   ),
-                                  // );
-                                },
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.005),
                                 child: Text(
-                                  "Jetzt registrieren!",
+                                  ("toRegistration").tr(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Colors.blue,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: size.width * 0.045,
+                                    fontSize: size.width * 0.04,
                                     //fontStyle: FontStyle.,
                                   ),
                                 ),
-                              )),
-                        ],
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      print("I was tapped!");
+                                      Future.delayed(Duration(milliseconds: 50), () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
+                                      });
+                                      // Navigator.push(
+                                      //   context,
+                                      //   PageRouteBuilder(
+                                      //     pageBuilder:
+                                      //         (context, animation1, animation2) =>
+                                      //             Registration(
+                                      //                 // title: 'Login',
+                                      //                 ),
+                                      //     transitionDuration: Duration.zero,
+                                      //   ),
+                                      // );
+                                    },
+                                    child: Text(
+                                      "Jetzt registrieren!",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: size.width * 0.045,
+                                        //fontStyle: FontStyle.,
+                                      ),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 );
                 // else if (state is LoadingAuth) {}
                 // Navigator.of(context).popUntil((route) => route.isFirst);
@@ -842,297 +717,6 @@ class _StartPageState extends State<StartPage> {
         },
       ),
     );
-
-    // return Scaffold(
-    //   resizeToAvoidBottomInset: false,
-    //   body: LayoutBuilder(
-    //     builder: (BuildContext context, BoxConstraints constraints) {
-    //       return Stack(
-    //         children: <Widget>[
-    //           Positioned.fill(
-    //             child: Image.asset(
-    //               "assets/images/Background.png",
-    //               fit: BoxFit.cover,
-    //               //allowDrawingOutsideViewBox: true,
-    //             ),
-    //           ),
-    //           // position: _offsetAnimation,
-    //           /* ClipPath(
-    //             clipper: TsClip1(_widgetKey),
-    //             // child: SlideTransition(
-    //             //   position: _offsetAnimation,
-    //             child: Wrap(
-    //               // alignment: WrapAlignment.start,
-    //               spacing: 10.0,
-    //               // runSpacing: 5,
-    //               // alignment: WrapAlignment.center,
-    //               // direction: Axis.vertical,
-    //               direction: Axis.vertical,
-    //               // crossAxisAlignment: WrapCrossAlignment.end,
-    //               // runAlignment: WrapAlignment.values,
-    //               // verticalDirection: VerticalDirection.down,
-    //               children: [
-    //                 Wrap(
-    //                   spacing: 15.0,
-    //                   // alignment: WrapAlignment.center,
-    //                   // verticalDirection: VerticalDirection.down,
-    //                   // direction: Axis.vertical,
-    //                   // direction: Axis.horizontal,
-    //                   children: [
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                   ],
-    //                 ),
-    //                 Wrap(
-    //                   // direction: Axis.vertical,
-    //                   // direction: Axis.horizontal,
-    //                   spacing: 15.0,
-    //                   children: [
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                   ],
-    //                 ),
-    //                 Wrap(
-    //                   // direction: Axis.vertical,
-    //                   // direction: Axis.horizontal,
-    //                   spacing: 15.0,
-    //                   children: [
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                   ],
-    //                 ),
-    //                 Wrap(
-    //                   // direction: Axis.vertical,
-    //                   // direction: Axis.horizontal,
-    //                   spacing: 15.0,
-    //                   children: [
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                     coverWidget2(),
-    //                     coverWidget(),
-    //                   ],
-    //                 ),
-    //                 // Wrap(
-    //                 //   direction: Axis.vertical,
-    //                 //   spacing: 15.0,
-    //                 //   children: [
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //   ],
-    //                 // ),
-    //                 // Wrap(
-    //                 //   // direction: Axis.vertical,
-    //                 //   spacing: 15.0,
-    //                 //   children: [
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //   ],
-    //                 // ),
-    //                 // Wrap(
-    //                 //   // direction: Axis.vertical,
-    //                 //   spacing: 15.0,
-    //                 //   children: [
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //     coverWidget(),
-    //                 //     coverWidget2(),
-    //                 //   ],
-    //                 // ),
-    //               ],
-    //             ),
-    //           ),*/
-    //           // ),
-    //           Positioned(
-    //             top: constraints.constrainHeight() / 2,
-    //             height: constraints.constrainHeight() / 2,
-    //             width: constraints.constrainWidth(),
-    //             // left: constraints.constrainWidth() / 2,
-    //             // child: FlutterLogo(),
-    //             // key: _widgetKey,
-    //             child: Container(
-    //               // key: _widgetKey,
-    //               margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
-    //               decoration: new BoxDecoration(border: Border.all(color: Colors.blueAccent, width: 0.10), borderRadius: new BorderRadius.circular(20.0), color: Colors.transparent
-    //                   // color: Colors.red,
-    //                   ),
-    //               child: SingleChildScrollView(
-    //                 key: _widgetKey,
-    //                 child: new Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.stretch,
-    //                   children: <Widget>[
-    //                     Padding(
-    //                       padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
-    //                       child: Text(
-    //                         "Herzlich willkommen",
-    //                         textAlign: TextAlign.left,
-    //                         style: TextStyle(
-    //                           color: Colors.white,
-    //                           fontWeight: FontWeight.w700,
-    //                           fontSize: 24,
-    //                           //fontStyle: FontStyle.,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Padding(
-    //                       padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
-    //                       child: Text(
-    //                         "Lorem ipsum dolor sit amit, consectetur adipiscing elit.",
-    //                         textAlign: TextAlign.left,
-    //                         style: TextStyle(
-    //                           color: Colors.white,
-    //                           fontWeight: FontWeight.w300,
-    //                           fontSize: 16,
-    //                           //fontStyle: FontStyle.,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Padding(
-    //                       padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
-    //                       child: ElevatedButton(
-    //                         onPressed: () {
-    //                           // _authenticateincomplete(context);
-    //                           BlocProvider.of<AuthBloc>(context).add(
-    //                             IncompleteSignInRequested(),
-    //                           );
-    //                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
-    //                         },
-    //                         style: ElevatedButton.styleFrom(
-    //                           //primary: Colors.green,
-    //                           onPrimary: Colors.white,
-    //                           shadowColor: Colors.blueAccent,
-    //                           elevation: 3,
-    //                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-    //                           minimumSize: Size(100, 60), //////// HERE
-    //                         ),
-    //                         child: Text(
-    //                           "Ohne Account lesen",
-    //                           style: TextStyle(
-    //                             color: Colors.white,
-    //                             fontWeight: FontWeight.w400,
-    //                             fontSize: 18,
-    //                             //fontStyle: FontStyle.,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Padding(
-    //                       padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-    //                       child: OutlinedButton(
-    //                         onPressed: () {
-    //                           Navigator.push(
-    //                             context,
-    //                             PageRouteBuilder(
-    //                               pageBuilder: (context, animation1, animation2) => LoginPage(
-    //                                 // title: 'Login',
-    //                                 splashbloc: widget.splashbloc,
-    //                               ),
-    //                               transitionDuration: Duration.zero,
-    //                             ),
-    //                           );
-    //
-    //                           // Navigator.pushReplacement(
-    //                           //     context,
-    //                           //     MaterialPageRoute(
-    //                           //         builder: (context) => MainPage()));
-    //                         },
-    //                         style: OutlinedButton.styleFrom(
-    //                           //primary: Colors.,
-    //                           //onPrimary: Colors.white,
-    //                           //shadowColor: Colors.blueAccent,
-    //                           // elevation: 3,
-    //                           side: BorderSide(width: 0.10, color: Colors.white),
-    //                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-    //                           minimumSize: Size(100, 60), //////// HERE
-    //                         ),
-    //                         child: Text(
-    //                           "Anmelden",
-    //                           style: TextStyle(
-    //                             color: Colors.white,
-    //                             fontWeight: FontWeight.w400,
-    //                             fontSize: 18,
-    //                             //fontStyle: FontStyle.,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Padding(
-    //                       padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 5.0),
-    //                       child: Text(
-    //                         "Du hast noch keinen Account?",
-    //                         textAlign: TextAlign.center,
-    //                         style: TextStyle(
-    //                           color: Colors.white,
-    //                           fontWeight: FontWeight.w300,
-    //                           fontSize: 16,
-    //                           //fontStyle: FontStyle.,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Padding(
-    //                         padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-    //                         child: InkWell(
-    //                           onTap: () {
-    //                             print("I was tapped!");
-    //                             Future.delayed(Duration(milliseconds: 50), () {
-    //                               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
-    //                             });
-    //                             // Navigator.push(
-    //                             //   context,
-    //                             //   PageRouteBuilder(
-    //                             //     pageBuilder:
-    //                             //         (context, animation1, animation2) =>
-    //                             //             Registration(
-    //                             //                 // title: 'Login',
-    //                             //                 ),
-    //                             //     transitionDuration: Duration.zero,
-    //                             //   ),
-    //                             // );
-    //                           },
-    //                           child: Text(
-    //                             "Jetzt registrieren!",
-    //                             textAlign: TextAlign.center,
-    //                             style: TextStyle(
-    //                               color: Colors.blue,
-    //                               fontWeight: FontWeight.w300,
-    //                               fontSize: 16,
-    //                               //fontStyle: FontStyle.,
-    //                             ),
-    //                           ),
-    //                         )),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   ),
-    // );
   }
 
   Future<void> parseSVG(String assetName) async {
@@ -1171,5 +755,39 @@ class _StartPageState extends State<StartPage> {
       height: MediaQuery.of(context).size.height / 3.5,
       width: MediaQuery.of(context).size.width / 2.4,
     );
+  }
+}
+
+class TsClip1 extends CustomClipper<Path> {
+  final GlobalKey key;
+
+  TsClip1(this.key);
+
+  @override
+  Path getClip(Size size) {
+    // Obtain the RenderBox of the widget associated with _widgetKey
+    final RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
+
+    // Obtain the offset position of the widget
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    // Get the size of the widget
+    final widgetSize = renderBox.size;
+
+    final borderRadius = BorderRadius.circular(20.0); // the border radius value from your BoxDecoration
+
+    // Create a path that clips everything outside the bounds of the widget with _widgetKey
+    final Path path = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..addRRect(RRect.fromRectAndCorners(Rect.fromLTWH(offset.dx, offset.dy, widgetSize.width, widgetSize.height),
+          topLeft: borderRadius.topLeft, topRight: borderRadius.topRight, bottomLeft: borderRadius.bottomLeft, bottomRight: borderRadius.bottomRight))
+      ..fillType = PathFillType.evenOdd; // Use even-odd fill rule to clip outside the inner rect
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
   }
 }

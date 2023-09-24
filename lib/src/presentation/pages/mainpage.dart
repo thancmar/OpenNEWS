@@ -55,10 +55,13 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   List<String> _masForUsing = [];
   int currentIndex = 0;
   bool isLoadingOnTop = false;
+  final fabKey = GlobalKey();
+  bool showQR = false;
 
   late List<Widget> _pages = [
     HomePage(),
     MenuPage(),
+    if(showQR)Container(),
     Maps(),
     AccountPage(pageController: _pageController, onClick: onClicked),
   ];
@@ -89,23 +92,42 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   void onClicked(int index) {
-    print("mainpage onclicked");
+    print("mainpage onclicked $index");
     // if (showSearchPage == false) {
+    // if (index != 2) // Makes the QR code area non-interactive
+    // {
     setState(() {
-      currentIndex = index;
-      _pageController.animateToPage(index, duration: Duration(milliseconds: 400), curve: Curves.ease);
+      if (index != 2 && showQR) {
+        // if (index > 2) {
+        //   currentIndex = index - 1;
+        // } else {
+        currentIndex = index;
+        // }
+        // currentIndex = index;
+        _pageController.animateToPage(currentIndex, duration: Duration(milliseconds: 400), curve: Curves.ease);
+      }else{
+        currentIndex = index;
+        // }
+        // currentIndex = index;
+        _pageController.animateToPage(currentIndex, duration: Duration(milliseconds: 400), curve: Curves.ease);
+
+      }
     });
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     Size size = MediaQuery.of(context).size;
     print("localeee");
     print(EasyLocalization.of(context)!.supportedLocales);
     // double appBarHeight = ((currentIndex == 0 || currentIndex == 1) && !showSearchPage) ? size.height * 0.10 : 0;
+    double? fabQRHeight = ((_keyheight.currentContext?.findRenderObject() as RenderBox?)?.size.height ?? 0) * 0.4;
+
     return Scaffold(
-      resizeToAvoidBottomInset:false,
+      resizeToAvoidBottomInset: false,
       body: BlocBuilder<NavbarBloc, NavbarState>(builder: (context, state) {
         if (state is NavbarLoaded) {
           isLoadingOnTop = false;
@@ -236,9 +258,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                   ? Padding(
                                                                       padding: EdgeInsets.all(8.0),
                                                                       child: Container(
-                                                                        height: size.aspectRatio * 100,
+                                                                        height: size.width *0.25,
                                                                         // width: size.height * 0.095,
-                                                                        width: size.aspectRatio * 100,
+                                                                        width: size.width *0.25,
                                                                         decoration: BoxDecoration(
                                                                             boxShadow: <BoxShadow>[
                                                                               BoxShadow(
@@ -333,37 +355,37 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                   ],
                                                 ),
                                               )),
-                                              Container(
-                                                color: Colors.transparent,
-                                                child: ValueListenableBuilder(
-                                                    valueListenable: showLocationPage,
-                                                    builder: (BuildContext context, bool counterValue, Widget? child) {
-                                                      return !counterValue
-                                                          ? GestureDetector(
-                                                              onTap: () {
-                                                                // FAB onPressed logic
-                                                                Navigator.of(context).push(MaterialPageRoute(
-                                                                  builder: (context) => QRViewExample(),
-                                                                ));
-                                                              },
-                                                              // backgroundColor: Colors.grey.withOpacity(0.2),
-                                                              // child: Icon(Icons.qr_code),
-
-                                                              child: Padding(
-                                                                padding: EdgeInsets.only(left: 10),
-                                                                child: Icon(
-                                                                  // Backdrop.of(context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
-                                                                  // _counter1 == false ? Icons.search_sharp : Icons.clear,
-                                                                  Icons.qr_code,
-                                                                  // Icomoon.fc_logo,
-                                                                  color: Colors.white,
-                                                                  size: 40,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : Container();
-                                                    }),
-                                              ),
+                                              // Container(
+                                              //   color: Colors.transparent,
+                                              //   child: ValueListenableBuilder(
+                                              //       valueListenable: showLocationPage,
+                                              //       builder: (BuildContext context, bool counterValue, Widget? child) {
+                                              //         return !counterValue
+                                              //             ? GestureDetector(
+                                              //                 onTap: () {
+                                              //                   // FAB onPressed logic
+                                              //                   Navigator.of(context).push(MaterialPageRoute(
+                                              //                     builder: (context) => QRViewExample(),
+                                              //                   ));
+                                              //                 },
+                                              //                 // backgroundColor: Colors.grey.withOpacity(0.2),
+                                              //                 // child: Icon(Icons.qr_code),
+                                              //
+                                              //                 child: Padding(
+                                              //                   padding: EdgeInsets.only(left: 10),
+                                              //                   child: Icon(
+                                              //                     // Backdrop.of(context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
+                                              //                     // _counter1 == false ? Icons.search_sharp : Icons.clear,
+                                              //                     Icons.qr_code,
+                                              //                     // Icomoon.fc_logo,
+                                              //                     color: Colors.white,
+                                              //                     size: 40,
+                                              //                   ),
+                                              //                 ),
+                                              //               )
+                                              //             : Container();
+                                              //       }),
+                                              // ),
 
                                               Container(
                                                 color: Colors.transparent,
@@ -801,30 +823,92 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         Container(),
                     ],
                   ),
+                  // floatingActionButton: Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   children: <Widget>[
+                  //     Padding(
+                  //       padding: EdgeInsets.only(bottom: fabQRHeight ?? 50.0), // adjust the value as needed
+                  //       child: SizedBox(
+                  //         height: 80, // adjust as needed
+                  //         width: 60, // adjust as needed
+                  //         child: FloatingActionButton(
+                  //           key: fabKey,
+                  //           onPressed: () => {},
+                  //           child: Icon(
+                  //             Icons.qr_code,
+                  //             color: Colors.white, // setting icon color to white
+                  //           ),
+                  //           backgroundColor: Colors.black.withOpacity(0.3),
+                  //           // setting button background to transparent with opacity 0.3
+                  //           elevation: 6.0, // elevation
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // floatingActionButton: ValueListenableBuilder(
+                  //     valueListenable: showLocationPage,
+                  //     builder: (BuildContext context, bool counterValue, Widget? child) {
+                  //       return Column(
+                  //         mainAxisAlignment: MainAxisAlignment.end,
+                  //         children: <Widget>[
+                  //           !counterValue
+                  //               ? Padding(
+                  //                   padding: EdgeInsets.only(bottom: fabQRHeight ?? 50.0), // adjust the value as needed
+                  //                   child: SizedBox(
+                  //                     // height: 90, // adjust as needed
+                  //                     // width: 60, // adjust as needed
+                  //                     child: FloatingActionButton(
+                  //                       key: fabKey,
+                  //                       onPressed: () => {},
+                  //                       child: Icon(
+                  //                         Icons.qr_code,
+                  //                         color: Colors.white, // setting icon color to white
+                  //                       ),
+                  //                       backgroundColor: Colors.grey.withOpacity(0.3),
+                  //                       // setting button background to transparent with opacity 0.3
+                  //                       elevation: 6.0, // elevation
+                  //                     ),
+                  //                   ),
+                  //                 )
+                  //               : Container(),
+                  //         ],
+                  //       );
+                  //     }),
+                  //
+                  // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
                   backLayer: Stack(
                     children: [
                       ClipPath(
-                        clipper: BodyClipper(index: currentIndex, context: context, key: _keyheight),
+                        clipper: BodyClipper(index: currentIndex, context: context, navbarkey: _keyheight, fabkey: fabKey),
                         clipBehavior: Clip.hardEdge,
                         child: PageView.builder(
                           controller: _pageController,
+                          // itemCount: _pages.length,
                           physics: NeverScrollableScrollPhysics(),
                           // physics: AlwaysScrollableScrollPhysics(),
                           itemBuilder: (context, index) => _pages[index],
                         ),
                       ),
-
                       // currentIndex != 4
                       Container(
                           alignment: Alignment.bottomCenter,
                           // key: _keyheight,
                           child: ClipPath(
                               key: _keyheight,
+                              // clipper: NavbarQRClipper(currentIndex,_keyheight,fabKey),
                               clipper: NavbarClipper(currentIndex),
                               child: CustomPaint(
-                                painter: NavbarPainter(currentIndex),
+                                // painter: NavbarQRPainter(
+                                //   currentIndex,
+                                //   fabKey,
+                                //   context,
+                                //   _keyheight,
+                                // ),
+                                painter: NavbarPainter(currentIndex,showQR),
                                 child: CustomNavbar(
                                   onClicked: onClicked,
+                                  showQR: showQR,
                                   selectedIndex: currentIndex,
                                 ),
                               ))),
@@ -963,12 +1047,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                           // "$index",
                                           style: TextStyle(fontSize: 20, color: Colors.black),
                                         ),
-                                        onPressed: () async{
+                                        onPressed: () async {
                                           // To show the "Location page(front layer of backdropscaffold)"
                                           // if (showLocationPage.value == false) backdropState!.currentState!.fling();
-                                          await EasyLocalization.of(context)!.setLocale(Locale( state.languageOptions![index].languageCode!));
+                                          await EasyLocalization.of(context)!.setLocale(Locale(state.languageOptions![index].languageCode!));
                                           // setState(() {
-                                            BlocProvider.of<NavbarBloc>(context).add(LanguageSelected(language: state.languageOptions![index]));
+                                          BlocProvider.of<NavbarBloc>(context).add(LanguageSelected(language: state.languageOptions![index]));
                                           // });
                                         },
                                       ),

@@ -62,6 +62,12 @@ class OpenLanguageSelection extends NavbarEvent {
 //   List<Object> get props => [];
 // }
 
+// To add and remove
+class Bookmark extends NavbarEvent {
+
+  Bookmark();
+  List<Object> get props => [];
+}
 
 class LocationSelected extends NavbarEvent {
   final Data? location;

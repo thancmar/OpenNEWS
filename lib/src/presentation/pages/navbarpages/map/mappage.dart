@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
-
 // import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -20,7 +19,6 @@ import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
 
 import 'package:sharemagazines_flutter/src/models/place_map.dart';
 
-
 import 'mapOfferpage.dart';
 
 class Maps extends StatefulWidget {
@@ -32,20 +30,22 @@ class Maps extends StatefulWidget {
 
 class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   late GoogleMapController mapController;
+
   // var repo = HotspotRepository();
   late Future<HotspotsGetAllActive> hotspotList;
+
   // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   // late List<Place>? hpList = [];
   Set<Marker> markers = Set(); //markers for google map
   List<Marker> myMarkers = <Marker>[];
   late ClusterManager manager;
   Completer<GoogleMapController> _controller = Completer();
+
   // String location = ("mapsearch").tr();
   String location = "Search";
   late bool showlocationdetail = false;
   late Place locationmarker;
   bool isAutocompleteOpen = false;
-
 
   Timer? _timer;
   late double _progress;
@@ -150,10 +150,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 
           onCameraIdle: manager.updateMap,
           initialCameraPosition: CameraPosition(
-            target: NavbarState.currentPosition != null
-                ? LatLng(NavbarState.currentPosition!.latitude,
-                    NavbarState.currentPosition!.longitude)
-                : _center,
+            target:
+                NavbarState.currentPosition != null ? LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude) : _center,
             zoom: NavbarState.currentPosition != null ? 15.0 : 6.0,
           ),
           myLocationEnabled: true,
@@ -186,46 +184,9 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     setState(() {
                       isAutocompleteOpen = true;
                     });
-                    isAutocompleteOpen = true;
+                    // isAutocompleteOpen = true;
                     var place = await PlacesAutocomplete.show(
-                        // theme: ThemeData(
-                        //   textTheme: TextTheme(
-                        //     // Change the font of the body text
-                        //     bodyText2: TextStyle(fontFamily: 'YourFontFamily', fontSize: 16),
-                        //   ),
-                        // ),
-                      // decoration: InputDecoration(fillColor: Colors.red),
-                        // decoration: BoxDecoration(
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Colors.grey.withOpacity(0.1),
-                        //         spreadRadius: 1,
-                        //         blurRadius: 0,
-                        //         // offset: Offset(0, 3), // changes position of shadow
-                        //       ),
-                        //     ],
-                        //     color: Colors.lightBlue,
-                        //     border: Border.all(
-                        //       // color: Colors.red,
-                        //     ),
-                        //     borderRadius: BorderRadius.circular(15)),
-                        // overlayBorderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        // decoration: InputDecoration(
-                        //     //Maybe we need it
-                        //     // contentPadding: const EdgeInsets.symmetric(
-                        //     //     vertical: 20.0, horizontal: 10.0),
-                        //     // enabled: true,
-                        //     // focusColor: Colors.yellow,
-                        //     // floatingLabelStyle: TextStyle(color: Colors.red),
-                        //     // // labelText: "Vorname",
-                        //     // labelStyle: TextStyle(fontSize: 16.0, color: Colors.green, fontWeight: FontWeight.w300), //, height: 3.8),
-                        //     // border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        //     // errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
-                        //     // enabledBorder: const OutlineInputBorder(
-                        //     //   borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                        //     //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        //     // ),
-                        //     ),
+
                         logo: Text(""),
                         radius: 10000,
                         context: context,
@@ -262,10 +223,9 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       // var newlatlang = LatLng(51.00, 10.00);
 
                       //move map camera to selected place with animation
-                      mapController.animateCamera(
-                          CameraUpdate.newCameraPosition(
-                              CameraPosition(target: newlatlang, zoom: 17)));
-                    };
+                      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: newlatlang, zoom: 17)));
+                    }
+                    ;
                     // isAutocompleteOpen = false;
                     setState(() {
                       isAutocompleteOpen = false;
@@ -288,8 +248,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                                 // spreadRadius: 7,
                                 // blurRadius: 7,
 
-                                offset:
-                                    Offset(0, 1), // changes position of shadow
+                                offset: Offset(0, 1), // changes position of shadow
                               ),
                             ],
                           ),
@@ -298,30 +257,21 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           child: ListTile(
                             title: Text(
                               location,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey),
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
                             ),
                             trailing: GestureDetector(
                                 onTap: () {
                                   //still need to implement
                                   if (NavbarState.currentPosition != null) {
                                     final p = CameraPosition(
-                                        target: LatLng(
-                                            NavbarState.currentPosition!.latitude,
-                                            NavbarState
-                                                .currentPosition!.longitude),
-                                        zoom: 15);
-                                    mapController.animateCamera(
-                                        CameraUpdate.newCameraPosition(p));
+                                        target: LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude), zoom: 15);
+                                    mapController.animateCamera(CameraUpdate.newCameraPosition(p));
                                   }
                                 },
                                 child: Icon(
                                   Icons.location_searching,
                                 )),
                             dense: true,
-
                           )),
                     ),
                   ))),
@@ -348,15 +298,12 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
           ListTile(
             // leading: Icon(Icons.album),
             title: Padding(
-              padding:  EdgeInsets.fromLTRB(10, 20, 10, 5),
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Hero(
-                tag:  locationmarker.nameApp,
+                tag: locationmarker.nameApp,
                 child: Text(
                   locationmarker.nameApp,
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700),
+                  style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -370,10 +317,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       locationmarker.addressZip +
                       " " +
                       locationmarker.addressCity,
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300)),
+                  style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w300)),
             ),
           ),
           Row(
@@ -400,13 +344,11 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     child: Text(
                         // ("offers").tr(),
                         "offers",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                     onPressed: () {
                       /* ... */
                       print('Angebote');
-                      BlocProvider.of<NavbarBloc>(context)
-                          .add(GetMapOffer(loc: locationmarker));
+                      BlocProvider.of<NavbarBloc>(context).add(GetMapOffer(loc: locationmarker));
                       Navigator.of(context).push(
                         CupertinoPageRoute(
                           builder: (context) => MapOffer(
@@ -452,11 +394,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                   ),
                   child: TextButton(
                     child: Icon(Icons.directions),
-                    onPressed: () => openMapsSheet(
-                        context,
-                        locationmarker.nameApp!,
-                        locationmarker.latitude,
-                        locationmarker.longitude),
+                    onPressed: () => openMapsSheet(context, locationmarker.nameApp!, locationmarker.latitude, locationmarker.longitude),
                   ),
                 ),
               ),
@@ -478,8 +416,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     mapController.animateCamera(CameraUpdate.newCameraPosition(p));
   }
 
-  Future<Marker> Function(Cluster<Place>) get _markerBuilder =>
-      (cluster) async {
+  Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
         mapController = await _controller.future;
         Completer<GoogleMapController> completer = Completer();
 
@@ -490,8 +427,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               if (cluster.isMultiple == true) {
                 setState(() {
                   print(cluster.location);
-                  animateTo(
-                      cluster.location.latitude, cluster.location.longitude);
+                  animateTo(cluster.location.latitude, cluster.location.longitude);
                   showlocationdetail = false;
                 });
               } else {
@@ -519,12 +455,8 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
   final Canvas canvas = Canvas(pictureRecorder);
   print("_getMarkerBitmap text");
   print(text);
-  final Paint paint1 = Paint()
-    ..color = int.parse(text!) < 10
-        ? Colors.blue.withOpacity(0.4)
-        : Colors.purple.withOpacity(0.4);
-  final Paint paint2 = Paint()
-    ..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
+  final Paint paint1 = Paint()..color = int.parse(text!) < 10 ? Colors.blue.withOpacity(0.4) : Colors.purple.withOpacity(0.4);
+  final Paint paint2 = Paint()..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
 
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.6, paint2);
@@ -532,13 +464,10 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
 
   if (text != null) {
     TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
-      // (textDirection: TextDirection.ltr);
+    // (textDirection: TextDirection.ltr);
     painter.text = TextSpan(
       text: text,
-      style: TextStyle(
-          fontSize: size / 3,
-          color: Colors.white,
-          fontWeight: FontWeight.normal),
+      style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.normal),
     );
     painter.layout();
     painter.paint(
