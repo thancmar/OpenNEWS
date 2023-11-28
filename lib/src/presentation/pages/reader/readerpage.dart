@@ -78,7 +78,7 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
 
   @override
   void initState() {
-    // print(widget.id);
+    print(widget.id);
 
     widget.pageController = PageController(initialPage: 0);
     // widget.pageController.addListener(() {
