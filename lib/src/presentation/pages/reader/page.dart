@@ -1,7 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
+
+import '../../../blocs/navbar/navbar_bloc.dart';
 
 class ReaderPage extends StatefulWidget {
   final Reader reader;
@@ -14,15 +20,13 @@ class ReaderPage extends StatefulWidget {
   State<ReaderPage> createState() => _ReaderPageState();
 }
 
-class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ReaderPage> {
-  static ValueNotifier<int> _networklHasErrorNotifier = ValueNotifier(0);
+class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateMixin
+// , AutomaticKeepAliveClientMixin<ReaderPage>
+{
   late AnimationController? _spinKitController;
-  static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
-  // TransformationController _controller = TransformationController(matrix4);
-
-  @override
-  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -37,7 +41,7 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
   void dispose() {
     // _controller.dispose();
     // pdfController.dispose();
-
+    // _networklHasErrorNotifier.dispose();// forEach((element) {element.dispose();});
     _spinKitController?.dispose();
     super.dispose();
   }
@@ -45,11 +49,12 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return InteractiveViewer(
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: Clip.none,
       alignPanAxis: true,
       transformationController: widget.reader.transformationController,
       minScale: 0.01,
       maxScale: 3.5,
+// constrained: false,
 
       // boundaryMargin: Orientation == Orientation.portrait
       //     ? EdgeInsets.only(right: 150, bottom: 500)
@@ -68,249 +73,119 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
       // },
       child: Hero(
         tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
-        child: CachedNetworkImage(
-            key: ValueKey(_networklHasErrorNotifier.value),
-            filterQuality: FilterQuality.none,
-            imageUrl:
-                widget.reader.magazine.idMagazinePublication! + "_" + widget.reader.magazine.dateOfPublication! + "_" + widget.pageNumber.toString(),
-            // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
-            //     "_" +
-            //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
-            // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-            //   // color: Colors.grey.withOpacity(0.1),
-            //   decoration: BoxDecoration(
-            //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-            //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            //     color: Colors.grey.withOpacity(0.1),
-            //   ),
-            //   child: SpinKitFadingCircle(
-            //     color: Colors.white,
-            //     size: 50.0,
-            //   ),
-            // ),
+        //   child:
+        //   CustomCachedNetworkImage(reader:true,pageNo: widget.pageNumber, heroTag:null, spinKitController: _spinKitController, mag: widget.reader.magazine, thumbnail: false),
+        // )
+        child: FutureBuilder<Uint8List?>(
+            future: BlocProvider.of<NavbarBloc>(context).getCover(
+                widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, widget.pageNumber.toString(), false, true),
+            builder: (context, snapshot) {
+              return Stack(
+                children: [
+                  // (!snapshot.hasData)?
+                  // Container(
+                  // CachedNetworkImage(
+                  //     filterQuality: FilterQuality.none,
+                  //     imageUrl: widget.reader.magazine.idMagazinePublication! +
+                  //         "_" +
+                  //         widget.reader.magazine.dateOfPublication! +
+                  //         "_" +
+                  //         widget.pageNumber.toString() +
+                  //         "_" +
+                  //         "thumbnail",
+                  //
+                  //     // placeholderFadeInDuration: const Duration(seconds: 50),
+                  //     // fadeOutCurve: Curves.bounceOut,
+                  //     // fadeOutDuration: Duration(milliseconds: 4),
+                  //     // fadeInDuration:  Duration(seconds: 4),
+                  //     imageBuilder: (context, imageProvider) => Container(
+                  //           height: MediaQuery.of(context).size.height,
+                  //           width: MediaQuery.of(context).size.width,
+                  //           // color: Colors.red,
+                  //           decoration: BoxDecoration(
+                  //             image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                  //             borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  //
+                  //           ),
+                  //         ),
+                  //
+                  //
+                  //     errorWidget: (context, url, error) {
+                  //       return Padding(
+                  //         padding: EdgeInsets.all(8.0),
+                  //         child: Container(
+                  //           // color: Colors.grey.withOpacity(0.1),
+                  //
+                  //           decoration: BoxDecoration(
+                  //             // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                  //
+                  //             borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  //             // color: Colors.grey.withOpacity(0.1),
+                  //           ),
+                  //           child:  !snapshot.hasData
+                  //               ?SpinKitFadingCircle(
+                  //             color: Colors.white,
+                  //             size: 50.0,
+                  //             controller: _spinKitController,
+                  //             // itemBuilder: (BuildContext context, int value) => {},
+                  //           ):Container(),
+                  //         ),
+                  //       );
+                  //     }),
+                  // Container(color: Colors.green,)
+                  snapshot.hasData
+                      ? CachedNetworkImage(
+                          filterQuality: FilterQuality.none,
+                          // placeholderFadeInDuration: const Duration(milliseconds: 3000),
+                          // fadeInDuration: Duration(milliseconds: 300),
+                          // fadeOutDuration: const Duration(milliseconds: 300),
+                          imageUrl: widget.reader.magazine.idMagazinePublication! +
+                              "_" +
+                              widget.reader.magazine.dateOfPublication! +
+                              "_" +
+                              widget.pageNumber.toString(),
 
-            imageBuilder: (context, imageProvider) => Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  // color: Colors.red,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                ),
-            // useOldImageOnUrlChange: true,
-            // very important: keep both placeholder and errorWidget
-            placeholder: (context, url)
-            {
-              Future.delayed(Duration(milliseconds: 100), () {
-                setState(() {
-                  _networklHasErrorNotifier.value++;
-                });
-              });
-              return CachedNetworkImage(
-                key: ValueKey(_networklHasErrorNotifier.value),
-                filterQuality: FilterQuality.none,
-                imageUrl: widget.reader.magazine.idMagazinePublication! +
-                    "_" +
-                    widget.reader.magazine.dateOfPublication! +
-                    "_" +
-                    widget.pageNumber.toString() +
-                    "_" +
-                    "thumbnail",
-                // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
-                //     "_" +
-                //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
-                // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-                //   // color: Colors.grey.withOpacity(0.1),
-                //   decoration: BoxDecoration(
-                //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                //     color: Colors.grey.withOpacity(0.1),
-                //   ),
-                //   child: SpinKitFadingCircle(
-                //     color: Colors.white,
-                //     size: 50.0,
-                //   ),
-                // ),
+                          imageBuilder: (context, imageProvider) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              // color: Colors.red,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              ),
+                            );
+                          },
 
-                imageBuilder: (context, imageProvider) =>
-                    Container(
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height,
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      // color: Colors.red,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      ),
-                    ),
-                // useOldImageOnUrlChange: true,
-                // very important: keep both placeholder and errorWidget
-                placeholder: (context, url) =>
-                    Container(
-                      // color: Colors.grey.withOpacity(0.1),
-                      decoration: BoxDecoration(
-                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        // color: Colors.grey.withOpacity(0.1),
-                      ),
-                      child: SpinKitFadingCircle(
-                        color: Colors.white,
-                        size: 50.0,
-                        controller: _spinKitController,
-                      ),
-                    ),
-                errorWidget: (context, url, error) {
-                  Future.delayed(Duration(milliseconds: 100), () {
-                    setState(() {
-                      _networklHasErrorNotifier.value++;
-                    });
-                  });
-                  return Container(
-                    // color: Colors.grey.withOpacity(0.1),
+                          errorWidget: (context, url, error) {
+                            return Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Container(
+                                // color: Colors.grey.withOpacity(0.1),
 
-                    decoration: BoxDecoration(
-                      // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      // color: Colors.grey.withOpacity(0.1),
-                    ),
-                    child: SpinKitFadingCircle(
-                      color: Colors.white,
-                      size: 50.0,
-                      controller: _spinKitController,
-                    ),
-                  );
-                }
-              // errorWidget: (context, url, error) => Container(
-              //     alignment: Alignment.center,
-              //     child: Icon(
-              //       Icons.error,
-              //       color: Colors.grey.withOpacity(0.8),
-              //     )),
-            );},
-            // Container(
-            //   // color: Colors.grey.withOpacity(0.1),
-            //   decoration: BoxDecoration(
-            //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-            //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            //     // color: Colors.grey.withOpacity(0.1),
-            //   ),
-            //   child: SpinKitFadingCircle(
-            //     color: Colors.white,
-            //     size: 50.0,
-            //     controller: _spinKitController,
-            //   ),
-            // ),
-            errorWidget: (context, url, error) {
-              // Future.delayed(Duration(milliseconds: 100), () {
-              //   setState(() {
-              //     _networklHasErrorNotifier.value++;
-              //   });
-              // });
-              return CachedNetworkImage(
-                  key: ValueKey(_networklHasErrorNotifier.value),
-                  filterQuality: FilterQuality.none,
-                  imageUrl: widget.reader.magazine.idMagazinePublication! +
-                      "_" +
-                      widget.reader.magazine.dateOfPublication! +
-                      "_" +
-                      widget.pageNumber.toString() +
-                      "_" +
-                      "thumbnail",
-                  // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
-                  //     "_" +
-                  //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
-                  // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-                  //   // color: Colors.grey.withOpacity(0.1),
-                  //   decoration: BoxDecoration(
-                  //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                  //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  //     color: Colors.grey.withOpacity(0.1),
-                  //   ),
-                  //   child: SpinKitFadingCircle(
-                  //     color: Colors.white,
-                  //     size: 50.0,
-                  //   ),
-                  // ),
+                                decoration: BoxDecoration(
+                                  // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
 
-                  imageBuilder: (context, imageProvider) => Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    // color: Colors.red,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ),
-                  ),
-                  // useOldImageOnUrlChange: true,
-                  // very important: keep both placeholder and errorWidget
-                  placeholder: (context, url) => Container(
-                    // color: Colors.grey.withOpacity(0.1),
-                    decoration: BoxDecoration(
-                      // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      // color: Colors.grey.withOpacity(0.1),
-                    ),
-                    child: SpinKitFadingCircle(
-                      color: Colors.white,
-                      size: 50.0,
-                      controller: _spinKitController,
-                    ),
-                  ),
-                  errorWidget: (context, url, error) {
-                    Future.delayed(Duration(milliseconds: 100), () {
-                      setState(() {
-                        _networklHasErrorNotifier.value++;
-                      });
-                    });
-                    return Container(
-                      // color: Colors.grey.withOpacity(0.1),
+                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  // color: Colors.grey.withOpacity(0.1),
+                                ),
+                                child: SpinKitFadingCircle(
+                                  color: Colors.red,
+                                  size: 50.0,
+                                  controller: _spinKitController,
+                                  // itemBuilder: (BuildContext context, int value) => {},
+                                ),
+                              ),
+                            );
+                          }
 
-                      decoration: BoxDecoration(
-                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        // color: Colors.grey.withOpacity(0.1),
-                      ),
-                      child: SpinKitFadingCircle(
-                        color: Colors.white,
-                        size: 50.0,
-                        controller: _spinKitController,
-                      ),
-                    );
-                  }
-                // errorWidget: (context, url, error) => Container(
-                //     alignment: Alignment.center,
-                //     child: Icon(
-                //       Icons.error,
-                //       color: Colors.grey.withOpacity(0.8),
-                //     )),
+
+                          )
+                      : Container(),
+                ],
               );
-              // return Container(
-              //   // color: Colors.grey.withOpacity(0.1),
-              //
-              //   decoration: BoxDecoration(
-              //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-              //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              //     // color: Colors.grey.withOpacity(0.1),
-              //   ),
-              //   child: SpinKitFadingCircle(
-              //     color: Colors.white,
-              //     size: 50.0,
-              //     controller: _spinKitController,
-              //   ),
-              // );
             }
-            // errorWidget: (context, url, error) => Container(
-            //     alignment: Alignment.center,
-            //     child: Icon(
-            //       Icons.error,
-            //       color: Colors.grey.withOpacity(0.8),
-            //     )),
+
             ),
       ),
     );

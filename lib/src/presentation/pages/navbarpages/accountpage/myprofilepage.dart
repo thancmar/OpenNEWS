@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -12,13 +13,32 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   DateTime selectedDate = DateTime.now();
   TextEditingController _calenderController =
-      TextEditingController(text: AuthState.userDetails?.response?.dateOfBirth);
+      TextEditingController(
+          // text: AuthState.userDetails?.response?.dateOfBirth
+      );
   TextEditingController _firstnameController =
-      TextEditingController(text: AuthState.userDetails?.response?.firstname);
+      TextEditingController(
+          // text: AuthState.userDetails?.response?.firstname
+      );
   TextEditingController _lastnameController =
-      TextEditingController(text: AuthState.userDetails?.response?.lastname);
+      TextEditingController(
+          // text: AuthState.userDetails?.response?.lastname
+      );
   @override
   Widget build(BuildContext context) {
+    _firstnameController =
+        TextEditingController(
+            text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
+          // text: AuthState.userDetails?.response?.firstname
+        ); _lastnameController =
+        TextEditingController(
+            text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.lastname
+          // text: AuthState.userDetails?.response?.firstname
+        ); _calenderController =
+        TextEditingController(
+            text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.dateOfBirth
+          // text: AuthState.userDetails?.response?.firstname
+        );
     return Stack(
       children: [
         Positioned.fill(
@@ -209,7 +229,9 @@ class _MyProfileState extends State<MyProfile> {
                       // dividerColor: Colors.red,
                       inactiveBgColor: Colors.grey.withOpacity(0.1),
                       initialLabelIndex:
-                          AuthState.userDetails?.response?.sex == "w" ? 1 : 0,
+                      BlocProvider.of<AuthBloc>(context).state.userDetails.response?.sex=="w"?1:
+                          // AuthState.userDetails?.response?.sex == "w" ? 1 :
+                          0,
                       totalSwitches: 2,
                       radiusStyle: true,
 

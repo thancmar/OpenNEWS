@@ -50,51 +50,51 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       print("OpenReader");
       try {
         // for (var i = 0; i < int.parse(event.magazine.pageMax!); i++) {
-        for (var i = 0; i < int.parse(event.magazine.pageMax!); i++) {
-          if(i<=3){
-            await DefaultCacheManager()
-                .getFileFromCache(event.magazine.idMagazinePublication! +
-                    "_" +
-                    event.magazine.dateOfPublication! +
-                    "_" +
-                    i.toString())
-                .then((value) async => {
-                      if (value?.file.lengthSync() == null)
-                        {
-                          print(
-                              "page does not exist2 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value}"),
-                          magazineRepository.GetPagesforReader(
-                              page: i,
-                              id_mag_pub: event.magazine.idMagazinePublication,
-                              date_of_publication:
-                                  event.magazine.dateOfPublication,
-                              readerCancelToken: cancelToken),
-                        }
-                    });
-          }
-
-          await DefaultCacheManager()
-              .getFileFromCache(event.magazine.idMagazinePublication! +
-                  "_" +
-                  event.magazine.dateOfPublication! +
-                  "_" +
-                  i.toString() +
-                  "_" +
-                  "thumbnail")
-              .then((value) async => {
-                    if (value?.file.lengthSync() == null)
-                      {
-                        print(
-                            "page does not exist2 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value}"),
-                        magazineRepository.GetThumbnailforReader(
-                            page: i,
-                            id_mag_pub: event.magazine.idMagazinePublication,
-                            date_of_publication:
-                                event.magazine.dateOfPublication,
-                            readerCancelToken: cancelToken),
-                      }
-                  });
-        }
+        // for (var i = 0; i < int.parse(event.magazine.pageMax!); i++) {
+        //   if(i<=3){
+        //     await DefaultCacheManager()
+        //         .getFileFromCache(event.magazine.idMagazinePublication! +
+        //             "_" +
+        //             event.magazine.dateOfPublication! +
+        //             "_" +
+        //             i.toString())
+        //         .then((value) async => {
+        //               if (value?.file.lengthSync() == null)
+        //                 {
+        //                   print(
+        //                       "page does not exist2 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value}"),
+        //                   magazineRepository.GetPagesforReader(
+        //                       page: i,
+        //                       id_mag_pub: event.magazine.idMagazinePublication,
+        //                       date_of_publication:
+        //                           event.magazine.dateOfPublication,
+        //                       readerCancelToken: cancelToken),
+        //                 }
+        //             });
+        //   }
+        //
+        //   await DefaultCacheManager()
+        //       .getFileFromCache(event.magazine.idMagazinePublication! +
+        //           "_" +
+        //           event.magazine.dateOfPublication! +
+        //           "_" +
+        //           i.toString() +
+        //           "_" +
+        //           "thumbnail")
+        //       .then((value) async => {
+        //             if (value?.file.lengthSync() == null)
+        //               {
+        //                 print(
+        //                     "page does not exist2 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value}"),
+        //                 magazineRepository.GetThumbnailforReader(
+        //                     page: i,
+        //                     id_mag_pub: event.magazine.idMagazinePublication,
+        //                     date_of_publication:
+        //                         event.magazine.dateOfPublication,
+        //                     readerCancelToken: cancelToken),
+        //               }
+        //           });
+        // }
       } catch (error) {
         print("OpenReader error - $error");
         emit(ReaderError(error.toString()));
@@ -158,7 +158,8 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
                             id_mag_pub: event.magazine.idMagazinePublication,
                             date_of_publication:
                                 event.magazine.dateOfPublication,
-                            readerCancelToken: cancelToken),
+                            // readerCancelToken: cancelToken
+                        ),
                       }
                   });
         }

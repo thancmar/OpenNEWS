@@ -25,12 +25,12 @@ class ReaderOptionsPage extends StatefulWidget {
   // bool isOnPageTurning;
   // print("dsfs");
   // int current = 0;
-  ValueNotifier<double> currentPage;
+  // ValueNotifier<double> currentPage;
 
   ReaderOptionsPage({
     required this.reader,
     required this.bloc,
-    required this.currentPage,
+    // required this.currentPage,
     // required this.controller
   }) : super();
 
@@ -70,7 +70,9 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
           onPressed: () => {
             // Navigator.of(context).pop(),
             // dispose(),
-            // Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close(),
+            // Navigator.of(context).popUntil((route) => route.isFirst),
+            // widget.bloc.add(CloseReader()),
+            // widget.bloc.close(),
             // setState(() {
             //   pageScale = _controller.value.getMaxScaleOnAxis();
             // }),
@@ -211,20 +213,20 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(
-                      heroTag: "FAB",
-                      onPressed: () => {},
-                      backgroundColor: Colors.white.withOpacity(0.2),
-                      child: Icon(
-                        Icons.chrome_reader_mode_outlined,
-                      ),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
+                //   child: Align(
+                //     alignment: Alignment.bottomRight,
+                //     child: FloatingActionButton(
+                //       heroTag: "FAB",
+                //       onPressed: () => {},
+                //       backgroundColor: Colors.white.withOpacity(0.2),
+                //       child: Icon(
+                //         Icons.chrome_reader_mode_outlined,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 // Text(
                 //   "adscxdsa",
                 //   style: TextStyle(color: Colors.red),
@@ -236,7 +238,7 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
                       isOnPageTurning: isOnPageTurning,
                       reader: widget.reader,
                       bloc: widget.bloc,
-                      currentPage: widget.currentPage,
+                      // currentPage: widget.currentPage,
                     )),
               ],
             ),

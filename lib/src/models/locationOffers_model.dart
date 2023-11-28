@@ -1,7 +1,23 @@
 import 'dart:convert';
+import 'dart:io';
+// import 'dart:html';
+import 'dart:typed_data';
 
 LocationOffers LocationOffersFromJson(String str) =>
     LocationOffers.fromJson(json.decode(str));
+
+class OfferImage {
+  dynamic mediaContent;
+  LocationOffer offer; // or int, depending on your ID type
+  // You can also include the entire offer object if needed
+
+  OfferImage(this.mediaContent, this.offer);
+
+  bool isImage() => mediaContent is Uint8List;
+  bool isVideo() => mediaContent is File;
+}
+
+
 
 class LocationOffers {
   List<LocationOffer>? locationOffer;
@@ -37,6 +53,7 @@ class LocationOffer {
   int? idLocation;
   int? idOffer;
   int? status;
+
   List<Shm2Offer>? shm2Offer;
 
   LocationOffer(
@@ -45,6 +62,7 @@ class LocationOffer {
       this.idLocation,
       this.idOffer,
       this.status,
+
       this.shm2Offer});
 
   LocationOffer.fromJson(Map<String, dynamic> json) {

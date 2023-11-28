@@ -5,9 +5,9 @@ abstract class NavbarEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class Initialize123 extends NavbarEvent {
+class InitializeNavbar extends NavbarEvent {
   final Data? currentPosition;
-  Initialize123(
+  InitializeNavbar(
       {required this.currentPosition}
       );
   List<Object> get props => [];
@@ -69,15 +69,26 @@ class Bookmark extends NavbarEvent {
   List<Object> get props => [];
 }
 
+// class GetCover extends NavbarEvent {
+//   final String idMagazinePublication;
+//   final String dateOfPublication;
+//
+//
+//   GetCover({required this.idMagazinePublication, required this.dateOfPublication});
+//   List<Object> get props => [];
+// }
+
 class LocationSelected extends NavbarEvent {
-  final Data? location;
-  LocationSelected({required this.location});
+  final Data? selectedLocation;
+  final Data? currentLocation;
+  LocationSelected({required this.selectedLocation, required this.currentLocation});
   List<Object> get props => [];
 }
 
 class LanguageSelected extends NavbarEvent {
   final Locale? language;
-  LanguageSelected({required this.language});
+  final Data? currentLocation;
+  LanguageSelected({required this.language, required this.currentLocation});
   List<Object> get props => [];
 }
 

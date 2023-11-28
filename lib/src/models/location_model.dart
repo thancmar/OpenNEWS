@@ -39,30 +39,7 @@ class Localization {
       data!.add(new Data.fromJson(v));
     });
   }
-  // factory Localization.fromJson(Map<String, dynamic> json) => new Localization(
-  //       code: json['code'],
-  //       msg: json['msg'],
-  //       data: Data.fromJson(json['data']),
-  //     );
-  // factory Localization.fromJson(Map<String, dynamic> json) {
-  //   var list = json['data'] as List;
-  //   print(list.runtimeType);
-  //   List<Data> imagesList = list.map((i) => Data.fromJson(i)).toList();
-  //   print("imagesList");
-  //   print(imagesList[0]);
-  //
-  //   return Localization(code: json['code'], msg: json['msg'], data: imagesList);
-  // }
 
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = new Map<String, dynamic>();
-  //   data['code'] = this.code;
-  //   data['msg'] = this.msg;
-  //   if (this.data != null) {
-  //     data['data'] = this.data!.map((v) => v.toJson()).toList();
-  //   }
-  //   return data;
-  // }
 }
 
 class Data {
@@ -70,8 +47,13 @@ class Data {
   String? nameApp;
   String? device;
   String? hasEbooksAudiobooks;
+  String? token;
+  String? applied_at;
+  String? expiration;
 
-  Data({this.idLocation, this.nameApp, this.device, this.hasEbooksAudiobooks});
+
+
+  Data({this.idLocation, this.nameApp, this.device, this.hasEbooksAudiobooks, this.token, this.applied_at, this.expiration});
 
   // Data.fromJson(Map<String, dynamic> json) {
   //   idLocation = json['id_location'];
@@ -91,6 +73,11 @@ class Data {
     nameApp = json['name_app'] ?? '';
     device = json['device'] ?? '';
     hasEbooksAudiobooks = json['has_ebooks_audiobooks'] ?? '';
+    token = json['token'] ?? '';
+    applied_at = json['applied_at'] ?? '';
+    expiration = json['expiration'] ?? '';
+
+
   }
 
   // Map<String, dynamic> toJson() {

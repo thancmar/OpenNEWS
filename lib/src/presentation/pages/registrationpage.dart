@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -73,392 +74,421 @@ class _RegistrationState extends State<Registration> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              // mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
-                  child: TextFormField(
-                    controller: _firstnameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This is the required field';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      //Maybe we need it
-                      // contentPadding: const EdgeInsets.symmetric(
-                      //     vertical: 20.0, horizontal: 10.0),
-                      floatingLabelStyle: TextStyle(color: Colors.blue),
-                      labelText: "Vorname",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        body:BlocBuilder<AuthBloc , AuthState>(
+            builder: (context, state) {
+              if(state is AuthError){
+                return AlertDialog(
+                  title: Text(
+                    ('error').tr(),
+                    style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w500),
+                  ),
+                  content: Text(state.error.toString(), style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300)),
+                  actions: <Widget>[
+                    // TextButton(
+                    //   onPressed: () => Navigator.pop(context, 'Cancel'),
+                    //   child: const Text('Cancel'),
+                    // ),
+                    TextButton(
+                      onPressed: () => BlocProvider.of<AuthBloc>(context).add(
+                        OpenLoginPage(),
+                        // Initialize()
                       ),
+                      child: Text('OK'),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
-                  child: TextFormField(
-                    controller: _lastnameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This is the required field';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      floatingLabelStyle: TextStyle(color: Colors.blue),
-                      labelText: "Nachname",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0, color: Colors.grey), //, height: 3.8),
-
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
-                  child: TextFormField(
-                    controller: _emailController,
-                    validator: (value) => validateEmail(value),
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      floatingLabelStyle: TextStyle(color: Colors.blue),
-                      labelText: "Email",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0, color: Colors.grey), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    // validator: (value) => validatePassword(value),
-                    style: TextStyle(color: Colors.white),
-                    obscureText: !_passwordVisible,
-                    validator: (value) => validatePassword(value),
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                          icon: Icon(
-                              _passwordVisible
-                                  ? Icons.remove_red_eye_outlined
-                                  : Icons.remove_red_eye,
-                              color: Colors.grey),
-                          onPressed: () {
-                            // Update the state i.e. toogle the state of passwordVisible variable
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          }),
-                      floatingLabelStyle: TextStyle(color: Colors.blue),
-                      labelText: "Passwort",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
-                  child: TextFormField(
-                    controller: _calenderController,
-                    // validator: (value) => validateEmail(value),
-                    style: TextStyle(color: Colors.white),
-
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.calendar_today_outlined,
-                            color: Colors.grey),
-                        onPressed: () => _selectDate(context),
-                      ),
-                      floatingLabelStyle: TextStyle(color: Colors.blue),
-                      labelText: "Geburtsdatum",
-                      labelStyle: TextStyle(
-                          fontSize: 16.0, color: Colors.grey), //, height: 3.8),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(1.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1)),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Gender",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
-                //
-                //
-                //Controller not yet defined for gender
-                Container(
-                  height: 60,
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  alignment: Alignment.center,
-                  // margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10)),
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child: _buildChips(),
-                  // color: Colors.blue,
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "By pressing the button I agree with Share Magazines Terms and Conditions and the Privacy policy",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 14),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 10, 20.0, 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        BlocProvider.of<AuthBloc>(context).add(
-                          SignUpRequested(
-                            _emailController.text,
-                            _passwordController.text,
-                            _firstnameController.text,
-                            _lastnameController.text,
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                            " ",
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      //primary: Colors.green,
-                      onPrimary: Colors.white,
-                      shadowColor: Colors.blueAccent,
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14.0)),
-                      minimumSize: Size(400, 60), //////// HERE
-                    ),
-                    child: Text(
-                      "Registrieren",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18,
-                        //fontStyle: FontStyle.,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "or signup with",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 14),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
+                  ],
+                );
+              }
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  // mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: GestureDetector(
-                        onTap: () => {
-                          BlocProvider.of<AuthBloc>(context)
-                              .add(SignInWithGoogle())
-                          // _googleSignIn = GoogleSignIn(
-                          //   scopes: [
-                          //     'email',
-                          //     'https://www.googleapis.com/auth/contacts.readonly',
-                          //   ],
-                          // )
+                      padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+                      child: TextFormField(
+                        controller: _firstnameController,
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'This is the required field';
+                        //   }
+                        //   return null;
+                        // },
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          //Maybe we need it
+                          // contentPadding: const EdgeInsets.symmetric(
+                          //     vertical: 20.0, horizontal: 10.0),
+                          floatingLabelStyle: TextStyle(color: Colors.blue),
+                          labelText: "Vorname",
+                          labelStyle: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w300), //, height: 3.8),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.grey, width: 1.0),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
+                      child: TextFormField(
+                        controller: _lastnameController,
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'This is the required field';
+                        //   }
+                        //   return null;
+                        // },
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          floatingLabelStyle: TextStyle(color: Colors.blue),
+                          labelText: "Nachname",
+                          labelStyle: TextStyle(
+                              fontSize: 16.0, color: Colors.grey), //, height: 3.8),
+
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.grey, width: 1.0),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
+                      child: TextFormField(
+                        controller: _emailController,
+                        validator: (value) => validateEmail(value),
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          floatingLabelStyle: TextStyle(color: Colors.blue),
+                          labelText: "Email",
+                          labelStyle: TextStyle(
+                              fontSize: 16.0, color: Colors.grey), //, height: 3.8),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.grey, width: 1.0),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
+                      child: TextFormField(
+                        controller: _passwordController,
+                        validator: (value) => validatePassword(value),
+                        style: TextStyle(color: Colors.white),
+                        obscureText: !_passwordVisible,
+
+                        // validator: (value) => validatePassword(value),
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                              icon: Icon(
+                                  _passwordVisible
+                                      ? Icons.remove_red_eye_outlined
+                                      : Icons.remove_red_eye,
+                                  color: Colors.grey),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              }),
+                          floatingLabelStyle: TextStyle(color: Colors.blue),
+                          labelText: "Passwort",
+                          labelStyle: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w300), //, height: 3.8),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.grey, width: 1.0),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
+                      child: TextFormField(
+                        controller: _calenderController,
+                        readOnly: true, //To not pop up the keyboard on tap
+                        onTap: () => _selectDate(context),
+                        // validator: (value) => validateEmail(value),
+                        style: TextStyle(color: Colors.white),
+
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.calendar_today_outlined,
+                                color: Colors.grey),
+                            onPressed: () => _selectDate(context),
+                          ),
+                          floatingLabelStyle: TextStyle(color: Colors.blue),
+                          labelText: "Geburtsdatum",
+                          labelStyle: TextStyle(
+                              fontSize: 16.0, color: Colors.grey), //, height: 3.8),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(1.0)),
+                              borderSide: BorderSide(color: Colors.red, width: 1)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.grey, width: 1.0),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Gender",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    //
+                    //
+                    //Controller not yet defined for gender
+                    Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      alignment: Alignment.center,
+                      // margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                      child: _buildChips(),
+                      // color: Colors.blue,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "By pressing the button I agree with Share Magazines Terms and Conditions and the Privacy policy",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 14),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20.0, 10, 20.0, 20.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            BlocProvider.of<AuthBloc>(context).add(
+                              SignUpRequested(
+                                _emailController.text,
+                                _passwordController.text,
+                                _firstnameController.text,
+                                _lastnameController.text,
+                                _calenderController.text,
+                                _selectedIndex == 0?'m':_selectedIndex == 1?'f':'d',
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                              ),
+                            );
+                          }
                         },
-                        child: Container(
-                          // color: Colors.white,
-                          height: 65,
-                          width: MediaQuery.of(context).size.width * 0.27,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 0.5),
+                        style: ElevatedButton.styleFrom(
+                          //primary: Colors.green,
+                          onPrimary: Colors.white,
+                          shadowColor: Colors.blueAccent,
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.0)),
+                          minimumSize: Size(400, 60), //////// HERE
+                        ),
+                        child: Text(
+                          "Registrieren",
+                          style: TextStyle(
                             color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(15),
-                            ),
-                          ),
-
-                          // child: Icon(
-                          //   IconData(0xe255, fontFamily: 'MaterialIcons'),
-                          //   size: 30,
-                          //   color: Colors.blue,
-                          // )
-                          child: new SvgPicture.asset(
-                            "assets/images/google_login_logo.svg",
-                            fit: BoxFit.fill,
-                            allowDrawingOutsideViewBox: true,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 18,
+                            //fontStyle: FontStyle.,
                           ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: Container(
-                        // color: Colors.white,
-                        height: 65,
-                        width: MediaQuery.of(context).size.width * 0.27,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                        ),
-                        child: new SvgPicture.asset(
-                          "assets/images/facebook_login_logo.svg",
-                          fit: BoxFit.fill,
-                          allowDrawingOutsideViewBox: true,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: GestureDetector(
-                        onTap: () => {
-                          SignInWithAppleButton(
-                            onPressed: () async {
-                              BlocProvider.of<AuthBloc>(context)
-                                  .add(SignUpWithApple());
-                              // final credential = await SignInWithApple.getAppleIDCredential(
-                              //   scopes: [
-                              //     AppleIDAuthorizationScopes.email,
-                              //     AppleIDAuthorizationScopes.fullName,
-                              //   ],
-                              // );
-
-                              // print(credential);
-
-                              // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
-                              // after they have been validated with Apple (see `Integration` section for more information on how to do this)
-                            },
-                          )
-                        },
-                        child: Container(
-                          // color: Colors.white,
-                          height: 65,
-
-                          width: MediaQuery.of(context).size.width * 0.27,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 0.5),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(15),
-                            ),
-                          ),
-                          child: new SvgPicture.asset(
-                            "assets/images/apple_login_logo.svg",
-                            fit: BoxFit.fill,
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Spacer(),
+                    // Padding(
+                    //   padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    //   child: Align(
+                    //     alignment: Alignment.center,
+                    //     child: Text(
+                    //       "or signup with",
+                    //       style: TextStyle(
+                    //           color: Colors.grey,
+                    //           fontWeight: FontWeight.w300,
+                    //           fontSize: 14),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Row(
+                    //   children: [
+                    //     Padding(
+                    //       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                    //       child: GestureDetector(
+                    //         onTap: () => {
+                    //           BlocProvider.of<AuthBloc>(context)
+                    //               .add(SignInWithGoogle())
+                    //           // _googleSignIn = GoogleSignIn(
+                    //           //   scopes: [
+                    //           //     'email',
+                    //           //     'https://www.googleapis.com/auth/contacts.readonly',
+                    //           //   ],
+                    //           // )
+                    //         },
+                    //         child: Container(
+                    //           // color: Colors.white,
+                    //           height: 65,
+                    //           width: MediaQuery.of(context).size.width * 0.27,
+                    //           decoration: BoxDecoration(
+                    //             border: Border.all(color: Colors.grey, width: 0.5),
+                    //             color: Colors.white,
+                    //             borderRadius: BorderRadius.all(
+                    //               Radius.circular(15),
+                    //             ),
+                    //           ),
+                    //
+                    //           // child: Icon(
+                    //           //   IconData(0xe255, fontFamily: 'MaterialIcons'),
+                    //           //   size: 30,
+                    //           //   color: Colors.blue,
+                    //           // )
+                    //           child: new SvgPicture.asset(
+                    //             "assets/images/google_login_logo.svg",
+                    //             fit: BoxFit.fill,
+                    //             allowDrawingOutsideViewBox: true,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                    //       child: Container(
+                    //         // color: Colors.white,
+                    //         height: 65,
+                    //         width: MediaQuery.of(context).size.width * 0.27,
+                    //         decoration: BoxDecoration(
+                    //           border: Border.all(color: Colors.grey, width: 0.5),
+                    //           color: Colors.white,
+                    //           borderRadius: BorderRadius.all(
+                    //             Radius.circular(15),
+                    //           ),
+                    //         ),
+                    //         child: new SvgPicture.asset(
+                    //           "assets/images/facebook_login_logo.svg",
+                    //           fit: BoxFit.fill,
+                    //           allowDrawingOutsideViewBox: true,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                    //       child: GestureDetector(
+                    //         onTap: () => {
+                    //           SignInWithAppleButton(
+                    //             onPressed: () async {
+                    //               BlocProvider.of<AuthBloc>(context)
+                    //                   .add(SignUpWithApple());
+                    //               // final credential = await SignInWithApple.getAppleIDCredential(
+                    //               //   scopes: [
+                    //               //     AppleIDAuthorizationScopes.email,
+                    //               //     AppleIDAuthorizationScopes.fullName,
+                    //               //   ],
+                    //               // );
+                    //
+                    //               // print(credential);
+                    //
+                    //               // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
+                    //               // after they have been validated with Apple (see `Integration` section for more information on how to do this)
+                    //             },
+                    //           )
+                    //         },
+                    //         child: Container(
+                    //           // color: Colors.white,
+                    //           height: 65,
+                    //
+                    //           width: MediaQuery.of(context).size.width * 0.27,
+                    //           decoration: BoxDecoration(
+                    //             border: Border.all(color: Colors.grey, width: 0.5),
+                    //             color: Colors.white,
+                    //             borderRadius: BorderRadius.all(
+                    //               Radius.circular(15),
+                    //             ),
+                    //           ),
+                    //           child: new SvgPicture.asset(
+                    //             "assets/images/apple_login_logo.svg",
+                    //             fit: BoxFit.fill,
+                    //             allowDrawingOutsideViewBox: true,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Spacer(),
+                    //   ],
+                    // ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }
         ),
       )
     ]);

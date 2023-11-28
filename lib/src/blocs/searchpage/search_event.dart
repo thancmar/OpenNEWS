@@ -30,7 +30,8 @@ class OpenSearchResults extends SearchEvent {
   // final String pageNo;
   final BuildContext context;
   final String searchText;
-  OpenSearchResults(this.context, this.searchText);
+  final bool saveResult;
+  OpenSearchResults(this.context, this.searchText, this.saveResult);
 }
 
 class OpenLanguageResults extends SearchEvent {

@@ -19,41 +19,34 @@ abstract class NavbarState extends Equatable {
   static late HotspotsGetAllActive hotspotList;
   static late List<Place> allMapMarkers = <Place>[];
 
-  // final List<Uint8List> bytes;
-  // List<Future<Uint8List>>? AllCovers = List.empty(growable: true);
-  // late final List<Future<Uint8List>>? futureFunc;
   static late List<Future<Uint8List>>? languageResultsALL = List.empty(growable: true);
-  static late List<Stream<Uint8List>>? languageResultsALLStream = List.empty(growable: true);
-  static late List<Future<Uint8List>>? languageResultsDE = List.empty(growable: true);
-  static late List<Future<Uint8List>>? languageResultsEN = List.empty(growable: true);
-  static late List<Future<Uint8List>>? languageResultsFR = List.empty(growable: true);
-  static late List<Future<Uint8List>>? getTopMagazines = List.empty(growable: true);
 
-  // late final Localization? locations_NavbarState;
-
-  // Localization get access_location;
 
   static late Future<LocationGetHeader>? locationheader = null;
-  static late Future<LocationOffers>? locationoffers = null;
-  static late List<Future<Uint8List>> locationoffersImages = List.empty(growable: true);
+  static  Future<LocationOffers>? locationoffers = null;
+  static  Future<List<OfferImage>>? locationoffers123 = null;
+  static  List<OfferImage> locationoffersImages =[] ;
   static late List<Future<File>>? locationoffersVideos = List.empty(growable: true);
   static late Future<Uint8List>? locationImage = null;
-  static late Data appbarlocation = Data(); //This is the global location for the App
+   final Data appbarlocation ; //This is the global location for the App
+
+  static late String? token = null;
+  static late String? fingerprint = null;
 
   static late Future<LocationOffers>? maplocationoffers = null;
 
   // NavbarState(this.magazinePublishedGetLastWithLimit, this.languageResultsALL, this.locations);
-  NavbarState();
+  NavbarState(this.appbarlocation);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [appbarlocation];
 }
 
 class LoadingNavbar extends NavbarState {
   // final MagazinePublishedGetLastWithLimit magazinePublishedGetLastWithLimit;
   // final List<Future<Uint8List>>? futureFuncall1;
   // Loading([this.futureFuncall]) : super(null, futureFuncall, null);
-  LoadingNavbar() : super();
+  LoadingNavbar(Data appbarlocation) : super(appbarlocation);
 
   @override
   List<Object> get props => [];
@@ -67,16 +60,16 @@ class NavbarLoaded extends NavbarState {
   // final List<String> data;
   // final Data data;
 
-  NavbarLoaded() : super();
+  NavbarLoaded(Data appbarlocation) : super(appbarlocation);
 
-  @override
-  List<Object> get props => [];
+  // @override
+  // List<Object> get props => [appbarlocation];
 }
 
 class GoToLocationSelection extends NavbarState {
   final List<Data>? locations_GoToLocationSelection;
 
-  GoToLocationSelection(this.locations_GoToLocationSelection) : super();
+  GoToLocationSelection(this.locations_GoToLocationSelection,Data appbarlocation) : super(appbarlocation);
 
   @override
   List<Object> get props => [];
@@ -85,7 +78,7 @@ class GoToLocationSelection extends NavbarState {
 class GoToLanguageSelection extends NavbarState {
   final List<Locale> languageOptions;
 
-  GoToLanguageSelection({required this.languageOptions}) : super();
+  GoToLanguageSelection({required this.languageOptions}) : super(Data());
 
   @override
   List<Object> get props => [];
@@ -93,7 +86,7 @@ class GoToLanguageSelection extends NavbarState {
 
 class AskForLocationPermission extends NavbarState {
   // final List<Data>? locations_GoToLocationSelection;
-  AskForLocationPermission() : super();
+  AskForLocationPermission(Data appbarlocation) : super(appbarlocation);
 
   @override
   List<Object> get props => [];
@@ -102,7 +95,7 @@ class AskForLocationPermission extends NavbarState {
 class NavbarError extends NavbarState {
   final String error;
 
-  NavbarError(this.error) : super();
+  NavbarError(this.error) : super(Data());
 // @override
 // List<Object?> get props => [appbarlocation];
 

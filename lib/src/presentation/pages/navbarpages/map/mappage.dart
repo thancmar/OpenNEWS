@@ -65,7 +65,10 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 
   ClusterManager _initClusterManager() {
     print("_initClusterManager");
-    return ClusterManager<Place>(NavbarState.allMapMarkers, _updateMarkers,
+    List<Place> filteredMarkers = NavbarState.allMapMarkers.where((place) => place.type != "5").toList();
+
+    // return ClusterManager<Place>(NavbarState.allMapMarkers, _updateMarkers,
+    return ClusterManager<Place>(filteredMarkers, _updateMarkers,
         markerBuilder: _markerBuilder,
         // levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0],
         stopClusteringZoom: 12.0);
@@ -417,6 +420,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   }
 
   Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
+
         mapController = await _controller.future;
         Completer<GoogleMapController> completer = Completer();
 

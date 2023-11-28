@@ -1,75 +1,81 @@
 import 'package:flutter/material.dart';
 
-class CustomNavbar extends StatelessWidget {
-  // const BottomNavBarImp({
-  // int selectedIndex = 0;
-  final selectedIndex;
+class CustomNavbar extends StatefulWidget {
+  final int selectedIndex;
   final ValueChanged<int> onClicked;
-  final showQR;
+  final bool showQR;
 
-  CustomNavbar({required this.selectedIndex, required this.onClicked,required this.showQR});
+  CustomNavbar({required this.selectedIndex, required this.onClicked, required this.showQR});
+
+  @override
+  _CustomNavbarState createState() => _CustomNavbarState();
+}
+
+class _CustomNavbarState extends State<CustomNavbar> with TickerProviderStateMixin {
+  late List<AnimationController> _controllers;
+  late List<Animation<double>> _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(
+        4,
+        (index) => AnimationController(
+              vsync: this,
+              // value: 1,
+              duration: Duration(milliseconds: 200),
+            ));
+    _animations = _controllers.map((controller) => Tween<double>(begin: 1, end: 1.5).animate(controller)).toList();
+
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Theme(
-          data: Theme.of(context).copyWith(
-            splashColor: Colors.transparent,  // Disabling splash effect
-            highlightColor: Colors.transparent,  // Disabling highlight effect
-          ),
+          data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
           child: BottomNavigationBar(
-            // withd: MediaQuery.of(context).padding.bottom;
-            type: BottomNavigationBarType.fixed, //Helps with the Transparent Bug
+            type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.transparent,
-            // backgroundColor: Theme.of(context).copyWith(splashColor: Colors.yellow),,
             elevation: 0,
-            // backgroundColor: Color(0x00ffffff),
             showSelectedLabels: false,
             selectedItemColor: Colors.blue,
             showUnselectedLabels: false,
-            currentIndex: selectedIndex,
-            onTap: onClicked,
+            currentIndex: widget.selectedIndex,
+            onTap: (index) {
+              widget.onClicked(index);
+              _controllers[index]
+                  .forward()
+                  .then((_) => _controllers[index].reverse()); // Trigger the animation when tapped
 
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                  color: selectedIndex == 0 ? Colors.blue : Colors.grey,
-                ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.menu,
-                  color: selectedIndex == 1 ? Colors.blue : Colors.grey,
-                ),
-                label: 'Camera',
-              ),
-              if(showQR == true)BottomNavigationBarItem(
-                icon: SizedBox.shrink(), // This creates an empty space for the icon
+            },
+            items: [
 
-                label: 'QR_FAB',
-
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.pin_drop_outlined,
-                  color: selectedIndex == 2 ? Colors.blue : Colors.grey,
-                ),
-                label: 'Chats',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.account_circle_outlined,
-                  color: selectedIndex == 3 ? Colors.blue : Colors.grey,
-                ),
-                label: 'Account',
-              ),
+              _buildItem(0, Icons.home),
+              _buildItem(1, Icons.menu),
+              _buildItem(2, Icons.pin_drop_outlined),
+              _buildItem(3, Icons.account_circle_outlined),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  BottomNavigationBarItem _buildItem(int index, IconData iconData) {
+    return BottomNavigationBarItem(
+      icon: ScaleTransition(
+        scale: _animations[index], // Use the animation for scaling
+        child: Icon(iconData, color: widget.selectedIndex == index ? Colors.blue : Colors.grey),
+      ),
+      label: '',
     );
   }
 }

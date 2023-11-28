@@ -8,13 +8,16 @@ import 'package:http/http.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../blocs/navbar/navbar_bloc.dart';
+import '../../../models/location_model.dart';
 import '../../../models/magazineCategoryGetAllActive.dart';
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../widgets/marquee.dart';
+import '../../widgets/src/covershorizontallist.dart';
 import '../reader/readerpage.dart';
 import 'homepage/homepage.dart';
 
 class MenuPage extends StatefulWidget {
+
   const MenuPage({Key? key}) : super(key: key);
 
   @override
@@ -22,15 +25,16 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<MenuPage> {
+
   @override
   bool get wantKeepAlive => true;
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  void _onRefresh() async {
+  void _onRefresh(Data currentLocation) async {
     // monitor network fetch
-    await BlocProvider.of<NavbarBloc>(context).checkLocation();
-    _refreshController.refreshCompleted();
+    await BlocProvider.of<NavbarBloc>(context).checkLocation(currentLocation);
+   _refreshController.refreshCompleted();
   }
 
   @override
@@ -42,7 +46,7 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
         child: SmartRefresher(
           enablePullDown: true,
           controller: _refreshController,
-          onRefresh: _onRefresh,
+          onRefresh:() => _onRefresh(state.appbarlocation),
           child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
@@ -87,6 +91,7 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
                           ListMagazineCover(
                             cover: bookmarks,
                             heroTag: 'menu_bookmarks',
+                            scrollDirection: Axis.horizontal,
                           ),
                         Align(
                           alignment: Alignment.center,
@@ -106,10 +111,11 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
                         ListMagazineCover(
                           cover: items,
                           heroTag: 'menu_$i',
+                          scrollDirection: Axis.horizontal,
                         ),
-                        if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!)
+                        if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!-1)
                           Container(
-                            height: size.height * 0.1,
+                            height: size.height * 0.2,
                             color: Colors.transparent,
                           )
 

@@ -34,44 +34,57 @@ class AuthRepository {
       required String account_owner,
       required String creation_date,
       required String origin}) async {
-    Map<String, dynamic> data = {
-      'f': 'readerAdd',
-      'json':
-          '{"email": "$email", "password":"$password", "firstname":"$firstname", "lastname":"$lastname", "date_of_birth":"$date_of_birth", "sex":"$sex","address_street":"$address_street" ,"address_house_nr":"$address_house_nr","address_zip":"$address_zip","address_city":"$address_city","phone":"$phone","iban":"$iban","account_owner":"$account_owner","creation_date":"","origin":"$origin"}'
-    };
-    print(data);
+    try {
+      Map<String, dynamic> data = {
+        'f': 'readerAdd',
+        'json':
+            '{"email": "$email", "password":"$password", "firstname":"$firstname", "lastname":"$lastname", "date_of_birth":"$date_of_birth", "sex":"$sex","address_street":"$address_street" ,"address_house_nr":"$address_house_nr","address_zip":"$address_zip","address_city":"$address_city","phone":"$phone","iban":"$iban","account_owner":"$account_owner","creation_date":"","origin":"$origin"}'
+      };
+      print(data);
 
-    final response = await http.post(
-      Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint),
-      body: data,
-      // headers: head,
-    );
-    print("login response: ${response.body}");
-    if (response.statusCode == 200) {
-      // return jokeModelFromJson(response.body);
-      // print(response.body);
-      if (json.decode(response.body)['response']['code'] == 1062) {
-        print("1062");
-        throw Exception("Failed to signup");
-      } else {
-        // String rawCookie = response.headers['set-cookie'] ?? _cookieData;
-        print("rk");
-        print(response.headers['set-cookie']);
-        // try {
-        //   UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: "barry.allen@example.com", password: "SuperSecretPassword!");
-        // } on FirebaseAuthException catch (e) {
-        //   if (e.code == 'weak-password') {
-        //     print('The password provided is too weak.');
-        //   } else if (e.code == 'email-already-in-use') {
-        //     print('The account already exists for that email.');
-        //   }
-        // } catch (e) {
-        //   print(e);
+      final response = await http.post(
+        Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint),
+        body: data,
+        // headers: head,
+      );
+      print("login response: ${response.body}");
+      if (response.statusCode == 200) {
+        // return jokeModelFromJson(response.body);
+        // print(response.body);
+        // if (json.decode(response.body)['response']['code'] == 1062) {
+        //   print("1062");
+        throw Exception(json.decode(response.body)['response']['message']);
         // }
+        // else {
+        //   // String rawCookie = response.headers['set-cookie'] ?? _cookieData;
+        //   print("rk");
+        //   print(response.headers['set-cookie']);
+        //   // try {
+        //   //   UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: "barry.allen@example.com", password: "SuperSecretPassword!");
+        //   // } on FirebaseAuthException catch (e) {
+        //   //   if (e.code == 'weak-password') {
+        //   //     print('The password provided is too weak.');
+        //   //   } else if (e.code == 'email-already-in-use') {
+        //   //     print('The account already exists for that email.');
+        //   //   }
+        //   // } catch (e) {
+        //   //   print(e);
+        //   // }
+        //   return RegistrierungFromJson(response.body);
+        // }
+      } else if (response.statusCode == 500) {
         return RegistrierungFromJson(response.body);
+      } else {
+        throw Exception(json.decode(response.body)['response']['message']);
       }
-    } else {
-      throw Exception("Failed to login");
+    } on TypeError catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to parse the response");
+    } on SocketException catch (e) {
+      rethrow;
+    } catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to login. Code ${e}");
     }
   }
 
@@ -134,12 +147,15 @@ class AuthRepository {
   Future<LoginModel> signIn({
     required String? email,
     required String? password,
+    required String? token,
+    required String? fingerprint,
   }) async {
     try {
       final getIt = GetIt.instance;
       Map<String, dynamic> data = {
         'f': 'readerLogin',
-        'json': '{"email": "$email", "password":"$password", "version":"5", "client":"web", "lang":"en", "token":"","fingerprint":"aaabb"}'
+        'json':
+            '{"email": "$email", "password":"$password", "version":"5", "client":"web", "lang":"en", "token":"$token","fingerprint":"$fingerprint"}'
       };
       final response = await getIt<ApiClient>()
           .diofordata

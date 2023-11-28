@@ -6,6 +6,7 @@ import 'package:open_store/open_store.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/login_model.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
+import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/emalpwdreset.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/myprofilepage.dart';
 import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
 
@@ -13,6 +14,11 @@ import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/splash/splash_bloc.dart';
 import '../../../../models/location_model.dart';
 import '../../startpage.dart';
+
+enum ResetType {
+  email,
+  password,
+}
 
 class AccountPageWidgets extends StatefulWidget {
   final PageController pageController;
@@ -128,7 +134,9 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
                             child: Text(
-                              '${AuthState.userDetails?.response?.firstname} ${AuthState.userDetails?.response?.lastname}',
+                              "${BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname} ${BlocProvider.of<AuthBloc>(context).state.userDetails.response?.lastname}" ,
+                              // "Name",
+                              // '${AuthState.userDetails?.response?.firstname} ${AuthState.userDetails?.response?.lastname}',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w500,
@@ -357,7 +365,9 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   ),
                 ),
                 children: <Widget>[
-                  Padding(
+                  BlocProvider.of<AuthBloc>(context).state is Authenticated
+                  // AuthState.userDetails?.response?.firstname != ''
+                  ?Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: ListTile(
                         leading: const Icon(
@@ -373,12 +383,28 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                             color: Colors.white,
                           ),
                         )),
-                  ),
-                  Padding(
+                  ):Container(),
+                  // BlocProvider.of<AuthBloc>(context).state is Authenticated
+                  // AuthState.userDetails?.response?.firstname != ''
+                  // ?
+                  BlocProvider.of<AuthBloc>(context).state is Authenticated? Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: InkWell(
                         onTap: () => {
-
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => EmailPwdReset(resetType: ResetType.email),
+                                // transitionDuration: Duration(milliseconds: 500),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  const begin = Offset(0.0, 1.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.decelerate;
+                                  final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(position: animation.drive(tween), child: child);
+                                }),
+                          ),
                         },
                       child: ListTile(
                           leading: const Icon(
@@ -394,10 +420,14 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                             ),
                           )),
                     ),
-                  ),
+                  ):Container(),
+                              // :Container(),
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: ListTile(
+                        onTap: () => {
+
+                        },
                         leading: const Icon(
                           Icons.add_alert,
                           color: Colors.white,

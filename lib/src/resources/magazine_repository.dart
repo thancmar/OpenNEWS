@@ -45,14 +45,14 @@ class MagazineRepository {
     if (response.statusCode == 200) {
       // final Map parsed = json.decode(response.data);
       print("magazinePublishedGetLastWithLimit sucess");
-      if (await dioClient.secureStorage.read(key: "allmagazines") ==
-          (response.data)) {
-        // print('dsfsf');
-        dioClient.secureStorage
-            .write(key: "allmagazines", value: response.data);
-        return MagazinePublishedGetLastWithLimitFromJson(response.data);
-      }
-      ;
+      // if (await dioClient.secureStorage.read(key: "allmagazines") ==
+      //     (response.data)) {
+      //   // print('dsfsf');
+      //   dioClient.secureStorage
+      //       .write(key: "allmagazines", value: response.data);
+      //   return MagazinePublishedGetLastWithLimitFromJson(response.data);
+      // }
+      // ;
       // print(response.data);
       // print(response!.data);
       // dioClient.secureStorage.write(key: "allmagazines", value: response.data);
@@ -166,11 +166,11 @@ class MagazineRepository {
     // print("sdfdjkbsf $id_mag_pub");
 
     // await DefaultCacheManager().emptyCache();
-    var response = await getIt<ApiClient>().diofordata.get(
+    var response = await getIt<ApiClient>().dioforImages.get(
         ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
         options: Options(responseType: ResponseType.bytes));
     await DefaultCacheManager().putFile(
-        id_mag_pub + "_" + date_of_publication + "_" + "0",
+        id_mag_pub + "_" + date_of_publication + "_" + page,
         Uint8List.fromList(response.data),
         fileExtension: "jpeg",
         maxAge: Duration(days: 7));
@@ -185,7 +185,8 @@ class MagazineRepository {
       {required int page,
       required String? id_mag_pub,
       required String? date_of_publication,
-      required CancelToken? readerCancelToken}) async {
+      required CancelToken? readerCancelToken
+      }) async {
     // print("GetPage $id_mag_pub $page");
     try {
       final getIt = GetIt.instance;
@@ -229,11 +230,12 @@ class MagazineRepository {
     }
   }
 
-  GetThumbnailforReader(
+  Future<Uint8List> GetThumbnailforReader(
       {required int page,
       required String? id_mag_pub,
       required String? date_of_publication,
-      required CancelToken? readerCancelToken}) async {
+      // required CancelToken? readerCancelToken
+      }) async {
     // print("GetPage $id_mag_pub $page");
     try {
       final getIt = GetIt.instance;
@@ -252,9 +254,9 @@ class MagazineRepository {
       //       .diofordata
       //       .get(ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString, options: Options(responseType: ResponseType.bytes), cancelToken: readerCancelToken);
       // });
-      print(
-          "sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
-      var response = await getIt<ApiClient>().dioforImages.get(
+      // print(
+      //     "sdfdjkbsf ${id_mag_pub + "_" + date_of_publication! + "_" + page.toString()}");
+      var response = await getIt<ApiClient>().diofordata.get(
           ApiConstants.baseUrl + ApiConstants.getCoverJPEG + '?' + queryString,
           options: Options(responseType: ResponseType.bytes));
       switch (response.statusCode) {
@@ -270,7 +272,7 @@ class MagazineRepository {
               Uint8List.fromList(response.data),
               fileExtension: "jpeg",
               maxAge: Duration(days: 7));
-          return;
+          return Uint8List.fromList(response.data);
         default:
           throw Exception(response.data);
       }

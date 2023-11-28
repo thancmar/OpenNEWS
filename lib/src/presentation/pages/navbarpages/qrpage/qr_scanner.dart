@@ -1,5 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:backdrop/backdrop.dart';
+import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,10 +12,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/qrpage/qrCodeInputField.dart';
 
+import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/navbar/navbar_bloc.dart';
 
 class QRViewExample extends StatefulWidget {
-  const QRViewExample({Key? key}) : super(key: key);
+  late String? fingerprint;
+
+  // bool hideCamera = false;
+  ValueNotifier<bool> hideCamera = ValueNotifier<bool>(false);
+  TextEditingController textEditingController = TextEditingController();
+
+  QRViewExample({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _QRViewExampleState();
@@ -18,10 +30,16 @@ class QRViewExample extends StatefulWidget {
 
 class _QRViewExampleState extends State<QRViewExample> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  final TextEditingController textEditingController = TextEditingController();
+
+  // final TextEditingController textEditingController = TextEditingController();
   Barcode? result;
   bool cameraActive = false;
+
+  // bool hideCamera = false;
   QRViewController? controller;
+
+  // String? fingerprint;
+  ValueNotifier<bool> errorQR = ValueNotifier<bool>(false);
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -39,46 +57,104 @@ class _QRViewExampleState extends State<QRViewExample> {
   void initState() {
     super.initState();
     checkCameraPermission();
+    generateFingerprint().then((value) => setState(() {
+          widget.fingerprint = value;
+          print('hash: ${widget.fingerprint}');
+        }));
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  Future<String> generateFingerprint() async {
+    var deviceInfo = DeviceInfoPlugin();
+    String fingerprintSource;
+
+    if (Platform.isAndroid) {
+      var androidInfo = await deviceInfo.androidInfo;
+      fingerprintSource = '''
+      ${androidInfo.id}
+      ${androidInfo.brand}
+      ${androidInfo.device}
+      ${androidInfo.id}
+      ${androidInfo.product}
+      ${androidInfo.version.sdkInt}
+    ''';
+    } else if (Platform.isIOS) {
+      var iosInfo = await deviceInfo.iosInfo;
+      fingerprintSource = '''
+      ${iosInfo.identifierForVendor}
+      ${iosInfo.systemName}
+      ${iosInfo.systemVersion}
+      ${iosInfo.model}
+    ''';
+    } else {
+      // Other platforms
+      print("vd");
+      fingerprintSource = 'Unsupported Platform';
+    }
+    print(fingerprintSource);
+    var bytes = utf8.encode(fingerprintSource);
+
+    var digest = md5.convert(bytes);
+    print(digest);
+
+    return digest.toString();
+  }
+
+  void _onQRViewCreated(QRViewController controller) async {
     this.controller = controller;
+
     controller.scannedDataStream.listen((scanData) {
       // Find the index of the last occurrence of '=' in the string
       controller!.pauseCamera();
       int startIndex = scanData.code!.lastIndexOf('=');
 
-    // Extract the value after '='
+      // Extract the value after '='
       String extractedValue = scanData.code!.substring(startIndex + 1);
       setState(() {
-        textEditingController.text=extractedValue;
+        widget.textEditingController.text = extractedValue;
       });
+      BlocProvider.of<AuthBloc>(context).add(
+        SignInRequested(AuthState.savedEmail, AuthState.savedPWD, extractedValue, widget.fingerprint, true),
+      );
 
+      // }
 
-      BlocProvider.of<NavbarBloc>(context).qr(extractedValue);
+      BlocProvider.of<NavbarBloc>(context).qr(extractedValue, widget.fingerprint!).then((value) => {
+            if (value == true) {Navigator.pop(context)} else {errorQR.value = true}
+          });
+      // BlocProvider.of<NavbarBloc>(context).qr(extractedValue);
       setState(() {
         result = scanData;
       });
+    }, onError: (error) {
+      print("QREEOR");
+
+      errorQR.value = true;
     });
   }
 
   void checkCameraPermission() async {
     // PermissionStatus cameraPermissionStatus = await Permission.cameraStatus();
     PermissionStatus status = await Permission.camera.status;
+    print(status);
     if (status.isGranted) {
       // Camera permission is granted
 
-      setState(() {
-        cameraActive = true;
-      });
-    } else {
-      // Camera permission is not granted
-      PermissionStatus status = await Permission.camera.request();
-      // openAppSettings();
-      setState(() {
-        cameraActive = false;
-      });
-      // cameraActive = false;
+      //   setState(() {
+      //     cameraActive = true;
+      //   });
+      // } else {
+      //   // Camera permission is not granted
+      //   PermissionStatus status = await Permission.camera.request();
+      //   if (status != PermissionStatus.granted) {
+      //     setState(() {
+      //       cameraActive = false;
+      //     });
+      //   } else {
+      //     setState(() {
+      //       cameraActive = true;
+      //     });
+      //   }
+      cameraActive = false;
     }
   }
 
@@ -122,61 +198,197 @@ class _QRViewExampleState extends State<QRViewExample> {
             elevation: 0,
           ),
           body: SafeArea(
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  flex: 3,
-                  child: cameraActive == true
-                      ? Container(
-                          margin:  EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.blue, width: 1.10),
-                            borderRadius: new BorderRadius.circular(20.0),
-                            // color: Colors.red,
+            child: ValueListenableBuilder<bool>(
+                valueListenable: errorQR,
+                builder: (BuildContext context, bool counterValue, Widget? child) {
+                  return counterValue
+                      ? AlertDialog(
+                          title: Text(
+                            ('error').tr(),
+                            style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w500),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: QRView(
-                              key: qrKey,
-                              overlay: QrScannerOverlayShape(
-                                borderColor: Colors.blue,
-                                borderRadius: 10.0,
-                                borderLength: 30.0,
-                                borderWidth: 4.0,
-                                cutOutSize: MediaQuery.of(context).size.width * 0.8,
-                              ),
-                              // overlayMargin: EdgeInsets.all(80),
-                              onQRViewCreated: _onQRViewCreated,
+                          content: Text('QR code is not valid'),
+                          actions: <Widget>[
+                            // TextButton(
+                            //   onPressed: () => Navigator.pop(context, 'Cancel'),
+                            //   child: const Text('Cancel'),
+                            // ),
+                            TextButton(
+                              onPressed: () => {errorQR.value = false,widget.hideCamera.value=false},
+                              child: Text('OK'),
                             ),
-                          ),
+                          ],
                         )
                       : Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          color: Colors.grey.withOpacity(0.4),
-                          child: Align(
-                              alignment: Alignment.center,
-                              child: Center(
-                                  child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.no_photography_outlined,
-                                    color: Colors.white,
-                                  ),
-                                  Text("No camera access"),
-                                ],
-                              ))),
-                        ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Center(child: QRCodeInputField(textEditingController: textEditingController,)
-                      // (result != null) ? Text('Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}') : Text('Scan a code'),
-                      ),
-                )
-              ],
-            ),
+                          // margin: EdgeInsets.all(4.0),
+                          // decoration: BoxDecoration(
+                          //   border: Border.all(color: Colors.blue, width: 1.10),
+                          //   borderRadius: new BorderRadius.circular(20.0),
+                          // ),
+                          child: Column(
+                            children: <Widget>[
+                              ValueListenableBuilder<bool>(
+                                valueListenable: widget.hideCamera,
+                                builder: (BuildContext context, bool currentPageNo, Widget? child) {
+                                  return !currentPageNo
+                                      ? Expanded(
+                                          flex: 3,
+                                          child:
+                                              cameraActive == false
+                                                  ?
+                                              Container(
+                                                      margin: EdgeInsets.all(8.0),
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.blue, width: 1.10),
+                                                        borderRadius: new BorderRadius.circular(20.0),
+
+                                                        // color: Colors.red,
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius: BorderRadius.circular(20.0),
+                                                        child: QRView(
+                                                          key: qrKey,
+                                                          overlay: QrScannerOverlayShape(
+                                                            borderColor: Colors.blue,
+                                                            borderRadius: 10.0,
+                                                            borderLength: 30.0,
+                                                            borderWidth: 4.0,
+                                                            cutOutSize: MediaQuery.of(context).size.width * 0.8,
+                                                          ),
+                                                          // overlayMargin: EdgeInsets.all(80),
+                                                          onQRViewCreated: _onQRViewCreated,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  :
+                                              Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            color: Colors.grey.withOpacity(0.4),
+                                            child: Align(
+                                                alignment: Alignment.center,
+                                                child: Center(
+                                                    child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.no_photography_outlined,
+                                                      color: Colors.white,
+                                                      size: 60,
+                                                    ),
+                                                    Text("No camera access",
+                                                        style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300)),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        openAppSettings();
+                                                      },
+                                                      child: Text(
+                                                        "Open Settings",
+                                                        style: TextStyle(
+                                                          color: Colors.blue,
+                                                          fontWeight: FontWeight.w300,
+                                                          fontSize: 18,
+                                                          //fontStyle: FontStyle.,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ))),
+                                          ),
+                                        )
+                                      : Container();
+                                },
+                              ),
+                              // widget.hideCamera == false
+                              //     ? Container(
+                              //         color: Colors.red,
+                              //         height: 100,
+                              //       )
+                              //     : Container(),
+                              // widget.hideCamera.value == false
+                              //     ? Expanded(
+                              //         flex: 3,
+                              //         child:
+                              //             // cameraActive == false
+                              //             //     ?
+                              //             // Container(
+                              //             //         margin: EdgeInsets.all(8.0),
+                              //             //         decoration: BoxDecoration(
+                              //             //           border: Border.all(color: Colors.blue, width: 1.10),
+                              //             //           borderRadius: new BorderRadius.circular(20.0),
+                              //             //
+                              //             //           // color: Colors.red,
+                              //             //         ),
+                              //             //         child: ClipRRect(
+                              //             //           borderRadius: BorderRadius.circular(20.0),
+                              //             //           child: QRView(
+                              //             //             key: qrKey,
+                              //             //             overlay: QrScannerOverlayShape(
+                              //             //               borderColor: Colors.blue,
+                              //             //               borderRadius: 10.0,
+                              //             //               borderLength: 30.0,
+                              //             //               borderWidth: 4.0,
+                              //             //               cutOutSize: MediaQuery.of(context).size.width * 0.8,
+                              //             //             ),
+                              //             //             // overlayMargin: EdgeInsets.all(80),
+                              //             //             onQRViewCreated: _onQRViewCreated,
+                              //             //           ),
+                              //             //         ),
+                              //             //       )
+                              //             //     :
+                              //             Container(
+                              //           width: double.infinity,
+                              //           height: double.infinity,
+                              //           color: Colors.grey.withOpacity(0.4),
+                              //           child: Align(
+                              //               alignment: Alignment.center,
+                              //               child: Center(
+                              //                   child: Column(
+                              //                 mainAxisAlignment: MainAxisAlignment.center,
+                              //                 children: [
+                              //                   Icon(
+                              //                     Icons.no_photography_outlined,
+                              //                     color: Colors.white,
+                              //                     size: 60,
+                              //                   ),
+                              //                   Text("No camera access",
+                              //                       style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300)),
+                              //                   GestureDetector(
+                              //                     onTap: () {
+                              //                       openAppSettings();
+                              //                     },
+                              //                     child: Text(
+                              //                       "Open Settings",
+                              //                       style: TextStyle(
+                              //                         color: Colors.blue,
+                              //                         fontWeight: FontWeight.w300,
+                              //                         fontSize: 18,
+                              //                         //fontStyle: FontStyle.,
+                              //                       ),
+                              //                     ),
+                              //                   ),
+                              //                 ],
+                              //               ))),
+                              //         ),
+                              //       )
+                              //     : Container(),
+                              Expanded(
+                                flex: 1,
+                                child: Center(
+                                    child: QRCodeInputField(
+                                  // textEditingController: widget.textEditingController,
+                                  // fingerprint:  widget.fingerprint,
+                                  cameraActive: cameraActive,
+                                  error: errorQR,
+                                  camera: this.widget,
+                                )
+                                    // (result != null) ? Text('Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}') : Text('Scan a code'),
+                                    ),
+                              )
+                            ],
+                          ),
+                        );
+                }),
           ),
         ),
       ],

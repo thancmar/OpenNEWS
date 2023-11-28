@@ -78,7 +78,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     });
 
     on<OpenSearchResults>((event, emit) async {
-      if (SearchState.oldSearchResults?.contains(event.searchText) == false) {
+      if (SearchState.oldSearchResults?.contains(event.searchText) == false && event.saveResult) {
         SearchState. oldSearchResults?.add(event.searchText.toLowerCase().toString());
         await dioClient.secureStorage.write(
             key: "oldSearchResults", value: jsonEncode(SearchState.oldSearchResults));
@@ -111,6 +111,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     });
     on<OpenCategoryPage>((event, emit) async {
       // categoryCovers;
+      categoryCovers =MagazinePublishedGetAllLastByHotspotId(response: []);
       categoryCovers =  MagazinePublishedGetAllLastByHotspotId(
           response: NavbarState.magazinePublishedGetLastWithLimit!.response!
               .where((element) =>

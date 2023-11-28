@@ -12,6 +12,7 @@ import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreadero
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 
 class StartReader extends StatelessWidget {
   final model.ResponseMagazine magazine;
@@ -27,7 +28,7 @@ class StartReader extends StatelessWidget {
             ),
         child: Reader(
           magazine: this.magazine,
-          currentPage: ValueNotifier<double>(0.0),
+          // currentPage: ValueNotifier<double>(0.0),
           heroTag: this.heroTag,
         ));
   }
@@ -37,13 +38,14 @@ class StartReader extends StatelessWidget {
 class Reader extends StatefulWidget {
   final model.ResponseMagazine magazine;
   final String heroTag;
+  final controllerflip = GlobalKey<PageFlipWidgetState>();
   late PageController pageController;
-  ValueNotifier<double> currentPage;
+  // ValueNotifier<double> currentPage;
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController transformationController = TransformationController(matrix4);
   bool pageScrollEnabled = true;
 
-  Reader({Key? key, required this.magazine, required this.currentPage, required this.heroTag}) : super(key: key);
+  Reader({Key? key, required this.magazine,  required this.heroTag}) : super(key: key);
 
   @override
   State<Reader> createState() => _ReaderState();
@@ -59,6 +61,7 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   // TransformationController _controller = TransformationController(matrix4);
   // static ValueNotifier<int> _networklHasErrorNotifier = ValueNotifier(0);
   late AnimationController? _spinKitController;
+
 
   get math => null;
 
@@ -76,10 +79,11 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   @override
   void initState() {
     // print(widget.id);
+
     widget.pageController = PageController(initialPage: 0);
-    widget.pageController.addListener(() {
-      widget.currentPage.value = widget.pageController.page!;
-    });
+    // widget.pageController.addListener(() {
+    //   widget.currentPage.value = widget.pageController.page!;
+    // });
     widget.transformationController.addListener(() {
       if (widget.transformationController.value.getMaxScaleOnAxis() > 1.0) {
         // Disable PageView scroll
@@ -103,8 +107,9 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     });
     // widget.currentPage.addListener( widget.pageController) ;
     pageScale = widget.transformationController.value.getMaxScaleOnAxis();
-
-    widget.pageController.addListener(onScroll);
+// _controllerflip.currentState./
+    // widget.pageController.addListener(onScroll);
+    // _controllerflip.
     BlocProvider.of<ReaderBloc>(context).add(
       // OpenReader(idMagazinePublication: widget.magazine.idMagazinePublication!, dateofPublicazion: widget.magazine.dateOfPublication!, pageNo: widget.magazine.pageMax!),
       OpenReader(magazine: widget.magazine),
@@ -137,9 +142,9 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   void onScroll() {
     // This is where you can react to the scrolling.
     // print("Scroll position: ${widget.pageController.page}");
-    if (visitedPages.contains(widget.pageController.page?.round()) == false) {
-      visitedPages.add(widget.pageController.page!.round());
-      BlocProvider.of<ReaderBloc>(context).add(DownloadPage(magazine: widget.magazine, pageNo: widget.pageController.page!.round()));
+    if (visitedPages.contains(widget.controllerflip.currentState?.pageNumber.round()) == false) {
+      visitedPages.add(widget.controllerflip.currentState!.pageNumber.round());
+      BlocProvider.of<ReaderBloc>(context).add(DownloadPage(magazine: widget.magazine, pageNo: widget.controllerflip.currentState!.pageNumber.round()));
     }
   }
 
@@ -147,7 +152,8 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   void dispose() {
     // _controller.dispose();
     // pdfController.dispose();
-    widget.pageController.dispose();
+    // widget.pageController.removeListener(onScroll);
+    // widget.pageController.dispose();
     _spinKitController?.dispose();
     super.dispose();
     SystemChrome.setPreferredOrientations([
@@ -162,30 +168,28 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     return Stack(
       children: [
         Positioned.fill(
-            child:
-                Hero(
-                          tag: 'bg',
-                // flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
-                //   return Stack(children: [
-                //     // Positioned.fill(child: FadeTransition(opacity: animation, child: fromHeroContext.widget)),
-                //     Positioned.fill(
-                //       child: FadeTransition(
-                //         opacity: animation.drive(
-                //           Tween<double>(begin: 0.0, end: 1.0).chain(
-                //             CurveTween(
-                //               curve: Interval(
-                //                 0.0, 1.0,
-                //                 // curve: ValleyQuadraticCurve()
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     )
-                //   ]);
-                // },
-                child:
-                Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+          child: Hero(
+              tag: 'bg',
+              // flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
+              //   return Stack(children: [
+              //     // Positioned.fill(child: FadeTransition(opacity: animation, child: fromHeroContext.widget)),
+              //     Positioned.fill(
+              //       child: FadeTransition(
+              //         opacity: animation.drive(
+              //           Tween<double>(begin: 0.0, end: 1.0).chain(
+              //             CurveTween(
+              //               curve: Interval(
+              //                 0.0, 1.0,
+              //                 // curve: ValleyQuadraticCurve()
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     )
+              //   ]);
+              // },
+              child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
         OrientationBuilder(builder: (context, orientation) {
           return Stack(
@@ -195,33 +199,69 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
               //   child: Image.asset("assets/images/Background.png"),
               // ),
               GestureDetector(
-                  onTap: () => Navigator.push(
-                      context,
-                      ReaderOptionRoute(
-                          widget: ReaderOptionsPage(
-                        reader: this.widget,
-                        bloc: BlocProvider.of<ReaderBloc>(context),
-                        currentPage: widget.currentPage,
-                      ))),
-                  onDoubleTap: () => {
-                        // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
-                        print("controller"),
-                        widget.transformationController.value = Matrix4.identity(),
-                        // setState(() {
-                        // setState(() {
-                        //   pageScale = _controller.value.getMaxScaleOnAxis();
-                        // }),
-                        // });
+                  onTap: () => {
+                        print("ds"),
+                        Navigator.push(
+                            context,
+                            ReaderOptionRoute(
+                                widget: ReaderOptionsPage(
+                              reader: this.widget,
+                              bloc: BlocProvider.of<ReaderBloc>(context),
+                              // currentPage: widget.currentPage,
+                            ))),
                       },
+                  onDoubleTapDown: (details) {
+                    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                    final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+
+                    final Matrix4 currentMatrix = widget.transformationController.value;
+                    final double currentScale = currentMatrix.getMaxScaleOnAxis();
+
+                    if (currentScale == 1.0) {
+                      // Define your desired zoom-in scale
+                      final double zoomInScale = 3.0;
+
+                      // Get the position of the double tap in the viewport
+                      final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                      final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+
+                      // Calculate the translation needed to get the tap location to the center of the viewport
+                      final Size viewportSize = MediaQuery.of(context).size;
+                      final double dx = (viewportSize.width / 2 - zoomInScale * localPosition.dx);
+                      final double dy = (viewportSize.height / 2 - zoomInScale * localPosition.dy);
+
+                      // Create the zoom-in transformation matrix
+                      final Matrix4 zoomInMatrix = Matrix4.identity()
+                        ..translate(dx, dy)
+                        ..scale(zoomInScale);
+
+                      widget.transformationController.value = zoomInMatrix;
+                    } else {
+                      // If the image is zoomed in, reset to the original scale
+                      widget.transformationController.value = Matrix4.identity();
+                    }
+                  },
+                  // onHorizontalDragEnd: ,
+
+                  // onDoubleTap: () => {
+                  //       // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
+                  //       print("controller"),
+                  //       widget.transformationController.value = Matrix4.identity(),
+                  //       // setState(() {
+                  //       // setState(() {
+                  //       //   pageScale = _controller.value.getMaxScaleOnAxis();
+                  //       // }),
+                  //       // });
+                  //     },
                   child: BlocListener<ReaderBloc, ReaderState>(
                     listener: (context, state) {
                       if (state is ReaderClosed) {
                         print("state.ReaderClosed");
                         // Navigator.of(context).popUntil((route) => route.isFirst);
                         setState(() {
-                          widget.pageController.jumpToPage(0) ;
-
-                          widget.transformationController.value = Matrix4.identity();
+                          // widget.pageController.jumpToPage(0) ;
+                          widget.controllerflip.currentState!.pageNumber = 0;
+                          // widget.transformationController.value = Matrix4.identity();
                           // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
                         });
                         WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -239,9 +279,25 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                     child: BlocBuilder<ReaderBloc, ReaderState>(
                       builder: (context, state) {
                         // if (state is ReaderOpened) {
+                        // return PageFlipWidget(
+                        //   key: widget.controllerflip,
+                        //   backgroundColor: Colors.transparent,
+                        //   reader: this.widget,
+                        //
+                        //   // isRightSwipe: true,
+                        //   // lastPage: Container(color: Colors.transparent, child: const Center(child: Text('Last Page!'))),
+                        //   children: <ReaderPage>[
+                        //     for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                        //       ReaderPage(
+                        //         reader: this.widget,
+                        //         pageNumber: index,
+                        //       ),
+                        //   ],
+                        // );
                         return PageView.builder(
                             controller: widget.pageController,
                             itemCount: int.parse(widget.magazine.pageMax!),
+
                             physics: widget.pageScrollEnabled ? AlwaysScrollableScrollPhysics() : NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) => ReaderPage(
                                   reader: this.widget,

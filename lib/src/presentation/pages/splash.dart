@@ -8,6 +8,7 @@ import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/splash_widget.dart';
 
 import '../../blocs/navbar/navbar_bloc.dart';
+import '../../models/location_model.dart';
 import 'startpage.dart';
 
 // This the widget where the BLoC states and events are handled.
@@ -17,10 +18,13 @@ class SplashScreen extends StatelessWidget {
     return Stack(
       children: [
         Positioned.fill(
-          child: Image.asset(
-            "assets/images/background/Background.png",
-            fit: BoxFit.fill,
-            // allowDrawingOutsideViewBox: true,
+          child: Hero(
+            tag: 'bg',
+            child: Image.asset(
+              "assets/images/background/Background.png",
+              fit: BoxFit.fill,
+              // allowDrawingOutsideViewBox: true,
+            ),
           ),
         ),
         Align(child: _buildBody(context))
@@ -55,7 +59,31 @@ class SplashScreen extends StatelessWidget {
         // }
         else if (state is SkipLogin) {
           // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
-          BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
+          BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd, "","",false));
+          return BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                // Check if the state is the one you expect after IncompleteSignInRequested
+                if (state is Authenticated) {
+                  // Now that AuthBloc has finished its work, do the next steps
+                  BlocProvider.of<NavbarBloc>(context).add(InitializeNavbar(currentPosition: Data()));
+
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainPage()),
+                        (Route<dynamic> route) => false,
+                  );
+                }else{
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => StartPage(title: "title")),
+                        (Route<dynamic> route) => false,
+                  );
+                }
+              },
+            child: Container(),
+              // child: ... // Rest of your widget tree
+          );
+
           // Navigator.pushAndRemoveUntil(
           //   context,
           //   MaterialPageRoute(
@@ -66,101 +94,46 @@ class SplashScreen extends StatelessWidget {
           //   ),
           //   (_) => false,
           // );
-          return StartPage(
-            title: "notitle",
-          );
+          // Future.delayed(Duration(milliseconds: 5), () async { BlocProvider.of<NavbarBloc>(context).add(InitializeNavbar(currentPosition: Data()));
+          // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+          // });
+
+          // return MainPage();
+          // return Container();
         } else if (state is SkipLoginIncomplete) {
+
           // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
-          BlocProvider.of<AuthBloc>(context).add(IncompleteSignInRequested());
+          // BlocProvider.of<AuthBloc>(context).add(IncompleteSignInRequested());
           return const StartPage(
             title: "notitle",
           );
+          // return BlocListener<AuthBloc, AuthState>(
+          //   listener: (context, state) {
+          //     // Check if the state is the one you expect after IncompleteSignInRequested
+          //     if (state is IncompleteAuthenticated) {
+          //       // Now that AuthBloc has finished its work, do the next steps
+          //       BlocProvider.of<NavbarBloc>(context).add(InitializeNavbar(currentPosition: Data()));
+          //
+          //       Navigator.pushAndRemoveUntil(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => MainPage()),
+          //             (Route<dynamic> route) => false,
+          //       );
+          //     }
+          //   },
+          //   child: Container(),
+          //   // child: ... // Rest of your widget tree
+          // );
+          // Future.delayed(Duration(milliseconds: 500), () async { BlocProvider.of<NavbarBloc>(context).add(InitializeNavbar(currentPosition: Data()));
+          // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+          // });
+          // return  Container(color: Colors.green,child: Text(BlocProvider.of<AuthState>(context).s),);
         }
-        // else if (state is GoToLocationSelection) {
-        //   // await authRepository.signIn(email: existingemail, password: existingpwd).then((value) => {emit(IncompleteAuthenticated())});
-        //   // BlocProvider.of<AuthBloc>(context).add(SignInRequested(state.email, state.pwd));
-        //
-        //   return CupertinoActionSheet(
-        //
-        //       title: Text(
-        //         'You are near these Locations',
-        //         style: TextStyle(fontSize: 20, color: Colors.black),
-        //       ),
-        //       message: Text(
-        //         'Please select one',
-        //         style: TextStyle(fontSize: 16, color: Colors.black),
-        //       ),
-        //       actions: <Widget>[
-        //         ...List.generate(
-        //           state.locations_GoToLocationSelection!.length,
-        //           (index) => GestureDetector(
-        //             // onTap: () => setState(() => _selectedIndex = index),
-        //             child: CupertinoActionSheetAction(
-        //               child: Text(
-        //                 state.locations_GoToLocationSelection![index].nameApp!,
-        //                 // "$index",
-        //                 style: TextStyle(fontSize: 20, color: Colors.black),
-        //               ),
-        //               onPressed: () {
-        //                 print(state.locations_GoToLocationSelection![index].nameApp!);
-        //                 // Navigator.of(context, rootNavigator: true).pop();
-        //                 // currentIndex = 0;
-        //                 // setState(() {
-        //                 //   BlocProvider.of<NavbarBloc>(context).add(LocationSelected(location: state.locations_GoToLocationSelection![index]));
-        //                 // });
-        //                 BlocProvider.of<AuthBloc>(context).add(Initialize());
-        //                 SplashState.appbarlocation = state.locations_GoToLocationSelection![index];
-        //                 // BlocProvider.of<NavbarBloc>(context).add(Initialize()));
-        //                 Navigator.pushReplacement(
-        //                   context,
-        //                   MaterialPageRoute(
-        //                       builder: (context) => StartPage(
-        //                             title: "notitle",
-        //                           )
-        //                       // transitionDuration: Duration.zero,
-        //                       ),
-        //                 );
-        //                 // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        //                 //   return StartPage(
-        //                 //     title: "notitle",
-        //                 //     currentLocation: state.locations_GoToLocationSelection![index],
-        //                 //   );
-        //                 // }));
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //
-        //         // CupertinoActionSheetAction(
-        //         //   child: Text(state.location!.data![0].nameApp!),
-        //         //   onPressed: () {
-        //         //     print(state.location);
-        //         //     // Navigator.of(context, rootNavigator: true).pop();
-        //         //
-        //         //     setState(() {
-        //         //       BlocProvider.of<NavbarBloc>(context).add(
-        //         //         Home(),
-        //         //       );
-        //         //       currentIndex = 0;
-        //         //     });
-        //         //   },
-        //         // )
-        //       ]);
-        // }
+
         else if (state is Loaded) {
-          print("SplashScreen state is loaded");
-          // print(state.position?.latitude);
-          // BlocProvider.of<AuthBloc>(context).add(Initialize());
-
-
           return const StartPage(
             title: "notitle",
           );
-          // Navigator.of(context).push(PageRouteBuilder(
-          //     pageBuilder: (BuildContext context, _, __) => StartPage(
-          //           title: "notitle",
-          //           splashbloc: BlocProvider.of<SplashBloc>(context),
-          //         )));
         } else if (state is SplashError) {
           print(state.error);
           // print(state.position?.latitude);
@@ -168,16 +141,10 @@ class SplashScreen extends StatelessWidget {
           return const StartPage(
             title: "notitle",
           );
-          // Navigator.of(context).push(PageRouteBuilder(
-          //     pageBuilder: (BuildContext context, _, __) => StartPage(
-          //           title: "notitle",
-          //           splashbloc: BlocProvider.of<SplashBloc>(context),
-          //         )));
+
         }
         return Container();
-        // return StartPage(
-        //   title: "notitle",
-        // );
+
       },
     );
   }

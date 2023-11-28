@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pdf_render/pdf_render.dart';
+import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
@@ -13,8 +14,8 @@ import '../../../../models/locationOffers_model.dart';
 
 class OfferPage extends StatefulWidget {
   final LocationOffer locOffer;
-
-  OfferPage({Key? key, required this.locOffer}) : super(key: key);
+  final Uint8List? imageData;
+  OfferPage({Key? key, required this.locOffer, this.imageData}) : super(key: key);
 
   @override
   State<OfferPage> createState() => _OfferPageState();
@@ -36,8 +37,8 @@ class _OfferPageState extends State<OfferPage> {
           .GetLocationOfferImage(offerID: widget.locOffer.shm2Offer![0].id.toString(), filePath: widget.locOffer.shm2Offer![0].data.toString());
     }
     if ( widget.locOffer.shm2Offer![0].type!.contains("PDF")) {
-      // image = RepositoryProvider.of<LocationRepository>(context)
-      //     .GetLocationOfferPDF(offerID: widget.locOffer.shm2Offer![0].id.toString(), filePath: widget.locOffer.shm2Offer![0].data.toString());
+      image = RepositoryProvider.of<LocationRepository>(context)
+          .GetLocationOfferImage(offerID: widget.locOffer.shm2Offer![0].id.toString(), filePath: widget.locOffer.shm2Offer![0].data.toString());
       // PdfDocument docFromData = await PdfDocument.openData(data);
     }
     if (widget.locOffer.shm2Offer![0].type!.contains("MOV")) {
@@ -74,6 +75,7 @@ class _OfferPageState extends State<OfferPage> {
   void dispose() {
     _controller?.pause();
     _controller = null;
+    image = null;
     super.dispose();
   }
 
@@ -136,7 +138,7 @@ class _OfferPageState extends State<OfferPage> {
     return Stack(
       children: [
         Positioned.fill(
-          child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover),
+          child: Hero(tag: 'bg',child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
         Scaffold(
           // extendBody: true,
@@ -172,7 +174,13 @@ class _OfferPageState extends State<OfferPage> {
               // _controller.notnull == true &&
               // _controller.value.isInitialized
               //     ?
-              widget.locOffer.shm2Offer![0].type!.contains("MOV")
+
+              widget.imageData!=null? Hero(tag:widget.locOffer.shm2Offer![0].id.toString(),
+                child: Image.memory(
+                  // state.bytes![i],
+                  widget.imageData!,
+                ),
+              ): widget.locOffer.shm2Offer![0].type!.contains("MOV")
                   ? AspectRatio(
                       aspectRatio: _controller != null ? _controller!.value.aspectRatio : 16 / 9,
                       child: _controller != null

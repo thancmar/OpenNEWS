@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../blocs/navbar/navbar_bloc.dart';
 import '../constants.dart';
 import '../models/locationGetHeader_model.dart';
 import '../models/locationOffers_model.dart';
@@ -16,7 +17,7 @@ import 'dioClient.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
 
 class LocationRepository {
-  Future<Localization?> checklocation([String? locationID, double? lat, double? long, String? token]) async {
+  Future<Localization?> checklocation([String? locationID, double? lat, double? long, String? token, String? fingerprint]) async {
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     // Map data = {
     //   'f': 'Localization.check',
@@ -41,7 +42,7 @@ class LocationRepository {
       if (token != null) {
         data = {
           'f': 'Localization.check',
-          'json': '{"id_location":"$locationID","token":"$token","fingerprint":"edb1b95f1930da5dbfd3af18630d5680"}',
+          'json': '{"id_location":"$locationID","token":"$token","fingerprint":"$fingerprint"}',
         };
       } else {
         data = {
@@ -70,7 +71,8 @@ class LocationRepository {
       if (decoded['code'] == 511) {
         print("you are in the given location.");
         return LocalizationFromJson(response.data);
-      } else if (decoded['code'] == 501) {
+      } else
+        if (decoded['code'] == 501) {
         print("you are near a location.");
         return LocalizationFromJson(response.data);
       } else if (decoded['code'] == 500) {
@@ -179,9 +181,11 @@ class LocationRepository {
     // var file = await DefaultCacheManager().getSingleFile(queryString);
 
     // await DefaultCacheManager().emptyCache();
+
     var response = await getIt<ApiClient>().diofordata.get(
         ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "offer/" + offerID + "/getImage?filePath=" + "$filePath",
         options: Options(responseType: ResponseType.bytes));
+
     // var response = await getIt<ApiClient>().dioforImages.get(
     //     ApiConstants.baseUrlLocations + ApiConstants.locationsMobileAPI + "location/" + "4188" + "/getImage?filePath=" + "/uploads/headers/4188_01.12.2020-12-04-02.jpg",
     //     options: Options(responseType: ResponseType.bytes));

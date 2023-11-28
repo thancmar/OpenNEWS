@@ -34,8 +34,14 @@ class HotspotRepository {
         default:
           throw Exception(response.data);
       }
+    } on TypeError catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to parse the response");
     } on SocketException catch (e) {
       rethrow;
+    } catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to login. Code ${e}");
     }
   }
 }

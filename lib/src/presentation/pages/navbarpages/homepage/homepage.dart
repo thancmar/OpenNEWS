@@ -14,11 +14,14 @@ import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines_flutter/src/models/locationOffers_model.dart';
 import 'package:sharemagazines_flutter/src/models/location_model.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
+import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 import '../../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../../widgets/loading.dart';
 import '../../../widgets/marquee.dart';
+import '../../../widgets/navbar/body_clipper.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../widgets/src/coversverticallist.dart';
 import '../map/offerpage.dart';
 
 // class HomePageState extends StatelessWidget {
@@ -48,23 +51,27 @@ import '../map/offerpage.dart';
 
 class HomePage extends StatefulWidget {
   // static  int index1 = 0;
-  // final NavbarBloc navbarBloc;
-  const HomePage({Key? key}) : super(key: key);
+  // final NavbarBloc navbarBloc;//= RefreshController(initialRefresh: false);
+   HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
- static  int _index1 = 0;
-
+  // static MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
+  //     response:
+  //     []
+  //         // NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.idsMagazineCategory!.contains('20') == true).toList()
+  // );
 
   // Timer? _timer;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  ScrollController _scrollController = ScrollController();
 
-  void _onRefresh() async {
+  void _onRefresh(Data currentLocation) async {
     // monitor network fetch
-    await BlocProvider.of<NavbarBloc>(context).checkLocation();
+    await BlocProvider.of<NavbarBloc>(context).checkLocation(currentLocation);
     _refreshController.refreshCompleted();
   }
 
@@ -97,6 +104,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   void initState() {
     super.initState();
     print("_HomePageState init");
+    // _refreshController.
+    // triggerAnimationLoop();
+    // items = MagazinePublishedGetAllLastByHotspotId(
+    //     response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+    //         .where((element) => element.idsMagazineCategory!.contains('20') == true)
+    //         .toList());
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
 
@@ -104,6 +117,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   bool get wantKeepAlive => true;
 
   void dispose() {
+   _refreshController.dispose();
     super.dispose();
     print("_HomePageState dispose");
     // this._dispatchEvent(
@@ -112,121 +126,92 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
 
     super.build(context);
-    Size size = MediaQuery.of(context).size;
     return BlocBuilder<NavbarBloc, NavbarState>(
       builder: (BuildContext context, state) {
-
-        return SafeArea(
+        MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
+            response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+                .where((element) => element.idsMagazineCategory!.contains('20') == true)
+                .toList());
+        return state is NavbarLoaded? SafeArea(
           child: Column(
             children: [
               Expanded(
                 child: SmartRefresher(
+
                   enablePullDown: true,
-                  // enablePullUp: true,
+                  header: ClassicHeader(
+                    // Customize your header's appearance here
+                    refreshingIcon: CircularProgressIndicator(strokeWidth: 2.0),
+                    completeIcon: Icon(Icons.done, color: Colors.grey),
+                    idleIcon: Icon(Icons.arrow_downward, color: Colors.grey),
+                    releaseIcon: Icon(Icons.refresh, color: Colors.grey),
+                    idleText: 'Pull down to refresh',
+                    refreshingText: 'Loading...',
+                    completeText: 'Refresh Completed',
+                    failedText: 'Refresh Failed',
+                    textStyle: TextStyle(color: Colors.grey),
+                    refreshStyle: RefreshStyle.Follow,
+                    // Add a BoxDecoration to give a grey background
+                    // decoration: BoxDecoration(
+                    //   color: Colors.grey[300], // Choose the shade of grey you want
+                    // ),
+                  ),
+                  controller:  _refreshController,
+                  // enableTwoLevel: ,
+                  onRefresh: () => _onRefresh(state.appbarlocation),
 
-                  // header: ClassicHeader(),
-                  // footer: CustomFooter(
-                  //   builder: (BuildContext context, LoadStatus? mode) {
-                  //     Widget body;
-                  //     if (mode == LoadStatus.idle) {
-                  //       body = Text("pull up load");
-                  //     } else if (mode == LoadStatus.loading) {
-                  //       body = CupertinoActivityIndicator();
-                  //     } else if (mode == LoadStatus.failed) {
-                  //       body = Text("Load Failed!Click retry!");
-                  //     } else if (mode == LoadStatus.canLoading) {
-                  //       body = Text("release to load more");
-                  //     } else {
-                  //       body = Text("No more Data");
-                  //     }
-                  //     return Container(
-                  //       height: 55.0,
-                  //       child: Center(child: body),
-                  //     );
-                  //   },
-                  // ),
-                  controller: _refreshController,
-                  onRefresh: _onRefresh,
-                  // onLoading: _onLoading,
-                  child: ListView(
-                    // duration: 00,
-
-                    physics: ClampingScrollPhysics(),
-                    // spaceBetween: 20,
-                    // shrinkWrap: true,
-                    shrinkWrap: false,
-                    // crossAxisCount: 2,
-                    // mainAxisExtent: 256,
-                    // crossAxisSpacing: 8,
-                    // mainAxisSpacing: 8,
-                    // children: Column(
-                    children: [
-                      // SingleChildScrollView(
-                      //   physics: RangeMaintainingScrollPhysics(),
-                      //   scrollDirection: Axis.horizontal,
-                      //   child:
-
-                      // LocationOffersWidget(),
+                  child: CustomScrollView(
+                    scrollDirection: Axis.vertical,
+                    // clipBehavior: Clip.hardEdge,
+                    controller: _scrollController,
+                    slivers: <Widget>[
+                      // You can add a SliverAppBar here if needed
+                      // SliverAppBar(
+                      //   title: Text('Sliver App Bar'),
+                      //   floating: true,
+                      //   pinned: true,
+                      //   expandedHeight: 200.0,
+                      //   flexibleSpace: FlexibleSpaceBar(
+                      //     background: Image.network("URL_TO_YOUR_IMAGE", fit: BoxFit.cover),
+                      //   ),
                       // ),
-                      // Container( height: 300,child: LoadingAnimation()),
-                      //
-                      // if (NavbarState.locationheader != null) LocationOffersWidget(),
+                      // if (NavbarState.magazinePublishedGetTopLastByRange != null &&
+                      //     NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
+                      // Align(
+                      //   alignment: Alignment.centerLeft,
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
+                      //     child: Text(
+                      //       ("regionalTitle").tr(),
+                      //       style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      //       textAlign: TextAlign.right,
+                      //     ),
+                      //   ),
+                      // ),
+
                       if (NavbarState.magazinePublishedGetTopLastByRange != null &&
                           NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
-                        Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
-                                    child: Text(
-                                      ("regionalTitle").tr(),
-                                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  ),
-                                ),
-
-                                News_aus_deiner_Region( state: state),
-                              ],
-                            ),
-                          ],
+                        SliverToBoxAdapter(child: News_aus_deiner_Region(state: state, categoryName: 'Top Titel')),
+                      VerticalListCover(
+                          items: items,
+                          scrollController: _scrollController,
+                          height_News_aus_deiner_Region: MediaQuery.of(context).size.aspectRatio * 1000),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          height: size.height * 0.2, // Adjust the height as needed
+                          color: Colors.transparent, // Set any color if needed
                         ),
-
-                      Column(
-                        // crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
-                              padding: EdgeInsets.fromLTRB(size.aspectRatio*25, size.aspectRatio*30, size.aspectRatio*25, size.aspectRatio*20),
-                              child: Text(
-                                ("catalog").tr(),
-                                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                          ),
-                          ListMagazineCover(cover: NavbarState.magazinePublishedGetLastWithLimit,heroTag: 'catalog_'),
-                        ],
                       ),
-                      //Add as padding
-                      Container(
-                        height: 80,
-                      )
                     ],
                   ),
                 ),
               ),
             ],
           ),
-        );
+        ):Container();
         // }
         return Container();
       },
@@ -234,241 +219,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   }
 }
 
-class ListMagazineCover extends StatefulWidget {
-  final MagazinePublishedGetAllLastByHotspotId cover;
-  final String heroTag;
-  const ListMagazineCover({
-    Key? key,
-    required this.cover, required String this.heroTag
-  }) : super(key: key);
 
-  @override
-  State<ListMagazineCover> createState() => _ListMagazineCoverState();
-}
 
-class _ListMagazineCoverState extends State<ListMagazineCover> {
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return SizedBox(
-        height: size.aspectRatio*800, // card height
-        // width: 200,
-        child: PageView.builder(
-          itemCount: widget.cover.response!.length,
-          // itemCount: state.magazinePublishedGetLastWithLimit.response!.length! + 10,
-          // itemCount: 10,
-          // padEnds: false,
-          //IMPORTANT(.down is also good)
-          dragStartBehavior: DragStartBehavior.start,
-
-          allowImplicitScrolling: false,
-          controller: PageController(
-            // viewportFraction: 0.65,
-            // initialPage: widget.cover.response.length >0 ?Random().nextInt( widget.cover.response!.length):1,
-            initialPage: 1,
-            keepPage: true,
-            viewportFraction: MediaQuery.of(context).size.aspectRatio * 1.5, //Works?
-          ),
-
-          // onPageChanged: (int index) => setState(() => _index2 = index),
-          // onPageChanged: (int index) => _index2 = index,
-          pageSnapping: false,
-          itemBuilder: (context, i) {
-            // if (state.bytes.isEmpty) {
-            //   setState(() {});
-            // }
-            // print("Herooo $i");
-            return Transform.scale(
-              // origin: Offset(100, 50),
-              // alignment: Alignment.center,
-              // scale: i == _index1 ? 1 : 1,
-              scale: 1,
-
-              // alignment: Alignment.bottomCenter,
-              // alignment: AlignmentGeometry(),
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Card(
-                        color: Colors.transparent,
-                        // clipBehavior: Clip.hardEdge,
-                        // borderOnForeground: true,
-                        margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                        elevation: 0,
-
-                        ///maybe 0?
-                        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(500)),
-                        child: Stack(
-                          children: [
-                            GestureDetector(
-                              // behavior: HitTestBehavior.translucent,
-                              onTap: () => {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => StartReader(
-                                      magazine:widget.cover.response![i],
-                                      heroTag: "${widget.heroTag}$i",
-
-                                      // noofpages: 5,
-                                    ),
-                                  ),
-                                )
-                              },
-                              child: CachedNetworkImage(
-                                imageUrl:widget.cover.response![i].idMagazinePublication!  +
-                                    "_" +
-                                    widget.cover.response![i].dateOfPublication! +
-                                    "_0",
-                                // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
-                                //   // color: Colors.grey.withOpacity(0.1),
-                                //   decoration: BoxDecoration(
-                                //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                //     color: Colors.grey.withOpacity(0.1),
-                                //   ),
-                                //   child: SpinKitFadingCircle(
-                                //     color: Colors.white,
-                                //     size: 50.0,
-                                //   ),
-                                // ),
-
-                                imageBuilder: (context, imageProvider) => Hero(
-                                  tag: "${widget.heroTag}$i",
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                    ),
-                                  ),
-                                ),
-                                useOldImageOnUrlChange: true,
-                                // very important: keep both placeholder and errorWidget
-                                placeholder: (context, url) => Container(
-                                  // color: Colors.grey.withOpacity(0.1),
-                                  decoration: BoxDecoration(
-                                    // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                    color: Colors.grey.withOpacity(0.1),
-                                  ),
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 50.0,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  // color: Colors.grey.withOpacity(0.1),
-                                  decoration: BoxDecoration(
-                                    // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                    color: Colors.grey.withOpacity(0.1),
-                                  ),
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 50.0,
-                                  ),
-                                ),
-                                // errorWidget: (context, url, error) => Container(
-                                //     alignment: Alignment.center,
-                                //     child: Icon(
-                                //       Icons.error,
-                                //       color: Colors.grey.withOpacity(0.8),
-                                //     )),
-                              ),
-                            ),
-                          ],
-                        )),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 4, 20, 0),
-                      //Dumb hack
-                      child: AbsorbPointer(
-                        absorbing: true,
-                        child: MarqueeWidget(
-                          child: MarqueeWidget(
-                            direction: Axis.vertical,
-
-                            // crossAxisAlignment: CrossAxisAlignment.start,
-                            child: Text(
-                              // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                              widget.cover.response![i].name!,
-                              // " asd",
-                              // "Card ${i + 1}",
-                              textAlign: TextAlign.center,
-
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                backgroundColor: Colors.transparent,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                      child: AbsorbPointer(
-                        absorbing: true,
-                        child: MarqueeWidget(
-                          child: MarqueeWidget(
-                            direction: Axis.vertical,
-                            child: Text(
-                              // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                              DateFormat("d. MMMM yyyy").format(
-                                  DateTime.parse(widget.cover.response![i].dateOfPublication!)),
-                              // " asd",
-                              // "Card ${i + 1}",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                                backgroundColor: Colors.transparent,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Positioned(
-                  //   // top: -50,
-                  //   bottom: -100,
-                  //   // height: -50,
-                  //   width: MediaQuery.of(context).size.width / 2 - 20,
-                  //   child: Align(
-                  //     alignment: Alignment.center,
-                  //     child: MarqueeWidget(
-                  //       // crossAxisAlignment: CrossAxisAlignment.start,
-                  //       child: Text(
-                  //         // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                  //         NavbarState.magazinePublishedGetLastWithLimit!.response![i].name!,
-                  //         // " asd",
-                  //         // "Card ${i + 1}",
-                  //         textAlign: TextAlign.center,
-                  //
-                  //         style: TextStyle(
-                  //           fontSize: 14,
-                  //           color: Colors.white,
-                  //           backgroundColor: Colors.transparent,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-            );
-          },
-        ));
-  }
-}
 
 class LocationOffersWidget extends StatelessWidget {
   const LocationOffersWidget({
@@ -508,7 +260,7 @@ class LocationOffersWidget extends StatelessWidget {
 
                           child: FloatingActionButton.extended(
                             // heroTag: 'offer_title$i',
-                            heroTag: null,
+                            heroTag: snapshot.data!.locationOffer![i].shm2Offer![0].title!,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                             label: Text(
@@ -518,27 +270,12 @@ class LocationOffersWidget extends StatelessWidget {
                             ),
                             // <-- Text
                             backgroundColor: Colors.grey.withOpacity(0.1),
-                            // icon: Icon(
-                            //   // <-- Icon
-                            //   Icons.menu_book,
-                            //   // IconData(0xe9a9, fontFamily: ‘icomoon’);
-                            //   size: 16.0,
-                            // ),
+
                             onPressed: () => {
-                              // Navigator.push(
-                              //   context,
-                              //   PageRouteBuilder(
-                              //     pageBuilder: (_, __, ___) => OfferPage(
-                              //       locOffer: snapshot.data!.locationOffer![i],
-                              //       heroTag: i,
-                              //     ),
-                              //   ),
-                              // )
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => OfferPage(
                                     locOffer: snapshot.data!.locationOffer![i],
-
                                   ),
                                 ),
                               )

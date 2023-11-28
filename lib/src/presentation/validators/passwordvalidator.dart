@@ -1,9 +1,10 @@
 String? validatePassword(String? value) {
-  String pattern =
-      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+  // Define the criteria for a valid password with a regular expression.
+  // This pattern requires at least one special character and at least 8 characters in total.
+  String pattern = r'^(?=.*?[!@#\$&*~]).{8,}$';
   RegExp regex = RegExp(pattern);
   if (value == null || value.isEmpty || !regex.hasMatch(value))
-    return 'Enter a valid Password';
+    return 'Password needs 8+ chars, 1+ symbol';
   else
     return null;
 }

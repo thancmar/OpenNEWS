@@ -31,10 +31,13 @@ class SignUpWithApple extends AuthEvent {
 
 // When the user signing in with email and password this event is called and the [AuthRepository] is called to sign in the user
 class SignInRequested extends AuthEvent {
-  final String email;
-  final String password;
+  final String? email;
+  final String? password;
+  final String? token;
+  final String? fingerprint;
+  final bool qrscan;
 
-  SignInRequested(this.email, this.password);
+  SignInRequested(this.email, this.password,this.token, this.fingerprint,this.qrscan);
 }
 
 // class IncompleteSignInRequested extends AuthEvent {

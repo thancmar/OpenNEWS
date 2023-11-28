@@ -23,7 +23,7 @@ class ApiClient {
     // connectTimeout: Duration(seconds: 5),
     // receiveTimeout: Duration(seconds: 10),
     // receiveDataWhenStatusError: true,
-    followRedirects: false,
+    followRedirects: true,
     // maxRedirects : 500,
 
     // headers: ,
@@ -37,7 +37,7 @@ class ApiClient {
     required this.networkInfo,
     required this.secureStorage,
   }) {
-    print("ApiClient initialized");
+    print("ApiClient Dio initialized");
     var cokkies = CookieJar();
     dioforImages.options = baseOptions;
     diofordata.options = baseOptions;
@@ -54,6 +54,11 @@ class ApiClient {
       // client.badCertificateCallback = (cert, host, port) => true;
       client.maxConnectionsPerHost=50;
     };
+
+    // (dioforImages.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+    //   // client.badCertificateCallback = (cert, host, port) => true;
+    //   client.maxConnectionsPerHost=50;
+    // };
     // dioforImages.httpClientAdapter = DefaultHttpClientAdapter()..onHttpClientCreate = (httpClient) => httpClient..maxConnectionsPerHost = 50;
     // diofordata.httpClientAdapter = DefaultHttpClientAdapter()..onHttpClientCreate = (httpClient) => httpClient..maxConnectionsPerHost = 50;
     dioforImages.interceptors.add(InterceptorsWrapper(onError: (e, handler) {
