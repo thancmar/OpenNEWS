@@ -40,7 +40,7 @@ class Reader extends StatefulWidget {
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
   late PageController pageController;
-  // ValueNotifier<double> currentPage;
+  ValueNotifier<double> currentPage = ValueNotifier(0);
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController transformationController = TransformationController(matrix4);
   bool pageScrollEnabled = true;
@@ -81,9 +81,9 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     // print(widget.id);
 
     widget.pageController = PageController(initialPage: 0);
-    // widget.pageController.addListener(() {
-    //   widget.currentPage.value = widget.pageController.page!;
-    // });
+    widget.pageController.addListener(() {
+      widget.currentPage.value = widget.pageController.page!;
+    });
     widget.transformationController.addListener(() {
       if (widget.transformationController.value.getMaxScaleOnAxis() > 1.0) {
         // Disable PageView scroll
@@ -259,9 +259,9 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                         print("state.ReaderClosed");
                         // Navigator.of(context).popUntil((route) => route.isFirst);
                         setState(() {
-                          // widget.pageController.jumpToPage(0) ;
-                          widget.controllerflip.currentState!.pageNumber = 0;
-                          // widget.transformationController.value = Matrix4.identity();
+                          widget.pageController.jumpToPage(0) ;
+
+                          widget.transformationController.value = Matrix4.identity();
                           // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
                         });
                         WidgetsBinding.instance!.addPostFrameCallback((_) {

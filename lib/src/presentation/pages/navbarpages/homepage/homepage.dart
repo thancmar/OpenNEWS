@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       builder: (BuildContext context, state) {
         MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
             response: NavbarState.magazinePublishedGetLastWithLimit!.response!
-                .where((element) => element.idsMagazineCategory!.contains('20') == true)
+                .where((element) => element.idsMagazineCategory?.contains('20') == true)
                 .toList());
         return state is NavbarLoaded? SafeArea(
           child: Column(
