@@ -69,7 +69,10 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
       // controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.4 : 0.15);
       controller = PageController(
           viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15,
-          initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1);
+          // initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1
+          initialPage:0
+
+      );
 
       return SizedBox(
         // width: 500,
@@ -168,12 +171,13 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                             child: Container(
                                               padding:
                                               // i == widget.reader.pageController.page
-                                              i == widget.reader.controllerflip.currentState!.pageNumber
+                                              i == widget.reader.pageController.page
                                                   ? EdgeInsets.fromLTRB(10, 10, 10, 10)
-                                                  : EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                                  :
+                                              EdgeInsets.fromLTRB(5, 0, 5, 0),
                                               // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                               // decoration: i == pageNo
-                                              decoration: i ==widget.reader.controllerflip.currentState!.pageNumber
+                                              decoration: i ==widget.reader.pageController.page
                                                   ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue)
                                                   : BoxDecoration(),
                                               // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
@@ -202,7 +206,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                                   decoration: BoxDecoration(
                                                       borderRadius: BorderRadius.all(Radius.circular(5)),
                                                       color: Colors.black.withOpacity(0.8),
-                                                      border: i == widget.reader.controllerflip.currentState!.pageNumber
+                                                      border: i == widget.reader.pageController.page
                                                           ? Border.all(color: Colors.transparent, width: 5.10)
                                                           : Border.all(color: Colors.transparent, width: 0)),
                                                   // color: Colors.black.withOpacity(0.8),
