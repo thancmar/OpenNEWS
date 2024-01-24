@@ -116,6 +116,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                 // print(widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + i.toString());
                 return ValueListenableBuilder<double>(
                     valueListenable: widget.reader.currentPage,
+
                     builder: (BuildContext context, double pageNo, Widget? child) {
                       return BlocBuilder<ReaderBloc, ReaderState>(
                       bloc: widget.bloc,
