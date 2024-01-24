@@ -57,7 +57,7 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
 
                 items = MagazinePublishedGetAllLastByHotspotId(
                     response: NavbarState.magazinePublishedGetLastWithLimit!.response!
-                        .where((element) => element.idsMagazineCategory!.contains(NavbarState.magazineCategoryGetAllActive!.response![i].id!) == true)
+                        .where((element) => element.idsMagazineCategory?.contains(NavbarState.magazineCategoryGetAllActive!.response![i].id!) == true)
                         // .toSet()
                         .toList());
                 return ValueListenableBuilder<MagazinePublishedGetAllLastByHotspotId>(

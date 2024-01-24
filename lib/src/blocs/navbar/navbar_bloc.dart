@@ -658,7 +658,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     // });
   }
 
-  Future<Uint8List?> getCover(String idMagazinePublication, String dateOfPublication, String pageNo, bool thumbNail, bool preloadneigbor) async {
+  Future<Uint8List> getCover(String idMagazinePublication, String dateOfPublication, String pageNo, bool thumbNail, bool preloadneigbor) async {
     final FileInfo? cacheFile = await DefaultCacheManager()
         .getFileFromCache(idMagazinePublication + "_" + dateOfPublication + "_" + pageNo + (thumbNail == true ? '_thumbnail' : ''));
     // if(preloadneigbor){
@@ -674,7 +674,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //   }
     //
     // }
-
+    // print("get cover ${idMagazinePublication}_${dateOfPublication}_$pageNo $thumbNail");
     if (cacheFile?.file.lengthSync() == null) {
       // print("get thumbnail $thumbNail ${idMagazinePublication}_${dateOfPublication}_$pageNo");
       // If the file is not in the cache, fetch it from the repository
@@ -703,7 +703,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     } else {
       // print("no get");
       // If the file is in the cache, return its content as Uint8List
-      return cacheFile?.file.readAsBytes();
+      return cacheFile!.file.readAsBytes();
     }
     //     .then((value)async => {
     // if (value?.file.lengthSync() == null)

@@ -13,6 +13,8 @@ import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 import '../../widgets/src/pageflip/src/page_flip_widget.dart';
+import '../../widgets/src/pageflip2/src/page_flip_widget.dart';
+
 
 class StartReader extends StatelessWidget {
   final model.ResponseMagazine magazine;
@@ -40,12 +42,13 @@ class Reader extends StatefulWidget {
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
   late PageController pageController;
+
   // ValueNotifier<double> currentPage;
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController transformationController = TransformationController(matrix4);
   bool pageScrollEnabled = true;
 
-  Reader({Key? key, required this.magazine,  required this.heroTag}) : super(key: key);
+  Reader({Key? key, required this.magazine, required this.heroTag}) : super(key: key);
 
   @override
   State<Reader> createState() => _ReaderState();
@@ -56,12 +59,12 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   late List<ReaderPage> pages = [];
   List<int> visitedPages = [];
   late double pageScale;
+  late List<GlobalKey> pageKeys;
 
   // static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   // TransformationController _controller = TransformationController(matrix4);
   // static ValueNotifier<int> _networklHasErrorNotifier = ValueNotifier(0);
   late AnimationController? _spinKitController;
-
 
   get math => null;
 
@@ -78,8 +81,8 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
 
   @override
   void initState() {
-    print(widget.id);
-
+    // print(widget.id);
+    pageKeys = List.generate(int.parse(widget.magazine.pageMax!), (index) => GlobalKey());
     widget.pageController = PageController(initialPage: 0);
     // widget.pageController.addListener(() {
     //   widget.currentPage.value = widget.pageController.page!;
@@ -115,14 +118,14 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
       OpenReader(magazine: widget.magazine),
     );
 
-    for (var i = 1; i <= int.parse(widget.magazine.pageMax!); i++) {
-      // for (int i = 0; i <= 5; i++) {
-      pages.add(ReaderPage(
-        reader: this.widget,
-        pageNumber: i,
-      ));
-    }
-    ;
+    // for (var i = 1; i <= int.parse(widget.magazine.pageMax!); i++) {
+    //   // for (int i = 0; i <= 5; i++) {
+    //   pages.add(ReaderPage(
+    //     reader: this.widget,
+    //     pageNumber: i,
+    //   ));
+    // }
+    // ;
 
     // final pdfPinchController = CustumPdfControllerPinch(document: PdfDocument.openData(ReaderState.doc));
     SystemChrome.setPreferredOrientations([
@@ -139,12 +142,15 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     // controller.addListener(zoomListener);
   }
 
+
+
   void onScroll() {
     // This is where you can react to the scrolling.
     // print("Scroll position: ${widget.pageController.page}");
     if (visitedPages.contains(widget.controllerflip.currentState?.pageNumber.round()) == false) {
       visitedPages.add(widget.controllerflip.currentState!.pageNumber.round());
-      BlocProvider.of<ReaderBloc>(context).add(DownloadPage(magazine: widget.magazine, pageNo: widget.controllerflip.currentState!.pageNumber.round()));
+      BlocProvider.of<ReaderBloc>(context)
+          .add(DownloadPage(magazine: widget.magazine, pageNo: widget.controllerflip.currentState!.pageNumber.round()));
     }
   }
 
@@ -166,160 +172,133 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   Widget build(BuildContext context) {
     super.build(context);
     return Stack(
-      children: [
-        Positioned.fill(
-          child: Hero(
-              tag: 'bg',
-              // flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
-              //   return Stack(children: [
-              //     // Positioned.fill(child: FadeTransition(opacity: animation, child: fromHeroContext.widget)),
-              //     Positioned.fill(
-              //       child: FadeTransition(
-              //         opacity: animation.drive(
-              //           Tween<double>(begin: 0.0, end: 1.0).chain(
-              //             CurveTween(
-              //               curve: Interval(
-              //                 0.0, 1.0,
-              //                 // curve: ValleyQuadraticCurve()
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     )
-              //   ]);
-              // },
-              child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
-        ),
+      alignment: Alignment.center,
+      children: <Widget>[
+        // Positioned.fill(
+        //   child: Hero(
+        //       tag: 'bg',
+        //       // flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
+        //       //   return Stack(children: [
+        //       //     // Positioned.fill(child: FadeTransition(opacity: animation, child: fromHeroContext.widget)),
+        //       //     Positioned.fill(
+        //       //       child: FadeTransition(
+        //       //         opacity: animation.drive(
+        //       //           Tween<double>(begin: 0.0, end: 1.0).chain(
+        //       //             CurveTween(
+        //       //               curve: Interval(
+        //       //                 0.0, 1.0,
+        //       //                 // curve: ValleyQuadraticCurve()
+        //       //               ),
+        //       //             ),
+        //       //           ),
+        //       //         ),
+        //       //       ),
+        //       //     )
+        //       //   ]);
+        //       // },
+        //       child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+        // ),
         OrientationBuilder(builder: (context, orientation) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              // Positioned.fill(
-              //   child: Image.asset("assets/images/Background.png"),
-              // ),
-              GestureDetector(
-                  onTap: () => {
-                        print("ds"),
-                        Navigator.push(
-                            context,
-                            ReaderOptionRoute(
-                                widget: ReaderOptionsPage(
-                              reader: this.widget,
-                              bloc: BlocProvider.of<ReaderBloc>(context),
-                              // currentPage: widget.currentPage,
-                            ))),
-                      },
-                  onDoubleTapDown: (details) {
-                    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                    final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
-
-                    final Matrix4 currentMatrix = widget.transformationController.value;
-                    final double currentScale = currentMatrix.getMaxScaleOnAxis();
-
-                    if (currentScale == 1.0) {
-                      // Define your desired zoom-in scale
-                      final double zoomInScale = 3.0;
-
-                      // Get the position of the double tap in the viewport
-                      final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                      final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
-
-                      // Calculate the translation needed to get the tap location to the center of the viewport
-                      final Size viewportSize = MediaQuery.of(context).size;
-                      final double dx = (viewportSize.width / 2 - zoomInScale * localPosition.dx);
-                      final double dy = (viewportSize.height / 2 - zoomInScale * localPosition.dy);
-
-                      // Create the zoom-in transformation matrix
-                      final Matrix4 zoomInMatrix = Matrix4.identity()
-                        ..translate(dx, dy)
-                        ..scale(zoomInScale);
-
-                      widget.transformationController.value = zoomInMatrix;
-                    } else {
-                      // If the image is zoomed in, reset to the original scale
-                      widget.transformationController.value = Matrix4.identity();
-                    }
+          return GestureDetector(
+              onTap: () => {
+                    print("ds"),
+                    Navigator.push(
+                        context,
+                        ReaderOptionRoute(
+                            widget: ReaderOptionsPage(
+                          reader: this.widget,
+                          bloc: BlocProvider.of<ReaderBloc>(context),
+                          // currentPage: widget.currentPage,
+                        ))),
                   },
-                  // onHorizontalDragEnd: ,
+              // onDoubleTapDown: (details) {
+              //   final RenderBox renderBox = context.findRenderObject() as RenderBox;
+              //   final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+              //
+              //   final Matrix4 currentMatrix = widget.transformationController.value;
+              //   final double currentScale = currentMatrix.getMaxScaleOnAxis();
+              //
+              //   if (currentScale == 1.0) {
+              //     // Define your desired zoom-in scale
+              //     final double zoomInScale = 3.0;
+              //
+              //     // Get the position of the double tap in the viewport
+              //     final RenderBox renderBox = context.findRenderObject() as RenderBox;
+              //     final Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+              //
+              //     // Calculate the translation needed to get the tap location to the center of the viewport
+              //     final Size viewportSize = MediaQuery.of(context).size;
+              //     final double dx = (viewportSize.width / 2 - zoomInScale * localPosition.dx);
+              //     final double dy = (viewportSize.height / 2 - zoomInScale * localPosition.dy);
+              //
+              //     // Create the zoom-in transformation matrix
+              //     final Matrix4 zoomInMatrix = Matrix4.identity()
+              //       ..translate(dx, dy)
+              //       ..scale(zoomInScale);
+              //
+              //     widget.transformationController.value = zoomInMatrix;
+              //   } else {
+              //     // If the image is zoomed in, reset to the original scale
+              //     widget.transformationController.value = Matrix4.identity();
+              //   }
+              // },
+              // onHorizontalDragEnd: ,
 
-                  // onDoubleTap: () => {
-                  //       // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
-                  //       print("controller"),
-                  //       widget.transformationController.value = Matrix4.identity(),
-                  //       // setState(() {
-                  //       // setState(() {
-                  //       //   pageScale = _controller.value.getMaxScaleOnAxis();
-                  //       // }),
-                  //       // });
-                  //     },
-                  child: BlocListener<ReaderBloc, ReaderState>(
-                    listener: (context, state) {
-                      if (state is ReaderClosed) {
-                        print("state.ReaderClosed");
-                        // Navigator.of(context).popUntil((route) => route.isFirst);
-                        setState(() {
-                          // widget.pageController.jumpToPage(0) ;
-                          widget.controllerflip.currentState!.pageNumber = 0;
-                          // widget.transformationController.value = Matrix4.identity();
-                          // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                        });
-                        WidgetsBinding.instance!.addPostFrameCallback((_) {
-                          int count = 0;
-                          Navigator.popUntil(context, (route) {
-                            return count++ == 2;
-                          });
-                        });
-                        // int count = 0;
-                        // Navigator.popUntil(context, (route) {
-                        //   return count++ == 2;
-                        // });
-                      }
-                    },
-                    child: BlocBuilder<ReaderBloc, ReaderState>(
-                      builder: (context, state) {
-                        // if (state is ReaderOpened) {
-                        // return PageFlipWidget(
-                        //   key: widget.controllerflip,
-                        //   backgroundColor: Colors.transparent,
-                        //   reader: this.widget,
-                        //
-                        //   // isRightSwipe: true,
-                        //   // lastPage: Container(color: Colors.transparent, child: const Center(child: Text('Last Page!'))),
-                        //   children: <ReaderPage>[
-                        //     for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
-                        //       ReaderPage(
-                        //         reader: this.widget,
-                        //         pageNumber: index,
-                        //       ),
-                        //   ],
-                        // );
-                        return PageView.builder(
-                            controller: widget.pageController,
-                            itemCount: int.parse(widget.magazine.pageMax!),
+              // onDoubleTap: () => {
+              //       // if (widget.isOnPageTurning = true) {Navigator.of(context).pop(), print("double tap reader")}
+              //       print("controller"),
+              //       widget.transformationController.value = Matrix4.identity(),
+              //       // setState(() {
+              //       // setState(() {
+              //       //   pageScale = _controller.value.getMaxScaleOnAxis();
+              //       // }),
+              //       // });
+              //     },
+              child: BlocListener<ReaderBloc, ReaderState>(
+                listener: (context, state) {
+                  if (state is ReaderClosed) {
+                    print("state.ReaderClosed");
+                    // Navigator.of(context).popUntil((route) => route.isFirst);
+                    setState(() {
+                      // widget.pageController.jumpToPage(0) ;
+                      widget.controllerflip.currentState!.pageNumber = 0;
+                      // widget.transformationController.value = Matrix4.identity();
+                      // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                    });
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      int count = 0;
+                      Navigator.popUntil(context, (route) {
+                        return count++ == 2;
+                      });
+                    });
+                    // int count = 0;
+                    // Navigator.popUntil(context, (route) {
+                    //   return count++ == 2;
+                    // });
+                  }
+                },
+                child: new  PageFlipWidget2(
+                  key: widget.controllerflip,
+                  backgroundColor: Colors.transparent,
+                  reader: this.widget,
+                  pageMax:int.parse( widget.magazine.pageMax!),
 
-                            physics: widget.pageScrollEnabled ? AlwaysScrollableScrollPhysics() : NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) => ReaderPage(
-                                  reader: this.widget,
-                                  pageNumber: index,
-                                ));
-                      },
-                    ),
-                  )),
-              // Positioned(
-              //     bottom: 20,
-              //     right: 20,
-              //     child: FloatingActionButton(
-              //       // key: UniqueKey(),
-              //       // heroTag: "FAB",
-              //       onPressed: () => {},
-              //       backgroundColor: Colors.white.withOpacity(0.2),
-              //       child: Icon(
-              //         Icons.chrome_reader_mode_outlined,
-              //       ),
-              //     )),
-            ],
-          );
+                  // isRightSwipe: true,
+                  // lastPage: Container(color: Colors.transparent, child: const Center(child: Text('Last Page!'))),
+//                       children: <ReaderPage>[
+//                         for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+//                           new ReaderPage(
+//                             key: ValueKey(index),
+//                             // key: pageKeys[index],
+//                             reader: this.widget,
+//                             pageNumber: index,
+//                             repaintBoundaryKey: pageKeys[index],
+// // repaintBoundaryKey: Key(index),
+// // repaintBoundaryKey: ValueKey(index),
+//                           ),
+//                       ],
+                ),
+              ));
         }),
       ],
     );

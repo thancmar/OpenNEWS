@@ -69,7 +69,8 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
       // controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.4 : 0.15);
       controller = PageController(
           viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15,
-          initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1);
+          // initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1
+      );
 
       return SizedBox(
         // width: 500,

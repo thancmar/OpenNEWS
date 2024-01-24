@@ -53,7 +53,7 @@ class MagazineRepository {
       //   return MagazinePublishedGetLastWithLimitFromJson(response.data);
       // }
       // ;
-      // print(response.data);
+      print(response.data);
       // print(response!.data);
       // dioClient.secureStorage.write(key: "allmagazines", value: response.data);
       return MagazinePublishedGetLastWithLimitFromJson(response.data);

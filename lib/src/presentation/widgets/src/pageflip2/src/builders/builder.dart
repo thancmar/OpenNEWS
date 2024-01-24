@@ -10,57 +10,50 @@ Map<int, ui.Image?> imageData = {};
 ValueNotifier<int> currentPage = ValueNotifier(-1);
 ValueNotifier<Widget> currentWidget = ValueNotifier(Container());
 ValueNotifier<int> currentPageIndex = ValueNotifier(0);
+ValueNotifier<Map<int, Size>> imageSizes = ValueNotifier({});
 
-class PageFlipBuilder extends StatefulWidget {
-  const PageFlipBuilder({
+
+class PageFlipBuilder2 extends StatefulWidget {
+  const PageFlipBuilder2({
     Key? key,
     required this.amount,
     this.backgroundColor,
     required this.child,
     required this.pageIndex,
     required this.isRightSwipe,
+    required this.bKey,
+    required this.imageSize
   }) : super(key: key);
 
   final Animation<double> amount;
   final int pageIndex;
   final Color? backgroundColor;
-  final ReaderPage child;
+  final Widget child;
   final bool isRightSwipe;
+  final GlobalKey bKey;
+  final Size imageSize;
 
   @override
-  State<PageFlipBuilder> createState() => PageFlipBuilderState();
+  State<PageFlipBuilder2> createState() => PageFlipBuilder2State();
 }
 
-class PageFlipBuilderState extends State<PageFlipBuilder> {
+class PageFlipBuilder2State extends State<PageFlipBuilder2> {
   final _boundaryKey = GlobalKey();
 
   void _captureImage(Duration timeStamp, int index) async {
     // widget.child.repaintBoundaryKey.
     // _
 
-    if (widget.child.repaintBoundaryKey.currentContext == null) return;
+    if (widget.bKey.currentContext == null) return;
     await Future.delayed(const Duration(milliseconds: 100));
     if (mounted) {
-      final boundary = widget.child.repaintBoundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+      final boundary = widget.bKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
       final image = await boundary.toImage();
       setState(() {
         imageData[index] = image.clone();
       });
     }
   }
-
-  // void _captureImage(Duration timeStamp, int index) async {
-  //   if (_boundaryKey.currentContext == null) return;
-  //   await Future.delayed(const Duration(milliseconds: 100));
-  //   if (mounted) {
-  //     final boundary = _boundaryKey.currentContext!.findRenderObject()!
-  //     as RenderRepaintBoundary;
-  //     final image = await boundary.toImage();
-  //     setState(() {
-  //       imageData[index] = image.clone();
-  //     });
-  //   }
-  // }
 
 
   @override
@@ -69,21 +62,29 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
       valueListenable: currentPage,
       builder: (context, value, child) {
         if (imageData[widget.pageIndex] != null && value >= 0) {
-          return CustomPaint(
-            painter: PageFlipEffect(
-              amount: widget.amount,
-              image: imageData[widget.pageIndex]!,
-              backgroundColor: widget.backgroundColor,
-              isRightSwipe: widget.isRightSwipe,
-            ),
-            size: Size.infinite,
-            // size: _layoutSize,
+          return ValueListenableBuilder<Map<int, Size>>(
+              valueListenable: imageSizes,
+              builder: (context, sizes, child){
+                Size imageSize = sizes[widget.pageIndex] ?? Size.zero; // Default size if not yet determined
+imageSize = Size(1600,2240);
+                return imageSize != Size.zero?CustomPaint(
+                painter: PageFlipEffect2(
+                  amount: widget.amount,
+                  image: imageData[widget.pageIndex]!,
+                  backgroundColor: widget.backgroundColor,
+                  isRightSwipe: widget.isRightSwipe,
+                ),
+                size: imageSize,
+                // size: Size.infinite,
+                // size: _layoutSize,
+              ):Container(color: Colors.amberAccent,);
+            }
           );
         }
         else {
           if (value == widget.pageIndex || (value == (widget.pageIndex + 1))) {
             WidgetsBinding.instance.addPostFrameCallback(
-              (timeStamp) => _captureImage(timeStamp, currentPageIndex.value),
+                  (timeStamp) => _captureImage(timeStamp, currentPageIndex.value),
             );
           }
           if (widget.pageIndex == currentPageIndex.value ||
@@ -91,6 +92,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
             return ColoredBox(
               color: widget.backgroundColor ?? Colors.black12,
               child: RepaintBoundary(
+                // key: widget.bKey,
                 // key: _boundaryKey,
                 // key: widget.child.repaintBoundaryKey,
                 child: widget.child,
