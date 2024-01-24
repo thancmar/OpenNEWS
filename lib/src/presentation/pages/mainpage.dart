@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:card_swiper/card_swiper.dart';
+// import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:expandable/expandable.dart';
@@ -64,7 +64,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   bool isLoadingOnTop = false;
   final fabKey = GlobalKey();
   bool showQR = false;
-  late SwiperController locationOffersController = SwiperController();
+  // late SwiperController locationOffersController = SwiperController();
   GlobalKey qrIconKey = GlobalKey();
   // static late VideoPlayerController? _offerVideoController = null;
 
@@ -133,7 +133,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     _pageController.dispose();
     _controller.dispose();
     _masForUsing.clear(); // = [];;
-    locationOffersController.dispose();
+    // locationOffersController.dispose();
     super.dispose();
   }
 
