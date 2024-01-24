@@ -115,7 +115,6 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
               itemBuilder: (_, i) {
                 // print(widget.magazine.idMagazinePublication! + "_" + widget.magazine.dateOfPublication! + "_" + i.toString());
                 return BlocBuilder<ReaderBloc, ReaderState>(
-
                   bloc: widget.bloc,
                   builder: (context, state) {
                     // print(state);

@@ -115,7 +115,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       categoryCovers =  MagazinePublishedGetAllLastByHotspotId(
           response: NavbarState.magazinePublishedGetLastWithLimit!.response!
               .where((element) =>
-                  element.idsMagazineCategory?.contains(event.categoryID) ==
+                  element.idsMagazineCategory!.contains(event.categoryID) ==
                   true)
               .toList());
       await categoryCovers;

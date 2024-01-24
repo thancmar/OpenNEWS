@@ -40,7 +40,7 @@ dependencies:
   dio: ^5.3.3
   webview_flutter: ^3.0.4
   shaky_animated_listview: ^0.0.5
-  package_info_plus: ^3.1.2
+  package_info_plus: ^5.0.1
   bloc_concurrency: ^0.2.0
   easy_localization: ^3.0.1
   pdfx: ^2.3.0
@@ -126,6 +126,7 @@ dependencies:
   uuid: ^3.0.7
   flutter_local_notifications: ^15.1.1
   flutter_card_swiper: ^6.1.0
+  flip_widget: ^0.1.11
 
 dev_dependencies:
   flutter_test:
