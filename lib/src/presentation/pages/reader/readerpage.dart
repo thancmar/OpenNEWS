@@ -294,16 +294,15 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                         //       ),
                         //   ],
                         // );
+                        return PageView.builder(
+                            controller: widget.pageController,
+                            itemCount: int.parse(widget.magazine.pageMax!),
 
-                        // return PageView.builder(
-                        //     controller: widget.pageController,
-                        //     itemCount: int.parse(widget.magazine.pageMax!),
-                        //
-                        //     physics: widget.pageScrollEnabled ? AlwaysScrollableScrollPhysics() : NeverScrollableScrollPhysics(),
-                        //     itemBuilder: (context, index) => ReaderPage(
-                        //           reader: this.widget,
-                        //           pageNumber: index,
-                        //         ));
+                            physics: widget.pageScrollEnabled ? AlwaysScrollableScrollPhysics() : NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => ReaderPage(
+                                  reader: this.widget,
+                                  pageNumber: index,
+                                ));
                       },
                     ),
                   )),
