@@ -270,7 +270,7 @@ class _MyProfileState extends State<MyProfile> {
                       // _authenticateWithEmailAndPassword(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      onPrimary: Colors.white,
+                      // onPrimary: Colors.white,
                       shadowColor: Colors.blueAccent,
                       elevation: 3,
                       // side: BorderSide(width: 0.10, color: Colors.white),

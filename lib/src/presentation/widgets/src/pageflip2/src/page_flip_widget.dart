@@ -82,7 +82,7 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
     currentPage = ValueNotifier(-1);
     currentWidget = ValueNotifier(Container());
      // pagesdata = List.generate(widget.pageMax, (index) => null);
-     pages = List.generate(widget.pageMax, (index) => Container());
+     pages = List.generate(widget.pageMax, (index) => SizedBox(height: 100,width: 100,));
     repaintBoundaryKeys = List.generate(widget.pageMax, (index) => GlobalKey());
     imageSize = List.generate(widget.pageMax, (index) => Size.zero);
     currentPageIndex = ValueNotifier(0);
@@ -138,15 +138,17 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
   //   );
   // }
   Widget _showImage(Uint8List imageData, int index) {
-    return Container(color: Colors.deepPurpleAccent,
-      child: ImageSizer(
-        imageData: imageData,
-        index: index,
-        bKey: repaintBoundaryKeys[index],
-        // onSizeDetermined: (Size size) {
-        //   // Use the size here as needed
-        //   imageSize[index] = size; // Store the size in a map or pass it to the custom painter
-        // },
+    return SizedBox(
+      child: Container(color: Colors.deepPurpleAccent,
+        child: ImageSizer(
+          imageData: imageData,
+          index: index,
+          bKey: repaintBoundaryKeys[index],
+          // onSizeDetermined: (Size size) {
+          //   // Use the size here as needed
+          //   imageSize[index] = size; // Store the size in a map or pass it to the custom painter
+          // },
+        ),
       ),
     );
   }
@@ -418,7 +420,8 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
         onHorizontalDragEnd: widget.reader.pageScrollEnabled == true ? (details) => _onDragFinish() : null,
 
         child: Stack(
-          fit: StackFit.expand,
+          // fit: StackFit.expand,
+          alignment: Alignment.center,
           children: <Widget>[
             if (widget.lastPage != null) ...[
               widget.lastPage!,

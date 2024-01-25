@@ -105,7 +105,7 @@ dependencies:
 #  firebase_auth: ^4.4.2
   expandable: ^5.0.1
   dismissible_page: ^0.7.3
-  assorted_layout_widgets: ^7.0.0
+  assorted_layout_widgets: ^9.0.0
   map_launcher: ^2.4.0
   permission_handler: ^11.0.1
   sign_in_with_apple: ^4.3.0

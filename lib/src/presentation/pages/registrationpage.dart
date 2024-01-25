@@ -348,7 +348,7 @@ class _RegistrationState extends State<Registration> {
                         },
                         style: ElevatedButton.styleFrom(
                           //primary: Colors.green,
-                          onPrimary: Colors.white,
+                          // onPrimary: Colors.white,
                           shadowColor: Colors.blueAccent,
                           elevation: 3,
                           shape: RoundedRectangleBorder(

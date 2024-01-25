@@ -55,7 +55,7 @@ class Reader extends StatefulWidget {
 }
 
 class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
-  late final CustumPdfControllerPinch pdfPinchController;
+  // late final CustumPdfControllerPinch pdfPinchController;
   late List<ReaderPage> pages = [];
   List<int> visitedPages = [];
   late double pageScale;

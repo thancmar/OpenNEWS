@@ -10,6 +10,7 @@ class PageFlipEffect2 extends CustomPainter {
     this.backgroundColor,
     this.radius = 0.18,
     required this.isRightSwipe,
+    required this.imageSize,
   }) : super(repaint: amount);
 
   final Animation<double> amount;
@@ -17,10 +18,12 @@ class PageFlipEffect2 extends CustomPainter {
   final Color? backgroundColor;
   final double radius;
   final bool isRightSwipe;
+  final Size imageSize;
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
-    size = Size(400,400);
+    // size = Size(400,200);
+    print("Canvas size $size");
     final pos = isRightSwipe ? 1.0 - amount.value : amount.value;
     final movX = isRightSwipe ? pos : (1.0 - pos) * 0.85;
     final calcR = (movX < 0.20) ? radius * movX * 5 : radius;
@@ -28,8 +31,8 @@ class PageFlipEffect2 extends CustomPainter {
     final hWRatio = image.height / image.width;
     final hWCorrection = (hWRatio - 1.0) / 2.0;
 
-    final w = size.width.toDouble();
-    final h = size.height.toDouble();
+    final w = imageSize.width.toDouble();
+    final h = imageSize.height.toDouble()-200;
     final c = canvas;
     final shadowXf = (wHRatio - movX);
     final shadowSigma = isRightSwipe
@@ -51,7 +54,7 @@ class PageFlipEffect2 extends CustomPainter {
     }
 
     final ip = Paint();
-    for (double x = 0; x < size.width; x++) {
+    for (double x = 0; x < imageSize.width; x++) {
       final xf = (x / w);
       final baseValue = isRightSwipe
           ? math.cos(math.pi / 0.5 * (xf + pos))
