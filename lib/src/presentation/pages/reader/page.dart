@@ -84,54 +84,54 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                 children: [
                   // (!snapshot.hasData)?
                   // Container(
-                  // CachedNetworkImage(
-                  //     filterQuality: FilterQuality.none,
-                  //     imageUrl: widget.reader.magazine.idMagazinePublication! +
-                  //         "_" +
-                  //         widget.reader.magazine.dateOfPublication! +
-                  //         "_" +
-                  //         widget.pageNumber.toString() +
-                  //         "_" +
-                  //         "thumbnail",
-                  //
-                  //     // placeholderFadeInDuration: const Duration(seconds: 50),
-                  //     // fadeOutCurve: Curves.bounceOut,
-                  //     // fadeOutDuration: Duration(milliseconds: 4),
-                  //     // fadeInDuration:  Duration(seconds: 4),
-                  //     imageBuilder: (context, imageProvider) => Container(
-                  //           height: MediaQuery.of(context).size.height,
-                  //           width: MediaQuery.of(context).size.width,
-                  //           // color: Colors.red,
-                  //           decoration: BoxDecoration(
-                  //             image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                  //             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  //
-                  //           ),
-                  //         ),
-                  //
-                  //
-                  //     errorWidget: (context, url, error) {
-                  //       return Padding(
-                  //         padding: EdgeInsets.all(8.0),
-                  //         child: Container(
-                  //           // color: Colors.grey.withOpacity(0.1),
-                  //
-                  //           decoration: BoxDecoration(
-                  //             // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                  //
-                  //             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  //             // color: Colors.grey.withOpacity(0.1),
-                  //           ),
-                  //           child:  !snapshot.hasData
-                  //               ?SpinKitFadingCircle(
-                  //             color: Colors.white,
-                  //             size: 50.0,
-                  //             controller: _spinKitController,
-                  //             // itemBuilder: (BuildContext context, int value) => {},
-                  //           ):Container(),
-                  //         ),
-                  //       );
-                  //     }),
+                  CachedNetworkImage(
+                      filterQuality: FilterQuality.none,
+                      imageUrl: widget.reader.magazine.idMagazinePublication! +
+                          "_" +
+                          widget.reader.magazine.dateOfPublication! +
+                          "_" +
+                          widget.pageNumber.toString() +
+                          "_" +
+                          "thumbnail",
+
+                      // placeholderFadeInDuration: const Duration(seconds: 50),
+                      // fadeOutCurve: Curves.bounceOut,
+                      // fadeOutDuration: Duration(milliseconds: 4),
+                      // fadeInDuration:  Duration(seconds: 4),
+                      imageBuilder: (context, imageProvider) => Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            // color: Colors.red,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+
+                            ),
+                          ),
+
+
+                      errorWidget: (context, url, error) {
+                        return Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Container(
+                            // color: Colors.grey.withOpacity(0.1),
+
+                            decoration: BoxDecoration(
+                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              // color: Colors.grey.withOpacity(0.1),
+                            ),
+                            child:  !snapshot.hasData
+                                ?SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 50.0,
+                              controller: _spinKitController,
+                              // itemBuilder: (BuildContext context, int value) => {},
+                            ):Container(),
+                          ),
+                        );
+                      }),
                   // Container(color: Colors.green,)
                   snapshot.hasData
                       ? CachedNetworkImage(

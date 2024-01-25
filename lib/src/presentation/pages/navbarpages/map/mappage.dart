@@ -260,7 +260,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           child: ListTile(
                             title: Text(
                               location,
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
+                              style:Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.grey),
+                              // style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
                             ),
                             trailing: GestureDetector(
                                 onTap: () {
@@ -306,7 +307,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                 tag: locationmarker.nameApp,
                 child: Text(
                   locationmarker.nameApp,
-                  style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w700),
+                  style:Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
+                  // style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -320,7 +322,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       locationmarker.addressZip +
                       " " +
                       locationmarker.addressCity,
-                  style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w300)),
+                  // style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w300)),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey))
             ),
           ),
           Row(
@@ -347,7 +350,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     child: Text(
                         // ("offers").tr(),
                         "offers",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.blue)),
                     onPressed: () {
                       /* ... */
                       print('Angebote');
@@ -396,7 +399,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     // ),
                   ),
                   child: TextButton(
-                    child: Icon(Icons.directions),
+                    child: Icon(Icons.directions,color: Colors.blue,),
                     onPressed: () => openMapsSheet(context, locationmarker.nameApp!, locationmarker.latitude, locationmarker.longitude),
                   ),
                 ),

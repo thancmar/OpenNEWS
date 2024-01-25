@@ -737,9 +737,10 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                     // _authenticateWithEmailAndPassword(context);
                                                   },
                                                   style: ElevatedButton.styleFrom(
-                                                    onPrimary: Colors.white,
-                                                    shadowColor: Colors.blueAccent,
+                                                    // onPrimary: Colors.white,
+                                                    shadowColor: Colors.blue,
                                                     elevation: 3,
+                                                    backgroundColor: Colors.blue,
                                                     // side: BorderSide(width: 0.10, color: Colors.white),
                                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(size.height * 0.015)),
                                                     // minimumSize: Size(100, 60), //////// HERE
@@ -848,8 +849,9 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                           },
                                           style: ElevatedButton.styleFrom(
                                             //primary: Colors.green,
-                                            onPrimary: Colors.white,
-                                            shadowColor: Colors.blueAccent,
+                                            // onPrimary: Colors.white,
+                                            backgroundColor: Colors.blue,
+                                            shadowColor: Colors.blue,
                                             elevation: 3,
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
                                             minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE

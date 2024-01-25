@@ -65,7 +65,8 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
         leading: IconButton(
           icon: Icon(
             Icons.navigate_before_outlined,
-            size: 30,
+            color: Colors.white,
+            // size: 30,
           ),
           onPressed: () => {
             // Navigator.of(context).pop(),
@@ -88,13 +89,14 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
         ),
         title: MarqueeWidget(
           // child: Text("sfd"),
-          child: Text(widget.reader.magazine.name! ?? "Title"),
+          child: Text(widget.reader.magazine.name! ?? "Title",style: Theme.of(context).textTheme.titleLarge,),
           direction: Axis.horizontal,
           // pauseDuration: Duration(milliseconds: 100),
           // animationDuration: Duration(seconds: 2),
           // backDuration: Duration(seconds: 1),
         ),
         actionsIconTheme: IconThemeData(
+          color: Colors.white,
           size: 25,
         ),
         actions: [
