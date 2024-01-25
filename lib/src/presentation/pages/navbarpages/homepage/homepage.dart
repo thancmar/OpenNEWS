@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     refreshingText: 'Loading...',
                     completeText: 'Refresh Completed',
                     failedText: 'Refresh Failed',
-                    textStyle: TextStyle(color: Colors.grey),
+                    textStyle: Theme.of(context).textTheme.bodyLarge!,
                     refreshStyle: RefreshStyle.Follow,
                     // Add a BoxDecoration to give a grey background
                     // decoration: BoxDecoration(
@@ -266,7 +266,7 @@ class LocationOffersWidget extends StatelessWidget {
                             label: Text(
                               snapshot.data!.locationOffer![i].shm2Offer![0].title!,
                               // 'Speisekarte',
-                              style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w300),
+                              style:  Theme.of(context).textTheme.bodyMedium,
                             ),
                             // <-- Text
                             backgroundColor: Colors.grey.withOpacity(0.1),

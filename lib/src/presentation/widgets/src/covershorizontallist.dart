@@ -177,12 +177,12 @@ class _ListMagazineCoverState extends State<ListMagazineCover> with SingleTicker
                                 // " asd",
                                 // "Card ${i + 1}",
                                 textAlign: TextAlign.center,
-
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  backgroundColor: Colors.transparent,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                // style: TextStyle(
+                                //   fontSize: 16,
+                                //   color: Colors.white,
+                                //   backgroundColor: Colors.transparent,
+                                // ),
                               ),
                             ),
                           ),
@@ -200,15 +200,16 @@ class _ListMagazineCoverState extends State<ListMagazineCover> with SingleTicker
                               direction: Axis.vertical,
                               child: Text(
                                 // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.cover.response![i].dateOfPublication!)),
+                                DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.cover.response![i].dateOfPublication ?? "")),
                                 // " asd",
                                 // "Card ${i + 1}",
                                 textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                  backgroundColor: Colors.transparent,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey),
+                                // style: TextStyle(
+                                //   fontSize: 12,
+                                //   color: Colors.grey,
+                                //   backgroundColor: Colors.transparent,
+                                // ),
                               ),
                             ),
                           ),

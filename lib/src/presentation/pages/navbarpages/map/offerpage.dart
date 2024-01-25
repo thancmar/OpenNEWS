@@ -164,7 +164,7 @@ class _OfferPageState extends State<OfferPage> {
             //HeroTag performance issue
             title: Hero(
                 tag: widget.locOffer.shm2Offer![0].title!,
-                child: Text(widget.locOffer.shm2Offer![0].title!, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300))),
+                child: Text(widget.locOffer.shm2Offer![0].title!, style: Theme.of(context).textTheme.headlineSmall,)),
 
             backgroundColor: Colors.transparent,
             elevation: 0,

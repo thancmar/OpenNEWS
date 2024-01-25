@@ -57,7 +57,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
             padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
             child: Text(
               ("regionalTitle").tr(),
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              style:  Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.right,
             ),
           ),

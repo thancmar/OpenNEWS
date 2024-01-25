@@ -8,7 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:pdfx/pdfx.dart';
+// import 'package:pdfx/pdfx.dart';
 // import 'package:printing/printing.dart';
 
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
@@ -31,10 +31,10 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   late Uint8List image123;
   late List<Future<Uint8List>> futureFuncAllPages = List.empty(growable: true);
   late Uint8List pdfDocument;
-  late PdfDocument pdfdoc;
-  late PdfPage page;
+  // late PdfDocument pdfdoc;
+  // late PdfPage page;
   static late int? length;
-  late PdfPageImage? pageImage;
+  // late PdfPageImage? pageImage;
   late Future<Uint8List> pageImageBytes;
   late List<Uint8List> pdfImgages = List.empty(growable: true);
 

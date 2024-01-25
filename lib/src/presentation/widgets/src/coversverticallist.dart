@@ -149,11 +149,12 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                                     // " asd",
                                     // "Card ${i + 1}",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      backgroundColor: Colors.transparent,
-                                    ),
+                                    style:  Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey),
+                                    // style: TextStyle(
+                                    //   fontSize: 14,
+                                    //   color: Colors.grey,
+                                    //   backgroundColor: Colors.transparent,
+                                    // ),
                                   ),
                                 ),
                               ),
@@ -173,12 +174,12 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                                     // " asd",
                                     // "Card ${i + 1}",
                                     textAlign: TextAlign.center,
-
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      backgroundColor: Colors.transparent,
-                                    ),
+                                    style:  Theme.of(context).textTheme.bodyMedium,
+                                    // style: TextStyle(
+                                    //   fontSize: 14,
+                                    //   color: Colors.white,
+                                    //   backgroundColor: Colors.transparent,
+                                    // ),
                                   ),
                                 ),
                               ),

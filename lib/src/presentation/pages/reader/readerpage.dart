@@ -52,7 +52,7 @@ class Reader extends StatefulWidget {
 }
 
 class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
-  late final CustumPdfControllerPinch pdfPinchController;
+  // late final CustumPdfControllerPinch pdfPinchController;
   late List<ReaderPage> pages = [];
   List<int> visitedPages = [];
   late double pageScale;
@@ -259,8 +259,8 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                         print("state.ReaderClosed");
                         // Navigator.of(context).popUntil((route) => route.isFirst);
                         setState(() {
-                          // widget.pageController.jumpToPage(0) ;
-                          widget.controllerflip.currentState!.pageNumber = 0;
+                          widget.pageController.jumpToPage(0) ;
+                          // widget.controllerflip.currentState!.pageNumber = 0;
                           // widget.transformationController.value = Matrix4.identity();
                           // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
                         });

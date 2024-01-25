@@ -29,6 +29,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
   static late PageController controller = PageController();
 
   late List<bool> toggleImageLoaded = List.filled(int.parse(widget.reader.magazine.pageMax!), false);
+  int _currentPage = 0;
 
   Timer? timer;
   late AnimationController? _spinKitController;
@@ -135,9 +136,13 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                               // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: i)),
                               setState(() {
                                 // widget.reader.currentPage == i;
-                                widget.reader.controllerflip.currentState!. goToPage(i);
+                                // widget.reader.controllerflip.currentState!. goToPage(i);
 // widget.reader.transformationController.value== Matrix4.identity();
-                                // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
+//                                 widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                                setState(() {
+                                  _currentPage = i;
+                                  widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                                });
                               })
                             // }
                         },
@@ -171,13 +176,13 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                             child: Container(
                                               padding:
                                               // i == widget.reader.pageController.page
-                                              i == widget.reader.pageController.page
+                                              i == _currentPage
                                                   ? EdgeInsets.fromLTRB(10, 10, 10, 10)
                                                   :
                                               EdgeInsets.fromLTRB(5, 0, 5, 0),
                                               // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                               // decoration: i == pageNo
-                                              decoration: i ==widget.reader.pageController.page
+                                              decoration: i ==_currentPage
                                                   ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue)
                                                   : BoxDecoration(),
                                               // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),

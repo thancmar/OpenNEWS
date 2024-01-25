@@ -123,11 +123,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
                             child: Text(
                               ( "welcome").tr(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                // fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                              style:Theme.of(context).textTheme.titleMedium!,
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -137,11 +133,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                               "${BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname} ${BlocProvider.of<AuthBloc>(context).state.userDetails.response?.lastname}" ,
                               // "Name",
                               // '${AuthState.userDetails?.response?.firstname} ${AuthState.userDetails?.response?.lastname}',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
+                              style: Theme.of(context).textTheme.titleLarge!,
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -252,11 +244,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         title: Text(
                           ( "toLogin").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            // fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         ),
                       ),
                     ),
@@ -312,11 +300,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   ),
                   title: Text(
     ( "rateUs").tr(),
-                    style: TextStyle(
-                      fontSize: 16,
-                      // fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style:Theme.of(context).textTheme.titleMedium!,
                   ),
                 ),
               ),
@@ -359,10 +343,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 backgroundColor: Colors.transparent,
                 title: Text(
                   ( "settings").tr(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium!,
                 ),
                 children: <Widget>[
                   BlocProvider.of<AuthBloc>(context).state is Authenticated
@@ -377,11 +358,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "changePasword").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            // fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         )),
                   ):Container(),
                   // BlocProvider.of<AuthBloc>(context).state is Authenticated
@@ -414,10 +391,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           minLeadingWidth: 10,
                           title: Text(
                             'E-Mail ändern',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
+                            style:Theme.of(context).textTheme.titleMedium!,
                           )),
                     ),
                   ):Container(),
@@ -435,10 +409,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "notifications").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium!,
                         )),
                   ),
                   Padding(
@@ -481,10 +452,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           minLeadingWidth: 10,
                           title: Text(
                             ( "language").tr(),
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium!,
                           )),
                     ),
                   ),
@@ -530,10 +498,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 backgroundColor: Colors.transparent,
                 title: Text(
                   ("information").tr(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium!,
                 ),
                 children: <Widget>[
                   Padding(
@@ -546,11 +511,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "impressum").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            // fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium!,
                         )),
                   ),
                   Padding(
@@ -563,10 +524,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "datenschutz").tr(),
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         )),
                   ),
                   Padding(
@@ -579,10 +537,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ("agb").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         )),
                   ),
                   Padding(
@@ -595,10 +550,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ("help").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         )),
                   ),
                   Padding(
@@ -611,10 +563,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ("contact").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         )),
                   ),
                 ],
@@ -746,11 +695,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         title: Text(
                           ("logout").tr(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            // fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style:Theme.of(context).textTheme.titleMedium!,
                         ),
                       ),
                     ),
@@ -765,18 +710,11 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               children: [
                 Text(
                   ("version").tr(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium!,
                 ),
                 Text(
                   ("designedBy").tr(),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w300,
-                  ),
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color:Colors.grey),
                 ),
               ],
             ),

@@ -64,8 +64,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   bool isLoadingOnTop = false;
   final fabKey = GlobalKey();
   bool showQR = false;
+
   // late SwiperController locationOffersController = SwiperController();
   GlobalKey qrIconKey = GlobalKey();
+
   // static late VideoPlayerController? _offerVideoController = null;
 
   // List<Uint8List> locationOfferImages = [];
@@ -109,8 +111,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   //     ),
   //   );
   // }
-
-
 
   @override
   void initState() {
@@ -204,7 +204,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               ),
               // transitionDuration: Duration.zero,
             ),
-          );;
+          );
+          ;
           // return AlertDialog(
           //   title: Text(
           //     ('error').tr(),
@@ -365,12 +366,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                               child: Text(
                                                                 state.appbarlocation!.nameApp ?? ("notAtLocation").tr(),
                                                                 // ("notAtLocation").tr(),
-                                                                style: TextStyle(
-                                                                  // fontSize: size.aspectRatio * 65,
-                                                                  fontSize: 30,
-                                                                  color: Colors.white,
-                                                                  // fontWeight: FontWeight.bold
-                                                                ),
+                                                                style: Theme.of(context).textTheme.headlineLarge,
                                                                 textAlign: TextAlign.center,
                                                               ),
                                                             ),
@@ -389,11 +385,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                       ("locationInformation").tr(),
                                                                       // overflow: TextOverflow.fade,
                                                                       // softWrap: true,
-                                                                      style: TextStyle(
-                                                                          // fontSize: size.aspectRatio * 25,
-                                                                          fontSize: 14,
-                                                                          color: Colors.white,
-                                                                          fontWeight: FontWeight.w200),
+                                                                      style:  Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w200),
+                                                                      // style: TextStyle(
+                                                                      //     // fontSize: size.aspectRatio * 25,
+                                                                      //     fontSize: 14,
+                                                                      //     color: Colors.white,
+                                                                      //     fontWeight: FontWeight.w200),
                                                                       // textAlign: TextAlign.center,
 // textAlign: TextAlign.right,
                                                                     ),
@@ -433,38 +430,40 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                 child: ValueListenableBuilder(
                                                     valueListenable: showLocationPage,
                                                     builder: (BuildContext context, bool counterValue, Widget? child) {
-
                                                       return
-                                                        // !counterValue &&
-                                                        state.appbarlocation?.nameApp == null
-                                                          ?
-                                                      GestureDetector(
-                                                              onTap: () {
-                                                                // FAB onPressed logic
-                                                                Navigator.of(context).push(MaterialPageRoute(
-                                                                  builder: (context) => QRViewExample(),
-                                                                )).whenComplete(() => {if (showLocationPage.value == false) backdropState!.currentState!.fling()});
+                                                          // !counterValue &&
+                                                          state.appbarlocation?.nameApp == null
+                                                              ? GestureDetector(
+                                                                  onTap: () {
+                                                                    // FAB onPressed logic
+                                                                    Navigator.of(context)
+                                                                        .push(MaterialPageRoute(
+                                                                          builder: (context) => QRViewExample(),
+                                                                        ))
+                                                                        .whenComplete(() => {
+                                                                              if (showLocationPage.value == false)
+                                                                                backdropState!.currentState!.fling()
+                                                                            });
                                                                     // .whenComplete(() => backdropState!.currentState!.fling());
-                                                                // showArrowOverlay(context, qrIconKey);
-                                                              },
-                                                              // backgroundColor: Colors.grey.withOpacity(0.2),
-                                                              // child: Icon(Icons.qr_code),
+                                                                    // showArrowOverlay(context, qrIconKey);
+                                                                  },
+                                                                  // backgroundColor: Colors.grey.withOpacity(0.2),
+                                                                  // child: Icon(Icons.qr_code),
 
-                                                              child: Padding(
-                                                                padding: EdgeInsets.only(left: 10),
-                                                                child: Icon(
-
-                                                                  // Backdrop.of(context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
-                                                                  // _counter1 == false ? Icons.search_sharp : Icons.clear,
-                                                                  Icons.qr_code,
-                                                                  key: qrIconKey,
-                                                                  // Icomoon.fc_logo,
-                                                                  color: Colors.white,
-                                                                  size: 40,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : Container();
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.only(left: 10),
+                                                                    child: Icon(
+                                                                      // Backdrop.of(context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
+                                                                      // _counter1 == false ? Icons.search_sharp : Icons.clear,
+                                                                      Icons.qr_code,
+                                                                      key: qrIconKey,
+                                                                      // Icomoon.fc_logo,
+                                                                      color: Colors.white,
+                                                                      size: 40,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : Container();
                                                     }),
                                               ),
 
@@ -587,7 +586,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-
                               Flexible(
                                 flex: 2,
                                 child: FutureBuilder<LocationGetHeader>(
@@ -614,7 +612,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   for (int a = 0; a < _masForUsing.length; a++)
-
                                                     Padding(
                                                       padding: EdgeInsets.fromLTRB(size.width * 0.07, size.height * 0.001, size.width * 0.07,
                                                           a == _masForUsing.length - 1 ? size.height * 0.001 : size.height * 0.01),
@@ -623,8 +620,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                         style: TextStyle(
                                                             fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
                                                             fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
-                                                            color: Colors.white
-                                                        ),
+                                                            color: Colors.white),
                                                         maxLines: 10, // Adjust the number of lines accordingly
                                                         overflow: TextOverflow.clip, // Use clip instead of fade
                                                       ),
@@ -978,8 +974,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                   numberOfCardsDisplayed: snapshotOfferDetails.data!.locationOffer!.length,
                                                   // cardsCount:  NavbarState.locationoffersImages.length,
                                                   cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-
-                                                    return  ClipRRect(
+                                                    return ClipRRect(
                                                       borderRadius: BorderRadius.circular(10.0),
                                                       child: BackdropFilter(
                                                         filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -993,8 +988,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                 CupertinoPageRoute(
                                                                   builder: (context) => OfferPage(
                                                                     locOffer: snapshotOfferDetails.data!.locationOffer![index],
-                                                                    imageData: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!.contains("MOV")
-                                                                        ?  NavbarState.locationoffersImages.singleWhere((element) => element.offer.idOffer == snapshotOfferDetails.data!.locationOffer![index].idOffer).mediaContent:null,
+                                                                    imageData: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
+                                                                            .contains("MOV")
+                                                                        ? NavbarState.locationoffersImages
+                                                                            .singleWhere((element) =>
+                                                                                element.offer.idOffer ==
+                                                                                snapshotOfferDetails.data!.locationOffer![index].idOffer)
+                                                                            .mediaContent
+                                                                        : null,
                                                                     // heroTag: itemIndex,
                                                                   ),
                                                                 ),
@@ -1017,53 +1018,58 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                 Flexible(
                                                                   flex: 8,
                                                                   child: ClipRRect(
-                                                                      borderRadius: BorderRadius.circular(5.0),
-                                                                      child:
-                                                                      !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!.contains("MOV")
-                                                                      // || !NavbarState.locationoffersImages.any((element) => (element.offer.idOffer==snapshotOfferDetails!.data!.locationOffer![index].idOffer && element.offer !=null))
-                                                                          ?
-                                                                      Hero(
-                                                                        tag: snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].id.toString(),
+                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                    child: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
+                                                                            .contains("MOV")
+                                                                        // || !NavbarState.locationoffersImages.any((element) => (element.offer.idOffer==snapshotOfferDetails!.data!.locationOffer![index].idOffer && element.offer !=null))
+                                                                        ? Hero(
+                                                                            tag: snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].id
+                                                                                .toString(),
                                                                             child: Image.memory(
-                                                                                // state.bytes![i],
-                                                                              NavbarState.locationoffersImages.firstWhere(
-                                                                                    (element) => element.offer.idOffer == snapshotOfferDetails.data!.locationOffer![index].idOffer// Provide a default OfferImage or handle it accordingly
-                                                                              ).mediaContent, fit: BoxFit.fill,
-                                                                                alignment: Alignment.center,
+                                                                              // state.bytes![i],
+                                                                              NavbarState.locationoffersImages
+                                                                                  .firstWhere((element) =>
+                                                                                          element.offer.idOffer ==
+                                                                                          snapshotOfferDetails.data!.locationOffer![index]
+                                                                                              .idOffer // Provide a default OfferImage or handle it accordingly
+                                                                                      )
+                                                                                  .mediaContent,
+                                                                              fit: BoxFit.fill,
+                                                                              alignment: Alignment.center,
 
-                                                                                gaplessPlayback: true,
-                                                                              ),
+                                                                              gaplessPlayback: true,
+                                                                            ),
                                                                           )
-                                                                          // : snapshotvideo.hasData? AspectRatio(
-                                                                          //   aspectRatio:
-                                                                          //       // _controller != null ? _controller!.value.aspectRatio :
-                                                                          //       16 / 9,
-                                                                          //   child:
-                                                                          //   // VideoPlayer(snapshotvideo.data)
-                                                                          //   Container()
-                                                                          // ):
-                                                                      // :SpinKitFadingCircle(
-                                                                      //       color: Colors.white,
-                                                                      //       size: 50.0,
-                                                                      //     )
-                                                                      // : Co
-                                                                      : Align(
-                                                                          alignment: Alignment.center,
-                                                                          child: Container(
-                                                                            width: double.infinity,
-                                                                            height: double.infinity,
-                                                                            color: Colors.grey.withOpacity(0.5),
-                                                                            child: Icon(
-                                                                              Icons.slow_motion_video_outlined,
-                                                                              size: 100,
-                                                                              color: Colors.white,
+                                                                        // : snapshotvideo.hasData? AspectRatio(
+                                                                        //   aspectRatio:
+                                                                        //       // _controller != null ? _controller!.value.aspectRatio :
+                                                                        //       16 / 9,
+                                                                        //   child:
+                                                                        //   // VideoPlayer(snapshotvideo.data)
+                                                                        //   Container()
+                                                                        // ):
+                                                                        // :SpinKitFadingCircle(
+                                                                        //       color: Colors.white,
+                                                                        //       size: 50.0,
+                                                                        //     )
+                                                                        // : Co
+                                                                        : Align(
+                                                                            alignment: Alignment.center,
+                                                                            child: Container(
+                                                                              width: double.infinity,
+                                                                              height: double.infinity,
+                                                                              color: Colors.grey.withOpacity(0.5),
+                                                                              child: Icon(
+                                                                                Icons.slow_motion_video_outlined,
+                                                                                size: 100,
+                                                                                color: Colors.white,
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
 
-                                                                      // :Container(height: double.infinity,width: double.infinity, color: Colors.grey.withOpacity(0.3), child: Icon(Icons.slow_motion_video_outlined, size: 80,),
-                                                                      // )
-                                                                      ),
+                                                                    // :Container(height: double.infinity,width: double.infinity, color: Colors.grey.withOpacity(0.3), child: Icon(Icons.slow_motion_video_outlined, size: 80,),
+                                                                    // )
+                                                                  ),
                                                                 ),
                                                                 Expanded(
                                                                   flex: 1,
@@ -1105,10 +1111,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                   });
                                             }
                                             // continue;
-                                            return  SpinKitFadingCircle(
-                                                  color: Colors.white,
-                                                  size: 50.0,
-                                                );
+                                            return SpinKitFadingCircle(
+                                              color: Colors.white,
+                                              size: 50.0,
+                                            );
                                           }))
                             ],
                           ),
@@ -1393,7 +1399,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     );
   }
 }
-
 
 class AnimatedArrow extends StatefulWidget {
   @override

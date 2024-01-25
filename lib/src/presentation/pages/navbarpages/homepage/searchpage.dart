@@ -141,8 +141,8 @@ class _SearchPageState extends State<SearchPage>
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.grey.withOpacity(0.2),
-                            labelStyle: TextStyle(fontSize: size.width * 0.06, color: Colors.white.withOpacity(0.5)),
-                            floatingLabelStyle: TextStyle(color: Colors.blue),
+                            labelStyle:  Theme.of(context).textTheme.titleLarge,
+                            floatingLabelStyle:  Theme.of(context).textTheme.bodyLarge,
                             labelText: "Suchen",
 
                             border: OutlineInputBorder(
@@ -231,7 +231,7 @@ class _SearchPageState extends State<SearchPage>
                                 padding: EdgeInsets.fromLTRB(30, 10, 30, 20),
                                 child: Text(
                                   'Kategorien',
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  style:Theme.of(context).textTheme.headlineSmall,
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -324,7 +324,8 @@ class _SearchPageState extends State<SearchPage>
                                 padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
                                 child: Text(
                                   'Choose a language',
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  // style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: Theme.of(context).textTheme.headlineSmall,
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -354,7 +355,7 @@ class _SearchPageState extends State<SearchPage>
                                           'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
                                           // 'All($counterALL)',
                                           // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
-                                          style: TextStyle(fontSize: 12),
+                                          style:Theme.of(context).textTheme.titleSmall,
                                         ),
                                         // <-- Text
                                         backgroundColor: Colors.grey.withOpacity(0.1),
@@ -410,7 +411,7 @@ class _SearchPageState extends State<SearchPage>
 
                                         label: Text(
                                           'German(${NavbarState.counterDE})',
-                                          style: TextStyle(fontSize: 12),
+                                          style:Theme.of(context).textTheme.titleSmall,
                                         ),
                                         // <-- Text
                                         backgroundColor: Colors.grey.withOpacity(0.1),
@@ -474,7 +475,7 @@ class _SearchPageState extends State<SearchPage>
                                             borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                                         label: Text(
                                           'English(${NavbarState.counterEN})',
-                                          style: TextStyle(fontSize: 12),
+                                          style:Theme.of(context).textTheme.titleSmall,
                                         ),
                                         // <-- Text
                                         backgroundColor: Colors.grey.withOpacity(0.1),
@@ -526,7 +527,7 @@ class _SearchPageState extends State<SearchPage>
                                             borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                                         label: Text(
                                           'French(${NavbarState.counterFR})',
-                                          style: TextStyle(fontSize: 12),
+                                          style: Theme.of(context).textTheme.titleSmall,
                                         ),
                                         // <-- Text
                                         backgroundColor: Colors.grey.withOpacity(0.1),
@@ -578,7 +579,7 @@ class _SearchPageState extends State<SearchPage>
                                             borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                                         label: Text(
                                           'Spanish(${NavbarState.counterES})',
-                                          style: TextStyle(fontSize: 12),
+                                          style: Theme.of(context).textTheme.titleSmall,
                                         ),
                                         // <-- Text
                                         backgroundColor: Colors.grey.withOpacity(0.1),
@@ -617,7 +618,7 @@ class _SearchPageState extends State<SearchPage>
                                 padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
                                 child: Text(
                                   'Versuchen Sie, nach zu suchen',
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  style:Theme.of(context).textTheme.headlineSmall,
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -635,7 +636,7 @@ class _SearchPageState extends State<SearchPage>
                                     padding: const EdgeInsets.only(left: 10),
                                     child: Text(
                                       'die beliebtesten Channel',
-                                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
+                                      style: Theme.of(context).textTheme.bodyLarge,
                                       textAlign: TextAlign.right,
                                     ),
                                   ),
@@ -656,7 +657,7 @@ class _SearchPageState extends State<SearchPage>
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Text(
                                         'magazinen, die Sie gelesen haben',
-                                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w200),
+                                        style:  Theme.of(context).textTheme.bodyLarge,
                                       ),
                                     ),
                                   ),
@@ -1078,8 +1079,9 @@ class _CategoryImagesState extends State<CategoryImages> {
                       // +                                    " " +
                       // NavbarState.magazineCategoryGetAllActive!.response![i].id!
                       ,
-                      style: TextStyle(color: Colors.white),
+                      style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ), // Spacer()
                 ],

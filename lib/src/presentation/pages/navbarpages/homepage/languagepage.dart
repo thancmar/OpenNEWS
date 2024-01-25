@@ -95,7 +95,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
                       label: Text(
                         '${widget.titleText}',
                         textAlign: TextAlign.center,
-
+                        style:Theme.of(context).textTheme.bodyLarge,
                         // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
                         // style: TextStyle(fontSize: 12),
                       ),

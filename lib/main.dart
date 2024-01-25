@@ -8,10 +8,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 // import 'package:sharemagazines_flutter/pdfreadermain.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
@@ -26,12 +28,12 @@ import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 import 'package:get_it/get_it.dart';
+
 // import ‘package:flutter/services.dart’;
 // import 'package:rest_api_work/Service/note_service.dart';
 // import 'firebase_options.dart';
 
 // import 'firebase_options.dart';
-
 
 Future<void> main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -70,15 +72,13 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]).then((value) => runApp(EasyLocalization(
       supportedLocales: [Locale('en'), Locale('de')],
-      path:
-          'assets/translations', // <-- change the path of the translation files
+      path: 'assets/translations', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
       child: MyApp())));
 
   runApp(EasyLocalization(
       supportedLocales: [Locale('en'), Locale('de')],
-      path:
-          'assets/translations', // <-- change the path of the translation files
+      path: 'assets/translations', // <-- change the path of the translation files
       fallbackLocale: Locale('en'),
       child: MyApp()));
   configLoading();
@@ -89,11 +89,11 @@ void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     // ..indicatorType = EasyLoadingIndicatorType.wanderingCubes
-    ..indicatorType= EasyLoadingIndicatorType.shmg
+    ..indicatorType = EasyLoadingIndicatorType.shmg
     ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 115.0
     ..radius = 30.0
-    ..progressColor = Colors.blue
+    ..progressColor = Colors.red
     ..backgroundColor = Colors.transparent
     ..indicatorColor = Colors.yellow
     ..textColor = Colors.white
@@ -101,7 +101,7 @@ void configLoading() {
     ..maskColor = Colors.transparent
     ..userInteractions = false
     ..dismissOnTap = false;
-    // ..customAnimation = CustomAnimation();
+  // ..customAnimation = CustomAnimation();
 }
 
 class MyApp extends StatelessWidget {
@@ -110,24 +110,33 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var baseTheme = ThemeData(
-        brightness: Brightness.light,
+    final ThemeData baseTheme = ThemeData.light();
+    TextTheme customTextTheme = GoogleFonts.ralewayTextTheme(baseTheme.textTheme).copyWith(
+      bodyMedium: TextStyle(color: Colors.white),
+      bodySmall: TextStyle(color: Colors.white),
+      bodyLarge: TextStyle(color: Colors.white),
+      titleSmall: TextStyle(color: Colors.white),
+      titleMedium: TextStyle(color: Colors.white),
+      titleLarge: TextStyle(color: Colors.white),
+      displaySmall: TextStyle(color: Colors.white),
+      displayMedium: TextStyle(color: Colors.white),
+      displayLarge: TextStyle(color: Colors.white),
+      headlineSmall: TextStyle(color: Colors.white),
+      headlineMedium: TextStyle(color: Colors.white),
+      headlineLarge: TextStyle(color: Colors.white),
+      // headlineMedium:
 
-
-        fontFamily: GoogleFonts.raleway(color: Colors.red).toString());
+    );
 
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>(
-            create: (context) => AuthRepository()),
-        RepositoryProvider<HotspotRepository>(
-            create: (context) => HotspotRepository()),
+        RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
+        RepositoryProvider<HotspotRepository>(create: (context) => HotspotRepository()),
         RepositoryProvider<MagazineRepository>(
           create: (context) => MagazineRepository(),
           lazy: false,
         ),
-        RepositoryProvider<LocationRepository>(
-            create: (context) => LocationRepository()),
+        RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -140,22 +149,14 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<SplashBloc>(
               create: (context) => SplashBloc(
-                  authRepository:
-                      RepositoryProvider.of<AuthRepository>(context),
-                  locationRepository:
-                      RepositoryProvider.of<LocationRepository>(context))),
+                  authRepository: RepositoryProvider.of<AuthRepository>(context),
+                  locationRepository: RepositoryProvider.of<LocationRepository>(context))),
           BlocProvider<NavbarBloc>(
               create: (context) => NavbarBloc(
-                  magazineRepository:
-                      RepositoryProvider.of<MagazineRepository>(context),
-                  locationRepository:
-                      RepositoryProvider.of<LocationRepository>(context),
-                  hotspotRepository:
-                      RepositoryProvider.of<HotspotRepository>(context))),
-          BlocProvider<SearchBloc>(
-              create: (context) => SearchBloc(
-                  magazineRepository:
-                      RepositoryProvider.of<MagazineRepository>(context))),
+                  magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
+                  locationRepository: RepositoryProvider.of<LocationRepository>(context),
+                  hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
+          BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
           // BlocProvider<AuthBloc>(
           //   create: (context) => AuthBloc(
           //     //no need of Authbloc here
@@ -178,10 +179,13 @@ class MyApp extends StatelessWidget {
           locale: context.locale,
 
           theme: ThemeData(
-              textTheme: GoogleFonts.ralewayTextTheme(baseTheme.textTheme),
-              // bottomSheetTheme: BottomSheetThemeData(
-              //     backgroundColor: Colors.black.withOpacity(0)),
-              //primarySwatch: Colors.blue
+              textTheme: customTextTheme,
+              iconTheme: IconThemeData(
+                color: Colors.white, // Set the color for icons
+              ),
+              primaryIconTheme: IconThemeData(
+                color: Colors.white, // Set the color for primary icons
+              ),
               pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.android: CupertinoPageTransitionsBuilder(),
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
@@ -197,23 +201,23 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     title: 'sharemagazines',
-  //     theme: ThemeData(
-  //         // bottomSheetTheme: BottomSheetThemeData(
-  //         //     backgroundColor: Colors.black.withOpacity(0)),
-  //         //primarySwatch: Colors.blue,
-  //         pageTransitionsTheme: PageTransitionsTheme(builders: {
-  //           TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-  //           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-  //         }),
-  //         fontFamily: 'Raleway',
-  //
-  //         // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
-  //         dividerColor: Colors.transparent),
-  //     home: StartReaderTesting(),
-  //   );
-  // }
+// @override
+// Widget build(BuildContext context) {
+//   return MaterialApp(
+//     title: 'sharemagazines',
+//     theme: ThemeData(
+//         // bottomSheetTheme: BottomSheetThemeData(
+//         //     backgroundColor: Colors.black.withOpacity(0)),
+//         //primarySwatch: Colors.blue,
+//         pageTransitionsTheme: PageTransitionsTheme(builders: {
+//           TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+//           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+//         }),
+//         fontFamily: 'Raleway',
+//
+//         // pageTransitionsTheme: PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder(), TargetPlatform.iOS: CupertinoPageTransitionsBuilder()}),
+//         dividerColor: Colors.transparent),
+//     home: StartReaderTesting(),
+//   );
+// }
 }
