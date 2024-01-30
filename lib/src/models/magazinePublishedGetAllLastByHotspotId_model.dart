@@ -44,6 +44,10 @@ class MagazinePublishedGetAllLastByHotspotId {
   String? pageMax;
   bool? advertisement;
   String? coverUrl;
+  String? gametypeDesktop;
+  String? puzzleIdDesktop;
+  String? gametypeMobile;
+  String? puzzleIdMobile;
 
   ResponseMagazine(
       {this.name,
@@ -57,7 +61,12 @@ class MagazinePublishedGetAllLastByHotspotId {
       this.dateOfPublication,
       this.pageMax,
       this.advertisement,
-      this.coverUrl});
+      this.coverUrl,
+      this.gametypeDesktop,
+      this.puzzleIdDesktop,
+      this.gametypeMobile,
+      this.puzzleIdMobile
+      });
 
   ResponseMagazine.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -74,6 +83,10 @@ class MagazinePublishedGetAllLastByHotspotId {
     pageMax = json['page_max'];
     advertisement = json['advertisement'];
     coverUrl = json['cover_url'];
+    gametypeDesktop = json['gametype_desktop'];
+    puzzleIdDesktop = json['puzzle_id_desktop'];
+    gametypeMobile = json['gametype_mobile'];
+    puzzleIdMobile = json['puzzle_id_mobile'];
     // name = json['name'] ?? '';
     // idPublisher = json['id_publisher'] ?? '';
     // idMagazineType = json['id_magazine_type'] ?? '';

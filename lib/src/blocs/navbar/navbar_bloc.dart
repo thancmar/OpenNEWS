@@ -78,264 +78,263 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //   maskType: EasyLoadingMaskType.black,
     // );
     try {
-    NavbarState.locationheader = null;
-    NavbarState.magazineCategoryGetAllActive = null;
-    NavbarState.locationoffers = null;
-    // NavbarState.locationoffersImages;
-    NavbarState.locationImage = null;
-    NavbarState.locationoffersImages = [];
+      NavbarState.locationheader = null;
+      NavbarState.magazineCategoryGetAllActive = null;
+      NavbarState.locationoffers = null;
+      // NavbarState.locationoffersImages;
+      NavbarState.locationImage = null;
+      NavbarState.locationoffersImages = [];
 
-    NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetAllLastByHotspotId(response: []);
-    NavbarState.magazinePublishedGetTopLastByRange = null;
+      NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetAllLastByHotspotId(response: []);
+      NavbarState.magazinePublishedGetTopLastByRange = null;
 
-    NavbarState.counterDE = 0;
-    NavbarState.counterEN = 0;
-    NavbarState.counterFR = 0;
-    NavbarState.counterES = 0;
+      NavbarState.counterDE = 0;
+      NavbarState.counterEN = 0;
+      NavbarState.counterFR = 0;
+      NavbarState.counterES = 0;
 
-    await magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
-    print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
+      await magazineRepository.magazineCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
+      print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
 
-    await locationRepository
-        .checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude, NavbarState.token,
-            NavbarState.fingerprint)
-        .then((value) async => {
-              // SplashState.allNearbyLocations = value!.data!,
-              // if (index != 0)
+      await locationRepository
+          .checklocation(locationID.toString(), NavbarState.currentPosition?.latitude, NavbarState.currentPosition?.longitude, NavbarState.token,
+              NavbarState.fingerprint)
+          .then((value) async => {
+                // SplashState.allNearbyLocations = value!.data!,
+                // if (index != 0)
 
-              // print(NavbarState.appbarlocation.idLocation),
-              if (locationID == 0)
-                {
-                  NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: "1"),
-                  NavbarState.locationheader?.then((value) => {
-                        // NavbarState.locationheader = value,
+                // print(NavbarState.appbarlocation.idLocation),
+                if (locationID == 0)
+                  {
+                    NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: "1"),
+                    NavbarState.locationheader?.then((value) => {
+                          // NavbarState.locationheader = value,
 
-                        if (value.filePath != "")
-                          {NavbarState.locationImage = locationRepository.GetLocationImage(locationID: '1', filePath: value.filePath.toString())}
-                      }),
-                  // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
-                  // NavbarState.locationoffers?.then((value) => {
-                  //       // NavbarState.locationheader = value,
-                  //       if (value.locationOffer!.length > 0)
-                  //         {
-                  //           value.locationOffer?.forEach((element) {
-                  //             if (element.shm2Offer![0].type!.contains("MOV")) {
-                  //               NavbarState.locationoffersVideos!.add(locationRepository.GetLocationOfferVideo(
-                  //                   offerID: element.shm2Offer![0].id.toString(), filePath: element.shm2Offer![0].data!));
-                  //             }
-                  //             // else{
-                  //             NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(
-                  //                 offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
-                  //             // }
-                  //           })
-                  //         }
-                  //     }),
-                }
-              else
-                {
-                  // NavbarState.appbarlocation = value!.data![0],
-                  NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: locationID.toString()),
-                  NavbarState.locationheader?.then((value) => {
-                        // NavbarState.locationheader = value,
+                          if (value.filePath != "")
+                            {NavbarState.locationImage = locationRepository.GetLocationImage(locationID: '1', filePath: value.filePath.toString())}
+                        }),
+                    // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
+                    // NavbarState.locationoffers?.then((value) => {
+                    //       // NavbarState.locationheader = value,
+                    //       if (value.locationOffer!.length > 0)
+                    //         {
+                    //           value.locationOffer?.forEach((element) {
+                    //             if (element.shm2Offer![0].type!.contains("MOV")) {
+                    //               NavbarState.locationoffersVideos!.add(locationRepository.GetLocationOfferVideo(
+                    //                   offerID: element.shm2Offer![0].id.toString(), filePath: element.shm2Offer![0].data!));
+                    //             }
+                    //             // else{
+                    //             NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(
+                    //                 offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                    //             // }
+                    //           })
+                    //         }
+                    //     }),
+                  }
+                else
+                  {
+                    // NavbarState.appbarlocation = value!.data![0],
+                    NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: locationID.toString()),
+                    NavbarState.locationheader?.then((value) => {
+                          // NavbarState.locationheader = value,
 
-                        if (value.filePath != "")
-                          {
-                            NavbarState.locationImage =
-                                locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())
-                          }
-                      }),
-                  // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
-                  // NavbarState.locationoffers?.then((value) => {
-                  //       // NavbarState.locationheader = value,
-                  //       if (value.locationOffer!.length > 0)
-                  //         {
-                  //           value.locationOffer?.forEach((element) {
-                  //             if (element.shm2Offer![0].type!.contains("MOV")) {
-                  //               NavbarState.locationoffersVideos!.add(locationRepository.GetLocationOfferVideo(
-                  //                   offerID: element.shm2Offer![0].id.toString(), filePath: element.shm2Offer![0].data!));
-                  //             }
-                  //             // else{
-                  //             NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(
-                  //                 offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
-                  //             // }
-                  //           })
-                  //         }
-                  //     }),
-                  await magazineRepository
-                      .magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar)
-                      .then((value) async => {
-                            NavbarState.magazinePublishedGetTopLastByRange = value,
-                            // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
-                            for (var i = 0; i < value.response!.length; i++)
-                              {
-                                // for (var k = 1; k < int.parse(value.response![i].pageMax!); k++)
-                                //   {
-                                //     DefaultCacheManager()
-                                //         .getFileFromCache(value.response![i].idMagazinePublication! +
-                                //             "_" +
-                                //             value.response![i].dateOfPublication! +
-                                //             "_" +
-                                //             k.toString())
-                                //         .then((valueCache) => {
-                                //               if (valueCache == null)
-                                //                 {
-                                //                   magazineRepository.GetPagesforReader(
-                                //                       page: k,
-                                //                       id_mag_pub: value.response![i].idMagazinePublication,
-                                //                       date_of_publication: value.response![i].dateOfPublication,
-                                //                       readerCancelToken: cancelToken)
-                                //
-                                //                   // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
-                                //                   // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
-                                //                   //     page: '0',
-                                //                   //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
-                                //                   //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
-                                //                   // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
-                                //                 },
-                                //             }),
-                                //     // magazineRepository.GetPagesforReader(
-                                //     //     page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
-                                //   },
-                                DefaultCacheManager()
-                                    .getFileFromCache(
-                                        value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + "0")
-                                    .then((valueCache) async => {
-                                          if (valueCache?.file.lengthSync() == null)
-                                            {
-                                              // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
-                                              magazineRepository.GetPage(
-                                                  page: '0',
-                                                  id_mag_pub: value.response![i].idMagazinePublication!,
-                                                  date_of_publication: value.response![i].dateOfPublication!)
-                                            }
-                                        }),
-                              },
-                            // event?.timer?.cancel(),
-                            // EasyLoading.dismiss(),
-                          }),
-                },
+                          if (value.filePath != "")
+                            {
+                              NavbarState.locationImage =
+                                  locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())
+                            }
+                        }),
+                    // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
+                    // NavbarState.locationoffers?.then((value) => {
+                    //       // NavbarState.locationheader = value,
+                    //       if (value.locationOffer!.length > 0)
+                    //         {
+                    //           value.locationOffer?.forEach((element) {
+                    //             if (element.shm2Offer![0].type!.contains("MOV")) {
+                    //               NavbarState.locationoffersVideos!.add(locationRepository.GetLocationOfferVideo(
+                    //                   offerID: element.shm2Offer![0].id.toString(), filePath: element.shm2Offer![0].data!));
+                    //             }
+                    //             // else{
+                    //             NavbarState.locationoffersImages!.add(locationRepository.GetLocationOfferImage(
+                    //                 offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                    //             // }
+                    //           })
+                    //         }
+                    //     }),
+                    await magazineRepository
+                        .magazinePublishedGetTopLastByRange(id_hotspot: locationID.toString(), cookieJar: cookieJar)
+                        .then((value) async => {
+                              NavbarState.magazinePublishedGetTopLastByRange = value,
+                              // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
+                              for (var i = 0; i < value.response!.length; i++)
+                                {
+                                  // for (var k = 1; k < int.parse(value.response![i].pageMax!); k++)
+                                  //   {
+                                  //     DefaultCacheManager()
+                                  //         .getFileFromCache(value.response![i].idMagazinePublication! +
+                                  //             "_" +
+                                  //             value.response![i].dateOfPublication! +
+                                  //             "_" +
+                                  //             k.toString())
+                                  //         .then((valueCache) => {
+                                  //               if (valueCache == null)
+                                  //                 {
+                                  //                   magazineRepository.GetPagesforReader(
+                                  //                       page: k,
+                                  //                       id_mag_pub: value.response![i].idMagazinePublication,
+                                  //                       date_of_publication: value.response![i].dateOfPublication,
+                                  //                       readerCancelToken: cancelToken)
+                                  //
+                                  //                   // for (var i = 0; i < int.parse(value. .magazine.pageMax!); i++) {},
+                                  //                   // NavbarState.getTopMagazines?.add(magazineRepository.GetPage(
+                                  //                   //     page: '0',
+                                  //                   //     id_mag_pub: NavbarState.magazinePublishedGetTopLastByRange?.response![i].idMagazinePublication!,
+                                  //                   //     date_of_publication: NavbarState.magazinePublishedGetTopLastByRange?.response![i].dateOfPublication!)),
+                                  //                   // print("magazinePublishedGetLastWithLimitdata.response![i].idMagazinePublication! = ${futureFunc[i].toString()}");
+                                  //                 },
+                                  //             }),
+                                  //     // magazineRepository.GetPagesforReader(
+                                  //     //     page: k, id_mag_pub: value.response![i].idMagazinePublication, date_of_publication: value.response![i].dateOfPublication, readerCancelToken: cancelToken)
+                                  //   },
+                                  DefaultCacheManager()
+                                      .getFileFromCache(
+                                          value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + "0")
+                                      .then((valueCache) async => {
+                                            if (valueCache?.file.lengthSync() == null)
+                                              {
+                                                // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
+                                                magazineRepository.GetPage(
+                                                    page: '0',
+                                                    id_mag_pub: value.response![i].idMagazinePublication!,
+                                                    date_of_publication: value.response![i].dateOfPublication!)
+                                              }
+                                          }),
+                                },
+                              // event?.timer?.cancel(),
+                              // EasyLoading.dismiss(),
+                            }),
+                  },
 
-              NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID != 0 ? locationID.toString() : "1"),
-              // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID != 0 ? locationID.toString() : "1");
-              await NavbarState.locationoffers!.then((value) async {
-                if (value.locationOffer!.isNotEmpty) {
-                  List<Future<void>> imageLoadFutures = [];
+                NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID != 0 ? locationID.toString() : "1"),
+                // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID != 0 ? locationID.toString() : "1");
+                await NavbarState.locationoffers!.then((value) async {
+                  if (value.locationOffer!.isNotEmpty) {
+                    List<Future<void>> imageLoadFutures = [];
 
-                  for (var element in value.locationOffer!) {
-                    if (!element.shm2Offer![0].type!.contains("MOV")) {
-                      // Collect futures for loading images
-                      var future =
-                          locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!)
-                              .then((Uint8List image) {
-                        NavbarState.locationoffersImages.add(OfferImage(image, element));
-                      });
-                      imageLoadFutures.add(future);
-                    } else {
-                      // Collect futures for loading videos
-                      var future =
-                          locationRepository.GetLocationOfferVideo(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!)
-                              .then((File video) {
-                        NavbarState.locationoffersImages.add(OfferImage(video, element));
-                      });
-                      imageLoadFutures.add(future);
+                    for (var element in value.locationOffer!) {
+                      if (!element.shm2Offer![0].type!.contains("MOV")) {
+                        // Collect futures for loading images
+                        var future =
+                            locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!)
+                                .then((Uint8List image) {
+                          NavbarState.locationoffersImages.add(OfferImage(image, element));
+                        });
+                        imageLoadFutures.add(future);
+                      } else {
+                        // Collect futures for loading videos
+                        var future =
+                            locationRepository.GetLocationOfferVideo(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!)
+                                .then((File video) {
+                          NavbarState.locationoffersImages.add(OfferImage(video, element));
+                        });
+                        imageLoadFutures.add(future);
+                      }
                     }
+
+                    // Wait for all futures to complete
+                    await Future.wait(imageLoadFutures);
                   }
+                  // Now, NavbarState.locationoffersImages is fully populated
+                }),
 
-                  // Wait for all futures to complete
-                  await Future.wait(imageLoadFutures);
-                }
-                // Now, NavbarState.locationoffersImages is fully populated
-              }),
+                // NavbarState.locationoffers!.then((value) {
+                //   // NavbarState.locationheader = value,
+                //   if (value.locationOffer!.length > 0) {
+                //     value.locationOffer?.forEach((element) async {
+                //       if (!element.shm2Offer![0].type!.contains("MOV")) {
+                //         Uint8List image = await locationRepository.GetLocationOfferImage(
+                //             offerID: element.idOffer.toString(),
+                //             filePath: element.shm2Offer![0].data!
+                //         );
+                //         NavbarState.locationoffersImages!.add(OfferImage(image, element));
+                //         // NavbarState.locationoffers123=(OfferImage(image, element));
+                //
+                //       } else {
+                //         File video = await locationRepository.GetLocationOfferVideo(offerID: element.idOffer.toString(),
+                //             filePath: element.shm2Offer![0].data!);
+                //         NavbarState.locationoffersImages!.add(OfferImage(video, element));
+                //       }
+                //       // if (element.shm2Offer![0].type!.contains("MOV")) {
+                //       //   NavbarState.locationoffersVideos!.add(locationRepository.GetLocationOfferVideo(
+                //       //       offerID: element.shm2Offer![0].id.toString(), filePath: element.shm2Offer![0].data!));
+                //       // }
+                //       // else{
+                //       // if (element.shm2Offer![0].type!.contains("PIC") || element.shm2Offer![0].type!.contains("PDF")) {
+                //       //   NavbarState.locationoffersImages!.add(
+                //       //        await locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                //       // NavbarState.locationoffersImages!.add(OfferImage(image, element));
+                //
+                //       // }
+                //       // else if (element.shm2Offer![0].type!.contains("MOV")) {
+                //       //   NavbarState.locationoffersImages!.add(
+                //       //      await locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
+                //       // }
+                //     });
+                //   }
+                // }),
+                print(NavbarState.locationoffersImages),
 
-              // NavbarState.locationoffers!.then((value) {
-              //   // NavbarState.locationheader = value,
-              //   if (value.locationOffer!.length > 0) {
-              //     value.locationOffer?.forEach((element) async {
-              //       if (!element.shm2Offer![0].type!.contains("MOV")) {
-              //         Uint8List image = await locationRepository.GetLocationOfferImage(
-              //             offerID: element.idOffer.toString(),
-              //             filePath: element.shm2Offer![0].data!
-              //         );
-              //         NavbarState.locationoffersImages!.add(OfferImage(image, element));
-              //         // NavbarState.locationoffers123=(OfferImage(image, element));
-              //
-              //       } else {
-              //         File video = await locationRepository.GetLocationOfferVideo(offerID: element.idOffer.toString(),
-              //             filePath: element.shm2Offer![0].data!);
-              //         NavbarState.locationoffersImages!.add(OfferImage(video, element));
-              //       }
-              //       // if (element.shm2Offer![0].type!.contains("MOV")) {
-              //       //   NavbarState.locationoffersVideos!.add(locationRepository.GetLocationOfferVideo(
-              //       //       offerID: element.shm2Offer![0].id.toString(), filePath: element.shm2Offer![0].data!));
-              //       // }
-              //       // else{
-              //       // if (element.shm2Offer![0].type!.contains("PIC") || element.shm2Offer![0].type!.contains("PDF")) {
-              //       //   NavbarState.locationoffersImages!.add(
-              //       //        await locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
-              //       // NavbarState.locationoffersImages!.add(OfferImage(image, element));
-              //
-              //       // }
-              //       // else if (element.shm2Offer![0].type!.contains("MOV")) {
-              //       //   NavbarState.locationoffersImages!.add(
-              //       //      await locationRepository.GetLocationOfferImage(offerID: element.idOffer.toString(), filePath: element.shm2Offer![0].data!));
-              //       // }
-              //     });
-              //   }
-              // }),
-              print(NavbarState.locationoffersImages),
+                await magazineRepository
+                    .magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar)
+                    .then((data) async {
+                  NavbarState.magazinePublishedGetLastWithLimit = data;
+                  // dioClient.secureStorage.write(key: "allmagazines", value: data);
 
-              await magazineRepository
-                  .magazinePublishedGetAllLastByHotspotId(id_hotspot: locationID.toString(), cookieJar: cookieJar)
-                  .then((data) async {
-                NavbarState.magazinePublishedGetLastWithLimit = data;
-                // dioClient.secureStorage.write(key: "allmagazines", value: data);
-
-                for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
-                  //To show on the searchpage
-                  // After every 50 iterations, delay for 1 second
-                  if ((i + 1) % 100 == 0) {
-                    Future.delayed(Duration(seconds: 1));
+                  for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
+                    //To show on the searchpage
+                    // After every 50 iterations, delay for 1 second
+                    if ((i + 1) % 100 == 0) {
+                      Future.delayed(Duration(seconds: 1));
+                    }
+                    switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
+                      case "de":
+                        NavbarState.counterDE = NavbarState.counterDE + 1;
+                        break;
+                      case "en":
+                        NavbarState.counterEN++;
+                        break;
+                      case "fr":
+                        NavbarState.counterFR++;
+                        break;
+                      case "es":
+                        NavbarState.counterES++;
+                        break;
+                    }
+                    // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].idsMagazineCategory!.contains('35')==true)
+                    //   DefaultCacheManager()
+                    //     .getFileFromCache(NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! +
+                    //         "_" +
+                    //         NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! +
+                    //         "_0")
+                    //     .then((value) => {
+                    //           if (value?.file.lengthSync() == null)
+                    //             {
+                    //               // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
+                    //               magazineRepository.GetPage(
+                    //                   page: '0',
+                    //                   id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
+                    //                   date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!)
+                    //             }
+                    //         });
                   }
-                  switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
-                    case "de":
-                      NavbarState.counterDE = NavbarState.counterDE + 1;
-                      break;
-                    case "en":
-                      NavbarState.counterEN++;
-                      break;
-                    case "fr":
-                      NavbarState.counterFR++;
-                      break;
-                    case "es":
-                      NavbarState.counterES++;
-                      break;
-                  }
-                  // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].idsMagazineCategory!.contains('35')==true)
-                  //   DefaultCacheManager()
-                  //     .getFileFromCache(NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! +
-                  //         "_" +
-                  //         NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication! +
-                  //         "_0")
-                  //     .then((value) => {
-                  //           if (value?.file.lengthSync() == null)
-                  //             {
-                  //               // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
-                  //               magazineRepository.GetPage(
-                  //                   page: '0',
-                  //                   id_mag_pub: NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!,
-                  //                   date_of_publication: NavbarState.magazinePublishedGetLastWithLimit!.response![i].dateOfPublication!)
-                  //             }
-                  //         });
-                }
-                // event?.timer?.cancel();
-                // await EasyLoading.dismiss();
-              }),
-            });
+                  // event?.timer?.cancel();
+                  // await EasyLoading.dismiss();
+                }),
+              });
     } on Exception catch (e) {
       // TODO
       emit(NavbarError(e.toString()));
-    }
-    on TypeError catch (e) {
+    } on TypeError catch (e) {
       print('An Error Occurred $e');
       emit(NavbarError(e.toString()));
     } on SocketException catch (e) {
@@ -658,9 +657,10 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     // });
   }
 
-  Future<Uint8List> getCover(String idMagazinePublication, String dateOfPublication, String pageNo, bool thumbNail, bool preloadneigbor) async {
-    final FileInfo? cacheFile = await DefaultCacheManager()
-        .getFileFromCache(idMagazinePublication + "_" + dateOfPublication + "_" + pageNo + (thumbNail == true ? '_thumbnail' : ''));
+  Future<Uint8List> getCover(String idMagazinePublication, String? dateOfPublication, String pageNo, bool thumbNail, bool preloadneigbor) async {
+    // print("getcover " +idMagazinePublication);
+    FileInfo? cacheFile = await DefaultCacheManager()
+          .getFileFromCache(idMagazinePublication + "_" + (dateOfPublication?? "puzzle") + "_" + pageNo + (thumbNail == true ? '_thumbnail' : ''));
     // if(preloadneigbor){
     //   if(pageNo == "0"){
     //     final FileInfo? cache1 = await DefaultCacheManager()
@@ -675,6 +675,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //
     // }
     // print("get cover ${idMagazinePublication}_${dateOfPublication}_$pageNo $thumbNail");
+    // print("getcover 1" +idMagazinePublication);
     if (cacheFile?.file.lengthSync() == null) {
       // print("get thumbnail $thumbNail ${idMagazinePublication}_${dateOfPublication}_$pageNo");
       // If the file is not in the cache, fetch it from the repository
@@ -684,17 +685,20 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
             // , readerCancelToken: readerCancelToken
             );
       }
+      // print("getcover 2" +idMagazinePublication);
       // if(int.parse(pageNo) < )
-      if(preloadneigbor){
-      final FileInfo? cacheFile2 = await DefaultCacheManager()
-          .getFileFromCache(idMagazinePublication + "_" + dateOfPublication + "_" +"${int.parse(pageNo)+1}");
-      if (cacheFile2?.file.lengthSync() == null) {
-        magazineRepository.GetPage(
-          page: "${int.parse(pageNo)+1}",
-          id_mag_pub: idMagazinePublication,
-          date_of_publication: dateOfPublication,
-        );
-      }}
+      if (preloadneigbor ) {
+        final FileInfo? cacheFile2 =
+            await DefaultCacheManager().getFileFromCache(idMagazinePublication + "_" + (dateOfPublication?? "puzzle") + "_" + "${int.parse(pageNo) + 1}");
+        if (cacheFile2?.file.lengthSync() == null) {
+          magazineRepository.GetPage(
+            page: "${int.parse(pageNo) + 1}",
+            id_mag_pub: idMagazinePublication,
+            date_of_publication: dateOfPublication,
+          );
+        }
+      }
+      print(idMagazinePublication);
       return await magazineRepository.GetPage(
         page: pageNo,
         id_mag_pub: idMagazinePublication,

@@ -49,15 +49,17 @@ Future<void> main() async {
   // );
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+
       systemStatusBarContrastEnforced: true,
       systemNavigationBarColor: Colors.transparent,
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.dark));
-
+      statusBarIconBrightness: Brightness.dark
+  ));
+  // SystemChrome.setEnabledSystemUIOverlay();
 //Setting SystmeUIMode
-//   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
-//       overlays: [SystemUiOverlay.top]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+      overlays: [SystemUiOverlay.top]);
 //   setUpLocator();
 //   configureInjection();
 
@@ -82,7 +84,7 @@ Future<void> main() async {
       fallbackLocale: Locale('en'),
       child: MyApp()));
   configLoading();
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light,);
 }
 
 void configLoading() {

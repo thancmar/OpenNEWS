@@ -8,6 +8,7 @@ class ApiConstants {
 
   static String baseUrlLocations = 'https://location.sharemagazines.de/';
   static String locationsMobileAPI = 'api/mobileApi/';
+
 }
 
 //Route Constants
