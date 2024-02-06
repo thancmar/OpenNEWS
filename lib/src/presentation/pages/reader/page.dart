@@ -84,9 +84,9 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
       //   // print the scale here
       // },
 
-      child:
-      Hero(
-        tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
+      // child:
+      // Hero(
+      //   tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
 
       child: FutureBuilder<Uint8List?>(
           future: BlocProvider.of<NavbarBloc>(context).getCover(
@@ -199,7 +199,7 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
               ],
             );
           }),
-      ),
+      // ),
     );
   }
 }
