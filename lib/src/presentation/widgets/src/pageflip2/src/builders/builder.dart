@@ -88,7 +88,7 @@ class PageFlipBuilder2State extends State<PageFlipBuilder2> {
                   ),
                 )
                     : Container(
-                        color: Colors.amberAccent,
+                        color: Colors.transparent,
                       );
               });
         } else {

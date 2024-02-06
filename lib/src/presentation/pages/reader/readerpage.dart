@@ -12,6 +12,7 @@ import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreadero
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+// import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 import '../../widgets/src/pageflip2/src/page_flip_widget.dart';
 
@@ -42,7 +43,9 @@ class Reader extends StatefulWidget {
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
   late PageController pageController;
-
+   List<Uint8List?> allImageData = [];
+   List<GlobalKey> allImagekey = [];
+  // List<Uint8List?> allImageData = List<Uint8List?>.filled(widget.magazine.pageMax!, null, growable: false);
   // ValueNotifier<double> currentPage;
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   TransformationController transformationController = TransformationController(matrix4);
@@ -82,6 +85,10 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
   @override
   void initState() {
     // print(widget.id);
+    widget.allImageData = List<Uint8List?>.filled(int.parse(widget.magazine.pageMax!), null, growable: false);
+
+    // widget.allImageData = List<Uint8List>.filled(int.parse(widget.magazine.pageMax!), null, growable: false);
+    widget.allImagekey = List<GlobalKey>.filled(int.parse(widget.magazine.pageMax!), GlobalKey(), growable: false);
     pageKeys = List.generate(int.parse(widget.magazine.pageMax!), (index) => GlobalKey());
     widget.pageController = PageController(initialPage: 0);
     // widget.pageController.addListener(() {
@@ -174,30 +181,30 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        // Positioned.fill(
-        //   child: Hero(
-        //       tag: 'bg',
-        //       // flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
-        //       //   return Stack(children: [
-        //       //     // Positioned.fill(child: FadeTransition(opacity: animation, child: fromHeroContext.widget)),
-        //       //     Positioned.fill(
-        //       //       child: FadeTransition(
-        //       //         opacity: animation.drive(
-        //       //           Tween<double>(begin: 0.0, end: 1.0).chain(
-        //       //             CurveTween(
-        //       //               curve: Interval(
-        //       //                 0.0, 1.0,
-        //       //                 // curve: ValleyQuadraticCurve()
-        //       //               ),
-        //       //             ),
-        //       //           ),
-        //       //         ),
-        //       //       ),
-        //       //     )
-        //       //   ]);
-        //       // },
-        //       child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
-        // ),
+        Positioned.fill(
+          child: Hero(
+              tag: 'bg',
+              // flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
+              //   return Stack(children: [
+              //     // Positioned.fill(child: FadeTransition(opacity: animation, child: fromHeroContext.widget)),
+              //     Positioned.fill(
+              //       child: FadeTransition(
+              //         opacity: animation.drive(
+              //           Tween<double>(begin: 0.0, end: 1.0).chain(
+              //             CurveTween(
+              //               curve: Interval(
+              //                 0.0, 1.0,
+              //                 // curve: ValleyQuadraticCurve()
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     )
+              //   ]);
+              // },
+              child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+        ),
         OrientationBuilder(builder: (context, orientation) {
           return GestureDetector(
               onTap: () => {
@@ -277,26 +284,37 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                     // });
                   }
                 },
-                child: new  PageFlipWidget2(
-                  key: widget.controllerflip,
-                  backgroundColor: Colors.transparent,
-                  reader: this.widget,
-                  pageMax:int.parse( widget.magazine.pageMax!),
+                child: Container(color: Colors.transparent,
+                  child:   PageFlipWidget(
+                    key: widget.controllerflip,
+                    backgroundColor: Colors.transparent,
+                    reader: this.widget,
+                      children: <ReaderPage>[
+                        for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                          ReaderPage(
+                            reader: this.widget,
+                            pageNumber: index,
+                          ),
+                      ],
+                    // );
+                    // pageMax:int.parse( widget.magazine.pageMax!
+                    // ),
 
-                  // isRightSwipe: true,
-                  // lastPage: Container(color: Colors.transparent, child: const Center(child: Text('Last Page!'))),
-//                       children: <ReaderPage>[
-//                         for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
-//                           new ReaderPage(
-//                             key: ValueKey(index),
-//                             // key: pageKeys[index],
-//                             reader: this.widget,
-//                             pageNumber: index,
-//                             repaintBoundaryKey: pageKeys[index],
-// // repaintBoundaryKey: Key(index),
-// // repaintBoundaryKey: ValueKey(index),
-//                           ),
-//                       ],
+                    // isRightSwipe: true,
+                    // lastPage: Container(color: Colors.transparent, child: const Center(child: Text('Last Page!'))),
+                  //                       children: <ReaderPage>[
+                  //                         for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                  //                           new ReaderPage(
+                  //                             key: ValueKey(index),
+                  //                             // key: pageKeys[index],
+                  //                             reader: this.widget,
+                  //                             pageNumber: index,
+                  //                             repaintBoundaryKey: pageKeys[index],
+                  // // repaintBoundaryKey: Key(index),
+                  // // repaintBoundaryKey: ValueKey(index),
+                  //                           ),
+                  //                       ],
+                  ),
                 ),
               ));
         }),

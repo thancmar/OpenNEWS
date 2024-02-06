@@ -24,26 +24,18 @@ class ImageSizer extends StatefulWidget {
 
 class _ImageSizerState extends State<ImageSizer> {
   ImageStreamListener? _imageListener;
-  final GlobalKey _imageKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    // _imageListener = ImageStreamListener(
-    //       (ImageInfo image, bool synchronousCall) {
-    //     final Size imageSize = Size(image.image.width.toDouble(), image.image.height.toDouble());
-    //     imageSizes.value = Map.from(imageSizes.value)..[widget.index] = imageSize;
-    //   },
-    // );
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      final RenderBox renderBox = _imageKey.currentContext?.findRenderObject() as RenderBox;
-      final Size size = renderBox.size; // Size on screen
-      print('Size on screen: $size');
+    _imageListener = ImageStreamListener(
+          (ImageInfo image, bool synchronousCall) {
+        final Size imageSize = Size(image.image.width.toDouble(), image.image.height.toDouble());
+        imageSizes.value = Map.from(imageSizes.value)..[widget.index] = imageSize;
+      },
+    );
 
-      // Store the size
-      imageSizes.value = Map.from(imageSizes.value)..[widget.index] = size;
-    });
-    // _loadAndListenToImage();
+    _loadAndListenToImage();
   }
 
   void _loadAndListenToImage() {
@@ -59,73 +51,84 @@ class _ImageSizerState extends State<ImageSizer> {
   }
 
   @override
-
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var screenWidth = screenSize.width;
-    var screenHeight = screenSize.height;
-
     return LayoutBuilder(
-
       builder: (context, constraints) {
-        // Constrain the image to the screen size
-        double maxWidth = min(constraints.maxWidth, screenWidth);
-        double maxHeight = min(constraints.maxHeight, screenHeight);
-        print(
-            "scaffold -> width : ${constraints.maxWidth}, height: ${constraints.maxHeight}");
-
-        return Align(
-          alignment: Alignment.topLeft,
-          // height: 100,
-          child: Center(
-            child: RepaintBoundary(
-              key: widget.bKey,
-              child: widget.imageData.isNotEmpty
-                  ? Image.memory(
-                widget.imageData,
-                key: _imageKey,
-                width: maxWidth,
-                height: maxHeight,
-                fit: BoxFit.contain, // Ensures the image does not exceed bounds
-              )
-                  : Container(
-                width: maxWidth,
-                height: maxHeight,
-                child: Center(
-                  child: Text('No Image'), // Placeholder for empty Uint8List
-                ),
-              ),
+        return RepaintBoundary(
+          key: widget.bKey,
+          child: IntrinsicWidth(
+            child: IntrinsicHeight(
+              child: Image.memory(widget.imageData),
             ),
           ),
         );
       },
     );
+    return RepaintBoundary(
+      key: widget.bKey,
+      child: UnconstrainedBox(
+        child: Center(
+          child: Container(color: Colors.red,height: 100  ,width: 100,),
+          // child: Image.memory(widget.imageData),
+        ),
+      ),
+    );
   }
-
-// Widget build(BuildContext context) {
-  //   return SizedBox(
-  //     child: LayoutBuilder(
-  //       builder: (context, constraints) {
-  //         return RepaintBoundary(
-  //           key: widget.bKey,
-  //           child: IntrinsicWidth(
-  //             child: IntrinsicHeight(
-  //
-  //               child: Image.memory(widget.imageData),
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  //   return RepaintBoundary(
-  //     key: widget.bKey,
-  //     child: UnconstrainedBox(
-  //       child: Center(
-  //         child: Container(color: Colors.red,height: 100  ,width: 100,),
-  //         // child: Image.memory(widget.imageData),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
+// class _ImageSizerState extends State<ImageSizer> {
+//   ImageStreamListener? _imageListener;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _imageListener = ImageStreamListener(
+//           (ImageInfo image, bool synchronousCall) {
+//         final screenSize = MediaQuery.of(context).size;
+//         final double widthRatio = screenSize.width / image.image.width;
+//         final double heightRatio = screenSize.height / image.image.height;
+//         final double scale = min(widthRatio, heightRatio);
+//
+//         final Size imageSize = Size(
+//           image.image.width.toDouble() * scale,
+//           image.image.height.toDouble() * scale,
+//         );
+//
+//         imageSizes.value = Map.from(imageSizes.value)
+//           ..[widget.index] = imageSize;
+//       },
+//     );
+//
+//     _loadAndListenToImage();
+//   }
+//
+//   void _loadAndListenToImage() {
+//     final ImageStream imageStream = MemoryImage(widget.imageData).resolve(ImageConfiguration.empty);
+//     imageStream.addListener(_imageListener!);
+//   }
+//
+//   @override
+//   void dispose() {
+//     final ImageStream imageStream = MemoryImage(widget.imageData).resolve(ImageConfiguration.empty);
+//     imageStream.removeListener(_imageListener!);
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return LayoutBuilder(
+//       builder: (context, constraints) {
+//         final Size? adjustedSize = imageSizes.value[widget.index];
+//         return RepaintBoundary(
+//           key: widget.bKey,
+//           child: adjustedSize == null
+//               ? Image.memory(widget.imageData)
+//               : SizedBox(
+//             width: adjustedSize.width,
+//             height: adjustedSize.height,
+//             child: Image.memory(widget.imageData),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }

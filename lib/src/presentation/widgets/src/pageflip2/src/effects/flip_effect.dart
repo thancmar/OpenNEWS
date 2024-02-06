@@ -23,7 +23,7 @@ class PageFlipEffect2 extends CustomPainter {
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
     // size = Size(400,200);
-    print("Canvas size $size");
+    // print("Canvas size $size");
     final pos = isRightSwipe ? 1.0 - amount.value : amount.value;
     final movX = isRightSwipe ? pos : (1.0 - pos) * 0.85;
     final calcR = (movX < 0.20) ? radius * movX * 5 : radius;
@@ -32,7 +32,7 @@ class PageFlipEffect2 extends CustomPainter {
     final hWCorrection = (hWRatio - 1.0) / 2.0;
 
     final w = imageSize.width.toDouble();
-    final h = imageSize.height.toDouble()-200;
+    final h = imageSize.height.toDouble();
     final c = canvas;
     final shadowXf = (wHRatio - movX);
     final shadowSigma = isRightSwipe
@@ -48,7 +48,7 @@ class PageFlipEffect2 extends CustomPainter {
       c.drawRect(
         pageRect,
         Paint()
-          ..color = Colors.black54
+          ..color = Colors.transparent
           ..maskFilter = MaskFilter.blur(BlurStyle.outer, shadowSigma),
       );
     }
