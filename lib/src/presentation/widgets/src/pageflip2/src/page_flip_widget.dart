@@ -22,7 +22,7 @@ class PageFlipWidget2 extends StatefulWidget {
       this.duration = const Duration(milliseconds: 450),
       this.cutoffForward = 0.8,
       this.cutoffPrevious = 0.1,
-      this.backgroundColor = Colors.white,
+      this.backgroundColor = Colors.transparent,
       // required this.children,
       this.initialIndex = 0,
       this.lastPage,
@@ -54,16 +54,16 @@ class PageFlipWidget2 extends StatefulWidget {
 
 class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderStateMixin {
   int pageNumber = 0;
+
   // ValueNotifier<int> pageNumber2 = ValueNotifier(0);
   List<Widget> pages = [];
-   List<Uint8List?> pagesdata =[];
+  List<Uint8List?> pagesdata = [];
 
   // List<ReaderPage> pages = [];
   final List<AnimationController> _controllers = [];
   bool? _isForward;
   List<GlobalKey> repaintBoundaryKeys = [];
   List<Size> imageSize = [];
-
 
   @override
   void dispose() {
@@ -81,8 +81,13 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
     imageData = {};
     currentPage = ValueNotifier(-1);
     currentWidget = ValueNotifier(Container());
-     // pagesdata = List.generate(widget.pageMax, (index) => null);
-     pages = List.generate(widget.pageMax, (index) => SizedBox(height: 100,width: 100,));
+    // pagesdata = List.generate(widget.pageMax, (index) => null);
+    pages = List.generate(
+        widget.pageMax,
+        (index) => SizedBox(
+              height: 100,
+              width: 100,
+            ));
     repaintBoundaryKeys = List.generate(widget.pageMax, (index) => GlobalKey());
     imageSize = List.generate(widget.pageMax, (index) => Size.zero);
     currentPageIndex = ValueNotifier(0);
@@ -96,13 +101,15 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
     // Implement your logic here that should happen when pageNumber changes
     // For example, fetching new data
     // if (pageNumber2.value < pagesdata.length && pagesdata[pageNumber2.value] == null) {
-      // Fetch data if it's not already present
+    // Fetch data if it's not already present
     print("current index ${currentPageIndex.value}");
-      // pagesdata[currentPageIndex.value] = await BlocProvider.of<NavbarBloc>(context).getCover(
-      //     widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, pageNumber2.value.toString(), false, true);
+    // pagesdata[currentPageIndex.value] = await BlocProvider.of<NavbarBloc>(context).getCover(
+    //     widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, pageNumber2.value.toString(), false, true);
 
-     Widget temp =  _showImage( await BlocProvider.of<NavbarBloc>(context).getCover(
-          widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, currentPageIndex.value.toString(), false, true), currentPageIndex.value);
+    Widget temp = _showImage(
+        await BlocProvider.of<NavbarBloc>(context).getCover(
+            widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, currentPageIndex.value.toString(), false, true),
+        currentPageIndex.value);
     setState(() {
       pages[currentPageIndex.value] = temp;
     });
@@ -139,7 +146,8 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
   // }
   Widget _showImage(Uint8List imageData, int index) {
     return SizedBox(
-      child: Container(color: Colors.deepPurpleAccent,
+      child: Container(
+        // color: Colors.deepPurpleAccent,
         child: ImageSizer(
           imageData: imageData,
           index: index,
@@ -159,7 +167,7 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
     if (widget.lastPage != null) {
       // widget.children.add(widget.lastPage!);
     }
-    for (var i = 0; i <int.parse( widget.reader.magazine.pageMax!) ; i++) {
+    for (var i = 0; i < int.parse(widget.reader.magazine.pageMax!); i++) {
       final controller = AnimationController(
         value: 1,
         duration: widget.duration,
@@ -259,7 +267,7 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
   }
 
   Future _onTap() async {
-    if(widget.reader.pageScrollEnabled == false) return;
+    if (widget.reader.pageScrollEnabled == false) return;
     Navigator.push(
         context,
         ReaderOptionRoute(
