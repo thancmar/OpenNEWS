@@ -123,7 +123,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
                             child: Text(
                               ( "welcome").tr(),
-                              style:Theme.of(context).textTheme.titleMedium!,
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -133,7 +133,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                               "${BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname} ${BlocProvider.of<AuthBloc>(context).state.userDetails.response?.lastname}" ,
                               // "Name",
                               // '${AuthState.userDetails?.response?.firstname} ${AuthState.userDetails?.response?.lastname}',
-                              style: Theme.of(context).textTheme.titleLarge!,
+                              style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w300),
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -244,7 +244,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         ),
                         title: Text(
                           ( "toLogin").tr(),
-                          style:Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         ),
                       ),
                     ),
@@ -300,7 +300,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   ),
                   title: Text(
     ( "rateUs").tr(),
-                    style:Theme.of(context).textTheme.titleMedium!,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                   ),
                 ),
               ),
@@ -343,7 +343,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 backgroundColor: Colors.transparent,
                 title: Text(
                   ( "settings").tr(),
-                  style: Theme.of(context).textTheme.titleMedium!,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                 ),
                 children: <Widget>[
                   BlocProvider.of<AuthBloc>(context).state is Authenticated
@@ -391,7 +391,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           minLeadingWidth: 10,
                           title: Text(
                             'E-Mail ändern',
-                            style:Theme.of(context).textTheme.titleMedium!,
+                            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                           )),
                     ),
                   ):Container(),
@@ -409,7 +409,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "notifications").tr(),
-                          style: Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         )),
                   ),
                   Padding(
@@ -452,7 +452,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                           minLeadingWidth: 10,
                           title: Text(
                             ( "language").tr(),
-                            style: Theme.of(context).textTheme.titleMedium!,
+                            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                           )),
                     ),
                   ),
@@ -498,7 +498,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 backgroundColor: Colors.transparent,
                 title: Text(
                   ("information").tr(),
-                  style: Theme.of(context).textTheme.titleMedium!,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                 ),
                 children: <Widget>[
                   Padding(
@@ -511,7 +511,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "impressum").tr(),
-                          style: Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         )),
                   ),
                   Padding(
@@ -524,7 +524,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ( "datenschutz").tr(),
-                          style:Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         )),
                   ),
                   Padding(
@@ -537,7 +537,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ("agb").tr(),
-                          style:Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         )),
                   ),
                   Padding(
@@ -550,7 +550,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ("help").tr(),
-                          style:Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         )),
                   ),
                   Padding(
@@ -563,7 +563,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         minLeadingWidth: 10,
                         title: Text(
                           ("contact").tr(),
-                          style:Theme.of(context).textTheme.titleMedium!,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                         )),
                   ),
                 ],
@@ -710,11 +710,11 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               children: [
                 Text(
                   ("version").tr(),
-                  style: Theme.of(context).textTheme.titleMedium!,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
                 ),
                 Text(
                   ("designedBy").tr(),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color:Colors.grey),
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color:Colors.grey,fontWeight: FontWeight.w300),
                 ),
               ],
             ),

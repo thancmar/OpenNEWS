@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+
+// import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
@@ -111,7 +112,7 @@ class _RegistrationState extends State<Registration> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
                     child: TextFormField(
-                      controller: _firstnameController,
+                      controller: _firstnameController, cursorColor: Colors.blue,
                       // validator: (value) {
                       //   if (value == null || value.isEmpty) {
                       //     return 'This is the required field';
@@ -125,7 +126,7 @@ class _RegistrationState extends State<Registration> {
                         //     vertical: 20.0, horizontal: 10.0),
                         floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Vorname",
-                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w300),
+                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
                         //, height: 3.8),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -135,13 +136,15 @@ class _RegistrationState extends State<Registration> {
                           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
-                      controller: _lastnameController,
+                      controller: _lastnameController, cursorColor: Colors.blue,
                       // validator: (value) {
                       //   if (value == null || value.isEmpty) {
                       //     return 'This is the required field';
@@ -152,7 +155,7 @@ class _RegistrationState extends State<Registration> {
                       decoration: InputDecoration(
                         floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Nachname",
-                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w300),
+                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
                         errorBorder: OutlineInputBorder(
@@ -161,6 +164,8 @@ class _RegistrationState extends State<Registration> {
                           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -168,12 +173,13 @@ class _RegistrationState extends State<Registration> {
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
                       controller: _emailController,
+                      cursorColor: Colors.blue,
                       validator: (value) => validateEmail(value),
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Email",
-                        labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey),
+                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
                         //, height: 3.8),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -183,6 +189,8 @@ class _RegistrationState extends State<Registration> {
                           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -190,6 +198,7 @@ class _RegistrationState extends State<Registration> {
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
                       controller: _passwordController,
+                      cursorColor: Colors.blue,
                       validator: (value) => validatePassword(value),
                       style: TextStyle(color: Colors.white),
                       obscureText: !_passwordVisible,
@@ -206,7 +215,7 @@ class _RegistrationState extends State<Registration> {
                             }),
                         floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Passwort",
-                        labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300),
+                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
                         //, height: 3.8),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -216,6 +225,8 @@ class _RegistrationState extends State<Registration> {
                           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -223,6 +234,7 @@ class _RegistrationState extends State<Registration> {
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
                       controller: _calenderController,
+                      cursorColor: Colors.blue,
                       readOnly: true,
                       //To not pop up the keyboard on tap
                       onTap: () => _selectDate(context),
@@ -236,7 +248,7 @@ class _RegistrationState extends State<Registration> {
                         ),
                         floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Geburtsdatum",
-                        labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey),
+                        labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
                         //, height: 3.8),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -246,6 +258,8 @@ class _RegistrationState extends State<Registration> {
                           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -255,7 +269,7 @@ class _RegistrationState extends State<Registration> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Gender",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 16),
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -278,7 +292,7 @@ class _RegistrationState extends State<Registration> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "By pressing the button I agree with Share Magazines Terms and Conditions and the Privacy policy",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 14),
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -323,12 +337,7 @@ class _RegistrationState extends State<Registration> {
                       ),
                       child: Text(
                         "Registrieren",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 18,
-                          //fontStyle: FontStyle.,
-                        ),
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w300),
                       ),
                     ),
                   ),
@@ -464,7 +473,10 @@ class _RegistrationState extends State<Registration> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        _calenderController = new TextEditingController(text: picked.toString().split(' ')[0]);
+
+        _calenderController = new TextEditingController(
+          text: picked.toString().split(' ')[0],
+        );
       });
     }
   }
@@ -480,13 +492,17 @@ class _RegistrationState extends State<Registration> {
 
     for (int i = 0; i < _options.length; i++) {
       ChoiceChip choiceChip = ChoiceChip(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+
         selected: _selectedIndex == i,
         label: Container(
-            width: MediaQuery.of(context).size.width * 0.19,
-            height: 40,
+            // width: MediaQuery.of(context).size.width * 0.19,
+            // height: 40,
             alignment: Alignment.center,
-            child: Text(_options[i], style: TextStyle(color: Colors.white))),
+            child: Text(
+              _options[i],
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300),
+            )),
         // avatar: FlutterLogo(),
 
         // elevation: 10,
@@ -515,36 +531,13 @@ class _RegistrationState extends State<Registration> {
                 child: choiceChip,
               ))));
     }
-    // return Row(
-    //   children: <Widget>[
-    //     Theme(
-    //       data: ThemeData(canvasColor: Colors.red),
-    //       child: Chip(
-    //         label: Text("Männlic"),
-    //         backgroundColor: Colors.transparent, // or any other color
-    //       ),
-    //     ),
-    //     Theme(
-    //       data: ThemeData(canvasColor: Colors.transparent),
-    //       child: Chip(
-    //         label: Text(
-    //           "as",
-    //           style: TextStyle(color: Colors.white),
-    //         ),
-    //         backgroundColor: Colors.transparent, // or any other color
-    //       ),
-    //     )
-    //   ],
-    // );
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        // This next line does the trick.
-        // scrollDirection: Axis.horizontal,
-        // physics: NeverScrollableScrollPhysics(),
 
-        children: chips,
-      ),
+    return Row(
+      // This next line does the trick.
+      // scrollDirection: Axis.horizontal,
+      // physics: NeverScrollableScrollPhysics(),
+
+      children: chips,
     );
   }
 }

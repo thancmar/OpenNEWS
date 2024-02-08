@@ -408,12 +408,12 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         emit(LoadingNavbar(Data()));
         // event.timer?.cancel();
         await EasyLoading.show(
-          status: 'loading...',
+          status: 'Scanning locations nearby...',
           maskType: EasyLoadingMaskType.black,
         );
         // Timer.periodic(Duration(seconds: 30), (Timer t) => checkLocationService());
         // Timer.periodic(Duration(seconds: 60), (Timer t) => checkLocation());
-        navbarData = ["sad"];
+
         (await dioClient.secureStorage.read(key: "allmagazines").then((value) => {
               if (value != null) {NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetLastWithLimitFromJson(value)}
             }));
@@ -598,7 +598,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     on<LocationSelected>((event, emit) async {
       try {
         await EasyLoading.show(
-          status: 'loading...',
+          status: 'Entering ${event.selectedLocation!.nameApp}...',
           maskType: EasyLoadingMaskType.black,
         );
         emit(LoadingNavbar(event.currentLocation!));

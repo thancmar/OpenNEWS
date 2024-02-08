@@ -93,10 +93,11 @@ void configLoading() {
     ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 115.0
     ..radius = 30.0
-    ..progressColor = Colors.red
+    ..progressColor = Colors.blue
     ..backgroundColor = Colors.transparent
     ..indicatorColor = Colors.yellow
     ..textColor = Colors.white
+    ..textStyle
     // ..maskColor = Colors.blue.withOpacity(0.5)
     ..maskColor = Colors.transparent
     ..userInteractions = false
@@ -112,22 +113,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData baseTheme = ThemeData.light();
     TextTheme customTextTheme = GoogleFonts.ralewayTextTheme(baseTheme.textTheme).copyWith(
-      bodyMedium: TextStyle(color: Colors.white),
-      bodySmall: TextStyle(color: Colors.white),
-      bodyLarge: TextStyle(color: Colors.white),
-      titleSmall: TextStyle(color: Colors.white),
-      titleMedium: TextStyle(color: Colors.white),
-      titleLarge: TextStyle(color: Colors.white),
-      displaySmall: TextStyle(color: Colors.white),
-      displayMedium: TextStyle(color: Colors.white),
-      displayLarge: TextStyle(color: Colors.white),
-      headlineSmall: TextStyle(color: Colors.white),
-      headlineMedium: TextStyle(color: Colors.white),
-      headlineLarge: TextStyle(color: Colors.white),
-      // headlineMedium:
-
-    );
-
+        bodyMedium: TextStyle(color: Colors.white),
+        bodySmall: TextStyle(color: Colors.white),
+        bodyLarge: TextStyle(color: Colors.white),
+        titleSmall: TextStyle(color: Colors.white),
+        titleMedium: TextStyle(color: Colors.white),
+        titleLarge: TextStyle(color: Colors.white),
+        displaySmall: TextStyle(color: Colors.white),
+        displayMedium: TextStyle(color: Colors.white),
+        displayLarge: TextStyle(color: Colors.white),
+        headlineSmall: TextStyle(color: Colors.white),
+        headlineMedium: TextStyle(color: Colors.white),
+        headlineLarge: TextStyle(color: Colors.white),
+        labelSmall: TextStyle(color: Colors.grey, fontWeight: FontWeight.w100, fontSize: 14),
+        labelMedium: TextStyle(color: Colors.grey, fontWeight: FontWeight.w100, fontSize: 16),
+        labelLarge: TextStyle(color: Colors.grey, fontWeight: FontWeight.w100, fontSize: 18));
+    EasyLoading.instance.textStyle = Theme.of(context).textTheme.titleMedium  !.copyWith(color: Colors.white);
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),

@@ -12,10 +12,10 @@ import 'package:sharemagazines_flutter/src/presentation/widgets/routes/toreadero
 import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
+
 // import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 import '../../widgets/src/pageflip2/src/page_flip_widget.dart';
-
 
 class StartReader extends StatelessWidget {
   final model.ResponseMagazine magazine;
@@ -43,8 +43,9 @@ class Reader extends StatefulWidget {
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
   late PageController pageController;
-   List<Uint8List?> allImageData = [];
-   List<GlobalKey> allImagekey = [];
+  List<Uint8List?> allImageData = [];
+  List<GlobalKey> allImagekey = [];
+
   // List<Uint8List?> allImageData = List<Uint8List?>.filled(widget.magazine.pageMax!, null, growable: false);
   // ValueNotifier<double> currentPage;
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
@@ -148,8 +149,6 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
     super.initState();
     // controller.addListener(zoomListener);
   }
-
-
 
   void onScroll() {
     // This is where you can react to the scrolling.
@@ -266,54 +265,61 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                   if (state is ReaderClosed) {
                     print("state.ReaderClosed");
                     // Navigator.of(context).popUntil((route) => route.isFirst);
-                    setState(() {
-                      // widget.pageController.jumpToPage(0) ;
-                      widget.controllerflip.currentState!.pageNumber = 0;
-                      // widget.transformationController.value = Matrix4.identity();
-                      // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                    });
-                    WidgetsBinding.instance!.addPostFrameCallback((_) {
-                      int count = 0;
-                      Navigator.popUntil(context, (route) {
-                        return count++ == 2;
-                      });
-                    });
+//                     setState(() {
+//
+//                         print("gotopage 0");
+//                         widget.controllerflip.currentState!. goToPage(0).then((value) => null);
+// // widget.reader.transformationController.value== Matrix4.identity();
+//                         // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
+//
+//                       // widget.pageController.jumpToPage(0) ;
+//                       // widget.controllerflip.currentState!.pageNumber = 0;
+//                       // widget.transformationController.value = Matrix4.identity();
+//                       // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
+//                     });
+//                     WidgetsBinding.instance!.addPostFrameCallback((_) {
+//                       int count = 0;
+//                       Navigator.popUntil(context, (route) {
+//                         return count++ == 2;
+//                       });
+//                     });
                     // int count = 0;
                     // Navigator.popUntil(context, (route) {
                     //   return count++ == 2;
                     // });
                   }
                 },
-                child: Container(color: Colors.transparent,
-                  child:   PageFlipWidget(
+                child: Container(
+                  color: Colors.transparent,
+                  child: PageFlipWidget(
                     key: widget.controllerflip,
                     backgroundColor: Colors.transparent,
                     reader: this.widget,
-                      children: <ReaderPage>[
-                        for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
-                          ReaderPage(
-                            reader: this.widget,
-                            pageNumber: index,
-                          ),
-                      ],
+                    children: <ReaderPage>[
+                      for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                        ReaderPage(
+                          reader: this.widget,
+                          pageNumber: index,
+                        ),
+                    ],
                     // );
                     // pageMax:int.parse( widget.magazine.pageMax!
                     // ),
 
                     // isRightSwipe: true,
                     // lastPage: Container(color: Colors.transparent, child: const Center(child: Text('Last Page!'))),
-                  //                       children: <ReaderPage>[
-                  //                         for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
-                  //                           new ReaderPage(
-                  //                             key: ValueKey(index),
-                  //                             // key: pageKeys[index],
-                  //                             reader: this.widget,
-                  //                             pageNumber: index,
-                  //                             repaintBoundaryKey: pageKeys[index],
-                  // // repaintBoundaryKey: Key(index),
-                  // // repaintBoundaryKey: ValueKey(index),
-                  //                           ),
-                  //                       ],
+                    //                       children: <ReaderPage>[
+                    //                         for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                    //                           new ReaderPage(
+                    //                             key: ValueKey(index),
+                    //                             // key: pageKeys[index],
+                    //                             reader: this.widget,
+                    //                             pageNumber: index,
+                    //                             repaintBoundaryKey: pageKeys[index],
+                    // // repaintBoundaryKey: Key(index),
+                    // // repaintBoundaryKey: ValueKey(index),
+                    //                           ),
+                    //                       ],
                   ),
                 ),
               ));

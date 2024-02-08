@@ -102,7 +102,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<IncompleteSignInRequested>((event, emit) async {
       try {
         await EasyLoading.show(
-          status: 'loading...',
+          status: 'Logging in as guest...',
           maskType: EasyLoadingMaskType.black,
         );
 

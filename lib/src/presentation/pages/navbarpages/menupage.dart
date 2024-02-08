@@ -45,6 +45,25 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
       return SafeArea(
         child: SmartRefresher(
           enablePullDown: true,
+          header: ClassicHeader(
+            // Customize your header's appearance here
+            refreshingIcon: CircularProgressIndicator(strokeWidth: 2.0,color: Colors.grey,),
+            completeIcon: Icon(Icons.done, color: Colors.grey),
+            idleIcon: Icon(Icons.arrow_downward, color: Colors.grey),
+            releaseIcon: Icon(Icons.refresh, color: Colors.grey),
+
+            idleText: 'Pull down to refresh',
+            refreshingText: 'Loading...',
+            completeText: 'Refresh Completed',
+            failedText: 'Refresh Failed',
+            textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey),
+            refreshStyle: RefreshStyle.Follow,
+
+            // Add a BoxDecoration to give a grey background
+            // decoration: BoxDecoration(
+            //   color: Colors.grey[300], // Choose the shade of grey you want
+            // ),
+          ),
           controller: _refreshController,
           onRefresh:() => _onRefresh(state.appbarlocation),
           child: ListView.builder(

@@ -156,11 +156,11 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
     if (_isForward != null) {
       if (_isForward == true) {
         if (!_isLastPage && _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
-          print("nextPage");
+          // print("nextPage");
           await nextPage();
         } else {
           if (!_isLastPage) {
-            print("_isLastPage");
+            // print("_isLastPage");
             await _controllers[pageNumber].forward();
           }
         }
@@ -173,7 +173,7 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
           } else {
             await _controllers[pageNumber - 1].reverse();
             if (!_isFirstPage) {
-              print("_isFirstPage");
+              // print("_isFirstPage");
               await previousPage();
 
             }
@@ -296,36 +296,64 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
   //   // widget.reader. =pageNumber;
   // }
 
-  Future goToPage(int targetIndex) async {
-    if (targetIndex < 0 || targetIndex >= _controllers.length) {
-      return; // Target index is out of range.
-    }
+  // Future goToPage(int targetIndex) async {
+  //   if (targetIndex < 0 || targetIndex >= _controllers.length) {
+  //     return; // Target index is out of range.
+  //   }
+  //
+  //   // Determine the direction of navigation
+  //   int step = (targetIndex > pageNumber) ? 1 : -1;
+  //
+  //   while (pageNumber != targetIndex) {
+  //     if (step > 0) {
+  //       // Moving forwards
+  //       await _controllers[pageNumber].forward();
+  //       if (pageNumber + 1 < _controllers.length) {
+  //         pageNumber++;
+  //       }
+  //     } else {
+  //       // Moving backwards
+  //       if (pageNumber - 1 >= 0) {
+  //         await _controllers[pageNumber - 1].reverse();
+  //         pageNumber--;
+  //       }
+  //     }
+  //
+  //     // Update the state after each animation
+  //     setState(() {
+  //       currentPageIndex.value = pageNumber;
+  //       // currentWidget.value = pages[pageNumber];
+  //       currentPage.value = pageNumber;
+  //     });
+  //   }
+  // }
 
-    // Determine the direction of navigation
-    int step = (targetIndex > pageNumber) ? 1 : -1;
+  Future goToPage(int index) async {
 
-    while (pageNumber != targetIndex) {
-      if (step > 0) {
-        // Moving forwards
-        await _controllers[pageNumber].forward();
-        if (pageNumber + 1 < _controllers.length) {
-          pageNumber++;
-        }
-      } else {
-        // Moving backwards
-        if (pageNumber - 1 >= 0) {
-          await _controllers[pageNumber - 1].reverse();
-          pageNumber--;
-        }
-      }
-
-      // Update the state after each animation
+    if (mounted) {
       setState(() {
-        currentPageIndex.value = pageNumber;
-        // currentWidget.value = pages[pageNumber];
-        currentPage.value = pageNumber;
+        pageNumber = index;
       });
     }
+    print("goToPage $index");
+    for (var i = 0; i < _controllers.length; i++) {
+
+      if (i == index) {
+        print("i $i");
+        _controllers[i].forward();
+      } else
+        if (i < index) {
+        _controllers[i].reverse();
+      } else {
+        if (_controllers[i].status == AnimationStatus.reverse) {
+          _controllers[i].value = 1;
+        }
+      }
+    }
+    currentPageIndex.value = pageNumber;
+    // currentWidget.value = pages[pageNumber];
+    currentPage.value = pageNumber;
+
   }
 
   @override

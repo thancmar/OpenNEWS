@@ -81,7 +81,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
     super.didUpdateWidget(oldWidget);
     // Update the controller if the savedEmail has changed
     if (AuthState.savedEmail != _emailController.text) {
-      _emailController.text = AuthState.savedEmail??"";
+      _emailController.text = AuthState.savedEmail ?? "";
     }
   }
 
@@ -478,9 +478,8 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                       TextButton(
                         onPressed: () => {
                           BlocProvider.of<AuthBloc>(context).add(
-                            // OpenLoginPage(),
-                            Initialize()
-                          ),
+                              // OpenLoginPage(),
+                              Initialize()),
                           setState(() {
                             hideBackground = false;
                           })
@@ -490,18 +489,19 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                     ],
                   );
                 }
-                _emailController =
-                    TextEditingController(
-                      text: AuthState.savedEmail
-                        // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
-                      // text: AuthState.userDetails?.response?.firstname
+                _emailController = TextEditingController(text: AuthState.savedEmail
+                    // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
+                    // text: AuthState.userDetails?.response?.firstname
                     );
-                _passwordController =
-                    TextEditingController(
-                        text: AuthState.savedPWD
-                      // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
-                      // text: AuthState.userDetails?.response?.firstname
+                _passwordController = TextEditingController(text: AuthState.savedPWD
+                    // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
+                    // text: AuthState.userDetails?.response?.firstname
                     );
+                var globalpadding = EdgeInsets.fromLTRB(size.width * 0.05, size.height * 0.005, size.width * 0.05, size.height * 0.005);
+                var textpadding = EdgeInsets.fromLTRB(0, size.height * 0.020, 0, size.height * 0.005);
+                var textpaddingsmall = EdgeInsets.fromLTRB(0, size.height * 0.0000, 0, size.height * 0.00);
+                var buttonpadding = EdgeInsets.fromLTRB(0, size.height * 0.015, 0, size.height * 0.003);
+                var inputfieldpadding = EdgeInsets.fromLTRB(0, size.height * 0.005, 0, size.height * 0.005);
                 return Material(
                   elevation: 0,
                   color: Colors.transparent,
@@ -563,7 +563,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                     children: <Widget>[
                                       Padding(
                                         // flex: 3,
-                                        padding: EdgeInsets.fromLTRB(size.width * 0.05, size.height * 0.005, size.width * 0.05, size.height * 0.005),
+                                        padding: globalpadding,
 
                                         child: Form(
                                           key: _formKey,
@@ -573,7 +573,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                             // mainAxisAlignment: MainAxisAlignment.start,
                                             children: <Widget>[
                                               Padding(
-                                                padding: const EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 0.0),
+                                                padding: textpadding,
                                                 // padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.01, size.width * 0.045, size.height * 0.001),
 
                                                 child: Row(
@@ -591,50 +591,60 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                     Text(
                                                       "Anmelden",
                                                       textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.w700,
-                                                        fontSize: size.width * 0.065,
-                                                        //fontStyle: FontStyle.,
-                                                      ),
+                                                      style: Theme.of(context).textTheme.headlineMedium,
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    size.width * 0.0145, size.height * 0.005, size.width * 0.0145, size.height * 0.005),
+                                                padding: inputfieldpadding,
                                                 child: TextFormField(
                                                   controller: _emailController,
                                                   validator: (value) => validateEmail(value),
-                                                  style: TextStyle(color: Colors.white),
+                                                  style:  Theme.of(context).textTheme.titleLarge,
+                                                  cursorColor: Colors.blue,
                                                   // initialValue: state.savedEmail ,
                                                   onEditingComplete: () => FocusScope.of(context).nextFocus(),
+                                                  onFieldSubmitted: (_) => {
+                                                    // FocusScope.of(context).unfocus(),
+                                                    // if (_formKey.currentState!.validate())
+                                                    //   {
+                                                    //     FocusScope.of(context).unfocus(),
+                                                    //     // FocusManager.instance.primaryFocus?.unfocus(),
+                                                    //     BlocProvider.of<AuthBloc>(context).add(
+                                                    //       SignInRequested(_emailController.text, _passwordController.text),
+                                                    //     ),
+                                                    //   }
+                                                    // else
+                                                    {FocusScope.of(context).requestFocus()}
+                                                  },
                                                   decoration: InputDecoration(
                                                     //Maybe we need it
                                                     // contentPadding: const EdgeInsets.symmetric(
                                                     //     vertical: 20.0, horizontal: 10.0),
                                                     floatingLabelStyle: TextStyle(color: Colors.blue),
                                                     labelText: "E-Mail oder Benutzernam",
-                                                    labelStyle:
-                                                        TextStyle(fontSize: size.width * 0.045, color: Colors.grey, fontWeight: FontWeight.w300),
+                                                    labelStyle: Theme.of(context).textTheme.labelLarge,
+                                                    // TextStyle(fontSize: size.width * 0.045, color: Colors.grey, fontWeight: FontWeight.w300),
                                                     //, height: 3.8),
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.white, width: 5),
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                    errorBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                                        borderSide: BorderSide(color: Colors.red, width: 1)),
+                                                    // border:Theme.of(context).inputDecorationTheme.border ,
+
+                                                    focusedBorder : OutlineInputBorder(
+                                                        borderSide: BorderSide(color: Colors.blue, width: 1),
+                                                        borderRadius: BorderRadius.all(Radius.circular(18.0))
+                                                      ),
+                                                    // errorBorder: OutlineInputBorder(
+                                                    //     borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                                    //     borderSide: BorderSide(color: Colors.red, width: 1)),
                                                     enabledBorder: const OutlineInputBorder(
                                                       borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                                                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                                      borderRadius: BorderRadius.all(Radius.circular(18.0)),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    size.width * 0.0145, size.height * 0.005, size.width * 0.0145, size.height * 0.005),
+                                                padding: inputfieldpadding,
                                                 child: TextFormField(
                                                   controller: _passwordController,
                                                   // validator: (value) {
@@ -647,6 +657,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                   // initialValue: state.sa,
                                                   obscureText: true,
                                                   style: TextStyle(color: Colors.white),
+                                                  cursorColor: Colors.blue,
                                                   onFieldSubmitted: (_) => {
                                                     // FocusScope.of(context).unfocus(),
                                                     // if (_formKey.currentState!.validate())
@@ -658,7 +669,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                     //     ),
                                                     //   }
                                                     // else
-                                                    //   {FocusScope.of(context).requestFocus()}
+                                                      {FocusScope.of(context).requestFocus()}
                                                   },
                                                   decoration: InputDecoration(
                                                     //Maybe we need it
@@ -667,24 +678,24 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                     floatingLabelStyle: TextStyle(color: Colors.blue),
                                                     labelText: "Passwort",
 
-                                                    labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300),
+                                                    labelStyle: Theme.of(context).textTheme.labelLarge,
                                                     //, height: 3.8),
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.white, width: 5),
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                    errorBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                                        borderSide: BorderSide(color: Colors.red, width: 1)),
+                                                    // border: OutlineInputBorder(
+                                                    //     borderSide: BorderSide(color: Colors.white, width: 5),
+                                                    //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                    focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                                                        borderSide: BorderSide(color: Colors.blue, width: 1)),
                                                     enabledBorder: const OutlineInputBorder(
                                                       borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                                                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                                      borderRadius: BorderRadius.all(Radius.circular(18.0)),
                                                     ),
+
                                                   ),
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    size.width * 0.0145, size.height * 0.005, size.width * 0.0145, size.height * 0.005),
+                                                padding: textpaddingsmall,
                                                 child: InkWell(
                                                   // onTap: () {
                                                   //   print("I was tapped!");
@@ -692,20 +703,13 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                   child: Text(
                                                     "Passwort vergessen?",
                                                     textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                      color: Colors.blue,
-                                                      fontWeight: FontWeight.w300,
-                                                      fontSize: 16,
-                                                      //fontStyle: FontStyle.,
-                                                    ),
+                                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.blue),
                                                   ),
                                                 ),
                                               ),
                                               Padding(
                                                 // padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-                                                padding: EdgeInsets.fromLTRB(
-                                                    size.width * 0.0145, size.height * 0.005, size.width * 0.0145, size.height * 0.025),
-
+                                                padding: buttonpadding,
                                                 child: ElevatedButton(
                                                   onPressed: () {
                                                     if (_formKey.currentState!.validate()) {
@@ -737,23 +741,17 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                                     // _authenticateWithEmailAndPassword(context);
                                                   },
                                                   style: ElevatedButton.styleFrom(
+                                                    //primary: Colors.green,
                                                     // onPrimary: Colors.white,
+                                                    backgroundColor: Colors.blue,
                                                     shadowColor: Colors.blue,
                                                     elevation: 3,
-                                                    backgroundColor: Colors.blue,
-                                                    // side: BorderSide(width: 0.10, color: Colors.white),
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(size.height * 0.015)),
-                                                    // minimumSize: Size(100, 60), //////// HERE
-                                                    minimumSize: Size(size.width - 40, size.height * 0.075),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+                                                    minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
                                                   ),
                                                   child: Text(
                                                     "Anmelden",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w400,
-                                                      fontSize: size.width * 0.06,
-                                                      //fontStyle: FontStyle.,
-                                                    ),
+                                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w300),
                                                   ),
                                                 ),
                                               ),
@@ -763,203 +761,207 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                       ),
                                     ],
                                   )
-                                : Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: <Widget>[
-                                      // Padding(
-                                      //   padding: const EdgeInsets.all(25.0),
-                                      //   child: Container( height: 300,child: LoadingAnimation()),
-                                      // ),
-
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 20.0),
-                                        child: Text(
-                                          ('welcome').tr(),
-                                          // "Herzlich willkommen",
-                                          textAlign: TextAlign.left,
-                                          // textScaleFactor: ScaleSize.textScaleFactor(context),
-                                          style: TextStyle(
-                                            // fontFamily: "Raleway",
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                            // fontSize: 24,
-                                            fontSize: size.width * 0.065,
-                                            //fontStyle: FontStyle.,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
-                                        child: Text(
-                                          ('welcomeText').tr(),
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w300,
-                                            // fontSize: 16,
-                                            fontSize: size.width * 0.05,
-                                            //fontStyle: FontStyle.,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            // Navigator.of(context).pop();
-                                            // Navigator.of(context).popUntil((route) => route.isFirst);
-                                            var sd = AuthState.inCompleteUserDetails;
-                                            if (AuthState.inCompleteUserDetails?.response != null && Navigator.of(context).canPop() == true) {
-                                              // Navigator.of(context).popUntil((route) => route.isFirst,);
-                                              Navigator.pop(context, 'popped');
-                                            } else {
-                                              BlocProvider.of<AuthBloc>(context).add(
-                                                IncompleteSignInRequested(),
-                                              );
-                                            }
-                                            // Navigator.of(context).popUntil((route) => route.isFirst);
-                                            // Future.delayed(Duration(milliseconds: 3), () async {
-                                            //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
-                                            //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                            //
-                                            //   // BlocProvider.of<NavbarBloc>(context);
-                                            //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
-                                            //   // setState(() {});
-                                            // });
-                                            // BlocProvider.of<AuthBloc>(context).add(
-                                            //   IncompleteSignInRequested(),
-                                            // );
-                                            // Future.delayed(Duration(milliseconds: 1), () async {
-                                            //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                            //
-                                            // });
-                                            // }
-                                            // _authenticateincomplete(context);
-                                            // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
-                                            //   if (NavbarState.ap is! Loading) {
-                                            //     Navigator.of(context).popUntil((route) => route.isFirst);
-                                            //     Future.delayed(Duration(milliseconds: 1), () async {
-                                            //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
-                                            //     });
-                                            //     return;
-                                            //   }
-                                            // });
-
-                                            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            //primary: Colors.green,
-                                            // onPrimary: Colors.white,
-                                            backgroundColor: Colors.blue,
-                                            shadowColor: Colors.blue,
-                                            elevation: 3,
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-                                            minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
-                                          ),
-                                          child: MarqueeWidget(
-                                            child: Text(
-                                              ("inCompleteSignIn").tr(),
-                                              style: TextStyle(
-                                                color: Colors.white,
-
-                                                fontWeight: FontWeight.w400,
-                                                // fontSize: 18,
-                                                fontSize: size.width * 0.06,
-                                                //fontStyle: FontStyle.,
+                                : Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: <Widget>[
+                                    // Padding(
+                                    //   padding: const EdgeInsets.all(25.0),
+                                    //   child: Container( height: 300,child: LoadingAnimation()),
+                                    // ),
+                                    Padding(
+                                        // flex: 3,
+                                        padding: globalpadding,
+                                        child: Form(
+                                          key: _formKey,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                                            mainAxisSize: MainAxisSize.max,
+                                            // mainAxisAlignment: MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: textpadding,
+                                                child: Text(
+                                                  // AppLocalizations.of(context).appTitle,
+                                                  ('welcome').tr(),
+                                                  // "Herzlich willkommen",
+                                                  textAlign: TextAlign.left,
+                                                  style: Theme.of(context).textTheme.headlineMedium,
+                                                  // textScaleFactor: ScaleSize.textScaleFactor(context),
+                                                  // style: TextStyle(
+                                                  //   // fontFamily: "Raleway",
+                                                  //   color: Colors.white,
+                                                  //   fontWeight: FontWeight.w700,
+                                                  //   // fontSize: 24,
+                                                  //   fontSize: size.width * 0.065,
+                                                  //   //fontStyle: FontStyle.,
+                                                  // ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.02),
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            // Navigator.push(
-                                            //   context,
-                                            //   PageRouteBuilder(
-                                            //     pageBuilder: (context, animation1, animation2) => LoginPage(
-                                            //       // title: 'Login',
-                                            //       splashbloc: widget.splashbloc,
-                                            //     ),
-                                            //     transitionDuration: Duration.zero,
-                                            //   ),
-                                            // );
-                                            BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
-                                            // BlocProvider.of<AuthBloc>(context).add(Initialize());
-
-                                            // Navigator.pushReplacement(
-                                            //     context,
-                                            //     MaterialPageRoute(
-                                            //         builder: (context) => MainPage()));
-                                          },
-                                          style: OutlinedButton.styleFrom(
-                                            //primary: Colors.,
-                                            //onPrimary: Colors.white,
-                                            //shadowColor: Colors.blueAccent,
-                                            // elevation: 3,
-                                            side: BorderSide(width: 0.10, color: Colors.white),
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-                                            minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
-                                          ),
-                                          child: Text(
-                                            ("logIn").tr(),
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: size.width * 0.06,
-                                              //fontStyle: FontStyle.,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(size.width * 0.06, 0, size.width * 0.06, size.height * 0.005),
-                                        child: Text(
-                                          ("toRegistration").tr(),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: size.width * 0.04,
-                                            //fontStyle: FontStyle.,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 25.0),
-                                          child: InkWell(
-                                            onTap: () {
-                                              print("I was tapped!");
-                                              Future.delayed(Duration(milliseconds: 50), () {
-                                                Navigator.pushAndRemoveUntil(
-                                                    context, MaterialPageRoute(builder: (context) => Registration()), (Route<dynamic> route) => true);
-                                              });
-                                              // Navigator.push(
-                                              //   context,
-                                              //   PageRouteBuilder(
-                                              //     pageBuilder:
-                                              //         (context, animation1, animation2) =>
-                                              //             Registration(
-                                              //                 // title: 'Login',
-                                              //                 ),
-                                              //     transitionDuration: Duration.zero,
-                                              //   ),
-                                              // );
-                                            },
-                                            child: Text(
-                                              "Jetzt registrieren!",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: size.width * 0.045,
-                                                //fontStyle: FontStyle.,
+                                              Padding(
+                                                padding: textpadding,
+                                                child: Text(
+                                                  ('welcomeText').tr(),
+                                                  textAlign: TextAlign.left,
+                                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
+                                                  // style: TextStyle(
+                                                  //   color: Colors.white,
+                                                  //   fontWeight: FontWeight.w300,
+                                                  //   // fontSize: 16,
+                                                  //   fontSize: size.width * 0.05,
+                                                  //   //fontStyle: FontStyle.,
+                                                  // ),
+                                                ),
                                               ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
+                                              Padding(
+                                                padding: buttonpadding,
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    // Navigator.of(context).pop();
+                                                    // Navigator.of(context).popUntil((route) => route.isFirst);
+                                                    var sd = AuthState.inCompleteUserDetails;
+                                                    if (AuthState.inCompleteUserDetails?.response != null && Navigator.of(context).canPop() == true) {
+                                                      // Navigator.of(context).popUntil((route) => route.isFirst,);
+                                                      Navigator.pop(context, 'popped');
+                                                    } else {
+                                                      BlocProvider.of<AuthBloc>(context).add(
+                                                        IncompleteSignInRequested(),
+                                                      );
+                                                    }
+                                                    // Navigator.of(context).popUntil((route) => route.isFirst);
+                                                    // Future.delayed(Duration(milliseconds: 3), () async {
+                                                    //   BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                                                    //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                                    //
+                                                    //   // BlocProvider.of<NavbarBloc>(context);
+                                                    //   // BlocProvider.of<NavbarBloc>(context).add(Initialize123(currentPosition: SplashState.appbarlocation));
+                                                    //   // setState(() {});
+                                                    // });
+                                                    // BlocProvider.of<AuthBloc>(context).add(
+                                                    //   IncompleteSignInRequested(),
+                                                    // );
+                                                    // Future.delayed(Duration(milliseconds: 1), () async {
+                                                    //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                                    //
+                                                    // });
+                                                    // }
+                                                    // _authenticateincomplete(context);
+                                                    // BlocListener<NavbarBloc, NavbarState>(listener: (context, state) {
+                                                    //   if (NavbarState.ap is! Loading) {
+                                                    //     Navigator.of(context).popUntil((route) => route.isFirst);
+                                                    //     Future.delayed(Duration(milliseconds: 1), () async {
+                                                    //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (Route<dynamic> route) => false);
+                                                    //     });
+                                                    //     return;
+                                                    //   }
+                                                    // });
+
+                                                    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    //primary: Colors.green,
+                                                    // onPrimary: Colors.white,
+                                                    backgroundColor: Colors.blue,
+                                                    shadowColor: Colors.blue,
+                                                    elevation: 3,
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+                                                    minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                                                  ),
+                                                  child: MarqueeWidget(
+                                                    child: Text(
+                                                      ("inCompleteSignIn").tr(),
+                                                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w300),
+                                                      // style: TextStyle(
+                                                      //   color: Colors.white,
+                                                      //
+                                                      //   fontWeight: FontWeight.w400,
+                                                      //   // fontSize: 18,
+                                                      //   fontSize: size.width * 0.06,
+                                                      //   //fontStyle: FontStyle.,
+                                                      // ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: buttonpadding,
+                                                child: OutlinedButton(
+                                                  onPressed: () {
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   PageRouteBuilder(
+                                                    //     pageBuilder: (context, animation1, animation2) => LoginPage(
+                                                    //       // title: 'Login',
+                                                    //       splashbloc: widget.splashbloc,
+                                                    //     ),
+                                                    //     transitionDuration: Duration.zero,
+                                                    //   ),
+                                                    // );
+                                                    BlocProvider.of<AuthBloc>(context).add(OpenLoginPage());
+                                                    // BlocProvider.of<AuthBloc>(context).add(Initialize());
+
+                                                    // Navigator.pushReplacement(
+                                                    //     context,
+                                                    //     MaterialPageRoute(
+                                                    //         builder: (context) => MainPage()));
+                                                  },
+                                                  style: OutlinedButton.styleFrom(
+                                                    //primary: Colors.,
+                                                    //onPrimary: Colors.white,
+                                                    //shadowColor: Colors.blueAccent,
+                                                    // elevation: 3,
+                                                    side: BorderSide(width: 0.10, color: Colors.white),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+                                                    minimumSize: Size(size.width - 40, size.height * 0.075), //////// HERE
+                                                  ),
+                                                  child: Text(
+                                                    ("logIn").tr(),
+                                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w300),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: textpaddingsmall,
+                                                child: Text(
+                                                  ("toRegistration").tr(),
+                                                  textAlign: TextAlign.center,
+                                                  style: Theme.of(context).textTheme.bodyMedium,
+                                                ),
+                                              ),
+                                              Padding(
+                                                  padding: textpaddingsmall,
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      print("I was tapped!");
+                                                      Future.delayed(Duration(milliseconds: 50), () {
+                                                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Registration()),
+                                                            (Route<dynamic> route) => true);
+                                                      });
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   PageRouteBuilder(
+                                                      //     pageBuilder:
+                                                      //         (context, animation1, animation2) =>
+                                                      //             Registration(
+                                                      //                 // title: 'Login',
+                                                      //                 ),
+                                                      //     transitionDuration: Duration.zero,
+                                                      //   ),
+                                                      // );
+                                                    },
+                                                    child: Text(
+                                                      "Jetzt registrieren!",
+                                                      textAlign: TextAlign.center,
+                                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.blue),
+                                                      // style: TextStyle(
+                                                      //   color: Colors.blue,
+                                                      //   fontWeight: FontWeight.w300,
+                                                      //   fontSize: size.width * 0.045,
+                                                      //   fontStyle: FontStyle.,
+                                                      // ),
+                                                    ),
+                                                  )),
+                                            ],
+                                          ),
+                                        ))
+                                  ]),
                           ),
                         ),
                       ),
@@ -978,5 +980,4 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
       ),
     );
   }
-
 }
