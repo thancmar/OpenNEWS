@@ -120,7 +120,7 @@ class _CustomCachedNetworkImageState extends State<CustomCachedNetworkImage>
     Size size = MediaQuery.of(context).size;
     return FutureBuilder<Uint8List?>(
         future: BlocProvider.of<NavbarBloc>(context)
-            .getCover(widget.mag.idMagazinePublication!, widget.mag.dateOfPublication!, widget.pageNo.toString(), widget.thumbnail,false),
+            .getCover(widget.mag.idMagazinePublication!, widget.mag.dateOfPublication, widget.pageNo.toString(), widget.thumbnail,false),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
 
@@ -133,7 +133,7 @@ class _CustomCachedNetworkImageState extends State<CustomCachedNetworkImage>
               //     // :
               //     // 'defaultKey'
               //     ),
-              imageUrl: widget.mag.idMagazinePublication! + "_" + widget.mag.dateOfPublication! + "_" + widget.pageNo.toString() //+ '_thumbnail',
+              imageUrl: widget.mag.idMagazinePublication! + "_" + (widget.mag.dateOfPublication?? "puzzle") + "_" + widget.pageNo.toString() //+ '_thumbnail',
               +(widget.thumbnail == true ? '_thumbnail' : ''),
               // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
               //     "_" +

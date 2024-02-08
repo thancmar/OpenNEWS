@@ -29,7 +29,6 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
   static late PageController controller = PageController();
 
   late List<bool> toggleImageLoaded = List.filled(int.parse(widget.reader.magazine.pageMax!), false);
-  int _currentPage = 0;
 
   Timer? timer;
   late AnimationController? _spinKitController;
@@ -71,8 +70,6 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
       controller = PageController(
           viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15,
           // initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1
-          initialPage:0
-
       );
 
       return SizedBox(
@@ -136,13 +133,9 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                               // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: i)),
                               setState(() {
                                 // widget.reader.currentPage == i;
-                                // widget.reader.controllerflip.currentState!. goToPage(i);
+                                widget.reader.controllerflip.currentState!. goToPage(i);
 // widget.reader.transformationController.value== Matrix4.identity();
-//                                 widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                                setState(() {
-                                  _currentPage = i;
-                                  widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                                });
+                                // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
                               })
                             // }
                         },
@@ -176,13 +169,12 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                             child: Container(
                                               padding:
                                               // i == widget.reader.pageController.page
-                                              i == _currentPage
+                                              i == widget.reader.controllerflip.currentState!.pageNumber
                                                   ? EdgeInsets.fromLTRB(10, 10, 10, 10)
-                                                  :
-                                              EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                                  : EdgeInsets.fromLTRB(5, 0, 5, 0),
                                               // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                               // decoration: i == pageNo
-                                              decoration: i ==_currentPage
+                                              decoration: i ==widget.reader.controllerflip.currentState!.pageNumber
                                                   ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue)
                                                   : BoxDecoration(),
                                               // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
@@ -211,7 +203,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                                   decoration: BoxDecoration(
                                                       borderRadius: BorderRadius.all(Radius.circular(5)),
                                                       color: Colors.black.withOpacity(0.8),
-                                                      border: i == widget.reader.pageController.page
+                                                      border: i == widget.reader.controllerflip.currentState!.pageNumber
                                                           ? Border.all(color: Colors.transparent, width: 5.10)
                                                           : Border.all(color: Colors.transparent, width: 0)),
                                                   // color: Colors.black.withOpacity(0.8),

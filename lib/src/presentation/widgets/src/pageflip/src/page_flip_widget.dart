@@ -10,23 +10,19 @@ import '../../../../pages/reader/readeroptionspage.dart';
 import '../../../../pages/reader/readerpage.dart';
 import '../../../routes/toreaderoption.dart';
 
-
-
 class PageFlipWidget extends StatefulWidget {
-  const PageFlipWidget({
-    Key? key,
-    this.duration = const Duration(milliseconds: 450),
-    this.cutoffForward = 0.8,
-    this.cutoffPrevious = 0.1,
-    this.backgroundColor = Colors.white,
-    required this.children,
-    this.initialIndex = 0,
-    this.lastPage,
-    this.isRightSwipe = false,
-    required this.reader
-
-  })  : assert(initialIndex < children.length,
-            'initialIndex cannot be greater than children length'),
+  const PageFlipWidget(
+      {Key? key,
+      this.duration = const Duration(milliseconds: 450),
+      this.cutoffForward = 0.8,
+      this.cutoffPrevious = 0.1,
+      this.backgroundColor = Colors.white,
+      required this.children,
+      this.initialIndex = 0,
+      this.lastPage,
+      this.isRightSwipe = false,
+      required this.reader})
+      : assert(initialIndex < children.length, 'initialIndex cannot be greater than children length'),
         super(key: key);
 
   final Color backgroundColor;
@@ -43,23 +39,24 @@ class PageFlipWidget extends StatefulWidget {
   PageFlipWidgetState createState() => PageFlipWidgetState();
 }
 
-class PageFlipWidgetState extends State<PageFlipWidget>
-    with TickerProviderStateMixin {
+class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderStateMixin {
   int pageNumber = 0;
+
   List<Widget> pages = [];
+  // List<ReaderPage> pages = [];
   final List<AnimationController> _controllers = [];
   bool? _isForward;
 
   @override
   void didUpdateWidget(PageFlipWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // if (widget.reader.pageScrollEnabled == false) {
-    //   widget.reader.transformationController.addListener((){
-    //   // widget.reader.currentPage.value = pageNumber;
-    //   });
-    // } else {
-    //   // widget.reader.transformationController.removeListener(_yourListenerMethod);
-    // }
+    if (widget.reader.pageScrollEnabled == false) {
+      widget.reader.transformationController.addListener(() {
+        // widget.reader.currentPage.value = pageNumber;
+      });
+    } else {
+      // widget.reader.transformationController.removeListener(_yourListenerMethod);
+    }
   }
 
   @override
@@ -75,9 +72,11 @@ class PageFlipWidgetState extends State<PageFlipWidget>
     super.initState();
     imageData = {};
     currentPage = ValueNotifier(-1);
-    currentWidget = ValueNotifier(Container());
+    // currentWidget = ValueNotifier(Container());
     currentPageIndex = ValueNotifier(0);
+    // pagesd
     _setUp();
+
   }
 
   void _setUp({bool isRefresh = false}) {
@@ -99,44 +98,44 @@ class PageFlipWidgetState extends State<PageFlipWidget>
         isRightSwipe: widget.isRightSwipe,
         pageIndex: i,
         key: Key('item$i'),
+        // child: widget.children[i],
         child: widget.children[i],
       );
       pages.add(child);
+      // pages.add(widget.children[i]);
     }
     pages = pages.reversed.toList();
     if (isRefresh) {
       goToPage(pageNumber);
     } else {
       pageNumber = widget.initialIndex;
-      lastPageLoad = pages.length < 3 ? 0 : 3;
+      // lastPageLoad = pages.length < 3 ? 0 : 3;
     }
     if (widget.initialIndex != 0) {
       currentPage = ValueNotifier(widget.initialIndex);
-      currentWidget = ValueNotifier(pages[pageNumber]);
+      // currentWidget = ValueNotifier(pages[pageNumber]);
       currentPageIndex = ValueNotifier(widget.initialIndex);
     }
   }
 
   bool get _isLastPage => (pages.length - 1) == pageNumber;
 
-  int lastPageLoad = 0;
+  // int lastPageLoad = 0;
 
   bool get _isFirstPage => pageNumber == 0;
+  bool get _isZoomedIn => (widget.reader.transformationController.value.getMaxScaleOnAxis() <= 0.01);
 
   void _turnPage(DragUpdateDetails details, BoxConstraints dimens) {
     // if ((_isLastPage) || !isFlipForward.value) return;
-    // if(widget.reader.pageScrollEnabled == true) return;
+    // print("is zoomed in ${widget.reader.transformationController.value}");
+    if (_isZoomedIn) return;
     currentPage.value = pageNumber;
-    currentWidget.value = Container();
+    // currentWidget.value = Container();
     final ratio = details.delta.dx / dimens.maxWidth;
-    if (_isForward == null ) {
-      if (widget.isRightSwipe
-          ? details.delta.dx < 0.0
-          : details.delta.dx > 0.0) {
+    if (_isForward == null) {
+      if (widget.isRightSwipe ? details.delta.dx < 0.0 : details.delta.dx > 0.0) {
         _isForward = false;
-      } else if (widget.isRightSwipe
-          ? details.delta.dx > 0.2
-          : details.delta.dx < -0.2) {
+      } else if (widget.isRightSwipe ? details.delta.dx > 0.2 : details.delta.dx < -0.2) {
         _isForward = true;
       } else {
         _isForward = null;
@@ -147,19 +146,61 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       final pageLength = pages.length;
       final pageSize = widget.lastPage != null ? pageLength : pageLength - 1;
       if (pageNumber != pageSize && !_isLastPage) {
-        widget.isRightSwipe
-            ? _controllers[pageNumber].value -= ratio
-            : _controllers[pageNumber].value += ratio;
+        widget.isRightSwipe ? _controllers[pageNumber].value -= ratio : _controllers[pageNumber].value += ratio;
       }
     }
   }
 
   Future _onDragFinish() async {
-    // if(widget.reader.pageScrollEnabled == true) return;
+    if(_isZoomedIn) return;
     if (_isForward != null) {
       if (_isForward == true) {
-        if (!_isLastPage &&
-            _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
+        if (!_isLastPage && _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
+          print("nextPage");
+          await nextPage();
+        } else {
+          if (!_isLastPage) {
+            print("_isLastPage");
+            await _controllers[pageNumber].forward();
+          }
+        }
+      } else {
+        if (!_isFirstPage && _controllers[pageNumber - 1].value >= widget.cutoffPrevious) {
+          await previousPage();
+        } else {
+          if (_isFirstPage) {
+            await _controllers[pageNumber].forward();
+          } else {
+            await _controllers[pageNumber - 1].reverse();
+            if (!_isFirstPage) {
+              print("_isFirstPage");
+              await previousPage();
+
+            }
+          }
+        }
+      }
+    }
+
+    _isForward = null;
+    currentPage.value = -1;
+  }
+
+  Future _onTap() async {
+    // if(widget.reader.pageScrollEnabled == false) return;
+    Navigator.push(
+        context,
+        ReaderOptionRoute(
+            widget: ReaderOptionsPage(
+          reader: widget.reader,
+          bloc: BlocProvider.of<ReaderBloc>(context),
+          // currentPage:  widget.reader.currentPage,
+        )));
+
+    // _controllers[pageNumber].
+    if (_isForward != null) {
+      if (_isForward == true) {
+        if (!_isLastPage && _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
           await nextPage();
         } else {
           if (!_isLastPage) {
@@ -167,8 +208,7 @@ class PageFlipWidgetState extends State<PageFlipWidget>
           }
         }
       } else {
-        if (!_isFirstPage &&
-            _controllers[pageNumber - 1].value >= widget.cutoffPrevious) {
+        if (!_isFirstPage && _controllers[pageNumber - 1].value >= widget.cutoffPrevious) {
           await previousPage();
         } else {
           if (_isFirstPage) {
@@ -187,49 +227,6 @@ class PageFlipWidgetState extends State<PageFlipWidget>
     currentPage.value = -1;
   }
 
-  Future _onTap() async {
-    // if(widget.reader.pageScrollEnabled == false) return;
-    Navigator.push(
-        context,
-        ReaderOptionRoute(
-            widget: ReaderOptionsPage(
-              reader: widget.reader,
-              bloc: BlocProvider.of<ReaderBloc>(context),
-              // currentPage:  widget.reader.currentPage,
-            )));
-
-    // _controllers[pageNumber].
-    // if (_isForward != null) {
-    //   if (_isForward == true) {
-    //     if (!_isLastPage &&
-    //         _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
-    //       await nextPage();
-    //     } else {
-    //       if (!_isLastPage) {
-    //         await _controllers[pageNumber].forward();
-    //       }
-    //     }
-    //   } else {
-    //     if (!_isFirstPage &&
-    //         _controllers[pageNumber - 1].value >= widget.cutoffPrevious) {
-    //       await previousPage();
-    //     } else {
-    //       if (_isFirstPage) {
-    //         await _controllers[pageNumber].forward();
-    //       } else {
-    //         await _controllers[pageNumber - 1].reverse();
-    //         if (!_isFirstPage) {
-    //           await previousPage();
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-    //
-    // _isForward = null;
-    // currentPage.value = -1;
-  }
-
   Future nextPage() async {
     await _controllers[pageNumber].reverse();
     if (mounted) {
@@ -240,12 +237,12 @@ class PageFlipWidgetState extends State<PageFlipWidget>
 
     if (pageNumber < pages.length) {
       currentPageIndex.value = pageNumber;
-      currentWidget.value = pages[pageNumber];
+      // currentWidget.value = pages[pageNumber];
     }
 
     if (_isLastPage) {
       currentPageIndex.value = pageNumber;
-      currentWidget.value = pages[pageNumber];
+      // currentWidget.value = pages[pageNumber];
       return;
     }
   }
@@ -258,77 +255,78 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       });
     }
     currentPageIndex.value = pageNumber;
-    currentWidget.value = pages[pageNumber];
-    imageData[pageNumber] = null;
+    // currentWidget.value = pages[pageNumber];
+    imageData[pageNumber+1] = null;
   }
 
-  Future goToPage(int index) async {
-    if (mounted) {
-      setState(() {
-        pageNumber = index;
-      });
-    }
-    for (var i = 0; i < _controllers.length; i++) {
-      if (i == index) {
-         _controllers[i].forward();
-
-      } else if (i < index) {
-         _controllers[i].reverse();
-         currentPageIndex.value = pageNumber+1;
-         currentWidget.value = pages[pageNumber+1];
-         currentPage.value = pageNumber+1;
-      } else {
-        // if (_controllers[i].status == AnimationStatus.reverse) {
-        //   _controllers[i].value = 1;
-        //   _isForward = null;
-        // }
-      }
-
-    }
-      // setState(() {
-    // currentPageIndex.value = pageNumber-1;
-    // currentWidget.value = pages[pageNumber-1];
-    // currentPage.value = pageNumber-1;
-      // _isForward = null;
-      // currentPage.value = -1;
-
-      // });
-    // widget.reader. =pageNumber;
-  }
-  // Future goToPage(int targetIndex) async {
-  //   if (targetIndex < 0 || targetIndex >= _controllers.length) {
-  //     return; // Target index is out of range.
-  //   }
-  //
-  //   // Determine the direction of navigation
-  //   int step = (targetIndex > pageNumber) ? 1 : -1;
-  //
-  //   while (pageNumber != targetIndex) {
-  //     if (step > 0) {
-  //       // Moving forwards
-  //       await _controllers[pageNumber].forward();
-  //       if (pageNumber + 1 < _controllers.length) {
-  //         pageNumber++;
-  //       }
-  //     } else {
-  //       // Moving backwards
-  //       if (pageNumber - 1 >= 0) {
-  //         await _controllers[pageNumber - 1].reverse();
-  //         pageNumber--;
-  //       }
-  //     }
-  //
-  //     // Update the state after each animation
+  // Future goToPage(int index) async {
+  //   if (mounted) {
   //     setState(() {
-  //       currentPageIndex.value = pageNumber;
-  //       currentWidget.value = pages[pageNumber];
-  //       currentPage.value = pageNumber;
+  //       pageNumber = index;
   //     });
   //   }
+  //   for (var i = 0; i < _controllers.length; i++) {
+  //     if (i == index) {
+  //       _controllers[i].forward();
+  //     } else if (i < index) {
+  //       _controllers[i].reverse();
+  //       // currentPageIndex.value = pageNumber+1;
+  //       // currentWidget.value = pages[pageNumber+1];
+  //       // currentPage.value = pageNumber+1;
+  //     } else {
+  //       if (_controllers[i].status == AnimationStatus.reverse) {
+  //         _controllers[i].value = 1;
+  //         // _isForward = null;
+  //       }
+  //     }
+  //   }
+  //   currentPageIndex.value = pageNumber;
+  //   // currentPageIndex.value = pageNumber-1;
+  //   currentWidget.value = pages[pageNumber];
+  //   // currentWidget.value = pages[pageNumber-1];
+  //   currentPage.value = pageNumber;
+  //   // setState(() {
+  //   // currentPageIndex.value = pageNumber-1;
+  //   // currentWidget.value = pages[pageNumber-1];
+  //   // currentPage.value = pageNumber-1;
+  //   // _isForward = null;
+  //   // currentPage.value = -1;
+  //
+  //   // });
+  //   // widget.reader. =pageNumber;
   // }
 
+  Future goToPage(int targetIndex) async {
+    if (targetIndex < 0 || targetIndex >= _controllers.length) {
+      return; // Target index is out of range.
+    }
 
+    // Determine the direction of navigation
+    int step = (targetIndex > pageNumber) ? 1 : -1;
 
+    while (pageNumber != targetIndex) {
+      if (step > 0) {
+        // Moving forwards
+        await _controllers[pageNumber].forward();
+        if (pageNumber + 1 < _controllers.length) {
+          pageNumber++;
+        }
+      } else {
+        // Moving backwards
+        if (pageNumber - 1 >= 0) {
+          await _controllers[pageNumber - 1].reverse();
+          pageNumber--;
+        }
+      }
+
+      // Update the state after each animation
+      setState(() {
+        currentPageIndex.value = pageNumber;
+        // currentWidget.value = pages[pageNumber];
+        currentPage.value = pageNumber;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -336,19 +334,25 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       builder: (context, dimens) => GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: (details) {},
-        onTapUp: (details) {_onTap();},
+        onTapUp: (details) {
+          _onTap();
+        },
         onPanDown: (details) {},
         onPanEnd: (details) {},
         onTapCancel: () {},
-        // onHorizontalDragCancel:widget.reader.pageScrollEnabled==true?  _isForward = null:null,
-        // onHorizontalDragUpdate: widget.reader.pageScrollEnabled==true? (details){_turnPage(details, dimens);}:null,
-        // onHorizontalDragEnd: widget.reader.paeader.pageScrollEnabled==true?  _isForward = null:null,
+        // onHorizontalDragCancel: widget.reader.pageScrollEnabled == true ? _isForward = null : null,
+        // onHorizontalDragUpdate: widget.reader.pageScrollEnabled == true
+        //     ? (details) {
+        //         _turnPage(details, dimens);
+        //       }
+        //     : null,
+        // onHorizontalDragEnd: widget.reader.pageScrollEnabled == true ? _isForward = null : null,
         onHorizontalDragCancel:  _isForward = null,
         onHorizontalDragUpdate: (details)=> _turnPage(details, dimens),
         onHorizontalDragEnd:  (details)=>_onDragFinish(),
 
         child: Stack(
-          fit: StackFit.expand,
+          // fit: StackFit.expand,
           children: <Widget>[
             if (widget.lastPage != null) ...[
               widget.lastPage!,

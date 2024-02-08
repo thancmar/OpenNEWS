@@ -56,7 +56,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           getIt.registerSingleton<ApiClient>(
               ApiClient(dioforImages: Dio(), diofordata: Dio(), networkInfo: NetworkInfo(), secureStorage: FlutterSecureStorage()),
               signalsReady: true);
-          getIt.registerSingleton<LoadingAnimation>(LoadingAnimation(), signalsReady: true);
+          // getIt.registerSingleton<LoadingAnimation>(LoadingAnimation(), signalsReady: true);
         }
 
         String? emailExistsIncomplete = await dioClient.secureStorage.read(key: "emailGuest");

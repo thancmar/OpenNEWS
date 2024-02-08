@@ -53,7 +53,7 @@ class MagazineRepository {
       //   return MagazinePublishedGetLastWithLimitFromJson(response.data);
       // }
       // ;
-      // print(response.data);
+      print(response.data);
       // print(response!.data);
       // dioClient.secureStorage.write(key: "allmagazines", value: response.data);
       return MagazinePublishedGetLastWithLimitFromJson(response.data);
@@ -154,7 +154,7 @@ class MagazineRepository {
   Future<Uint8List> GetPage(
       {required String? page,
       required String id_mag_pub,
-      required String date_of_publication}) async {
+      required String? date_of_publication}) async {
     // print("GetPage $id_mag_pub $page");
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
@@ -170,7 +170,7 @@ class MagazineRepository {
         ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
         options: Options(responseType: ResponseType.bytes));
     await DefaultCacheManager().putFile(
-        id_mag_pub + "_" + date_of_publication + "_" + page,
+        id_mag_pub + "_" + (date_of_publication??"puzzle") + "_" + page,
         Uint8List.fromList(response.data),
         fileExtension: "jpeg",
         maxAge: Duration(days: 7));
@@ -264,7 +264,7 @@ class MagazineRepository {
           await DefaultCacheManager().putFile(
               id_mag_pub +
                   "_" +
-                  date_of_publication! +
+                  (date_of_publication ?? "puzzle") +
                   "_" +
                   page.toString() +
                   "_" +

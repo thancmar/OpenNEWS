@@ -101,7 +101,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         selectedLanguageCovers = MagazinePublishedGetAllLastByHotspotId(
             response: NavbarState.magazinePublishedGetLastWithLimit!.response!
                 .where((element) =>
-                    element.magazineLanguage!.contains(event.languageText) ==
+                    element.magazineLanguage?.contains(event.languageText) ==
                     true)
                 .toList());
       } else {

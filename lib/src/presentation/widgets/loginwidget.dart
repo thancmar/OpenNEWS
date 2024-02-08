@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
 //import 'package:sharemagazines_flutter/src/presentation/pages/map_page.dart';
 import 'package:sharemagazines_flutter/src/presentation/widgets/loginwidget.dart';
@@ -37,11 +37,11 @@ class _LoginPageState extends State<LoginPage> {
           return Stack(
             children: <Widget>[
               Container(
-                child: new SvgPicture.asset(
-                  "assets/images/background_webreader.svg",
-                  fit: BoxFit.fill,
-                  allowDrawingOutsideViewBox: true,
-                ),
+                // child: new SvgPicture.asset(
+                //   "assets/images/background_webreader.svg",
+                //   fit: BoxFit.fill,
+                //   allowDrawingOutsideViewBox: true,
+                // ),
               ),
               Positioned(
                 top: constraints.constrainHeight() / 2,

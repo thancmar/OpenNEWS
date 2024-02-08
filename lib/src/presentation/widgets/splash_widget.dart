@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+// import 'package:flutter_svg/svg.dart';
 import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
 import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
 

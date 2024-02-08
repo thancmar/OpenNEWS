@@ -9,7 +9,7 @@ import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -106,11 +106,11 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           // title: title,
                         ),
                         title: Text(map.mapName),
-                        leading: SvgPicture.asset(
-                          map.icon,
-                          height: 30.0,
-                          width: 30.0,
-                        ),
+                        // leading: SvgPicture.asset(
+                        //   map.icon,
+                        //   height: 30.0,
+                        //   width: 30.0,
+                        // ),
                       ),
                   ],
                 ),
@@ -189,7 +189,6 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     });
                     // isAutocompleteOpen = true;
                     var place = await PlacesAutocomplete.show(
-
                         logo: Text(""),
                         radius: 10000,
                         context: context,
@@ -423,7 +422,6 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   }
 
   Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
-
         mapController = await _controller.future;
         Completer<GoogleMapController> completer = Completer();
 
@@ -445,13 +443,16 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                 });
               }
             },
-            icon: cluster.isMultiple == true
-                ? await _getMarkerBitmap(125, text: cluster.count.toString())
-                : await getBitmapDescriptorFromSVGAsset(
-                    context,
-                    chooseMapPin(cluster.items.first.type!),
-                    // "assets/images/pins/cafe.svg",
-                  ));
+            icon:
+                // cluster.isMultiple == true
+                //     ?
+                await _getMarkerBitmap(125, text: cluster.count.toString())
+            // : await getBitmapDescriptorFromSVGAsset(
+            //     context,
+            //     chooseMapPin(cluster.items.first.type!),
+            //     "assets/images/pins/cafe.svg",
+            // )
+            );
       };
 }
 
@@ -489,33 +490,37 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
   return BitmapDescriptor.fromBytes(data.buffer.asUint8List());
 }
 
-Future<BitmapDescriptor> getBitmapDescriptorFromSVGAsset(
-  BuildContext context,
-  String svgAssetLink, {
-  Size size = const Size(60, 60),
-}) async {
-  String svgString = await DefaultAssetBundle.of(context).loadString(
-    svgAssetLink,
-  );
-  Widget svgWidget = SvgPicture.string(svgString);
-  final drawableRoot = await svg.fromSvgString(
-    svgString,
-    'debug: $svgAssetLink',
-  );
-  final ratio = window.devicePixelRatio.ceil();
-  final width = size.width.ceil() * ratio;
-  final height = size.height.ceil() * ratio;
-  final picture = drawableRoot.toPicture(
-    size: Size(
-      width.toDouble(),
-      height.toDouble(),
-    ),
-  );
-  final image = await picture.toImage(width, height);
-  final byteData = await image.toByteData(format: ImageByteFormat.png);
-  final uInt8List = byteData?.buffer.asUint8List();
-  return BitmapDescriptor.fromBytes(uInt8List!);
-}
+// Future<BitmapDescriptor> getBitmapDescriptorFromSVGAsset(
+//   BuildContext context,
+//   String svgAssetLink, {
+//   Size size = const Size(60, 60),
+// })async {
+//   // Load the SVG string from assets
+//   String svgString = await DefaultAssetBundle.of(context).loadString(svgAssetLink);
+//
+//   // Parse the SVG string
+//   final SvgParser parser = SvgParser();
+//   DrawableRoot drawableRoot = await parser.parse(svgString, 'debug: $svgAssetLink');
+//
+//   // Create a Picture from the SVG
+//   final ratio = ui.window.devicePixelRatio.ceil();
+//   final width = size.width.ceil() * ratio;
+//   final height = size.height.ceil() * ratio;
+//   final picture = drawableRoot.toPicture(
+//     size: Size(
+//       width.toDouble(),
+//       height.toDouble(),
+//     ),
+//   );
+//
+//   // Convert the Picture to a ui.Image
+//   final ui.Image image = await picture.toImage(width, height);
+//   final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+//   final uInt8List = byteData?.buffer.asUint8List();
+//
+//   // Create a BitmapDescriptor from the image bytes
+//   return BitmapDescriptor.fromBytes(uInt8List!);
+// }
 
 String chooseMapPin(String hp_type) {
   print("hp_type");
