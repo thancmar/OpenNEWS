@@ -5,20 +5,28 @@ import 'dart:ui';
 // import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_api_headers/google_api_headers.dart';
+
+// import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
+// import 'package:flutter_google_places/flutter_google_places.dart';
+
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
+
+// import 'package:google_maps_webservice/places.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
 
-import 'package:sharemagazines_flutter/src/models/place_map.dart';
+// import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
+// import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
+//
+// import 'package:sharemagazines_flutter/src/models/place_map.dart';
 
+import '../../../../blocs/navbar/navbar_bloc.dart';
+import '../../../../models/hotspots_model.dart';
+import '../../../../models/place_map.dart';
 import 'mapOfferpage.dart';
 
 class Maps extends StatefulWidget {
@@ -40,16 +48,21 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   List<Marker> myMarkers = <Marker>[];
   late ClusterManager manager;
   Completer<GoogleMapController> _controller = Completer();
+  final FocusNode _focusNode = FocusNode();
 
   // String location = ("mapsearch").tr();
   String location = "Search";
   late bool showlocationdetail = false;
   late Place locationmarker;
-  bool isAutocompleteOpen = false;
+
+  // bool isAutocompleteOpen = false;
+  final _textController = TextEditingController();
 
   Timer? _timer;
   late double _progress;
   final LatLng _center = const LatLng(51.1657, 10.4515);
+
+  // final places = GoogleMapsPlaces(apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY");
 
   @override
   bool get wantKeepAlive => true;
@@ -59,6 +72,11 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     print("_MapsState init");
 
     super.initState();
+    _textController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     manager = _initClusterManager();
     // manager.updateMap.call();
   }
@@ -79,6 +97,13 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     setState(() {
       this.markers = markers;
     });
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    // _focusNode.dispose();
+    super.dispose();
   }
 
 //Show available maps to show route to the dest.
@@ -125,30 +150,19 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    // mapController.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
+    Size size = MediaQuery.of(context).size;
     return Container(
       child: Stack(children: [
         GoogleMap(
-          // onMapCreated: _onMapCreated,
-
           zoomGesturesEnabled: true,
           rotateGesturesEnabled: true,
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
             manager.setMapId(controller.mapId);
           },
-          onCameraMove:
-              //Could zoom in on the location when click on?
-
-              manager.onCameraMove,
+          onCameraMove: manager.onCameraMove,
           // showlocationdetail = false,
 
           onCameraIdle: manager.updateMap,
@@ -165,16 +179,10 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
           onTap: (LatLng point) {
             setState(() {
               showlocationdetail = false;
+              _focusNode.unfocus();
             });
           },
-
-          // onCameraMoveStarted: () => {
-          //   setState(() {
-          //     showlocationdetail = false;
-          //   })
-          // },
           zoomControlsEnabled: true,
-
           // markers: Set<Marker>.of(markers.values),
         ),
         SafeArea(
@@ -184,99 +192,97 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               child: InkWell(
                   // focusColor: Colors.red,
                   onTap: () async {
-                    setState(() {
-                      isAutocompleteOpen = true;
-                    });
-                    // isAutocompleteOpen = true;
-                    var place = await PlacesAutocomplete.show(
-                        logo: Text(""),
-                        radius: 10000,
-                        context: context,
-                        apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
-                        // mode: Mode.values[15],
-                        types: [],
-                        strictbounds: false,
-                        overlayBorderRadius: BorderRadius.circular(15.0),
-                        mode: Mode.overlay,
-                        components: [Component(Component.country, 'de')],
-                        //google_map_webservice package
-                        onError: (err) {
-                          print("error");
-                          print(err);
-                        });
-                    print("place");
-                    if (place != null) {
+                    if (mounted) {
                       setState(() {
-                        location = place.description.toString();
+                        _focusNode.unfocus();
                       });
-
-                      //form google_maps_webservice package
-                      final plist = GoogleMapsPlaces(
-                        apiKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
-                        apiHeaders: await GoogleApiHeaders().getHeaders(),
-                        //from google_api_headers package
-                      );
-                      String placeid = place.placeId ?? "0";
-                      final detail = await plist.getDetailsByPlaceId(placeid);
-                      final geometry = detail.result.geometry!;
-                      final lat = geometry.location.lat;
-                      final lang = geometry.location.lng;
-                      var newlatlang = LatLng(lat, lang);
-                      // var newlatlang = LatLng(51.00, 10.00);
-
-                      //move map camera to selected place with animation
-                      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: newlatlang, zoom: 17)));
                     }
-                    ;
-                    // isAutocompleteOpen = false;
-                    setState(() {
-                      isAutocompleteOpen = false;
-                    });
                   },
-                  child: Visibility(
-                    visible: !isAutocompleteOpen,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    child: Padding(
-                      // padding: EdgeInsets.all(15),
-                      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                // spreadRadius: 7,
-                                // blurRadius: 7,
+                  child: ListTile(
+                    title: GooglePlacesAutoCompleteTextFormField(
+                        autofocus: true,
+                        enableInteractiveSelection: true,
+                        enableIMEPersonalizedLearning: true,
+                        maxLines: 1,
+                        focusNode: _focusNode,
+                        textEditingController: _textController,
+                        googleAPIKey: "AIzaSyB4CAZ-Q37WtAXEwX_dTMX4nYvKPsMfswY",
+                        // proxyURL: "https://your-proxy.com/", // only needed if you build for the web
+                        debounceTime: 400,
+                        // defaults to 600 ms
+                        countries: ["de"],
+                        // optional, by default the list is empty (no restrictions)
+                        isLatLngRequired: true,
+                        enableSuggestions: true,
+                        overlayContainer: _defaultOverlayContainer,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black),
+                        // if you require the coordinates from the place details
+                        decoration: InputDecoration(
+                          //Maybe we need it
+                          // contentPadding: const EdgeInsets.symmetric(
+                          //     vertical: 20.0, horizontal: 10.0),
+                          // enabled: true,
+                          //                                 contentPadding: EdgeInsets.all(),
+                          fillColor: Colors.white,
+                          // focusColor: Colors.redAccent,
+                          // enabled: false,
+                          filled: true,
+                          floatingLabelStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
 
-                                offset: Offset(0, 1), // changes position of shadow
-                              ),
-                            ],
+                          // labelText: !_focusNode.hasFocus ? "Suchen":"",
+                          labelText: "Suchen",
+                          suffixIcon: GestureDetector(
+                              onTap: () {
+                                //still need to implement
+                                print("navbar latlon ${NavbarState.currentPosition!.latitude}");
+                                if (NavbarState.currentPosition != null) {
+                                  final p = CameraPosition(
+                                      target: LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude), zoom: 15);
+                                  mapController.animateCamera(CameraUpdate.newCameraPosition(p));
+                                }
+                              },
+                              child: Icon(
+                                NavbarState.currentPosition != null ? Icons.location_searching : Icons.location_disabled,
+                                color: NavbarState.currentPosition != null ? Colors.blue : Colors.grey,
+                              )),
+
+                          labelStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.grey, fontWeight: FontWeight.w300),
+                          // border: OutlineInputBorder(
+                          //     borderSide: BorderSide(color: Colors.redAccent, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                          // errorBorder: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.grey, width: 0.10),
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          padding: EdgeInsets.all(0),
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: ListTile(
-                            title: Text(
-                              location,
-                              style:Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.grey),
-                              // style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
-                            ),
-                            trailing: GestureDetector(
-                                onTap: () {
-                                  //still need to implement
-                                  if (NavbarState.currentPosition != null) {
-                                    final p = CameraPosition(
-                                        target: LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude), zoom: 15);
-                                    mapController.animateCamera(CameraUpdate.newCameraPosition(p));
-                                  }
-                                },
-                                child: Icon(
-                                  Icons.location_searching,
-                                )),
-                            dense: true,
-                          )),
-                    ),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(18.0)), borderSide: BorderSide(color: Colors.blue, width: 1.0)),
+                        ),
+                        getPlaceDetailWithLatLng: (prediction) {
+                          // this method will return latlng with place detail
+                          // print("Coordinates: (${prediction.lat},${prediction.lng})");
+                          if (mounted) {
+                            setState(() {
+                              _focusNode.unfocus();
+                            });
+                          }
+                          _textController.text = prediction.description ?? "";
+                          var newlatlang = LatLng(double.parse(prediction.lat!), double.parse(prediction.lng!));
+                          // var newlatlang = LatLng(51.00, 10.00);
+
+                          //move map camera to selected place with animation
+                          mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: newlatlang, zoom: 17)));
+                        },
+                        onTap: () {
+                          if (mounted) {
+                            setState(() {
+                              _textController.text = "";
+                              _defaultOverlayContainer;
+                            });
+                          }
+                        },
+                        // this callback is called when isLatLngRequired is true
+                        itmClick: (prediction) {}),
                   ))),
         ),
         showlocationdetail == true
@@ -306,24 +312,23 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                 tag: locationmarker.nameApp,
                 child: Text(
                   locationmarker.nameApp,
-                  style:Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
                   // style: TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
             subtitle: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Text(
-                  locationmarker.addressStreet +
-                      " " +
-                      locationmarker.addressHouseNr +
-                      ",\n" +
-                      locationmarker.addressZip +
-                      " " +
-                      locationmarker.addressCity,
-                  // style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w300)),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey))
-            ),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: Text(
+                    locationmarker.addressStreet +
+                        " " +
+                        locationmarker.addressHouseNr +
+                        ",\n" +
+                        locationmarker.addressZip +
+                        " " +
+                        locationmarker.addressCity,
+                    // style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w300)),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey))),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -398,7 +403,10 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                     // ),
                   ),
                   child: TextButton(
-                    child: Icon(Icons.directions,color: Colors.blue,),
+                    child: Icon(
+                      Icons.directions,
+                      color: Colors.blue,
+                    ),
                     onPressed: () => openMapsSheet(context, locationmarker.nameApp!, locationmarker.latitude, locationmarker.longitude),
                   ),
                 ),
@@ -454,6 +462,13 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
             // )
             );
       };
+}
+
+Widget _defaultOverlayContainer(Widget child) {
+  return Container(
+    color: Colors.white,
+    child: child,
+  );
 }
 
 Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {

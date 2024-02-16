@@ -4,7 +4,7 @@ part of 'splash_bloc.dart';
 abstract class SplashState {
   // static late Data? appbarlocation =
   //     Data(); //This is the global location for the App
-  static late List<Data> allNearbyLocations =
+  static late List<LocationData> allNearbyLocations =
       []; //This is list of all location nearby(if any)
 }
 

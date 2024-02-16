@@ -33,7 +33,7 @@
   "help": "Help",
   "contact": "Contact",
   "logout": "Log Out",
-  "version": "Version 1.0.0",
+  "version": "Version",
   "designedBy" : "Designsed By ",
 
   "offers" : "Offers",
@@ -42,5 +42,6 @@
   "toRegistration": "You don't have an account yet?",
   "registerNow": "Sign up!",
 
-  "mapsearch": "Search Location"
+  "mapsearch": "Search Location",
+  "nearLocations": "You are at the following Locaations"
 }

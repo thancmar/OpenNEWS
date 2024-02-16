@@ -10,7 +10,7 @@ abstract class SplashEvent {}
 class NavigateToHomeEvent extends SplashEvent {}
 
 class LocationSelection extends SplashEvent {
-  final List<Data>? locations;
+  final List<LocationData>? locations;
   LocationSelection({required this.locations});
   List<Object> get props => [];
 }

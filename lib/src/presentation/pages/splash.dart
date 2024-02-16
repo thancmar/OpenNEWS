@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
 
-import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/mainpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/splash_widget.dart';
+import 'package:sharemagazines/src/blocs/splash/splash_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/mainpage.dart';
+import 'package:sharemagazines/src/presentation/widgets/splash_widget.dart';
 
 import '../../blocs/navbar/navbar_bloc.dart';
 import '../../models/location_model.dart';
@@ -65,7 +65,7 @@ class SplashScreen extends StatelessWidget {
                 // Check if the state is the one you expect after IncompleteSignInRequested
                 if (state is Authenticated) {
                   // Now that AuthBloc has finished its work, do the next steps
-                  BlocProvider.of<NavbarBloc>(context).add(InitializeNavbar(currentPosition: Data()));
+                  BlocProvider.of<NavbarBloc>(context).add(InitializeNavbar(currentPosition: LocationData()));
 
                   Navigator.pushAndRemoveUntil(
                     context,

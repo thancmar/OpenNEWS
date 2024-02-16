@@ -9,8 +9,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/categoriepage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/categoriepage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/searchpage/search_bloc.dart';
@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage>
   @override
   void dispose() {
     _searchController.dispose();
-    controller.dispose();
+    // controller.dispose();
     // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

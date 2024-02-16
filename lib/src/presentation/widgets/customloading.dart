@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/src/animations/animation.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/animations/animation.dart';
 
 class CustomAnimation extends EasyLoadingAnimation {
   CustomAnimation();

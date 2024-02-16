@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../pages/navbarpages/homepage/homepage.dart';
 // import '../../pages/navbarpages/homepage/puzzlepage.dart';
+import '../../pages/navbarpages/homepage/puzzle.dart';
 import '../../pages/reader/readerpage.dart';
 import '../marquee.dart';
 import 'customCover.dart';
@@ -105,16 +106,18 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                         onTap: () => {
                           // To open Reader
                           if(widget.items.response![index].idMagazineType == "7"){
-                            // Navigator.of(context).push(
-                            //   CupertinoPageRoute(
-                            //     builder: (context) => Puzzle(
-                            //       puzzleID: widget.items.response![index].puzzleIdMobile!,
-                            //       gameType: widget.items.response![index].gametypeMobile!,
-                            //
-                            //       // noofpages: 5,
-                            //     ),
-                            //   ),
-                            // )
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) =>
+                                    WebViewExample(
+                                  // puzzleID: widget.items.response![index].puzzleIdMobile!,
+                                  // gameType: widget.items.response![index].gametypeMobile!,
+
+                                  // noofpages: 5,
+                                ),
+                                // WebViewXPage()
+                              ),
+                            )
                           }else{
                           Navigator.of(context).push(
                             CupertinoPageRoute(

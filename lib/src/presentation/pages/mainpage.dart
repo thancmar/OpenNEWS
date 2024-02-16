@@ -1,42 +1,32 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
-
-// import 'package:card_swiper/card_swiper.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// import 'package:backdrop/backdrop.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/models/locationOffers_model.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/menupage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/searchpage.dart';
+import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/models/locationOffers_model.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/menupage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage.dart';
 
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/accountpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/loading.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/navbar/body_clipper.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/navbar/custom_navbar.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/sliding_AppBar.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/navbar/navbar_painter_clipper.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/accountpage.dart';
+import 'package:sharemagazines/src/presentation/pages/startpage.dart';
+import 'package:sharemagazines/src/presentation/widgets/navbar/body_clipper.dart';
+import 'package:sharemagazines/src/presentation/widgets/navbar/custom_navbar.dart';
+import 'package:sharemagazines/src/presentation/widgets/sliding_AppBar.dart';
+import 'package:sharemagazines/src/presentation/widgets/marquee.dart';
+import 'package:sharemagazines/src/presentation/widgets/navbar/navbar_painter_clipper.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
-import '../../blocs/splash/splash_bloc.dart';
 import '../../models/locationGetHeader_model.dart';
 import '../../models/location_model.dart';
-import '../../resources/location_repository.dart';
 import '../widgets/backdrop/backdrop.dart';
 
 import 'navbarpages/homepage/tokenTimer.dart';
@@ -63,63 +53,21 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   int currentLocationOfferIndex = 0;
   bool isLoadingOnTop = false;
   final fabKey = GlobalKey();
-  bool showQR = false;
 
-  // late SwiperController locationOffersController = SwiperController();
-  GlobalKey qrIconKey = GlobalKey();
-
-  // static late VideoPlayerController? _offerVideoController = null;
-
-  // List<Uint8List> locationOfferImages = [];
-  // Future<void> preloadImages() async {
-  //   locationOfferImages = await Future.wait(NavbarState.locationoffersImages!);
-  // }
   @override
   bool get wantKeepAlive => true;
 
   late List<Widget> _pages = [
     HomePage(),
     MenuPage(),
-    if (showQR) Container(),
+    // if (showQR) Container(),
     Maps(),
     AccountPage(pageController: _pageController, onClick: onClicked),
   ];
 
-  late OverlayEntry _arrowOverlayEntry;
-
-  // void showArrowOverlay(BuildContext context, GlobalKey qrIconKey) {
-  //   _arrowOverlayEntry = createArrowOverlayEntry(qrIconKey);
-  //   Overlay.of(context)?.insert(_arrowOverlayEntry);
-  // }
-  //
-  // void removeArrowOverlay() {
-  //   _arrowOverlayEntry.remove();
-  // }
-  //
-  // OverlayEntry createArrowOverlayEntry(GlobalKey qrIconKey) {
-  //   RenderBox renderBox = qrIconKey.currentContext!.findRenderObject() as RenderBox;
-  //   Offset offset = renderBox.localToGlobal(Offset.zero);
-  //
-  //   return OverlayEntry(
-  //     builder: (context) => Positioned(
-  //       left: offset.dx,
-  //       top: offset.dy + renderBox.size.height, // Position below the QR icon
-  //       child: Material(
-  //         color: Colors.transparent,
-  //         child: AnimatedArrow(), // Your animated arrow widget
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   void initState() {
-    print("init_MainPageState");
-
     super.initState();
-    // preloadImages();
-    //To initialize the Map
-
     Maps();
     _controller = AnimationController(
       vsync: this,
@@ -138,53 +86,29 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   void onClicked(int index) {
-    print("mainpage onclicked $index");
-
-    // if (showSearchPage == false) {
-    // if (index != 2) // Makes the QR code area non-interactive
-    // {
     setState(() {
-      if (index != 2 && showQR) {
-        // if (index > 2) {
-        //   currentIndex = index - 1;
-        // } else {
-        currentIndex = index;
-        // }
-        // currentIndex = index;
-        _pageController.animateToPage(currentIndex, duration: Duration(milliseconds: 400), curve: Curves.ease);
-      } else {
-        currentIndex = index;
-        // }
-        // currentIndex = index;
-        _pageController.animateToPage(currentIndex, duration: Duration(milliseconds: 400), curve: Curves.ease);
-      }
+      currentIndex = index;
+      _pageController.animateToPage(currentIndex, duration: Duration(milliseconds: 400), curve: Curves.ease);
     });
-    // }
   }
 
-  Future<VideoPlayerController> OfferVideo(var video) async {
-    VideoPlayerController offerVideoController = VideoPlayerController.file(
-      video,
-      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
-    );
-    offerVideoController!.setLooping(true);
-    await offerVideoController!.initialize().then((_) {
-      setState(() {});
-    });
-    // offerVideoController!.play();
-    return offerVideoController;
-  }
+  // Future<VideoPlayerController> OfferVideo(var video) async {
+  //   VideoPlayerController offerVideoController = VideoPlayerController.file(
+  //     video,
+  //     videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
+  //   );
+  //   offerVideoController!.setLooping(true);
+  //   await offerVideoController!.initialize().then((_) {
+  //     setState(() {});
+  //   });
+  //   // offerVideoController!.play();
+  //   return offerVideoController;
+  // }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     Size size = MediaQuery.of(context).size;
-    // print("localeee");
-    // print(EasyLocalization.of(context)!.supportedLocales);
-    // double appBarHeight = ((currentIndex == 0 || currentIndex == 1) && !showSearchPage) ? size.height * 0.10 : 0;
-    double? fabQRHeight = ((_keyheight.currentContext?.findRenderObject() as RenderBox?)?.size.height ?? 0) * 0.6;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<NavbarBloc, NavbarState>(builder: (context, state) {
@@ -205,7 +129,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               // transitionDuration: Duration.zero,
             ),
           );
-          ;
           // return AlertDialog(
           //   title: Text(
           //     ('error').tr(),
@@ -230,23 +153,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
         return Stack(
           children: <Widget>[
-            // new SvgPicture.asset(
-            //   "assets/images/background_webreader.svg",
-            //   fit: BoxFit.fill,
-            //   allowDrawingOutsideViewBox: true,
-            // ),
             Positioned.fill(
               child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
             ),
-            // Visibility( visible: currentIndex == 0 || currentIndex == 1 ? true : false, child: SharedWidget()),
-            //
-
-            // Column(
-            //   children: [
-            //     Container(width: MediaQuery.of(context).size.width * 0.40, height: MediaQuery.of(context).size.width * 0.3, color: Colors.grey),
-            //     Container(width: MediaQuery.of(context).size.width * 0.40, height: MediaQuery.of(context).size.width * 0.3, color: Colors.black),
-            //   ],
-            // ),
             Center(
                 child: AnimatedOpacity(
               opacity: !isLoadingOnTop ? 1.0 : 0.0,
@@ -254,14 +163,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               child: IgnorePointer(
                 ignoring: isLoadingOnTop,
                 child: BackdropScaffold(
-                  // extendBodyBehindAppBar: currentIndex == 0 || currentIndex == 1 || currentIndex == 2 ? true : false,
                   extendBodyBehindAppBar: true,
                   resizeToAvoidBottomInset: false,
                   // extendBody: true,
-                  // appBar: currentIndex == 0 || currentIndex == 1
-                  //     ? PreferredSize(
-                  //         preferredSize: const Size(0, 56),
-
                   appBar: SlidingAppBar(
                     controller: _controller,
                     visible: currentIndex == 0 || currentIndex == 1 ? true : false,
@@ -273,7 +177,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         // primary: false,
                         excludeHeaderSemantics: true,
                         automaticallyImplyLeading: false,
-
                         backgroundColor: Colors.transparent,
                         elevation: 0,
                         // actions: const <Widget>[
@@ -289,9 +192,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                             child: GestureDetector(
                               onTap: () => {Backdrop.of(context).fling()},
                               child: Column(
-                                // mainAxisAlignment: MainAxisAlignment.center, // Try .end or .center
-                                // crossAxisAlignment: CrossAxisAlignment.center, // Try .end or .center
-
                                 children: [
                                   Expanded(
                                     child: Container(
@@ -301,16 +201,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              // GestureDetector(onTap: ,),
-                                              // GestureDetector(
-                                              //     child: Column(children: <Widget>[
-
-                                              // child: Icon(
-                                              //   Icons.circle,
-                                              //   color: Colors.white,
-                                              //   size: 80,
-                                              // ),
-
                                               Expanded(
                                                   child: GestureDetector(
                                                 onTap: () => {Backdrop.of(context).fling()},
@@ -385,14 +275,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                       ("locationInformation").tr(),
                                                                       // overflow: TextOverflow.fade,
                                                                       // softWrap: true,
-                                                                      style:  Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w200),
-                                                                      // style: TextStyle(
-                                                                      //     // fontSize: size.aspectRatio * 25,
-                                                                      //     fontSize: 14,
-                                                                      //     color: Colors.white,
-                                                                      //     fontWeight: FontWeight.w200),
-                                                                      // textAlign: TextAlign.center,
-// textAlign: TextAlign.right,
+                                                                      style: Theme.of(context)
+                                                                          .textTheme
+                                                                          .bodyMedium!
+                                                                          .copyWith(fontWeight: FontWeight.w200),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -401,14 +287,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                     builder: (BuildContext context, bool counterValue, Widget? child) {
                                                                       return InkWell(
                                                                         onTap: () => {
-                                                                          // if (!counterValue)
                                                                           Backdrop.of(context).fling()
                                                                         },
-                                                                        // child: BackdropToggleButton(
-                                                                        //   // icon: AnimatedIcons.menu_arrow,
-                                                                        //   // icon:AnimateIcons(),
-                                                                        //   color: Colors.white,
-                                                                        // ),
                                                                         child: Icon(
                                                                           counterValue ? Icons.arrow_upward : Icons.arrow_downward,
                                                                           color: Colors.white,
@@ -444,20 +324,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                               if (showLocationPage.value == false)
                                                                                 backdropState!.currentState!.fling()
                                                                             });
-                                                                    // .whenComplete(() => backdropState!.currentState!.fling());
-                                                                    // showArrowOverlay(context, qrIconKey);
                                                                   },
-                                                                  // backgroundColor: Colors.grey.withOpacity(0.2),
-                                                                  // child: Icon(Icons.qr_code),
-
                                                                   child: Padding(
                                                                     padding: EdgeInsets.only(left: 10),
                                                                     child: Icon(
-                                                                      // Backdrop.of(context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
-                                                                      // _counter1 == false ? Icons.search_sharp : Icons.clear,
                                                                       Icons.qr_code,
-                                                                      key: qrIconKey,
-                                                                      // Icomoon.fc_logo,
                                                                       color: Colors.white,
                                                                       size: 40,
                                                                     ),
@@ -476,36 +347,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                         onTap: () => {
                                                           if (!counterValue)
                                                             {
-                                                              // if (mounted) {setState(() => showSearchPage = true)},
-                                                              // setState(() {
-                                                              //   showSearchPage = true;
-                                                              // }),
-                                                              print("before searchpage state $state"),
                                                               Navigator.of(context).push(
                                                                 CupertinoPageRoute(
                                                                   fullscreenDialog: true,
                                                                   builder: (context) => SearchPage(),
                                                                 ),
                                                               )
-                                                              // Navigator.push(
-                                                              //   context,
-                                                              //   PageRouteBuilder(
-                                                              //       pageBuilder: (_, __, ___) => SearchPage(),
-                                                              //       // transitionDuration: Duration(milliseconds: 500),
-                                                              //       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                                              //         const begin = Offset(0, 1.0);
-                                                              //         const end = Offset.zero;
-                                                              //         const curve = Curves.ease;
-                                                              //         final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                                              //         final offsetAnimation = animation.drive(tween);
-                                                              //         return SlideTransition(position: animation.drive(tween), child: child);
-                                                              //       }),
-                                                              // ).then((_) {
-                                                              //   // print("after searchpage state $state");
-                                                              //   // setState(() {
-                                                              //   //   showSearchPage = false;
-                                                              //   // });
-                                                              // })
                                                             }
                                                           else
                                                             Backdrop.of(context).fling()
@@ -514,14 +361,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                           padding: EdgeInsets.only(left: 10),
                                                           child: Hero(
                                                             tag: "search button",
-                                                            // child: Scaffold_Close_Open_button(
-                                                            //   context: context,
-                                                            // ),
+
                                                             child: Icon(
-                                                              // Backdrop.of(context).isBackLayerConcealed == false ? Icons.search_sharp : Icons.clear,
-                                                              // _counter1 == false ? Icons.search_sharp : Icons.clear,
                                                               !counterValue ? Icons.search_sharp : Icons.close,
-                                                              // Icomoon.fc_logo,
                                                               color: Colors.white,
                                                               size: 40,
                                                             ),
@@ -530,8 +372,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                       );
                                                     }),
                                               ),
-
-                                              // if (NavbarState.locationheader != null) LocationOffersWidget(),
                                             ],
                                           ),
                                         ),
@@ -552,9 +392,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                       ),
                     ),
                   ),
-                  // subHeader:
-                  //     Container(width: MediaQuery.of(context).size.width * 0.40, height: MediaQuery.of(context).size.width * 0.3, color: Colors.grey),
-
                   frontLayerActiveFactor: 1,
                   backgroundColor: Colors.transparent,
                   backLayerBackgroundColor: Colors.transparent,
@@ -617,7 +454,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                           a == _masForUsing.length - 1 ? size.height * 0.001 : size.height * 0.01),
                                                       child: Text(
                                                         _masForUsing[a],
-                                                        style: TextStyle(
+                                                        style:Theme.of(context).textTheme.headlineMedium!.copyWith(
                                                             fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
                                                             fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
                                                             color: Colors.white),
@@ -1191,10 +1028,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 //   context,
                                 //   _keyheight,
                                 // ),
-                                painter: NavbarPainter(currentIndex, showQR),
+                                painter: NavbarPainter(currentIndex),
                                 child: CustomNavbar(
                                   onClicked: onClicked,
-                                  showQR: showQR,
                                   selectedIndex: currentIndex,
                                 ),
                               ))),
@@ -1206,11 +1042,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             state is NavbarError
                 ? AlertDialog(
                     title: Text(
-                      // ('error').tr(),
-                      'Navbarerror',
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w500),
+                      ('error').tr(),
+                      // 'Navbarerror',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.grey),
                     ),
-                    content: Text(state.error.toString(), style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w300)),
+                    content: Text(state.error.toString(), style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey)),
                     actions: <Widget>[
                       // TextButton(
                       //   onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -1227,7 +1063,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                             ),
                           );
                         },
-                        child: Text('OK'),
+                        child: Text('OK', style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue)),
                       ),
                     ],
                   )
@@ -1308,11 +1144,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                             child: CupertinoActionSheet(
                               title: Text(
                                 ('nearLocations').tr(),
-                                style: TextStyle(fontSize: 20, color: Colors.black),
+                                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black),
                               ),
                               message: Text(
                                 ('selectOne').tr(),
-                                style: TextStyle(fontSize: 16, color: Colors.black),
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.black),
                               ),
                               actions: <Widget>[
                                 ...List.generate(
@@ -1323,7 +1159,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                       child: Text(
                                         state.locations_GoToLocationSelection![index].nameApp!,
                                         // "$index",
-                                        style: TextStyle(fontSize: 20, color: Colors.black),
+                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black),
                                       ),
                                       onPressed: () {
                                         // To show the "Location page(front layer of backdropscaffold)"
@@ -1341,14 +1177,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                               cancelButton: CupertinoActionSheetAction(
                                 child: Text(
                                   'Cancel',
-                                  style: TextStyle(fontSize: 20, color: Colors.red),
+                                  style:Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.redAccent)
                                 ),
                                 // isDefaultAction: true,
                                 onPressed: () {
                                   if (showLocationPage.value == false) backdropState!.currentState!.fling();
                                   setState(() {
-                                    BlocProvider.of<NavbarBloc>(context)
-                                        .add(LocationSelected(selectedLocation: Data(idLocation: "0"), currentLocation: state.appbarlocation));
+                                    BlocProvider.of<NavbarBloc>(context).add(
+                                        LocationSelected(selectedLocation: LocationData(idLocation: "0"), currentLocation: state.appbarlocation));
                                   });
                                   // Navigator.pop(context); // You can also perform any other action here before dismissing
                                 },
@@ -1361,11 +1197,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 child: CupertinoActionSheet(
                                     title: Text(
                                       ('selectLanguage').tr(),
-                                      style: TextStyle(fontSize: 20, color: Colors.black),
+                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith( color: Colors.black),
                                     ),
                                     message: Text(
                                       ('selectOne').tr(),
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
+                                      style: Theme.of(context).textTheme.titleSmall!.copyWith( color: Colors.black),
                                     ),
                                     actions: <Widget>[
                                       ...List.generate(
@@ -1376,15 +1212,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                             child: Text(
                                               state.languageOptions![index].languageCode!,
                                               // "$index",
-                                              style: TextStyle(fontSize: 20, color: Colors.black),
+                                              style: Theme.of(context).textTheme.headlineSmall!.copyWith( color: Colors.black),
                                             ),
                                             onPressed: () async {
                                               // To show the "Location page(front layer of backdropscaffold)"
                                               // if (showLocationPage.value == false) backdropState!.currentState!.fling();
-                                              await EasyLocalization.of(context)!.setLocale(Locale(state.languageOptions![index].languageCode!));
+                                              // Future.delayed(Duration(milliseconds: 500), () {});
+
+
+
                                               // setState(() {
                                               BlocProvider.of<NavbarBloc>(context).add(
                                                   LanguageSelected(language: state.languageOptions![index], currentLocation: state.appbarlocation));
+                                              await Future.delayed(Duration(milliseconds: 700), () {});
+                                              await EasyLocalization.of(context)!.setLocale(Locale(state.languageOptions![index].languageCode!));
                                               // });
                                             },
                                           ),
@@ -1397,54 +1238,5 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         );
       }),
     );
-  }
-}
-
-class AnimatedArrow extends StatefulWidget {
-  @override
-  _AnimatedArrowState createState() => _AnimatedArrowState();
-}
-
-class _AnimatedArrowState extends State<AnimatedArrow> with SingleTickerProviderStateMixin {
-  AnimationController? _controller;
-  Animation<double>? _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _animation = Tween<double>(begin: 0, end: 10).animate(_controller!);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation!,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(10, _animation!.value),
-          child: Column(
-            children: [
-              Icon(Icons.arrow_upward, color: Colors.white),
-              // Text("Scan QR Code",style: TextStyle(
-              //   // fontSize: size.aspectRatio * 25,
-              //     fontSize: 14,
-              //     color: Colors.white,
-              //     fontWeight: FontWeight.w200),)
-            ],
-          ), // Arrow Icon
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
   }
 }

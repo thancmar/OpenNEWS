@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/qrpage/qr_scanner.dart';
+import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/qrpage/qr_scanner.dart';
 
 import '../../../../blocs/auth/auth_bloc.dart';
 

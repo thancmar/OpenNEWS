@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class NavbarPainter extends CustomPainter {
   final int index;
-  final bool showQR;
-  const NavbarPainter(this.index, this.showQR);
+  // final bool showQR;
+  const NavbarPainter(this.index);
 
   @override
   void paint(Canvas canvas, Size size) {

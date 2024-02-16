@@ -80,6 +80,12 @@ class SignUpRequested extends AuthEvent {
       this.origin);
 }
 
+class DeleteAccount extends AuthEvent {
+  final GetUserDetails? user_details;
+
+  DeleteAccount(this.user_details);
+}
+
 // When the user signing in with google this event is called and the [AuthRepository] is called to sign in the user
 // class GoogleSignInRequested extends AuthEvent {}
 

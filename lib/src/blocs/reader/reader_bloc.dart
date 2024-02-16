@@ -11,8 +11,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 // import 'package:printing/printing.dart';
 
-import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
-import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart'
+import 'package:sharemagazines/src/resources/magazine_repository.dart';
+import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart'
     as model;
 
 import '../../constants.dart';

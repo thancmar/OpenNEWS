@@ -6,7 +6,7 @@ abstract class NavbarEvent extends Equatable {
 }
 
 class InitializeNavbar extends NavbarEvent {
-  final Data? currentPosition;
+  final LocationData? currentPosition;
   InitializeNavbar(
       {required this.currentPosition}
       );
@@ -52,8 +52,9 @@ class OpenSystemSettings extends NavbarEvent {
 }
 
 class OpenLanguageSelection extends NavbarEvent {
+  final LocationData currentLocation;
   final List<Locale> languageOptions;
-  OpenLanguageSelection({required this.languageOptions});
+  OpenLanguageSelection({required this.currentLocation,required this.languageOptions});
   List<Object> get props => [];
 }
 
@@ -79,15 +80,15 @@ class Bookmark extends NavbarEvent {
 // }
 
 class LocationSelected extends NavbarEvent {
-  final Data? selectedLocation;
-  final Data? currentLocation;
+  final LocationData? selectedLocation;
+  final LocationData? currentLocation;
   LocationSelected({required this.selectedLocation, required this.currentLocation});
   List<Object> get props => [];
 }
 
 class LanguageSelected extends NavbarEvent {
   final Locale? language;
-  final Data? currentLocation;
+  final LocationData currentLocation;
   LanguageSelected({required this.language, required this.currentLocation});
   List<Object> get props => [];
 }

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/blocs/searchpage/search_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../widgets/marquee.dart';
@@ -39,7 +39,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
   @override
   void dispose() {
     super.dispose();
-    BlocProvider.of<SearchBloc>(context).add(OpenSearch());//NOT working
+    // BlocProvider.of<SearchBloc>(context).add(OpenSearch());//NOT working
     // BlocProvider.of<SearchBloc>(context).add(OpenLanguageResults(context, widget.titleText));
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
@@ -50,7 +50,7 @@ class _LanguagePageState extends State<LanguagePage> with AutomaticKeepAliveClie
     return Stack(
       children: [
         Positioned.fill(
-          child: Hero(tag: 'bg', child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
+          child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover),
         ),
         Scaffold(
           // extendBodyBehindAppBar: true,

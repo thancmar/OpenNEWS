@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/src/pageflip2/src/builders/builder.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/pageflip2/src/builders/builder.dart';
 
 import '../../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../../blocs/reader/reader_bloc.dart';

@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 class CustomNavbar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onClicked;
-  final bool showQR;
 
-  CustomNavbar({required this.selectedIndex, required this.onClicked, required this.showQR});
+  CustomNavbar({required this.selectedIndex, required this.onClicked});
 
   @override
   _CustomNavbarState createState() => _CustomNavbarState();

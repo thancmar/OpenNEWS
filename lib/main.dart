@@ -15,18 +15,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:sharemagazines_flutter/pdfreadermain.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/splash.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/customloading.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/src/easy_loading.dart';
-import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
+import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/blocs/searchpage/search_bloc.dart';
+import 'package:sharemagazines/src/blocs/splash/splash_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
+import 'package:sharemagazines/src/presentation/pages/splash.dart';
+import 'package:sharemagazines/src/presentation/widgets/customloading.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/easy_loading.dart';
+import 'package:sharemagazines/src/resources/auth_repository.dart';
+import 'package:sharemagazines/src/resources/hotspot_repository.dart';
+import 'package:sharemagazines/src/resources/location_repository.dart';
+import 'package:sharemagazines/src/resources/magazine_repository.dart';
 import 'package:get_it/get_it.dart';
 
 // import ‘package:flutter/services.dart’;
@@ -128,7 +128,7 @@ class MyApp extends StatelessWidget {
         labelSmall: TextStyle(color: Colors.grey, fontWeight: FontWeight.w100, fontSize: 14),
         labelMedium: TextStyle(color: Colors.grey, fontWeight: FontWeight.w100, fontSize: 16),
         labelLarge: TextStyle(color: Colors.grey, fontWeight: FontWeight.w100, fontSize: 18));
-    EasyLoading.instance.textStyle = Theme.of(context).textTheme.titleMedium  !.copyWith(color: Colors.white);
+    EasyLoading.instance.textStyle = Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white);
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
@@ -180,13 +180,42 @@ class MyApp extends StatelessWidget {
           locale: context.locale,
 
           theme: ThemeData(
+              primarySwatch: Colors.blue, // Your primary color for the app
+              colorScheme: ColorScheme.fromSwatch(
+                primarySwatch: Colors.blue, // This sets the main color for the scheme
+                accentColor: Colors.blueAccent, // This sets the accent color in the scheme
+
+              ).copyWith(
+                secondary: Colors.blueAccent, // Used for elements like floating action buttons
+                // Define other colors like surface, background, error, etc., as needed
+              ),
               textTheme: customTextTheme,
               iconTheme: IconThemeData(
                 color: Colors.white, // Set the color for icons
               ),
+              // primarySwatch: Colors.green,
               primaryIconTheme: IconThemeData(
                 color: Colors.white, // Set the color for primary icons
               ),
+
+              inputDecorationTheme: InputDecorationTheme(
+                floatingLabelStyle: TextStyle(color: Colors.blue),
+                // Focused border color
+                border:
+                    OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                errorBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+                focusedBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
+              ),
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: Colors.blue, // Change this to your desired cursor color
+              ),
+
               pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.android: CupertinoPageTransitionsBuilder(),
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),

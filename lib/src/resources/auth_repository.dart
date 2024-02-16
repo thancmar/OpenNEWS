@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines_flutter/src/constants.dart';
+import 'package:sharemagazines/src/constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:sharemagazines_flutter/src/models/incomplete_login_model.dart';
-import 'package:sharemagazines_flutter/src/models/login_model.dart';
-import 'package:sharemagazines_flutter/src/models/registrierung_model.dart';
-import 'package:sharemagazines_flutter/src/models/userDetails_model.dart';
-import 'package:sharemagazines_flutter/src/resources/dioClient.dart';
+import 'package:sharemagazines/src/models/incomplete_login_model.dart';
+import 'package:sharemagazines/src/models/login_model.dart';
+import 'package:sharemagazines/src/models/registrierung_model.dart';
+import 'package:sharemagazines/src/models/userDetails_model.dart';
+import 'package:sharemagazines/src/resources/dioClient.dart';
 import 'package:get_it/get_it.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 
@@ -249,5 +249,22 @@ class AuthRepository {
     } else {
       throw Exception("Failed to logout");
     }
+  }
+
+  Future<void> deleteUser(GetUserDetails? userDetails, String? pwd) async {
+
+    final getIt = GetIt.instance;
+    Map<String, dynamic> data = {
+      'f': 'readerDelete',
+      'json':
+          '{"email" : "${userDetails?.response?.email}","password" : "${pwd}","firstname" :"${userDetails?.response?.firstname}","lastname" : "${userDetails?.response?.lastname}","date_of_birth" :"${userDetails?.response?.dateOfBirth}","sex":"${userDetails?.response?.sex}","address_street" : "${userDetails?.response?.addressStreet}","address_house_nr" : "${userDetails?.response?.addressHouseNr}","address_zip" : "${userDetails?.response?.addressZip}","address_city" : "${userDetails?.response?.addressCity}","phone" : "${userDetails?.response?.phone}","iban":"${userDetails?.response?.iban}","account_owner" : "${userDetails?.response?.accountOwner}","creation_date" : "${userDetails?.response?.creationDate}","origin" : ""}'
+    };
+    print("deleteUser ${data}");
+    var response = await getIt<ApiClient>().diofordata.post(
+          ApiConstants.baseUrl + ApiConstants.usersEndpoint,
+          data: data,
+        );
+    // print(response!.data);
+    print("deleteUser response: ${response.data}");
   }
 }

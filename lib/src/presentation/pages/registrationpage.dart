@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/validators/emailvalidator.dart';
-import 'package:sharemagazines_flutter/src/presentation/validators/passwordvalidator.dart';
+import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/startpage.dart';
+import 'package:sharemagazines/src/presentation/validators/emailvalidator.dart';
+import 'package:sharemagazines/src/presentation/validators/passwordvalidator.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class Registration extends StatefulWidget {
@@ -112,7 +112,7 @@ class _RegistrationState extends State<Registration> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
                     child: TextFormField(
-                      controller: _firstnameController, cursorColor: Colors.blue,
+                      controller: _firstnameController,
                       // validator: (value) {
                       //   if (value == null || value.isEmpty) {
                       //     return 'This is the required field';
@@ -124,27 +124,15 @@ class _RegistrationState extends State<Registration> {
                         //Maybe we need it
                         // contentPadding: const EdgeInsets.symmetric(
                         //     vertical: 20.0, horizontal: 10.0),
-                        floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Vorname",
                         labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
-                        //, height: 3.8),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
-                      controller: _lastnameController, cursorColor: Colors.blue,
+                      controller: _lastnameController,
                       // validator: (value) {
                       //   if (value == null || value.isEmpty) {
                       //     return 'This is the required field';
@@ -153,19 +141,8 @@ class _RegistrationState extends State<Registration> {
                       // },
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Nachname",
                         labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -173,24 +150,11 @@ class _RegistrationState extends State<Registration> {
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
                       controller: _emailController,
-                      cursorColor: Colors.blue,
                       validator: (value) => validateEmail(value),
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Email",
                         labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
-                        //, height: 3.8),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -213,20 +177,10 @@ class _RegistrationState extends State<Registration> {
                                 _passwordVisible = !_passwordVisible;
                               });
                             }),
-                        floatingLabelStyle: TextStyle(color: Colors.blue),
                         labelText: "Passwort",
                         labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
                         //, height: 3.8),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
+
                       ),
                     ),
                   ),
@@ -234,7 +188,7 @@ class _RegistrationState extends State<Registration> {
                     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
                     child: TextFormField(
                       controller: _calenderController,
-                      cursorColor: Colors.blue,
+
                       readOnly: true,
                       //To not pop up the keyboard on tap
                       onTap: () => _selectDate(context),
@@ -246,20 +200,9 @@ class _RegistrationState extends State<Registration> {
                           icon: Icon(Icons.calendar_today_outlined, color: Colors.grey),
                           onPressed: () => _selectDate(context),
                         ),
-                        floatingLabelStyle: TextStyle(color: Colors.blue),
+
                         labelText: "Geburtsdatum",
                         labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
-                        //, height: 3.8),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 5), borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(1.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.blue, width: 1)),
                       ),
                     ),
                   ),
@@ -276,23 +219,15 @@ class _RegistrationState extends State<Registration> {
                   //
                   //
                   //Controller not yet defined for gender
-                  Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    alignment: Alignment.center,
-                    // margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(10)),
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    child: _buildChips(),
-                    // color: Colors.blue,
-                  ),
+                  GenderPickerWidget(),
+
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "By pressing the button I agree with Share Magazines Terms and Conditions and the Privacy policy",
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w500),
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w300),
                       ),
                     ),
                   ),
@@ -473,7 +408,6 @@ class _RegistrationState extends State<Registration> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-
         _calenderController = new TextEditingController(
           text: picked.toString().split(' ')[0],
         );
@@ -487,57 +421,46 @@ class _RegistrationState extends State<Registration> {
   //   return regExp.hasMatch(value);
   // }
 
-  Widget _buildChips() {
-    List<Widget> chips = [];
 
-    for (int i = 0; i < _options.length; i++) {
-      ChoiceChip choiceChip = ChoiceChip(
-        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+}
 
-        selected: _selectedIndex == i,
-        label: Container(
-            // width: MediaQuery.of(context).size.width * 0.19,
-            // height: 40,
-            alignment: Alignment.center,
+
+
+class GenderPickerWidget extends StatefulWidget {
+  @override
+  _GenderPickerWidgetState createState() => _GenderPickerWidgetState();
+}
+
+class _GenderPickerWidgetState extends State<GenderPickerWidget> {
+  final List<String> _options = ['Male', 'Female', 'Other']; // Define your options here
+  int _selectedIndex = 0; // Default to the first option
+
+  @override
+  Widget build(BuildContext context) {
+    return ToggleButtons(
+      borderColor: Colors.grey,
+      fillColor: Colors.blue,
+      borderWidth: 2,
+      selectedBorderColor: Colors.blue,
+      selectedColor: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+
+      children: <Widget>[
+        for (var option in _options)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              _options[i],
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300),
-            )),
-        // avatar: FlutterLogo(),
-
-        // elevation: 10,
-        pressElevation: 5,
-        // disabledColor: Colors.black,
-        // shadowColor: Colors.teal,
-        backgroundColor: Colors.transparent,
-        selectedColor: Colors.blue,
-        onSelected: (bool selected) {
-          setState(() {
-            if (selected) {
-              _selectedIndex = i;
-            }
-          });
-        },
-      );
-
-      chips.add(Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Container(
-              color: Colors.transparent,
-              child: Theme(
-                data: ThemeData(
-                  canvasColor: Colors.transparent,
-                ),
-                child: choiceChip,
-              ))));
-    }
-
-    return Row(
-      // This next line does the trick.
-      // scrollDirection: Axis.horizontal,
-      // physics: NeverScrollableScrollPhysics(),
-
-      children: chips,
+              option,
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w300),
+            ),
+          ),
+      ],
+      onPressed: (int index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      isSelected: List.generate(_options.length, (index) => index == _selectedIndex),
     );
   }
 }

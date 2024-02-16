@@ -189,7 +189,7 @@ class _ListMagazineCoverState extends State<ListMagazineCover> with SingleTicker
                         ),
                       ),
                     ),
-                    Align(
+                    widget.cover.response![i].dateOfPublication!=null? Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
@@ -200,7 +200,7 @@ class _ListMagazineCoverState extends State<ListMagazineCover> with SingleTicker
                               direction: Axis.vertical,
                               child: Text(
                                 // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.cover.response![i].dateOfPublication ?? "")),
+                                DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.cover.response![i].dateOfPublication!)),
                                 // " asd",
                                 // "Card ${i + 1}",
                                 textAlign: TextAlign.left,
@@ -215,7 +215,7 @@ class _ListMagazineCoverState extends State<ListMagazineCover> with SingleTicker
                           ),
                         ),
                       ),
-                    ),
+                    ):Container(),
                     // Positioned(
                     //   // top: -50,
                     //   bottom: -100,

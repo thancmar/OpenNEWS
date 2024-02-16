@@ -21,14 +21,14 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/splash/splash_bloc.dart';
-import 'package:sharemagazines_flutter/src/models/location_model.dart';
-import 'package:sharemagazines_flutter/src/models/magazineCategoryGetAllActive.dart';
-import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/location_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
+import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/blocs/splash/splash_bloc.dart';
+import 'package:sharemagazines/src/models/location_model.dart';
+import 'package:sharemagazines/src/models/magazineCategoryGetAllActive.dart';
+import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
+import 'package:sharemagazines/src/resources/hotspot_repository.dart';
+import 'package:sharemagazines/src/resources/location_repository.dart';
+import 'package:sharemagazines/src/resources/magazine_repository.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
 import '../../models/hotspots_model.dart';
@@ -345,6 +345,23 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     }
   }
 
+  Future<void> GetAllEbookAudiobooks(int locationID) async {
+    try {
+      print("GetAllEbookAudiobooks");
+      await magazineRepository.ebooksForLocationGetAllActive(id_hotspot: locationID.toString());} on Exception catch (e) {
+      // TODO
+      // emit(NavbarError(e.toString()));
+    } on TypeError catch (e) {
+      print('An Error Occurred $e');
+      emit(NavbarError(e.toString()));
+    } on SocketException catch (e) {
+      rethrow;
+    } catch (e) {
+      print('An Error Occurred $e');
+      throw Exception("Failed to login. Code ${e}");
+    }
+  }
+
   void checkLocationService() async {
     LocationPermission permission = await Geolocator.checkPermission();
     permission = await Geolocator.requestPermission();
@@ -402,10 +419,11 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     }
   }
 
-  NavbarBloc({required this.magazineRepository, required this.locationRepository, required this.hotspotRepository}) : super(LoadingNavbar(Data())) {
+  NavbarBloc({required this.magazineRepository, required this.locationRepository, required this.hotspotRepository})
+      : super(LoadingNavbar(LocationData())) {
     on<InitializeNavbar>((event, emit) async {
       try {
-        emit(LoadingNavbar(Data()));
+        emit(LoadingNavbar(LocationData()));
         // event.timer?.cancel();
         await EasyLoading.show(
           status: 'Scanning locations nearby...',
@@ -472,11 +490,16 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         //Have to change this(remove splashstate)
         if (SplashState.allNearbyLocations.length > 1) {
           await EasyLoading.dismiss();
-          emit(GoToLocationSelection(SplashState.allNearbyLocations, Data()));
+          emit(GoToLocationSelection(SplashState.allNearbyLocations, LocationData()));
         } else if (SplashState.allNearbyLocations.length == 1) {
           // SplashState.appbarlocation = SplashState.allNearbyLocations[0];
           // state.appbarlocation = SplashState.allNearbyLocations[0];
+          await EasyLoading.show(
+            status: 'Entering ${SplashState.allNearbyLocations[0].nameApp}',
+            maskType: EasyLoadingMaskType.black,
+          );
           await GetAllMagazinesCover(int.parse(SplashState.allNearbyLocations[0].idLocation!)).then((valueGetAllMagazinesCover) async => {
+                if (SplashState.allNearbyLocations[0].hasEbooksAudiobooks == "1") { GetAllEbookAudiobooks(int.parse(SplashState.allNearbyLocations[0].idLocation!))},
                 // add(Menu()),
                 // add(Home(event.currentPosition)),
                 // event.timer?.cancel(),
@@ -493,7 +516,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 // add(Home(event.currentPosition)),
                 // event.timer?.cancel(),
                 await EasyLoading.dismiss(),
-                emit(NavbarLoaded(Data())),
+                emit(NavbarLoaded(LocationData())),
                 // emit(GoToHome(currentLocation: appbarlocation!)),
                 print('EasyLoading dismiss 0 Location'),
               });
@@ -508,7 +531,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     on<BackFromLocationPermission>((event, emit) async {
       try {
         await EasyLoading.dismiss();
-        emit(NavbarLoaded(Data()));
+        emit(NavbarLoaded(LocationData()));
       } catch (error) {
         print("GetMapOffer error - $error");
         emit(NavbarError(error.toString()));
@@ -552,7 +575,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         //     // user manually enable it in the system settings.
         //     openAppSettings();
         //   }
-        emit(GoToLanguageSelection(languageOptions: event.languageOptions));
+        emit(GoToLanguageSelection(appbarlocation: event.currentLocation, languageOptions: event.languageOptions));
         // }
       } catch (error) {
         print("GetMapOffer error - $error");
@@ -566,6 +589,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           status: 'loading...',
           maskType: EasyLoadingMaskType.black,
         );
+
         emit(LoadingNavbar(event.currentLocation!));
         // if (NavbarState.appbarlocation.idLocation != event.location!.idLocation) {
         //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
@@ -573,8 +597,10 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         //     emit(NavbarLoaded()),
         //   });
         // } else {
+        // await Future.delayed(Duration(milliseconds: 700), () {});
+
         await EasyLoading.dismiss();
-        emit(NavbarLoaded(Data()));
+        emit(NavbarLoaded(event.currentLocation!));
         // }
       } on Exception catch (e) {
         await EasyLoading.dismiss();
@@ -659,8 +685,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
   Future<Uint8List> getCover(String idMagazinePublication, String? dateOfPublication, String pageNo, bool thumbNail, bool preloadneigbor) async {
     // print("getcover " +idMagazinePublication);
-    FileInfo? cacheFile = await DefaultCacheManager()
-          .getFileFromCache(idMagazinePublication + "_" + (dateOfPublication?? "puzzle") + "_" + pageNo + (thumbNail == true ? '_thumbnail' : ''));
+    FileInfo? cacheFile = await DefaultCacheManager().getFileFromCache(
+        idMagazinePublication + "_" + (dateOfPublication ?? "puzzle.dart") + "_" + pageNo + (thumbNail == true ? '_thumbnail' : ''));
     // if(preloadneigbor){
     //   if(pageNo == "0"){
     //     final FileInfo? cache1 = await DefaultCacheManager()
@@ -687,9 +713,9 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       }
       // print("getcover 2" +idMagazinePublication);
       // if(int.parse(pageNo) < )
-      if (preloadneigbor ) {
-        final FileInfo? cacheFile2 =
-            await DefaultCacheManager().getFileFromCache(idMagazinePublication + "_" + (dateOfPublication?? "puzzle") + "_" + "${int.parse(pageNo) + 1}");
+      if (preloadneigbor) {
+        final FileInfo? cacheFile2 = await DefaultCacheManager()
+            .getFileFromCache(idMagazinePublication + "_" + (dateOfPublication ?? "puzzle.dart") + "_" + "${int.parse(pageNo) + 1}");
         if (cacheFile2?.file.lengthSync() == null) {
           magazineRepository.GetPage(
             page: "${int.parse(pageNo) + 1}",
@@ -722,7 +748,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     // );
   }
 
-  Future<void> checkLocation(Data currentLocation) async {
+  Future<void> checkLocation(LocationData currentLocation) async {
     bool updateLocation = false;
     await locationRepository
         .checklocation(
@@ -752,9 +778,9 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 {
                   if (value!.data!.length == 0)
                     {
-                      currentLocation = Data(),
+                      currentLocation = LocationData(),
                       SplashState.allNearbyLocations = value.data!,
-                      add(InitializeNavbar(currentPosition: Data())),
+                      add(InitializeNavbar(currentPosition: LocationData())),
                     }
                   else if (value!.data!.length == 1)
                     {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/accountpage/accountPage_widgets.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/accountPage_widgets.dart';
 
 class AccountPage extends StatefulWidget {
   final PageController pageController;

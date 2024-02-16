@@ -17,9 +17,9 @@ import 'package:meta/meta.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/loading.dart';
-import 'package:sharemagazines_flutter/src/resources/auth_repository.dart';
-import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
+import 'package:sharemagazines/src/presentation/widgets/loading.dart';
+import 'package:sharemagazines/src/resources/auth_repository.dart';
+import 'package:sharemagazines/src/resources/hotspot_repository.dart';
 
 import '../../models/hotspots_model.dart';
 import '../../models/location_model.dart';

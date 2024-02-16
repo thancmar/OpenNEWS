@@ -1,8 +1,8 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
+import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
 
 
 

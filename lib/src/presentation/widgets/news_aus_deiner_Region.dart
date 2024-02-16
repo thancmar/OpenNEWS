@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
 import '../pages/reader/readerpage.dart';
 import 'marquee.dart';
@@ -64,7 +64,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
         ),
         SizedBox(
           // height: MediaQuery.of(context).size.height *0.55, // card height
-          height: 450, // card height
+          height:size.aspectRatio * 840, // card height
           // height: 450,
           // height: double.infinity,
           // width: 30,
@@ -72,7 +72,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
             itemCount: NavbarState.magazinePublishedGetTopLastByRange!.response!.length,
             // padEnds: true,
 
-            controller: PageController(viewportFraction: 0.807),
+            controller: PageController(viewportFraction: 0.6807),
             onPageChanged: (int index) => setState(() => index1 = index),
             itemBuilder: (_, i) {
               return Transform.scale(
@@ -124,16 +124,49 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                                     "_" +
                                     NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
                                     "_0",
-                                imageBuilder: (context, imageProvider) => Hero(
-                                      tag: "News_aus_deiner_Region_$i",
-                                      child: Container(
-                                        height: 400,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                imageBuilder: (context, imageProvider) => Container(
+                                  // decoration: BoxDecoration(
+                                  //   // border: Border.all(color: Colors.black, width: 2.0), // Outer border
+                                  //   borderRadius: BorderRadius.circular(5.0),
+                                  // ),
+                                  child: ClipRRect(
+
+                                    // This will clip any child widget going outside its bounds
+                                    borderRadius: BorderRadius.circular(5.0), // Same rounded corners as the outer border
+                                    child: Transform.translate(
+                                      offset: Offset(0,0),
+                                      // offset: Offset(widget.verticalScroll ? 0 : imageOffset, widget.verticalScroll ? imageOffset : 0),
+                                      child: Hero(
+                                        tag: "News_aus_deiner_Region_$i",
+                                        child: Container(
+                                          height: size.aspectRatio * 700,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                            // border: Border.all(color: Colors.black, width: 2.0), // Outer border
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit:
+                                              // widget.verticalScroll ? BoxFit.fill :
+                                              BoxFit.fill,
+
+                                            ),
+                                            // borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          ),
                                         ),
                                       ),
                                     ),
+                                  ),
+                                ),
+                                // imageBuilder: (context, imageProvider) => Hero(
+                                //       tag: "News_aus_deiner_Region_$i",
+                                //       child: Container(
+                                //         height: 400,
+                                //         decoration: BoxDecoration(
+                                //           image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                //           borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                //         ),
+                                //       ),
+                                //     ),
                                 // useOldImageOnUrlChange: true,
                                 // very important: keep both placeholder and errorWidget
                                 placeholder: (context, url) => Container(

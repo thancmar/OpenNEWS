@@ -7,7 +7,7 @@ Localization LocalizationFromJson(String str) =>
 class Localization {
   int? code;
   String? msg;
-  List<Data>? data = <Data>[];
+  List<LocationData>? data = <LocationData>[];
 
   Localization({this.code, this.msg, this.data});
 
@@ -36,13 +36,13 @@ class Localization {
     //   null;
     // }
     json['data'].forEach((v) {
-      data!.add(new Data.fromJson(v));
+      data!.add(new LocationData.fromJson(v));
     });
   }
 
 }
 
-class Data {
+class LocationData {
   String? idLocation;
   String? nameApp;
   String? device;
@@ -53,7 +53,7 @@ class Data {
 
 
 
-  Data({this.idLocation, this.nameApp, this.device, this.hasEbooksAudiobooks, this.token, this.applied_at, this.expiration});
+  LocationData({this.idLocation, this.nameApp, this.device, this.hasEbooksAudiobooks, this.token, this.applied_at, this.expiration});
 
   // Data.fromJson(Map<String, dynamic> json) {
   //   idLocation = json['id_location'];
@@ -68,7 +68,7 @@ class Data {
   //       device: json['device'],
   //       hasEbooksAudiobooks: json['has_ebooks_audiobooks'],
   //     );
-  Data.fromJson(Map<String, dynamic> json) {
+  LocationData.fromJson(Map<String, dynamic> json) {
     idLocation = json['id_location'] ?? '';
     nameApp = json['name_app'] ?? '';
     device = json['device'] ?? '';

@@ -11,7 +11,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
+import 'package:sharemagazines/src/resources/magazine_repository.dart';
 
 import '../../constants.dart';
 import '../../models/location_model.dart';
@@ -29,7 +29,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   late List<Uint8List> image = [];
 
   static late MagazinePublishedGetAllLastByHotspotId categoryCovers;
-  static late MagazinePublishedGetAllLastByHotspotId? selectedLanguageCovers;
+  static late MagazinePublishedGetAllLastByHotspotId selectedLanguageCovers;
   static late MagazinePublishedGetAllLastByHotspotId searchResultCovers;
 
   static late MagazinePublishedGetAllLastByHotspotId? frLanguageCovers;

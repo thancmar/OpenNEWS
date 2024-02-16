@@ -31,7 +31,7 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  void _onRefresh(Data currentLocation) async {
+  void _onRefresh(LocationData currentLocation) async {
     // monitor network fetch
     await BlocProvider.of<NavbarBloc>(context).checkLocation(currentLocation);
    _refreshController.refreshCompleted();

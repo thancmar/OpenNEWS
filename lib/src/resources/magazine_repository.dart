@@ -7,11 +7,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:sharemagazines_flutter/src/constants.dart';
-import 'package:sharemagazines_flutter/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
+import 'package:sharemagazines/src/constants.dart';
+import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:get_it/get_it.dart';
 
+import '../models/getebook.dart';
 import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
@@ -66,7 +67,7 @@ class MagazineRepository {
   Future<MagazinePublishedGetAllLastByHotspotId>
       magazinePublishedGetTopLastByRange(
           {required String? id_hotspot, required CookieJar cookieJar}) async {
-    print("magazinePublishedGetTopLastByRange $id_hotspot");
+
     final getIt = GetIt.instance;
     ApiClient dioClient = ApiClient(
         dioforImages: Dio(),
@@ -78,17 +79,14 @@ class MagazineRepository {
       'f': 'magazinePublishedGetTopLastByRange',
       'json': '{"id_hotspot": "$id_hotspot"}'
     };
-    print(data);
-    var queryString = Uri(queryParameters: data).query;
 
-    // var response = await getIt<ApiClient>().dio.post(
-    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
-    //       data: data,
-    //     );
+    // print(data);
+    var queryString = Uri(queryParameters: data).query;
     var response = await getIt<ApiClient>().diofordata.post(
           ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
           data: data,
         );
+
     if (response.statusCode == 200) {
       print("magazinePublishedGetTopLastByRange sucess");
       // print(response.data);
@@ -122,16 +120,7 @@ class MagazineRepository {
           ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
           data: data,
         );
-    // switch (response.statusCode) {
-    //   case 200:
-    //     // print(json.decode(response.data)['response']['code']);
-    //     // if (json.decode(response.data)['response']['code'] == 103) {
-    //     //   throw Exception("Failed to login with code 103");
-    //     // } else {
-    //     return MagazineCategoryGetAllActiveFromJson(response.data);
-    //   // }
-    //   default:
-    //     throw Exception(response.data);
+
     if (response.statusCode == 200) {
       print("magazineCategoryGetAllActive sucess");
       // for (int i = 0; i < MagazineCategoryGetAllActiveFromJson(response.data).response!.length; i++) {
@@ -145,6 +134,44 @@ class MagazineRepository {
       // print(response.data);
       // print(response.data);
       return MagazineCategoryGetAllActiveFromJson(response.data);
+    } else {
+      print("Failed magazineCategoryGetAllActive");
+      throw Exception("Failed magazineCategoryGetAllActive");
+    }
+  }
+
+  Future<EbooksForLocationGetAllActive> ebooksForLocationGetAllActive({required String? id_hotspot}) async {
+    final getIt = GetIt.instance;
+    Map<String, dynamic> data = {
+      'f': 'getAllActiveEbooksForLocation',
+      'json': '{"id_location": "$id_hotspot"}'
+    };
+
+    print(data);
+    var queryString = Uri(queryParameters: data).query;
+
+    // var response = await getIt<ApiClient>().dio.post(
+    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+    //       data: data,
+    //     );
+    var response = await getIt<ApiClient>().diofordata.post(
+      ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print("getAllActiveEbooksForLocation sucess ${response.data}");
+      // for (int i = 0; i < MagazineCategoryGetAllActiveFromJson(response.data).response!.length; i++) {
+      //   await DefaultCacheManager().putFile(
+      //       MagazineCategoryGetAllActiveFromJson(response.data).response![i].id! + "_" + MagazineCategoryGetAllActiveFromJson(response.data).response![i].name!,
+      //       Uint8List.fromList(
+      //         base64Decode(MagazineCategoryGetAllActiveFromJson(response.data).response![i].image!),
+      //       ),
+      //       fileExtension: "jpeg");
+      // }
+      // print(response.data);
+      // print(response.data);
+      return EbooksForLocationGetAllActiveFromJson(response.data);
     } else {
       print("Failed magazineCategoryGetAllActive");
       throw Exception("Failed magazineCategoryGetAllActive");
@@ -170,7 +197,7 @@ class MagazineRepository {
         ApiConstants.baseUrl + ApiConstants.getPageJPEG + '?' + queryString,
         options: Options(responseType: ResponseType.bytes));
     await DefaultCacheManager().putFile(
-        id_mag_pub + "_" + (date_of_publication??"puzzle") + "_" + page,
+        id_mag_pub + "_" + (date_of_publication??"puzzle.dart") + "_" + page,
         Uint8List.fromList(response.data),
         fileExtension: "jpeg",
         maxAge: Duration(days: 7));
@@ -264,7 +291,7 @@ class MagazineRepository {
           await DefaultCacheManager().putFile(
               id_mag_pub +
                   "_" +
-                  (date_of_publication ?? "puzzle") +
+                  (date_of_publication ?? "puzzle.dart") +
                   "_" +
                   page.toString() +
                   "_" +

@@ -5,52 +5,52 @@ abstract class AuthState extends Equatable {
   // static late User? user;
   static String? savedEmail;
   static String? savedPWD;
-  final  GetUserDetails userDetails ;
+  static  GetUserDetails? userDetails = GetUserDetails();
   static late GetUserDetails inCompleteUserDetails = GetUserDetails() ;
 
-  AuthState(this.userDetails);
+  AuthState();
 
   @override
-  List<Object> get props => [userDetails];
+  List<Object> get props => [];
 }
 
 // When the user presses the signin or signup button the state is changed to loading first and then to Authenticated.
 class LoadingAuth extends AuthState {
 
-  LoadingAuth( ) : super(GetUserDetails());
+  LoadingAuth( ) : super();
   // @override
   // List<Object?> get props => [userdetails];
 }
 
 class GoToLoginPage extends AuthState {
 
-  GoToLoginPage(GetUserDetails userdetails) : super(userdetails);
+  GoToLoginPage() : super();
   // @override
   // List<Object?> get props => [];
 }
 
 // When the user is authenticated the state is changed to Authenticated.
 class Authenticated extends AuthState {
-  Authenticated(GetUserDetails userdetails) : super(userdetails);
+  Authenticated() : super();
   // @override
   // List<Object?> get props => [userdetails];
 }
 
 class AuthenticatedWithGoogle extends AuthState {
-  AuthenticatedWithGoogle( ) : super(GetUserDetails());
+  AuthenticatedWithGoogle( ) : super();
   // @override
   // List<Object?> get props => [];
 }
 
 class IncompleteAuthenticated extends AuthState {
-  IncompleteAuthenticated( ) : super(GetUserDetails());
+  IncompleteAuthenticated( ) : super();
   // @override
   // List<Object?> get props => [];
 }
 
 // This is the initial state of the bloc. When the user is not authenticated the state is changed to Unauthenticated.
 class UnAuthenticated extends AuthState {
-  UnAuthenticated( ) : super(GetUserDetails());
+  UnAuthenticated( ) : super();
   // @override
   // List<Object?> get props => [];
 }
@@ -59,7 +59,7 @@ class UnAuthenticated extends AuthState {
 class AuthError extends AuthState {
   final String error;
 
-  AuthError(this.error):super(GetUserDetails());
+  AuthError(this.error):super();
   // @override
   // List<Object?> get props => [error];
 }

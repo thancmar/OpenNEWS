@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/qrpage/qrCodeInputField.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/qrpage/qrCodeInputField.dart';
 
 import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/navbar/navbar_bloc.dart';

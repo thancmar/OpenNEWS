@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/startpage.dart';
+import 'package:sharemagazines/src/presentation/pages/startpage.dart';
 //import 'package:sharemagazines_flutter/src/presentation/pages/map_page.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/loginwidget.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines_flutter/src/models/login_model.dart';
+import 'package:sharemagazines/src/presentation/widgets/loginwidget.dart';
+import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/models/login_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

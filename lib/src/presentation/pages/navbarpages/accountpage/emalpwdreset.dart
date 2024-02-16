@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'accountPage_widgets.dart';
@@ -31,16 +31,16 @@ class _EmailPwdResetState extends State<EmailPwdReset> {
   Widget build(BuildContext context) {
      _firstnameController =
     TextEditingController(
-      text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
-      // text: AuthState.userDetails?.response?.firstname
+      // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
+      text: AuthState.userDetails?.response?.firstname
     ); _lastnameController =
     TextEditingController(
-      text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.lastname
-      // text: AuthState.userDetails?.response?.firstname
+      // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.lastname
+      text: AuthState.userDetails?.response?.firstname
     ); _calenderController =
     TextEditingController(
-      text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.dateOfBirth
-      // text: AuthState.userDetails?.response?.firstname
+      // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.dateOfBirth
+      text: AuthState.userDetails?.response?.firstname
     );
     return Stack(
       children: [

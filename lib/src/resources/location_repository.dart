@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pdf_render/pdf_render.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines_flutter/src/models/location_model.dart';
+import 'package:sharemagazines/src/models/location_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../blocs/navbar/navbar_bloc.dart';

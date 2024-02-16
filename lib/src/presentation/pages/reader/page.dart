@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
 
 import '../../../blocs/navbar/navbar_bloc.dart';
 
@@ -54,40 +54,15 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
     // _controller.dispose();
     // pdfController.dispose();
     // _networklHasErrorNotifier.dispose();// forEach((element) {element.dispose();});
+    // widget.reader.transformationController[widget.pageNumber].dispose();
     _spinKitController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return InteractiveViewer(
-      clipBehavior: Clip.none,
-      alignPanAxis: true,
-      transformationController: widget.reader.transformationController,
-      minScale: 0.01,
-      maxScale: 3.5,
-// constrained: false,
-
-      // boundaryMargin: Orientation == Orientation.portrait
-      //     ? EdgeInsets.only(right: 150, bottom: 500)
-      //     : EdgeInsets.only(right: -MediaQuery.of(context).size.width * 0.3, left: -MediaQuery.of(context).size.width * 0.3),
-      // ,
-      // key: _flipKey,
-      // constrained: false,
-
-      // onInteractionUpdate: (ScaleUpdateDetails details) {
-      //   // get the scale from the ScaleUpdateDetails callback
-      //   setState(() {
-      //     pageScale = _controller.value.getMaxScaleOnAxis();
-      //   });
-      //   // print(pageScale);
-      //   // print the scale here
-      // },
-
-      child:
-      Hero(
-        tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
-
+    return Hero(
+      tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
       child: FutureBuilder<Uint8List?>(
           future: BlocProvider.of<NavbarBloc>(context).getCover(
               widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, widget.pageNumber.toString(), false, true),
@@ -121,11 +96,8 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                           decoration: BoxDecoration(
                             image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-
                           ),
                         ),
-
-
                     errorWidget: (context, url, error) {
                       return Padding(
                         padding: EdgeInsets.all(8.0),
@@ -138,13 +110,14 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                             // color: Colors.grey.withOpacity(0.1),
                           ),
-                          child:  !snapshot.hasData
-                              ?SpinKitFadingCircle(
-                            color: Colors.white,
-                            size: 50.0,
-                            controller: _spinKitController,
-                            // itemBuilder: (BuildContext context, int value) => {},
-                          ):Container(),
+                          child: !snapshot.hasData
+                              ? SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 50.0,
+                                  controller: _spinKitController,
+                                  // itemBuilder: (BuildContext context, int value) => {},
+                                )
+                              : Container(),
                         ),
                       );
                     }),
@@ -152,7 +125,6 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
 
                 if (snapshot.hasData)
                   CachedNetworkImage(
-
                       key: ValueKey(widget.reader.allImagekey[widget.pageNumber]),
                       filterQuality: FilterQuality.none,
                       // placeholderFadeInDuration: const Duration(milliseconds: 3000),
@@ -199,7 +171,6 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
               ],
             );
           }),
-      ),
     );
   }
 }

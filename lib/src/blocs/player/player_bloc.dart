@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
-import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
+import 'package:sharemagazines/src/models/hotspots_model.dart';
 import 'dart:async';
 
-import 'package:sharemagazines_flutter/src/resources/hotspot_repository.dart';
+import 'package:sharemagazines/src/resources/hotspot_repository.dart';
 
 part 'player_event.dart';
 part 'player_state.dart';

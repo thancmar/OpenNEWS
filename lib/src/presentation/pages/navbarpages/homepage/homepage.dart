@@ -10,11 +10,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 // import 'package:rive/rive.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/models/locationOffers_model.dart';
-import 'package:sharemagazines_flutter/src/models/location_model.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines_flutter/src/resources/magazine_repository.dart';
+import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/models/locationOffers_model.dart';
+import 'package:sharemagazines/src/models/location_model.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
+import 'package:sharemagazines/src/resources/magazine_repository.dart';
 import '../../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../../widgets/loading.dart';
 import '../../../widgets/marquee.dart';
@@ -23,31 +23,6 @@ import '../../../widgets/news_aus_deiner_Region.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../widgets/src/coversverticallist.dart';
 import '../map/offerpage.dart';
-
-// class HomePageState extends StatelessWidget {
-//   const HomePageState({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocProvider(create: (context) => ReaderBloc(), child: HomePage());
-//   }
-// }
-// class HomePageState extends StatelessWidget {
-//   final NavbarBloc navbarBloc;
-//   const HomePageState({Key? key, required this.navbarBloc}) : super(key: key);
-//
-//   // MapBloc _bloc = MapBloc(
-//   //   hotspotRepository: HotspotRepository(),
-//   // );
-//   @override
-//   Widget build(BuildContext context) {
-//     // Future<HotspotsGetAllActive>hp = RepositoryProvider.of<HotspotRepository>(context);
-//     return BlocProvider.value(
-//       value: navbarBloc,
-//       child: HomePage(),
-//     );
-//   }
-// }
 
 class HomePage extends StatefulWidget {
   // static  int index1 = 0;
@@ -59,17 +34,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
-  // static MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
-  //     response:
-  //     []
-  //         // NavbarState.magazinePublishedGetLastWithLimit!.response!.where((element) => element.idsMagazineCategory!.contains('20') == true).toList()
-  // );
-
-  // Timer? _timer;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   ScrollController _scrollController = ScrollController();
 
-  void _onRefresh(Data currentLocation) async {
+  void _onRefresh(LocationData currentLocation) async {
     // monitor network fetch
     await BlocProvider.of<NavbarBloc>(context).checkLocation(currentLocation);
     _refreshController.refreshCompleted();
@@ -96,21 +64,10 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   //   );
   //   return controller.stream;
   // })();
-  late Localization locationupdate;
-
-  // late Future futureRecords;
 
   @override
   void initState() {
     super.initState();
-    print("_HomePageState init");
-    // _refreshController.
-    // triggerAnimationLoop();
-    // items = MagazinePublishedGetAllLastByHotspotId(
-    //     response: NavbarState.magazinePublishedGetLastWithLimit!.response!
-    //         .where((element) => element.idsMagazineCategory!.contains('20') == true)
-    //         .toList());
-    // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
 
   @override
@@ -119,9 +76,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   void dispose() {
    _refreshController.dispose();
     super.dispose();
-    print("_HomePageState dispose");
-    // this._dispatchEvent(
-    //     context); // This will dispatch the navigateToHomeScreen event.
   }
 
   @override

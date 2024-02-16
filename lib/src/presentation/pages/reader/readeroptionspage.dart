@@ -4,11 +4,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
-import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines_flutter/src/blocs/reader/reader_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/reader/readeroptionspages.dart';
-import 'package:sharemagazines_flutter/src/presentation/widgets/marquee.dart';
+import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readeroptionspages.dart';
+import 'package:sharemagazines/src/presentation/widgets/marquee.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:sharemagazines_flutter/src/blocs/searchpage/search_bloc.dart';
-import 'package:sharemagazines_flutter/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/blocs/searchpage/search_bloc.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../widgets/marquee.dart';
