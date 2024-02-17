@@ -38,9 +38,19 @@ class PageFlipEffect2 extends CustomPainter {
     final shadowSigma = isRightSwipe
         ? Shadow.convertRadiusToSigma(8.0 + (32.0 * shadowXf))
         : Shadow.convertRadiusToSigma(8.0 + (32.0 * (1.0 - shadowXf)));
+
+
+    // Adjust calculations based on orientation
+    final isLandscape = size.width > size.height;
+    final adjustmentFactor = isLandscape ? (size.width * 0.01) : 0.0;
+
+    // Use adjustmentFactor to correct the right edge in landscape mode
+    final pageRectRightEdge = isRightSwipe ? size.width - adjustmentFactor : size.width;
+
+
     final pageRect = isRightSwipe
-        ? Rect.fromLTRB(w, 0.0, w * movX, h)
-        : Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
+        ? Rect.fromLTRB(w, 0.0, pageRectRightEdge , h)
+        : Rect.fromLTRB(0.0, 0.0, w-pageRectRightEdge , h);
     if (backgroundColor != null) {
       c.drawRect(pageRect, Paint()..color = backgroundColor!);
     }
@@ -62,7 +72,7 @@ class PageFlipEffect2 extends CustomPainter {
       final v = calcR * (baseValue + 1.1);
       final xv = isRightSwipe ? (xf * wHRatio) + movX : (xf * wHRatio) - movX;
       final sx = (xf * image.width);
-      final sr = Rect.fromLTRB(sx, 0.0, sx + 1.0, image.height.toDouble());
+      final sr = Rect.fromLTRB(sx, 0.0, sx + 1.0, image.width.toDouble());
       final yv = ((h * calcR * movX) * hWRatio) - hWCorrection;
       final ds = (yv * v);
       final dr = Rect.fromLTRB(xv * w, 0.0 - ds, xv * w + 1.1, h + ds);

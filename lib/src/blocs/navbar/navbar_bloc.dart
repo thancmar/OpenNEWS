@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'dart:typed_data';
@@ -31,6 +32,7 @@ import 'package:sharemagazines/src/resources/location_repository.dart';
 import 'package:sharemagazines/src/resources/magazine_repository.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
+import '../../models/getebook.dart';
 import '../../models/hotspots_model.dart';
 import '../../models/locationGetHeader_model.dart';
 import '../../models/locationOffers_model.dart';
@@ -348,7 +350,11 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   Future<void> GetAllEbookAudiobooks(int locationID) async {
     try {
       print("GetAllEbookAudiobooks");
-      await magazineRepository.ebooksForLocationGetAllActive(id_hotspot: locationID.toString());} on Exception catch (e) {
+      await magazineRepository.ebooksCategoryGetAllActive().then((value) async => {NavbarState.magazineCategoryGetAllActive = value});
+
+      print("GetAllMagazinesCover ${NavbarState.currentPosition?.latitude}");
+      await magazineRepository.ebooksForLocationGetAllActive(id_hotspot: locationID.toString()).then((value) => NavbarState.ebooks = value);
+    } on Exception catch (e) {
       // TODO
       // emit(NavbarError(e.toString()));
     } on TypeError catch (e) {
@@ -429,8 +435,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           status: 'Scanning locations nearby...',
           maskType: EasyLoadingMaskType.black,
         );
-        // Timer.periodic(Duration(seconds: 30), (Timer t) => checkLocationService());
-        // Timer.periodic(Duration(seconds: 60), (Timer t) => checkLocation());
+        Timer.periodic(Duration(seconds: 100), (Timer t) => checkLocationService());
+        Timer.periodic(Duration(seconds: 100), (Timer t) => checkLocation(state.appbarlocation));
 
         (await dioClient.secureStorage.read(key: "allmagazines").then((value) => {
               if (value != null) {NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetLastWithLimitFromJson(value)}
@@ -499,7 +505,8 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
             maskType: EasyLoadingMaskType.black,
           );
           await GetAllMagazinesCover(int.parse(SplashState.allNearbyLocations[0].idLocation!)).then((valueGetAllMagazinesCover) async => {
-                if (SplashState.allNearbyLocations[0].hasEbooksAudiobooks == "1") { GetAllEbookAudiobooks(int.parse(SplashState.allNearbyLocations[0].idLocation!))},
+                if (SplashState.allNearbyLocations[0].hasEbooksAudiobooks == "1")
+                  { GetAllEbookAudiobooks(int.parse(SplashState.allNearbyLocations[0].idLocation!))},
                 // add(Menu()),
                 // add(Home(event.currentPosition)),
                 // event.timer?.cancel(),
@@ -648,6 +655,17 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       try {
         String serializedBookmarks = jsonEncode(NavbarState.bookmarks.value.toJson());
         await dioClient.secureStorage.write(key: "bookmarks", value: serializedBookmarks);
+      } catch (error) {
+        print("error - $error");
+        emit(NavbarError(error.toString()));
+      }
+      ;
+    });
+
+    on<SelectCategory>((event, emit) async {
+      try {
+        NavbarState.categoryStatus.value = event.catStatus;
+        // emit(NavbarLoaded(event.currentLocation!));
       } catch (error) {
         print("error - $error");
         emit(NavbarError(error.toString()));

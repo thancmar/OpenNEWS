@@ -1,16 +1,24 @@
 part of 'navbar_bloc.dart';
 
-enum NavbarItems { Home, Menu, Map, Account }
+enum CategoryStatus {
+  presse,
+  ebooks,
+  hoerbuecher,
+}
 
 abstract class NavbarState extends Equatable {
   // late final NavbarItems navbarItem;
   // late final int index;
+  static ValueNotifier<CategoryStatus>  categoryStatus =ValueNotifier(CategoryStatus.presse);
+  // static CategoryStatus categoryStatus = CategoryStatus.presse;
   static MagazinePublishedGetAllLastByHotspotId magazinePublishedGetLastWithLimit = MagazinePublishedGetAllLastByHotspotId(response: []);
+  static EbooksForLocationGetAllActive ebooks = EbooksForLocationGetAllActive(response: []);
   static ValueNotifier<MagazinePublishedGetAllLastByHotspotId> bookmarks =ValueNotifier<MagazinePublishedGetAllLastByHotspotId>(MagazinePublishedGetAllLastByHotspotId(response: []));
 
   static MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetTopLastByRange = null;
 
   static late MagazineCategoryGetAllActive? magazineCategoryGetAllActive;
+  // static EbooksForLocationGetAllActive ebooks = EbooksForLocationGetAllActive(response: []);
   static late Position? currentPosition = null;
   static int counterDE = 0;
   static int counterEN = 0;
@@ -84,6 +92,17 @@ class GoToLanguageSelection extends NavbarState {
   @override
   List<Object> get props => [];
 }
+
+class ScrollSelection extends NavbarState {
+  final LocationData appbarlocation;
+  // final List<Locale> languageOptions;
+
+  ScrollSelection({required this.appbarlocation}) : super(appbarlocation);
+
+  @override
+  List<Object> get props => [];
+}
+
 
 class AskForLocationPermission extends NavbarState {
   // final List<Data>? locations_GoToLocationSelection;

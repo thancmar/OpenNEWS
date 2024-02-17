@@ -72,6 +72,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     print("_MapsState init");
 
     super.initState();
+    _focusNode.unfocus();
     _textController.addListener(() {
       if (mounted) {
         setState(() {});
@@ -200,7 +201,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                   },
                   child: ListTile(
                     title: GooglePlacesAutoCompleteTextFormField(
-                        autofocus: true,
+                        // autofocus: true,
                         enableInteractiveSelection: true,
                         enableIMEPersonalizedLearning: true,
                         maxLines: 1,

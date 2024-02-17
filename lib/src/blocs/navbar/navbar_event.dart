@@ -93,6 +93,14 @@ class LanguageSelected extends NavbarEvent {
   List<Object> get props => [];
 }
 
+class SelectCategory extends NavbarEvent {
+  // final Locale? language;
+  final CategoryStatus catStatus;
+  final LocationData currentLocation;
+  SelectCategory({ required this.currentLocation, required this.catStatus});
+  List<Object> get props => [];
+}
+
 class LocationRefresh extends NavbarEvent {
   LocationRefresh();
   List<Object> get props => [];

@@ -245,13 +245,13 @@ class _CustomCachedNetworkImageState extends State<CustomCachedNetworkImage>
             );
           } else {
             return Container(
-              // color: Colors.grey.withOpacity(0.1),
-              decoration: BoxDecoration(
-                // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                // color: Colors.grey.withOpacity(0.1),
-                // color: Colors.red,
-              ),
+              color: Colors.grey.withOpacity(0.1),
+              // decoration: BoxDecoration(
+              //   // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+              //   borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              //   // color: Colors.grey.withOpacity(0.1),
+              //   // color: Colors.red,
+              // ),
               child: SpinKitFadingCircle(
                 color: Colors.white,
                 size: 50.0,

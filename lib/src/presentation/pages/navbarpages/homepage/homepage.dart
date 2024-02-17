@@ -1,33 +1,21 @@
-import 'dart:async';
-import 'dart:math';
-import 'dart:typed_data';
-import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 // import 'package:rive/rive.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/models/locationOffers_model.dart';
 import 'package:sharemagazines/src/models/location_model.dart';
-import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines/src/resources/magazine_repository.dart';
 import '../../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import '../../../widgets/loading.dart';
-import '../../../widgets/marquee.dart';
-import '../../../widgets/navbar/body_clipper.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../widgets/src/coversverticallist.dart';
 import '../map/offerpage.dart';
 
 class HomePage extends StatefulWidget {
   // static  int index1 = 0;
   // final NavbarBloc navbarBloc;//= RefreshController(initialRefresh: false);
-   HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -74,7 +62,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   bool get wantKeepAlive => true;
 
   void dispose() {
-   _refreshController.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
@@ -86,97 +74,124 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     return BlocBuilder<NavbarBloc, NavbarState>(
       builder: (BuildContext context, state) {
         MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
-            response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+            response: NavbarState.magazinePublishedGetLastWithLimit.response!
                 .where((element) => element.idsMagazineCategory?.contains('20') == true)
                 .toList());
-        return state is NavbarLoaded? SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: SmartRefresher(
+        return state is NavbarLoaded
+            ? SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ValueListenableBuilder<CategoryStatus>(
+                          valueListenable: NavbarState.categoryStatus,
+                          builder: (context, value, child) {
+                            return SmartRefresher(
+                                enablePullDown: true,
+                                header: ClassicHeader(
+                                  // Customize your header's appearance here
+                                  refreshingIcon: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                    color: Colors.grey,
+                                  ),
+                                  completeIcon: Icon(Icons.done, color: Colors.grey),
+                                  idleIcon: Icon(Icons.arrow_downward, color: Colors.grey),
+                                  releaseIcon: Icon(Icons.refresh, color: Colors.grey),
 
-                  enablePullDown: true,
-                  header: ClassicHeader(
-                    // Customize your header's appearance here
-                    refreshingIcon: CircularProgressIndicator(strokeWidth: 2.0,color: Colors.grey,),
-                    completeIcon: Icon(Icons.done, color: Colors.grey),
-                    idleIcon: Icon(Icons.arrow_downward, color: Colors.grey),
-                    releaseIcon: Icon(Icons.refresh, color: Colors.grey),
+                                  idleText: 'Pull down to refresh',
+                                  refreshingText: 'Loading...',
+                                  completeText: 'Refresh Completed',
+                                  failedText: 'Refresh Failed',
+                                  textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey),
+                                  refreshStyle: RefreshStyle.Follow,
 
-                    idleText: 'Pull down to refresh',
-                    refreshingText: 'Loading...',
-                    completeText: 'Refresh Completed',
-                    failedText: 'Refresh Failed',
-                    textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey),
-                    refreshStyle: RefreshStyle.Follow,
+                                  // Add a BoxDecoration to give a grey background
+                                  // decoration: BoxDecoration(
+                                  //   color: Colors.grey[300], // Choose the shade of grey you want
+                                  // ),
+                                ),
+                                controller: _refreshController,
+                                // enableTwoLevel: ,
+                                onRefresh: () => _onRefresh(state.appbarlocation),
+                                child: CustomScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  // clipBehavior: Clip.hardEdge,
+                                  controller: _scrollController,
+                                  slivers: <Widget>[
+                                    // You can add a SliverAppBar here if needed
+                                    // SliverAppBar(
+                                    //   title: Text('Sliver App Bar'),
+                                    //   floating: true,
+                                    //   pinned: true,
+                                    //   expandedHeight: 200.0,
+                                    //   flexibleSpace: FlexibleSpaceBar(
+                                    //     background: Image.network("URL_TO_YOUR_IMAGE", fit: BoxFit.cover),
+                                    //   ),
+                                    // ),
+                                    // if (NavbarState.magazinePublishedGetTopLastByRange != null &&
+                                    //     NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
+                                    // Align(
+                                    //   alignment: Alignment.centerLeft,
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
+                                    //     child: Text(
+                                    //       ("regionalTitle").tr(),
+                                    //       style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                    //       textAlign: TextAlign.right,
+                                    //     ),
+                                    //   ),
+                                    // ),
 
-                    // Add a BoxDecoration to give a grey background
-                    // decoration: BoxDecoration(
-                    //   color: Colors.grey[300], // Choose the shade of grey you want
-                    // ),
-                  ),
-                  controller:  _refreshController,
-                  // enableTwoLevel: ,
-                  onRefresh: () => _onRefresh(state.appbarlocation),
+                                    if (value == CategoryStatus.presse &&
+                                        NavbarState.magazinePublishedGetTopLastByRange != null &&
+                                        NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
+                                      SliverToBoxAdapter(child: News_aus_deiner_Region(state: state, categoryName: 'Top Titel')),
+                                    if (value == CategoryStatus.presse)
+                                      VerticalListCover(
+                                          items: items,
+                                          scrollController: _scrollController,
+                                          height_News_aus_deiner_Region: MediaQuery.of(context).size.aspectRatio * 1000),
 
-                  child: CustomScrollView(
-                    scrollDirection: Axis.vertical,
-                    // clipBehavior: Clip.hardEdge,
-                    controller: _scrollController,
-                    slivers: <Widget>[
-                      // You can add a SliverAppBar here if needed
-                      // SliverAppBar(
-                      //   title: Text('Sliver App Bar'),
-                      //   floating: true,
-                      //   pinned: true,
-                      //   expandedHeight: 200.0,
-                      //   flexibleSpace: FlexibleSpaceBar(
-                      //     background: Image.network("URL_TO_YOUR_IMAGE", fit: BoxFit.cover),
-                      //   ),
-                      // ),
-                      // if (NavbarState.magazinePublishedGetTopLastByRange != null &&
-                      //     NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
-                      // Align(
-                      //   alignment: Alignment.centerLeft,
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
-                      //     child: Text(
-                      //       ("regionalTitle").tr(),
-                      //       style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                      //       textAlign: TextAlign.right,
-                      //     ),
-                      //   ),
-                      // ),
+                                    if (value == CategoryStatus.ebooks)
+                                      SliverToBoxAdapter(
+                                          child: Column(
+                                        children: [
+                                          Align(
+                                              alignment: Alignment.center,
+                                              child: Container(
+                                                height: size.height * 0.9,
+                                                child: ListView.builder(
+                                                  itemCount: NavbarState.ebooks.response!.length,
+                                                  itemBuilder: (_, int index) => ListTile(
+                                                    // leading: NavbarState.ebooks.response[index].leading,
+                                                    title: Text(
+                                                      NavbarState.ebooks.response![index].title!,
+                                                      style: Theme.of(context).textTheme.titleMedium,
+                                                    ),
+                                                    // onTap: () => _pushPage(context, pages[index]),
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      )),
 
-                      if (NavbarState.magazinePublishedGetTopLastByRange != null &&
-                          NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
-                        SliverToBoxAdapter(child: News_aus_deiner_Region(state: state, categoryName: 'Top Titel')),
-                      VerticalListCover(
-                          items: items,
-                          scrollController: _scrollController,
-                          height_News_aus_deiner_Region: MediaQuery.of(context).size.aspectRatio * 1000),
-                      SliverToBoxAdapter(
-                        child: Container(
-                          height: size.height * 0.2, // Adjust the height as needed
-                          color: Colors.transparent, // Set any color if needed
-                        ),
-                      ),
-                    ],
-                  ),
+                                    SliverToBoxAdapter(
+                                      child: Container(
+                                        height: size.height * 0.2, // Adjust the height as needed
+                                        color: Colors.transparent, // Set any color if needed
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                          }),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ):Container();
-        // }
-        return Container();
+              )
+            : Container();
       },
     );
   }
 }
-
-
-
 
 class LocationOffersWidget extends StatelessWidget {
   const LocationOffersWidget({
@@ -222,7 +237,7 @@ class LocationOffersWidget extends StatelessWidget {
                             label: Text(
                               snapshot.data!.locationOffer![i].shm2Offer![0].title!,
                               // 'Speisekarte',
-                              style:  Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             // <-- Text
                             backgroundColor: Colors.grey.withOpacity(0.1),

@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/customCover.dart';
 
 import '../pages/reader/readerpage.dart';
 import 'marquee.dart';
@@ -48,6 +49,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
     return Column(
       children: [
@@ -79,119 +81,111 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                   scale: i == index1 ? 1 : 0.85,
                   alignment: Alignment.bottomCenter,
 
-                  // alignment: AlignmentGeometry(),
-                  // child: Card(
-                  //   shadowColor: Colors.black,
-                  //   elevation: 6,
-                  //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                  //   child: Center(
-                  //     child: Text(
-                  //       // state.magazinePublishedGetLastWithLimit.response!
-                  //       "Card ${i + 1}",
-                  //       style: TextStyle(fontSize: 32),
-                  //     ),
-                  //   ),
-                  // ),
-                  child: ColumnSuper(
-                    innerDistance: 10, //-60 for circular card
-                    // outerDistance: -50,
-                    children: [
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () => {
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (context) => StartReader(
-                                magazine: NavbarState.magazinePublishedGetTopLastByRange!.response![i],
+                  child: Card(
+                    color: Colors.transparent,
+                    // clipBehavior: Clip.hardEdge,
+                    // borderOnForeground: true,
+                    margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    elevation: 0,
+                    child: Stack(
+                      // clipBehavior: Clip.none,
+                      // alignment: Alignment.center,
+                      // clipBehavior: Clip.antiAlias,
+                      children: [
+                        // CustomCachedNetworkImage(
+                        //   mag: NavbarState.magazinePublishedGetTopLastByRange!.response![i],
+                        //   reader: false,
+                        //   thumbnail: true,
+                        //   // covers: widget.cover,
+                        //   heroTag:'News_aus_deiner_Region_$i',
+                        //   pageNo: 0,
+                        //   spinKitController: _spinKitController,
+                        //   height_News_aus_deiner_Region: 0,
+                        //   // scrollController: ,
+                        //   // imageOffset: imageOffset,
+                        //   verticalScroll: false,
+                        //   // widget: widget, widget: widget, widget: widget, widget: widget, widget: widget, widget: widget
+                        // ),
+                  ColumnSuper(
+                      innerDistance: 10, //-60 for circular card
+                      // outerDistance: -50,
+                      children: [
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () => {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => StartReader(
+                                  magazine: NavbarState.magazinePublishedGetTopLastByRange!.response![i],
 
-                                heroTag: 'News_aus_deiner_Region_$i',
+                                  heroTag: 'News_aus_deiner_Region_$i',
 
-                                // noofpages: 5,
+                                  // noofpages: 5,
+                                ),
                               ),
-                            ),
-                          )
-                        },
-                        child: Stack(
-                          // clipBehavior: Clip.antiAlias,
-                          children: [
-                            // CustomCachedNetworkImage(
-                            //   networklHasErrorNotifier: _networklHasErrorNotifier, index: i, covers: NavbarState.magazinePublishedGetTopLastByRange!,
-                            //   // widget: widget, widget: widget, widget: widget, widget: widget, widget: widget, widget: widget
-                            // ),
-                            CachedNetworkImage(
+                            )
+                          },
+                          child: Stack(
+                            // clipBehavior: Clip.antiAlias,
+                            children: [
+                              // CustomCachedNetworkImage(
+                              //   networklHasErrorNotifier: _networklHasErrorNotifier, index: i, covers: NavbarState.magazinePublishedGetTopLastByRange!,
+                              //   // widget: widget, widget: widget, widget: widget, widget: widget, widget: widget, widget: widget
+                              // ),
+                              CachedNetworkImage(
                                 // key: ValueKey(_networklHasErrorNotifier[i].value),
-                                imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication! +
-                                    "_" +
-                                    NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
-                                    "_0",
-                                imageBuilder: (context, imageProvider) => Container(
-                                  // decoration: BoxDecoration(
-                                  //   // border: Border.all(color: Colors.black, width: 2.0), // Outer border
-                                  //   borderRadius: BorderRadius.circular(5.0),
-                                  // ),
-                                  child: ClipRRect(
+                                  imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication! +
+                                      "_" +
+                                      NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
+                                      "_0",
+                                  imageBuilder: (context, imageProvider) => Container(
+                                    // decoration: BoxDecoration(
+                                    //   // border: Border.all(color: Colors.black, width: 2.0), // Outer border
+                                    //   borderRadius: BorderRadius.circular(5.0),
+                                    // ),
+                                    child: ClipRRect(
 
-                                    // This will clip any child widget going outside its bounds
-                                    borderRadius: BorderRadius.circular(5.0), // Same rounded corners as the outer border
-                                    child: Transform.translate(
-                                      offset: Offset(0,0),
-                                      // offset: Offset(widget.verticalScroll ? 0 : imageOffset, widget.verticalScroll ? imageOffset : 0),
-                                      child: Hero(
-                                        tag: "News_aus_deiner_Region_$i",
-                                        child: Container(
-                                          height: size.aspectRatio * 700,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5.0),
-                                            // border: Border.all(color: Colors.black, width: 2.0), // Outer border
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit:
-                                              // widget.verticalScroll ? BoxFit.fill :
-                                              BoxFit.fill,
+                                      // This will clip any child widget going outside its bounds
+                                      borderRadius: BorderRadius.circular(5.0), // Same rounded corners as the outer border
+                                      child: Transform.translate(
+                                        offset: Offset(0,0),
+                                        // offset: Offset(widget.verticalScroll ? 0 : imageOffset, widget.verticalScroll ? imageOffset : 0),
+                                        child: Hero(
+                                          tag: "News_aus_deiner_Region_$i",
+                                          child: Container(
+                                            height: size.aspectRatio * 700,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5.0),
+                                              // border: Border.all(color: Colors.black, width: 2.0), // Outer border
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit:
+                                                // widget.verticalScroll ? BoxFit.fill :
+                                                BoxFit.fill,
 
+                                              ),
+                                              // borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                             ),
-                                            // borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                // imageBuilder: (context, imageProvider) => Hero(
-                                //       tag: "News_aus_deiner_Region_$i",
-                                //       child: Container(
-                                //         height: 400,
-                                //         decoration: BoxDecoration(
-                                //           image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                //           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                //         ),
-                                //       ),
-                                //     ),
-                                // useOldImageOnUrlChange: true,
-                                // very important: keep both placeholder and errorWidget
-                                placeholder: (context, url) => Container(
-                                      // color: Colors.grey.withOpacity(0.1),
-                                      height:400,
-                                      decoration: BoxDecoration(
-                                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                        color: Colors.grey.withOpacity(0.1),
-                                      ),
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 50.0,
-                                        controller: _spinKitController,
-                                      ),
-                                    ),
-                                errorWidget: (context, url, error) {
-                                  // Future.delayed(const Duration(milliseconds: 500), () {
-                                  //   setState(() {
-                                  //     _networklHasErrorNotifier[i].value++;
-                                  //   });
-                                  // });
-                                  return Container(
-                                    height: 400,
+                                  // imageBuilder: (context, imageProvider) => Hero(
+                                  //       tag: "News_aus_deiner_Region_$i",
+                                  //       child: Container(
+                                  //         height: 400,
+                                  //         decoration: BoxDecoration(
+                                  //           image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                  //           borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  // useOldImageOnUrlChange: true,
+                                  // very important: keep both placeholder and errorWidget
+                                  placeholder: (context, url) => Container(
                                     // color: Colors.grey.withOpacity(0.1),
+                                    height:400,
                                     decoration: BoxDecoration(
                                       // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
                                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -202,76 +196,100 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                                       size: 50.0,
                                       controller: _spinKitController,
                                     ),
-                                  );
-                                }),
+                                  ),
+                                  errorWidget: (context, url, error) {
+                                    // Future.delayed(const Duration(milliseconds: 500), () {
+                                    //   setState(() {
+                                    //     _networklHasErrorNotifier[i].value++;
+                                    //   });
+                                    // });
+                                    return Container(
+                                      height: 400,
+                                      // color: Colors.grey.withOpacity(0.1),
+                                      decoration: BoxDecoration(
+                                        // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                        color: Colors.grey.withOpacity(0.1),
+                                      ),
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 50.0,
+                                        controller: _spinKitController,
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            i == index1
+                                ? Align(
+                              alignment: Alignment.center,
+                              child: AbsorbPointer(
+                                absorbing: true,
+                                child: MarqueeWidget(
+                                  animationDuration: Duration(milliseconds: 10),
+                                  direction: Axis.vertical,
+                                  child: MarqueeWidget(
+                                    animationDuration: Duration(milliseconds: 6000),
+                                    direction: Axis.horizontal,
+                                    // crossAxisAlignment: CrossAxisAlignment.start,
+                                    child: Text(
+                                      // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                      NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!
+                                      // + "NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!"
+                                      ,
+                                      // " asd",
+                                      // "Card ${i + 1}",
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        backgroundColor: Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                                : Container(),
+                            i == index1
+                                ? Align(
+                              alignment: Alignment.center,
+                              child: AbsorbPointer(
+                                absorbing: true,
+                                child: MarqueeWidget(
+                                  // animationDuration: Duration(milliseconds: 0),
+                                  direction: Axis.vertical,
+                                  child: MarqueeWidget(
+                                    direction: Axis.horizontal,
+                                    child: Text(
+                                      // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                      DateFormat("d. MMMM yyyy").format(
+                                          DateTime.parse(NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication!)),
+                                      // " asd",
+                                      // "Card ${i + 1}",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        backgroundColor: Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                                : Container(),
                           ],
                         ),
-                      ),
-                      Column(
-                        children: [
-                          i == index1
-                              ? Align(
-                                  alignment: Alignment.center,
-                                  child: AbsorbPointer(
-                                    absorbing: true,
-                                    child: MarqueeWidget(
-                                      animationDuration: Duration(milliseconds: 10),
-                                      direction: Axis.vertical,
-                                      child: MarqueeWidget(
-                                        animationDuration: Duration(milliseconds: 6000),
-                                        direction: Axis.horizontal,
-                                        // crossAxisAlignment: CrossAxisAlignment.start,
-                                        child: Text(
-                                          // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                          NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!
-                                          // + "NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!"
-                                          ,
-                                          // " asd",
-                                          // "Card ${i + 1}",
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            backgroundColor: Colors.transparent,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          i == index1
-                              ? Align(
-                                  alignment: Alignment.center,
-                                  child: AbsorbPointer(
-                                    absorbing: true,
-                                    child: MarqueeWidget(
-                                      // animationDuration: Duration(milliseconds: 0),
-                                      direction: Axis.vertical,
-                                      child: MarqueeWidget(
-                                        direction: Axis.horizontal,
-                                        child: Text(
-                                          // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                          DateFormat("d. MMMM yyyy").format(
-                                              DateTime.parse(NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication!)),
-                                          // " asd",
-                                          // "Card ${i + 1}",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey,
-                                            backgroundColor: Colors.transparent,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    ],
+                      ],
+
+
+                  )],
+                    ),
                   ));
             },
           ),
@@ -283,7 +301,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
             child: Text(
               // ("Top-title").tr(),
               widget.categoryName,
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              style:  Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.right,
             ),
           ),

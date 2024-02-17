@@ -78,7 +78,7 @@ class PageFlipBuilder2State extends State<PageFlipBuilder2> {
                           child: CustomPaint(
                       painter: PageFlipEffect2(
                         amount: widget.amount,
-                        image: imageData[widget.pageIndex]!,
+                        image: imageData[widget.pageIndex+1]!,
                         backgroundColor: widget.backgroundColor,
                         isRightSwipe: widget.isRightSwipe,
                         imageSize: imageSize
@@ -101,8 +101,8 @@ class PageFlipBuilder2State extends State<PageFlipBuilder2> {
             Size imageSize = Size(1600, 2035);
             return Positioned(
               child: SizedBox(
-                width: imageSize.width,
-                height: imageSize.height,
+                // width: imageSize.width,
+                // height: imageSize.height*05,
                 child: ColoredBox(
                   color: widget.backgroundColor ?? Colors.blue,
                   child: RepaintBoundary(

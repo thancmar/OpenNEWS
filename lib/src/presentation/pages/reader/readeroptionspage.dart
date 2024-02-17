@@ -81,15 +81,16 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             setState(() {
               // widget.reader.currentPage == i;
               print("gotopage 0");
-              widget.reader.controllerflip.currentState!. goToPage(0);
+              widget.reader.transformationController.value = Matrix4.identity();
+              widget.reader.controllerflip.currentState!.goToPage(0).whenComplete(() => widget.bloc.add(CloseReader()));
 // widget.reader.transformationController.value== Matrix4.identity();
               // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
             }),},
             // widget.reader.transformationController.value = Matrix4.identity(), //To resize the loading icon
 
             // widget.bloc.add(CloseReader()),
-            if(widget.reader.controllerflip.currentState!.pageNumber==0){
-            widget.bloc.add(CloseReader())}
+            // if(widget.reader.controllerflip.currentState!.pageNumber==0){
+            // widget.bloc.add(CloseReader())}
             // BlocProvider.of<ReaderBloc>(context).add(CloseReader()),
             // BlocProvider
             // Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close()

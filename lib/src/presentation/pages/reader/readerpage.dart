@@ -40,7 +40,8 @@ class Reader extends StatefulWidget {
   final model.ResponseMagazine magazine;
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
-
+  // late Orientation currentOrientation ;
+  ValueNotifier<Orientation> currentOrientation = ValueNotifier<Orientation>(Orientation.portrait);
   List<Uint8List?> allImageData = [];
   List<GlobalKey> allImagekey = [];
   TransformationController transformationController = TransformationController(Matrix4.identity());
@@ -114,6 +115,7 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
               child: Image.asset("assets/images/background/Background.png", fit: BoxFit.cover)),
         ),
         OrientationBuilder(builder: (context, orientation) {
+          widget.currentOrientation.value =orientation;
           return GestureDetector(
               onTap: () => {
                     print("ds"),

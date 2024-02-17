@@ -1,13 +1,19 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
+
+// import 'package:direct_select_flutter/direct_select_container.dart';
+// import 'package:direct_select_flutter/direct_select_item.dart';
+// import 'package:direct_select_flutter/direct_select_list.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/models/locationOffers_model.dart';
@@ -53,6 +59,50 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   int currentLocationOfferIndex = 0;
   bool isLoadingOnTop = false;
   final fabKey = GlobalKey();
+  ValueNotifier<bool> isDialOpen = ValueNotifier(true);
+
+  var items = [
+    FloatingActionButtonLocation.startFloat,
+    FloatingActionButtonLocation.startDocked,
+    FloatingActionButtonLocation.centerFloat,
+    FloatingActionButtonLocation.endFloat,
+    FloatingActionButtonLocation.endDocked,
+    FloatingActionButtonLocation.startTop,
+    FloatingActionButtonLocation.centerTop,
+    FloatingActionButtonLocation.endTop,
+  ];
+
+  // final dsl = DirectSelectList<String>(
+  //     values: _cities,
+  //     defaultItemIndex: 3,
+  //     itemBuilder: (String value) => getDropDownMenuItem(value),
+  //     focusedItemDecoration: _getDslDecoration(),
+  //     onItemSelectedListener: (item, index, context) {
+  //       Scaffold.of(context).showSnackBar(SnackBar(content: Text(item)));
+  //     });
+  // DirectSelectItem<String> getDropDownMenuItem(String value) {
+  //   return DirectSelectItem<String>(
+  //       itemHeight: 56,
+  //       value: value,
+  //       itemBuilder: (context, value) {
+  //         return Text(value);
+  //       });
+  // }
+  //
+  // _getDslDecoration() {
+  //   // if (mounted) {
+  //   //   setState(() {
+  //   //     isLoadingOnTop = true;
+  //   //   });
+  //   // }
+  //
+  //   return BoxDecoration(
+  //     border: BorderDirectional(
+  //       bottom: BorderSide(width: 10, color: Colors.red), // Change color to red
+  //       top: BorderSide(width: 1, color: Colors.black12),
+  //     ),
+  //   );
+  // }
 
   @override
   bool get wantKeepAlive => true;
@@ -108,6 +158,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    RenderBox? renderBoxNavbar;
+    // if (_keyheight.currentContext != null) renderBoxNavbar = _keyheight.currentContext?.findRenderObject() as RenderBox;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -286,9 +338,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                     valueListenable: showLocationPage,
                                                                     builder: (BuildContext context, bool counterValue, Widget? child) {
                                                                       return InkWell(
-                                                                        onTap: () => {
-                                                                          Backdrop.of(context).fling()
-                                                                        },
+                                                                        onTap: () => {Backdrop.of(context).fling()},
                                                                         child: Icon(
                                                                           counterValue ? Icons.arrow_upward : Icons.arrow_downward,
                                                                           color: Colors.white,
@@ -337,7 +387,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                               : Container();
                                                     }),
                                               ),
-
                                               Container(
                                                 color: Colors.transparent,
                                                 child: ValueListenableBuilder(
@@ -361,7 +410,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                           padding: EdgeInsets.only(left: 10),
                                                           child: Hero(
                                                             tag: "search button",
-
                                                             child: Icon(
                                                               !counterValue ? Icons.search_sharp : Icons.close,
                                                               color: Colors.white,
@@ -454,7 +502,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                           a == _masForUsing.length - 1 ? size.height * 0.001 : size.height * 0.01),
                                                       child: Text(
                                                         _masForUsing[a],
-                                                        style:Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                                             fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
                                                             fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
                                                             color: Colors.white),
@@ -960,7 +1008,108 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         Container(),
                     ],
                   ),
-
+                  // floatingActionButton: SpeedDial(
+                  //   // animatedIcon: AnimatedIcons.menu_close,
+                  //   // animatedIconTheme: IconThemeData(size: 22.0),
+                  //   // / This is ignored if animatedIcon is non null
+                  //   // child: Text("open"),
+                  //   // activeChild: Text("close"),
+                  //   icon: Icons.add,
+                  //   activeIcon: Icons.close,
+                  //   spacing: 3,
+                  //   backgroundColor: Colors.redAccent,
+                  //   // overlayOpacity: 0.9,
+                  //
+                  //   // mini: mini,
+                    // openCloseDial: isDialOpen,
+                  //   childPadding: const EdgeInsets.all(5),
+                  //   spaceBetweenChildren: 4,
+                  //    // childMargin: EdgeInsets.all(25) ,
+                  //
+                  //   dialRoot: (ctx, open, toggleChildren) {
+                  //     return ElevatedButton(
+                  //       onPressed: toggleChildren,
+                  //
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: Colors.grey.withOpacity(0.2),
+                  //         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                  //         // alignment: Alignment(100, 500)
+                  //
+                  //       ),
+                  //       child: Text(
+                  //         "Category",
+                  //         style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+                  //       ),
+                  //     );
+                  //   },
+                  //
+                  //   // buttonSize: Size(40, 20),
+                  //   // it's the SpeedDial size which defaults to 56 itself
+                  //   // iconTheme: IconThemeData(size: 22),
+                  //   label: Text("Open"),
+                  //   // The label of the main button.
+                  //   /// The active label of the main button, Defaults to label if not specified.
+                  //   activeLabel: Text("Close"),
+                  //
+                  //   /// Transition Builder between label and activeLabel, defaults to FadeTransition.
+                  //   // labelTransitionBuilder: (widget, animation) => ScaleTransition(scale: animation,child: widget),
+                  //   /// The below button size defaults to 56 itself, its the SpeedDial childrens size
+                  //   // childrenButtonSize: childrenButtonSize,
+                  //   // visible: visible,
+                  //   direction: SpeedDialDirection.up,
+                  //   // switchLabelPosition: switchLabelPosition,
+                  //
+                  //   /// If true user is forced to close dial manually
+                  //   // closeManually: closeManually,
+                  //
+                  //   /// If false, backgroundOverlay will not be rendered.
+                  //   // renderOverlay: renderOverlay,
+                  //   overlayColor: Colors.grey.withOpacity(0.01),
+                  //   // overlayOpacity: 0.5,
+                  //   onOpen: () => debugPrint('OPENING DIAL'),
+                  //   onClose: () => debugPrint('DIAL CLOSED'),
+                  //   // useRotationAnimation: useRAnimation,
+                  //   tooltip: 'Open Speed Dial',
+                  //   heroTag: 'speed-dial-hero-tag',
+                  //   // foregroundColor: Colors.transparent,
+                  //   // // backgroundColor: Colors.white,
+                  //   // activeForegroundColor: Colors.transparent,
+                  //   // activeBackgroundColor: Colors.transparent,
+                  //   elevation: 8.0,
+                  //   animationCurve: Curves.elasticInOut,
+                  //   isOpenOnStart: false,
+                  //   shape: StadiumBorder(),
+                  //   // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  //   children: [
+                  //     SpeedDialChild(
+                  //       child: const Icon(Icons.accessibility),
+                  //       backgroundColor: Colors.blue,
+                  //       foregroundColor: Colors.white,
+                  //       label: 'First',
+                  //       labelBackgroundColor: Colors.grey.withOpacity(0.5),
+                  //       // onTap: () => setState(() => rmicons = !rmicons),
+                  //       onLongPress: () => debugPrint('FIRST CHILD LONG PRESS'),
+                  //     ),
+                  //     SpeedDialChild(
+                  //       child: Icon(Icons.brush),
+                  //       backgroundColor: Colors.blue,
+                  //       foregroundColor: Colors.white,
+                  //       label: 'Second',
+                  //       labelBackgroundColor: Colors.grey.withOpacity(0.5),
+                  //       onTap: () => debugPrint('SECOND CHILD'),
+                  //     ),
+                  //     SpeedDialChild(
+                  //       child: Icon(Icons.margin),
+                  //       backgroundColor: Colors.blue,
+                  //       foregroundColor: Colors.white,
+                  //       label: 'Show Snackbar',
+                  //       labelBackgroundColor: Colors.grey.withOpacity(0.5),
+                  //       visible: true,
+                  //       onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("Third Child Pressed")))),
+                  //       onLongPress: () => debugPrint('THIRD CHILD LONG PRESS'),
+                  //     ),
+                  //   ],
+                  // ),
                   // floatingActionButton: ValueListenableBuilder(
                   //     valueListenable: showLocationPage,
                   //     builder: (BuildContext context, bool counterValue, Widget? child) {
@@ -999,18 +1148,154 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   //       );
                   //     }),
                   //
-                  // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                  // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
                   backLayer: Stack(
                     children: [
                       ClipPath(
                         clipper: BodyClipper(index: currentIndex, context: context, navbarkey: _keyheight, fabkey: fabKey),
                         clipBehavior: Clip.hardEdge,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          // itemCount: _pages.length,
-                          physics: NeverScrollableScrollPhysics(),
-                          // physics: AlwaysScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => _pages[index],
+                        child: Stack(
+                          children: [
+                            PageView.builder(
+                              controller: _pageController,
+                              // itemCount: _pages.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              // physics: AlwaysScrollableScrollPhysics(),
+                              itemBuilder: (context, index) => _pages[index],
+                            ),
+                            currentIndex==0 || currentIndex==1?Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, size.height * 0.1),
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(28.0),
+                                  child: SpeedDial(
+                                    // animatedIcon: AnimatedIcons.menu_close,
+                                    // animatedIconTheme: IconThemeData(size: 22.0),
+                                    // / This is ignored if animatedIcon is non null
+                                    // child: Text("open"),
+                                    // activeChild: Text("close"),
+                                    icon: Icons.add,
+                                    activeIcon: Icons.close,
+                                    spacing: 3,
+
+                                    // backgroundColor: Colors.redAccent,
+                                    // overlayOpacity: 0.9,
+
+                                    // mini: mini,
+                                    // openCloseDial: false,
+                                    childPadding: const EdgeInsets.all(5),
+                                    spaceBetweenChildren: 4,
+                                    // childMargin: EdgeInsets.all(25) ,
+
+                                    dialRoot: (ctx, open, toggleChildren) {
+                                      return ElevatedButton(
+                                        onPressed: toggleChildren,
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue, //.withOpacity(0.693),
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                                          // alignment: Alignment(100, 500)
+                                        ),
+                                        child: Icon(
+                                          open ?  Icons.close_fullscreen:Icons.open_with,
+                                          color: Colors.white,
+                                        ),
+                                        // child: Text(
+                                        //   "Category",
+                                        //   style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+                                        // ),
+                                      );
+                                    },
+                                    iconTheme: IconThemeData(
+                                      size: 50,
+                                    ),
+                                    buttonSize: Size(40, 40),
+                                    // it's the SpeedDial size which defaults to 56 itself
+                                    // iconTheme: IconThemeData(size: 22),
+                                    label: Text("Open"),
+                                    // The label of the main button.
+                                    /// The active label of the main button, Defaults to label if not specified.
+                                    activeLabel: Text("Close"),
+
+                                    /// Transition Builder between label and activeLabel, defaults to FadeTransition.
+                                    // labelTransitionBuilder: (widget, animation) => ScaleTransition(scale: animation,child: widget),
+                                    /// The below button size defaults to 56 itself, its the SpeedDial childrens size
+                                    // childrenButtonSize: childrenButtonSize,
+                                    // visible: visible,
+                                    direction: SpeedDialDirection.up,
+                                    // switchLabelPosition: switchLabelPosition,
+
+                                    /// If true user is forced to close dial manually
+                                    // closeManually: closeManually,
+
+                                    /// If false, backgroundOverlay will not be rendered.
+                                    // renderOverlay: renderOverlay,
+                                    overlayOpacity: 0.35,
+                                    overlayColor: Colors.black,
+                                    // overlayOpacity: 0.5,
+                                    // onOpen: () => debugPrint('OPENING DIAL'),
+                                    // onClose: () => debugPrint('DIAL CLOSED'),
+                                    // useRotationAnimation: useRAnimation,
+                                    tooltip: 'Open Speed Dial',
+                                    heroTag: 'speed-dial-hero-tag',
+                                    foregroundColor: Colors.blue,
+                                    backgroundColor: Colors.green,
+                                    activeForegroundColor: Colors.redAccent,
+                                    activeBackgroundColor: Colors.pink,
+                                    elevation: 8.0,
+                                    animationCurve: Curves.elasticInOut,
+                                    isOpenOnStart: false,
+                                    shape: StadiumBorder(),
+                                    // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    children: [
+                                      SpeedDialChild(
+                                        child: Icon(Icons.newspaper),
+                                        backgroundColor: Colors.blue,
+                                        foregroundColor: Colors.white,
+                                        label: 'Presse',
+                                        labelStyle: Theme.of(context).textTheme.titleMedium,
+                                        labelBackgroundColor: Colors.black.withOpacity(0.5),
+                                        shape: StadiumBorder(),
+                                        onTap: () => BlocProvider.of<NavbarBloc>(context)
+                                            .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.presse)),
+                                        onLongPress: () => debugPrint('FIRST CHILD LONG PRESS'),
+                                      ),
+                                      SpeedDialChild(
+                                        child: Icon(Icons.book_online_outlined),
+                                        backgroundColor: Colors.blue,
+                                        foregroundColor: Colors.white,
+                                        label: 'E-Books',
+                                        labelStyle: Theme.of(context).textTheme.titleMedium,
+                                        labelBackgroundColor: Colors.black.withOpacity(0.5),
+                                        shape: StadiumBorder(),
+                                        onTap: () => {
+                                          BlocProvider.of<NavbarBloc>(context)
+                                              .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.ebooks))
+                                        },
+                                      ),
+                                      SpeedDialChild(
+                                        child: Icon(Icons.podcasts),
+                                        backgroundColor: Colors.blue,
+                                        foregroundColor: Colors.white,
+                                        label: 'Hörbücher',
+                                        labelStyle: Theme.of(context).textTheme.titleMedium,
+                                        labelBackgroundColor: Colors.black.withOpacity(0.5),
+                                        shape: StadiumBorder(),
+                                        visible: true,
+                                        onTap: () => {
+                                          BlocProvider.of<NavbarBloc>(context)
+                                              .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.hoerbuecher))
+                                        },
+                                        onLongPress: () => debugPrint('THIRD CHILD LONG PRESS'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ):Container()
+
+                          ],
                         ),
                       ),
                       // currentIndex != 4
@@ -1034,6 +1319,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                   selectedIndex: currentIndex,
                                 ),
                               ))),
+                      // DirectSelectContainer(child: Container(color: Colors.grey,),),
+                      // Container(color: Colors.grey,height: 100,width: 100,)
                     ],
                   ),
                 ),
@@ -1175,10 +1462,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 ),
                               ],
                               cancelButton: CupertinoActionSheetAction(
-                                child: Text(
-                                  'Cancel',
-                                  style:Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.redAccent)
-                                ),
+                                child: Text('Cancel', style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.redAccent)),
                                 // isDefaultAction: true,
                                 onPressed: () {
                                   if (showLocationPage.value == false) backdropState!.currentState!.fling();
@@ -1197,11 +1481,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 child: CupertinoActionSheet(
                                     title: Text(
                                       ('selectLanguage').tr(),
-                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith( color: Colors.black),
+                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.black),
                                     ),
                                     message: Text(
                                       ('selectOne').tr(),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith( color: Colors.black),
+                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.black),
                                     ),
                                     actions: <Widget>[
                                       ...List.generate(
@@ -1212,14 +1496,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                             child: Text(
                                               state.languageOptions![index].languageCode!,
                                               // "$index",
-                                              style: Theme.of(context).textTheme.headlineSmall!.copyWith( color: Colors.black),
+                                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.black),
                                             ),
                                             onPressed: () async {
                                               // To show the "Location page(front layer of backdropscaffold)"
                                               // if (showLocationPage.value == false) backdropState!.currentState!.fling();
                                               // Future.delayed(Duration(milliseconds: 500), () {});
-
-
 
                                               // setState(() {
                                               BlocProvider.of<NavbarBloc>(context).add(

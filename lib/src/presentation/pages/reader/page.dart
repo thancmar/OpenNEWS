@@ -61,6 +61,7 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    print(widget.reader.heroTag);
     return Hero(
       tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
       child: FutureBuilder<Uint8List?>(
@@ -71,7 +72,9 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
               // print(widget.pageNumber);
               widget.reader.allImageData[widget.pageNumber] = snapshot.data!;
             }
-            return Stack(
+            return ValueListenableBuilder<Orientation>(
+              valueListenable: widget.reader.currentOrientation,
+              builder: (BuildContext context, Orientation orientation, Widget? child) { return Stack(
               children: [
                 // (!snapshot.hasData)?
                 // Container(
@@ -90,14 +93,14 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                     // fadeOutDuration: Duration(milliseconds: 4),
                     // fadeInDuration:  Duration(seconds: 4),
                     imageBuilder: (context, imageProvider) => Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: MediaQuery.of(context).size.width,
-                          // color: Colors.red,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                        ),
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      // color: Colors.red,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                    ),
                     errorWidget: (context, url, error) {
                       return Padding(
                         padding: EdgeInsets.all(8.0),
@@ -112,11 +115,11 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                           ),
                           child: !snapshot.hasData
                               ? SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 50.0,
-                                  controller: _spinKitController,
-                                  // itemBuilder: (BuildContext context, int value) => {},
-                                )
+                            color: Colors.white,
+                            size: 50.0,
+                            controller: _spinKitController,
+                            // itemBuilder: (BuildContext context, int value) => {},
+                          )
                               : Container(),
                         ),
                       );
@@ -141,7 +144,7 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                           width: MediaQuery.of(context).size.width,
                           // color: Colors.red,
                           decoration: BoxDecoration(
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.fitWidth),
+                            image: DecorationImage(image: imageProvider, fit:orientation ==Orientation.portrait ? BoxFit.fitWidth:BoxFit.fitHeight),
                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                           ),
                         );
@@ -169,6 +172,8 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
                       })
                 // : Container(),
               ],
+            );},
+
             );
           }),
     );

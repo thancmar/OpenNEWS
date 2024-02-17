@@ -15,10 +15,10 @@ class ReaderOptionsPages extends StatefulWidget {
   final ReaderBloc bloc;
   final Reader reader;
   ValueNotifier<bool> isOnPageTurning;
+
   // ValueNotifier<double> currentPage;
 
-  ReaderOptionsPages({Key? key, required this.isOnPageTurning, required this.bloc, required this.reader})
-      : super(key: key);
+  ReaderOptionsPages({Key? key, required this.isOnPageTurning, required this.bloc, required this.reader}) : super(key: key);
 
   @override
   State<ReaderOptionsPages> createState() => _ReaderOptionsPagesState();
@@ -68,8 +68,8 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
     return OrientationBuilder(builder: (context, orientation) {
       // controller = PageController(viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.4 : 0.15);
       controller = PageController(
-          viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15,
-          // initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1
+        viewportFraction: MediaQuery.of(context).orientation == Orientation.portrait ? 0.45 : 0.15,
+        // initialPage: widget.reader.controllerflip.currentState!.pageNumber.round() - 1
       );
 
       return SizedBox(
@@ -127,17 +127,11 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                     return Stack(children: [
                       GestureDetector(
                         onTap: () => {
-                          // if (mounted)
-                          //   {
-                              // widget.reader.transformationController.value== Matrix4.identity(),
-                              // widget.bloc.add(DownloadPage(magazine: widget.reader.magazine, pageNo: i)),
-                              setState(() {
-                                // widget.reader.currentPage == i;
-                                widget.reader.controllerflip.currentState!. goToPage(i);
-// widget.reader.transformationController.value== Matrix4.identity();
-                                // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                              })
-                            // }
+                          setState(() {
+                            // widget.reader.currentPage == i;
+                            widget.reader.transformationController.value = Matrix4.identity();
+                            widget.reader.controllerflip.currentState!.goToPage(i);
+                          })
                         },
                         // child: CustomCachedNetworkImage(mag:widget.reader.magazine,
                         //     reader:true,
@@ -146,8 +140,8 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                         //     // covers:  widget.reader,
                         //     heroTag: "page$i", spinKitController: _spinKitController),
                         child: FutureBuilder<Uint8List?>(
-                            future: BlocProvider.of<NavbarBloc>(context).getCover(widget.reader.magazine.idMagazinePublication!,
-                                widget.reader.magazine.dateOfPublication!,i.toString(), true,false),
+                            future: BlocProvider.of<NavbarBloc>(context).getCover(
+                                widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, i.toString(), true, false),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 return CachedNetworkImage(
@@ -168,13 +162,13 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                             alignment: Alignment.center,
                                             child: Container(
                                               padding:
-                                              // i == widget.reader.pageController.page
-                                              i == widget.reader.controllerflip.currentState!.pageNumber
-                                                  ? EdgeInsets.fromLTRB(10, 10, 10, 10)
-                                                  : EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                                  // i == widget.reader.pageController.page
+                                                  i == widget.reader.controllerflip.currentState!.pageNumber
+                                                      ? EdgeInsets.fromLTRB(10, 10, 10, 10)
+                                                      : EdgeInsets.fromLTRB(5, 0, 5, 0),
                                               // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                               // decoration: i == pageNo
-                                              decoration: i ==widget.reader.controllerflip.currentState!.pageNumber
+                                              decoration: i == widget.reader.controllerflip.currentState!.pageNumber
                                                   ? BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), color: Colors.blue)
                                                   : BoxDecoration(),
                                               // decoration: BoxDecoration(color: Colors.green, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
@@ -211,8 +205,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                                   // width: constraints.maxWidth * 0.10,
 
                                                   padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
-                                                  child: Text((i + 1).toString(),
-                                                      textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                                                  child: Text((i + 1).toString(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                                                 ),
                                               );
                                             }),
@@ -259,8 +252,7 @@ class _ReaderOptionsPagesState extends State<ReaderOptionsPages>
                                           ),
                                         ),
                                       );
-                                    }
-                                    );
+                                    });
                               }
                               return Container(
                                 // color: Colors.grey.withOpacity(0.1),

@@ -114,12 +114,15 @@ class PageFlipBuilderState extends State<PageFlipBuilder> with SingleTickerProvi
       builder: (context, value, child) {
 
         if (imageData[widget.pageIndex] != null ) {
+          final bool isLandscape = (widget.child.reader.currentOrientation.value==Orientation.landscape);
           return CustomPaint(
             painter: PageFlipEffect(
               amount: widget.amount,
               image: imageData[widget.pageIndex]!,
               backgroundColor: widget.backgroundColor,
               isRightSwipe: widget.isRightSwipe,
+              reader: widget.child.reader,
+              isLanscape:isLandscape,
             ),
             size: Size.infinite,
           );

@@ -14,7 +14,7 @@ import '../../../../pages/reader/readeroptionspage.dart';
 import '../../../../pages/reader/readerpage.dart';
 import '../../../routes/toreaderoption.dart';
 import 'builders/builder.dart';
-import 'image_sizer.dart';
+// import 'image_sizer.dart';
 
 class PageFlipWidget2 extends StatefulWidget {
   const PageFlipWidget2(
@@ -103,63 +103,9 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
     // if (pageNumber2.value < pagesdata.length && pagesdata[pageNumber2.value] == null) {
     // Fetch data if it's not already present
     print("current index ${currentPageIndex.value}");
-    // pagesdata[currentPageIndex.value] = await BlocProvider.of<NavbarBloc>(context).getCover(
-    //     widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, pageNumber2.value.toString(), false, true);
 
-    Widget temp = _showImage(
-        await BlocProvider.of<NavbarBloc>(context).getCover(
-            widget.reader.magazine.idMagazinePublication!, widget.reader.magazine.dateOfPublication!, currentPageIndex.value.toString(), false, true),
-        currentPageIndex.value);
-    setState(() {
-      pages[currentPageIndex.value] = temp;
-    });
-    // }
   }
 
-  // Widget _showImage(Uint8List imageData, int index){
-  //   return RepaintBoundary(
-  //     key: repaintBoundaryKeys[index],
-  //     child: Image.memory(imageData),
-  //   );
-  // }
-  // Widget _showImage(Uint8List imageData, int index){
-  //   // Use a GlobalKey to get the RenderBox and its size
-  //   GlobalKey imageKey = GlobalKey();
-  //
-  //   // Use a post-frame callback to get the size after the layout is done
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     if (imageKey.currentContext != null) {
-  //       RenderBox box = imageKey.currentContext!.findRenderObject() as RenderBox;
-  //       Size imageSize = box.size; // This is the size of the image
-  //       imageSizes.value = Map.from(imageSizes.value)..[index] = imageSize;
-  //
-  //       // Now you have the size, you can pass it to where it's needed
-  //       // For example, store it in a map or state that the PageFlipEffect2 can access
-  //       // imageSize[index] = box.size;
-  //     }
-  //   });
-  //
-  //   return RepaintBoundary(
-  //     key: repaintBoundaryKeys[index],
-  //     child: Image.memory(imageData, key: imageKey),
-  //   );
-  // }
-  Widget _showImage(Uint8List imageData, int index) {
-    return SizedBox(
-      child: Container(
-        // color: Colors.deepPurpleAccent,
-        child: ImageSizer(
-          imageData: imageData,
-          index: index,
-          bKey: repaintBoundaryKeys[index],
-          // onSizeDetermined: (Size size) {
-          //   // Use the size here as needed
-          //   imageSize[index] = size; // Store the size in a map or pass it to the custom painter
-          // },
-        ),
-      ),
-    );
-  }
 
   void _setUp({bool isRefresh = false}) {
     _controllers.clear();
@@ -424,11 +370,11 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
         // onHorizontalDragUpdate: widget.reader.pageScrollEnabled==true? (details){_turnPage(details, dimens);}:null,
         // onHorizontalDragEnd: widget.reader.pageScrollEnabled==true?  _isForward = null:null,
         onHorizontalDragCancel: _isForward = null,
-        onHorizontalDragUpdate: widget.reader.pageScrollEnabled == true ? (details) => _turnPage(details, dimens) : null,
-        onHorizontalDragEnd: widget.reader.pageScrollEnabled == true ? (details) => _onDragFinish() : null,
+        onHorizontalDragUpdate: (details) => _turnPage(details, dimens),
+        onHorizontalDragEnd:  (details) => _onDragFinish() ,
 
         child: Stack(
-          // fit: StackFit.expand,
+          // fit: StackFit.loose,
           alignment: Alignment.center,
           children: <Widget>[
             if (widget.lastPage != null) ...[

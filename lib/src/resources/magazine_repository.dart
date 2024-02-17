@@ -140,6 +140,40 @@ class MagazineRepository {
     }
   }
 
+  Future<MagazineCategoryGetAllActive> ebooksCategoryGetAllActive() async {
+    final getIt = GetIt.instance;
+    Map<String, dynamic> data = {'f': 'magazineCategoryGetAllActive'};
+    print(data);
+    var queryString = Uri(queryParameters: data).query;
+
+    // var response = await getIt<ApiClient>().dio.post(
+    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+    //       data: data,
+    //     );
+    var response = await getIt<ApiClient>().diofordata.post(
+      ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print("magazineCategoryGetAllActive sucess");
+      // for (int i = 0; i < MagazineCategoryGetAllActiveFromJson(response.data).response!.length; i++) {
+      //   await DefaultCacheManager().putFile(
+      //       MagazineCategoryGetAllActiveFromJson(response.data).response![i].id! + "_" + MagazineCategoryGetAllActiveFromJson(response.data).response![i].name!,
+      //       Uint8List.fromList(
+      //         base64Decode(MagazineCategoryGetAllActiveFromJson(response.data).response![i].image!),
+      //       ),
+      //       fileExtension: "jpeg");
+      // }
+      // print(response.data);
+      // print(response.data);
+      return MagazineCategoryGetAllActiveFromJson(response.data);
+    } else {
+      print("Failed magazineCategoryGetAllActive");
+      throw Exception("Failed magazineCategoryGetAllActive");
+    }
+  }
+
   Future<EbooksForLocationGetAllActive> ebooksForLocationGetAllActive({required String? id_hotspot}) async {
     final getIt = GetIt.instance;
     Map<String, dynamic> data = {
