@@ -86,9 +86,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       // NavbarState navbarState = BlocProvider.of<NavbarBloc>(event.context).state;
       // searchResultCovers =MagazinePublishedGetAllLastByHotspotId(response:null);
       searchResultCovers = MagazinePublishedGetAllLastByHotspotId(
-          response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+          response: NavbarState.magazinePublishedGetLastWithLimit!.response()!
               .where((element) =>
-                  element.name!
+                  element.title!
                       .toLowerCase()
                       .contains(event.searchText.toLowerCase().toString()) ==
                   true)
@@ -99,7 +99,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<OpenLanguageResults>((event, emit) async {
       if (event.languageText != "all") {
         selectedLanguageCovers = MagazinePublishedGetAllLastByHotspotId(
-            response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+            response: NavbarState.magazinePublishedGetLastWithLimit!.response()!
                 .where((element) =>
                     element.magazineLanguage?.contains(event.languageText) ==
                     true)
@@ -113,7 +113,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       // categoryCovers;
       categoryCovers =MagazinePublishedGetAllLastByHotspotId(response: []);
       categoryCovers =  MagazinePublishedGetAllLastByHotspotId(
-          response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+          response: NavbarState.magazinePublishedGetLastWithLimit!.response()!
               .where((element) =>
                   element.idsMagazineCategory?.contains(event.categoryID) ==
                   true)

@@ -1,13 +1,22 @@
 import 'dart:convert';
 
+import 'magazinePublishedGetAllLastByHotspotId_model.dart';
+
 
 EbooksForLocationGetAllActive EbooksForLocationGetAllActiveFromJson(String str) =>
     EbooksForLocationGetAllActive.fromJson(json.decode(str));
 
-class EbooksForLocationGetAllActive {
-  List<Response>? response;
+class EbooksForLocationGetAllActive extends BaseResponse {
+  List<ResponseEbook>? _response;
 
-  EbooksForLocationGetAllActive({required this.response});
+
+  EbooksForLocationGetAllActive({List<ResponseEbook>? response})
+      : _response = response;
+
+  @override
+  List<ResponseEbook>? response() {
+    return _response;
+  }
 
   EbooksForLocationGetAllActive.fromJson(Map<String, dynamic> json) {
     // if (json['response'] != null) {
@@ -20,9 +29,9 @@ class EbooksForLocationGetAllActive {
       // response = (json['response'] as List)
       //     .map((v) => Response.fromJson(v as Map<String, dynamic>))
       //     .toList();
-      response = <Response>[];
+      _response = <ResponseEbook>[];
       json['response'].forEach((v) {
-        response!.add(Response.fromJson(v));
+        _response!.add(ResponseEbook.fromJson(v));
       });
     } else {
       null;
@@ -40,14 +49,14 @@ class EbooksForLocationGetAllActive {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
 
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    if (this._response != null) {
+      data['response'] = this._response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Response {
+class ResponseEbook {
   String? id;
   String? title;
   String? description;
@@ -59,7 +68,7 @@ class Response {
   String? dateOfPublication;
   String? pageMax;
 
-  Response(
+  ResponseEbook(
       {this.id,
         this.title,
         this.description,
@@ -71,7 +80,7 @@ class Response {
         this.dateOfPublication,
         this.pageMax});
 
-  Response.fromJson(Map<String, dynamic> json) {
+  ResponseEbook.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     description = json['description'];

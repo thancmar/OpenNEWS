@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage/searchpage.dart';
 
-import '../../../widgets/backdrop/backdrop.dart';
+import '../../../../widgets/backdrop/backdrop.dart';
 
 class SearchCloseButton extends StatefulWidget {
   final BuildContext context;

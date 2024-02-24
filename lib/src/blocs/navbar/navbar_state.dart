@@ -26,9 +26,8 @@ abstract class NavbarState extends Equatable {
   static int counterES = 0;
   static late HotspotsGetAllActive hotspotList;
   static late List<Place> allMapMarkers = <Place>[];
-
   static late List<Future<Uint8List>>? languageResultsALL = List.empty(growable: true);
-
+ // static
 
   static late Future<LocationGetHeader>? locationheader = null;
   static  Future<LocationOffers>? locationoffers = null;
@@ -67,6 +66,7 @@ class LoadingNavbar extends NavbarState {
 class NavbarLoaded extends NavbarState {
   // final List<String> data;
   // final Data data;
+
 
   NavbarLoaded(LocationData appbarlocation) : super(appbarlocation);
 

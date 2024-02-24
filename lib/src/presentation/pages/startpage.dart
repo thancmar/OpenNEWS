@@ -14,6 +14,7 @@ import '../../models/location_model.dart';
 import '../validators/emailvalidator.dart';
 import '../widgets/marquee.dart';
 
+
 class StartPage extends StatefulWidget {
   final String title;
 
@@ -40,6 +41,18 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
     _emailController = TextEditingController(text: AuthState.savedEmail);
   }
 
+  bool isTablet(BuildContext context) {
+    // Get the device's physical screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Arbitrary cutoff for device width that differentiates between phones and tablets
+    // This can be adjusted based on your needs or specific device metrics
+    const double deviceWidthCutoff = 600;
+
+    return screenSize.width > deviceWidthCutoff;
+  }
+
+
   @override
   void didUpdateWidget(StartPage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -52,6 +65,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool tablet = isTablet(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
@@ -74,14 +88,16 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                   : Positioned(
                       top: 0,
                       left: 0,
+
                       child: ClipPath(
                         clipper: InnerClipper(
                           height: constraints.constrainHeight() / 2,
-                          width: constraints.constrainWidth(),
+                          width: constraints.constrainWidth()/(tablet?2:1),
                           borderRadius: 20,
                           borderWidth: 0.10,
                           // Match with BoxDecoration borderWidth
                           padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
+                          tablet: tablet
                           // padding: EdgeInsets.fromLTRB(size.width * 0.045, size.height * 0.01, size.width * 0.045, size.height * 0.001),
                         ),
                         child: Container(
@@ -146,21 +162,23 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                     // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
                     // text: AuthState.userDetails?.response?.firstname
                     );
-                var globalpadding = EdgeInsets.fromLTRB(size.width * 0.05, size.height * 0.005, size.width * 0.05, size.height * 0.005);
-                var textpadding = EdgeInsets.fromLTRB(0, size.height * 0.020, 0, size.height * 0.005);
+                var globalpadding = tablet?EdgeInsets.fromLTRB(size.width * 0.025, size.height * 0.025,size.width * 0.025, size.height * 0.025):EdgeInsets.fromLTRB(size.width * 0.05, size.height * 0.005, size.width * 0.05, size.height * 0.005);
+                var textpadding = tablet?EdgeInsets.fromLTRB(size.width * 0.01, size.height * 0.02,size.width * 0.01, 0):EdgeInsets.fromLTRB(0, size.height * 0.020, 0, size.height * 0.005);
                 var textpaddingsmall = EdgeInsets.fromLTRB(0, size.height * 0.0000, 0, size.height * 0.00);
                 var buttonpadding = EdgeInsets.fromLTRB(0, size.height * 0.015, 0, size.height * 0.003);
                 var inputfieldpadding = EdgeInsets.fromLTRB(0, size.height * 0.005, 0, size.height * 0.005);
                 return Material(
                   elevation: 0,
                   color: Colors.transparent,
+
                   child: Stack(
                     clipBehavior: Clip.hardEdge,
+                    alignment: Alignment.center,
                     children: [
                       Positioned(
                         top: (MediaQuery.of(context).viewInsets.bottom > 0.0 && state is GoToLoginPage) ? 50 : constraints.constrainHeight() / 2,
                         height: constraints.constrainHeight() / 2,
-                        width: constraints.constrainWidth(),
+                        width: constraints.constrainWidth()/(tablet?2:1),
                         child: Container(
                           margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 45.0),
                           decoration: BoxDecoration(
@@ -171,8 +189,10 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                             key: _widgetKey,
                             child: state is GoToLoginPage
                                 ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment:MainAxisAlignment.center,
+
                                     children: <Widget>[
                                       Padding(
                                         // flex: 3,
@@ -183,6 +203,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             mainAxisSize: MainAxisSize.max,
+
                                             children: <Widget>[
                                               Padding(
                                                 padding: textpadding,
@@ -321,6 +342,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                                     Padding(
                                         // flex: 3,
                                         padding: globalpadding,
+                                        // padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                                         child: Form(
                                           key: _formKey,
                                           child: Column(

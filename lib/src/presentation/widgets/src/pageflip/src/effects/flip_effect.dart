@@ -13,7 +13,6 @@ class PageFlipEffect extends CustomPainter {
     this.backgroundColor,
     this.radius = 0.18,
     required this.isRightSwipe,
-    required this.reader,
     required this.isLanscape
   }) : super(repaint: amount);
 
@@ -22,7 +21,6 @@ class PageFlipEffect extends CustomPainter {
   final Color? backgroundColor;
   final double radius;
   final bool isRightSwipe;
-  final Reader reader;
   final bool isLanscape;
 
   @override

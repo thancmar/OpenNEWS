@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../blocs/searchpage/search_bloc.dart';
+import '../../../../../blocs/searchpage/search_bloc.dart';
 
 class SearchResult extends StatefulWidget {
   final int index;

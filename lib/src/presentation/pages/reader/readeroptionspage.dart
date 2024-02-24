@@ -7,14 +7,14 @@ import 'package:http/http.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
-import 'package:sharemagazines/src/presentation/pages/reader/readeroptionspages.dart';
+import 'package:sharemagazines/src/presentation/pages/reader/readerscrollpages.dart';
 import 'package:sharemagazines/src/presentation/widgets/marquee.dart';
 
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../widgets/routes/toreaderoption.dart';
 
-class ReaderOptionsPage extends StatefulWidget {
+class ReaderOverlayPage extends StatefulWidget {
   // final model.Response magazine;
   final ReaderBloc bloc;
 
@@ -27,7 +27,7 @@ class ReaderOptionsPage extends StatefulWidget {
   // int current = 0;
   // ValueNotifier<double> currentPage;
 
-  ReaderOptionsPage({
+  ReaderOverlayPage({
     required this.reader,
     required this.bloc,
     // required this.currentPage,
@@ -35,10 +35,10 @@ class ReaderOptionsPage extends StatefulWidget {
   }) : super();
 
   @override
-  State<ReaderOptionsPage> createState() => _ReaderOptionsPageState();
+  State<ReaderOverlayPage> createState() => _ReaderOverlayPageState();
 }
 
-class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKeepAliveClientMixin<ReaderOptionsPage> {
+class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKeepAliveClientMixin<ReaderOverlayPage> {
   static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   ValueNotifier<bool> isOnPageTurning = ValueNotifier<bool>(false);
   ValueNotifier<bool> showMagazineDetails = ValueNotifier<bool>(false);
@@ -82,7 +82,7 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
               // widget.reader.currentPage == i;
               print("gotopage 0");
               widget.reader.transformationController.value = Matrix4.identity();
-              widget.reader.controllerflip.currentState!.goToPage(0).whenComplete(() => widget.bloc.add(CloseReader()));
+              widget.reader.controllerflip.currentState!.goToPage(0);//.whenComplete(() => widget.bloc.add(CloseReader()));
 // widget.reader.transformationController.value== Matrix4.identity();
               // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
             }),},
@@ -93,12 +93,13 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             // widget.bloc.add(CloseReader())}
             // BlocProvider.of<ReaderBloc>(context).add(CloseReader()),
             // BlocProvider
-            // Navigator.of(context).popUntil((route) => route.isFirst), widget.bloc.add(CloseReader()), widget.bloc.close()
+            Navigator.of(context).popUntil((route) => route.isFirst),
+            // widget.bloc.add(CloseReader()),
           },
         ),
         title: MarqueeWidget(
           // child: Text("sfd"),
-          child: Text(widget.reader.magazine.name! ?? "Title",style: Theme.of(context).textTheme.titleLarge,),
+          child: Text(widget.reader.magazine.title! ?? "Title",style: Theme.of(context).textTheme.titleLarge,),
           direction: Axis.horizontal,
           // pauseDuration: Duration(milliseconds: 100),
           // animationDuration: Duration(seconds: 2),
@@ -118,22 +119,22 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
             child: GestureDetector(
               onTap: () => {
                 setState(() {
-                  if (NavbarState.bookmarks.value.response!
+                  if (NavbarState.bookmarks.value.response()!
                       .any((element) => element.idMagazinePublication == widget.reader.magazine.idMagazinePublication)) {
                     // Removing the item from the list
                     NavbarState.bookmarks.value = MagazinePublishedGetAllLastByHotspotId(
-                        response: NavbarState.bookmarks.value.response!
+                        response: NavbarState.bookmarks.value.response()!
                             .where((element) => element.idMagazinePublication != widget.reader.magazine.idMagazinePublication)
                             .toList());
                   } else {
                     // Adding the item to the list using the spread operator
                     NavbarState.bookmarks.value =
-                        MagazinePublishedGetAllLastByHotspotId(response: [...NavbarState.bookmarks.value.response!, widget.reader.magazine]);
+                        MagazinePublishedGetAllLastByHotspotId(response: [...NavbarState.bookmarks.value.response()!, widget.reader.magazine]);
                   }
                   BlocProvider.of<NavbarBloc>(context).add(Bookmark());
                 })
               },
-              child: Icon(NavbarState.bookmarks.value.response!
+              child: Icon(NavbarState.bookmarks.value.response()!
                       .any((element) => element.idMagazinePublication == widget.reader.magazine.idMagazinePublication)
                   ? Icons.bookmark
                   : Icons.bookmark_outline),
@@ -191,7 +192,7 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   SizedBox(height: 20.0),
-                                  Text(widget.reader.magazine.name!, style: TextStyle(fontSize: 16, color: Colors.white)),
+                                  Text(widget.reader.magazine.title!, style: TextStyle(fontSize: 16, color: Colors.white)),
                                   SizedBox(height: 8.0), // Add space
                                   Text("Pages - " + widget.reader.magazine.pageMax!, style: TextStyle(fontSize: 16, color: Colors.white)),
                                   SizedBox(height: 8.0), // Add space
@@ -245,7 +246,7 @@ class _ReaderOptionsPageState extends State<ReaderOptionsPage> with AutomaticKee
 
                 Align(
                     alignment: Alignment.bottomCenter,
-                    child: ReaderOptionsPages(
+                    child: ReaderScrollPages(
                       isOnPageTurning: isOnPageTurning,
                       reader: widget.reader,
                       bloc: widget.bloc,

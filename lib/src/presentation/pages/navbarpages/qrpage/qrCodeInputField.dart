@@ -60,8 +60,8 @@ class _QRCodeInputFieldState extends State<QRCodeInputField> {
                 if(mounted){
                   // if(!FocusScope.of(context).hasFocus) FocusScope.of(context).unfocus();
                   setState(() {
-                    widget.camera.hideCamera.value = !widget.camera.hideCamera.value;
-                    if(widget.camera.hideCamera.value==false){
+                    widget.camera.hideCameraToShowOnlyTextField.value = !widget.camera.hideCameraToShowOnlyTextField.value;
+                    if(widget.camera.hideCameraToShowOnlyTextField.value==false){
                       FocusScope.of(context).unfocus();
                     }
                   });

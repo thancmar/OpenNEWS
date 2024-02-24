@@ -192,6 +192,9 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               alignment: Alignment.topCenter,
               child: InkWell(
                   // focusColor: Colors.red,
+focusColor: Colors.white,
+highlightColor: Colors.white,
+// c: Colors.white,
                   onTap: () async {
                     if (mounted) {
                       setState(() {
@@ -199,8 +202,14 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                       });
                     }
                   },
-                  child: ListTile(
-                    title: GooglePlacesAutoCompleteTextFormField(
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 5,
+                    // borderOnForeground: true,
+                    margin: EdgeInsets.fromLTRB(15, 5, 15, 10),
+                    shape:
+                        RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18)), side: BorderSide(color: Colors.grey, width: 0.2)),
+                    child: GooglePlacesAutoCompleteTextFormField(
                         // autofocus: true,
                         enableInteractiveSelection: true,
                         enableIMEPersonalizedLearning: true,
@@ -224,12 +233,13 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           //     vertical: 20.0, horizontal: 10.0),
                           // enabled: true,
                           //                                 contentPadding: EdgeInsets.all(),
+
                           fillColor: Colors.white,
                           // focusColor: Colors.redAccent,
                           // enabled: false,
                           filled: true,
-                          floatingLabelStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
-
+                          // floatingLabelStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
                           // labelText: !_focusNode.hasFocus ? "Suchen":"",
                           labelText: "Suchen",
                           suffixIcon: GestureDetector(
@@ -253,11 +263,12 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           // errorBorder: OutlineInputBorder(
                           //     borderRadius: BorderRadius.all(Radius.circular(10.0)), borderSide: BorderSide(color: Colors.red, width: 1)),
                           enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.grey, width: 0.10),
+                            borderSide: const BorderSide(color: Colors.pink, width: 01.10, style: BorderStyle.none),
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
                           focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(18.0)), borderSide: BorderSide(color: Colors.blue, width: 1.0)),
+                              borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                              borderSide: BorderSide(color: Colors.blue, width: 1.0, style: BorderStyle.none)),
                         ),
                         getPlaceDetailWithLatLng: (prediction) {
                           // this method will return latlng with place detail

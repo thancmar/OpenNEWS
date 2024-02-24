@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../blocs/navbar/navbar_bloc.dart';
+import '../../../models/getebook.dart';
 import '../../../models/location_model.dart';
 import '../../../models/magazineCategoryGetAllActive.dart';
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
@@ -70,76 +71,85 @@ class _MenuPageState extends State<MenuPage> with AutomaticKeepAliveClientMixin<
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               itemCount: NavbarState.magazineCategoryGetAllActive?.response!.length,
+
               itemBuilder: (context, i) {
-                MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(response: []);
+                MagazinePublishedGetAllLastByHotspotId magazines = MagazinePublishedGetAllLastByHotspotId(response: []);
                 MagazinePublishedGetAllLastByHotspotId bookmarks;
 
-                items = MagazinePublishedGetAllLastByHotspotId(
-                    response: NavbarState.magazinePublishedGetLastWithLimit!.response!
+                EbooksForLocationGetAllActive ebooks = EbooksForLocationGetAllActive(response: []);
+
+                magazines = MagazinePublishedGetAllLastByHotspotId(
+                    response: NavbarState.magazinePublishedGetLastWithLimit!.response()!
                         .where((element) => element.idsMagazineCategory?.contains(NavbarState.magazineCategoryGetAllActive!.response![i].id!) == true)
                         // .toSet()
                         .toList());
+                ebooks =EbooksForLocationGetAllActive(response: NavbarState.ebooks.response());
                 return ValueListenableBuilder<MagazinePublishedGetAllLastByHotspotId>(
                   valueListenable: NavbarState.bookmarks,
-                  builder: (context, value, child) {
-                    if (value.response!.isNotEmpty && i == 0) {
-                      bookmarks = value;
+                  builder: (context, valueBookmark, child) {
+                    if (valueBookmark.response()!.isNotEmpty && i == 0) {
+                      bookmarks = valueBookmark;
                     } else {
                       bookmarks = MagazinePublishedGetAllLastByHotspotId(response: []);
                     }
-                    return Column(
-                      // crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        if (value.response!.isNotEmpty && i == 0)
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
-                              padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+                    return ValueListenableBuilder<CategoryStatus>(
+                        valueListenable: NavbarState.categoryStatus,
+                        builder: (context, categoryStatus, child) {
+                        return Column(
+                          // crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            if (valueBookmark.response()!.isNotEmpty && i == 0)
+                              Align(
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                                  padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
 
-                              child: Text(
-                                // 'Meistgelesene Artikel',
-                                //   element.idsMagazineCategory!,
-                                "Bookmarks",
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                textAlign: TextAlign.center,
+                                  child: Text(
+                                    // 'Meistgelesene Artikel',
+                                    //   element.idsMagazineCategory!,
+                                    "Bookmarks",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            if (valueBookmark.response()!.isNotEmpty && i == 0)
+                              ListMagazineCover(
+                                cover: bookmarks,
+                                heroTag: 'menu_bookmarks',
+                                scrollDirection: Axis.horizontal,
+                              ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
+                                padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
+
+                                child: Text(
+                                  // 'Meistgelesene Artikel',
+                                  //   element.idsMagazineCategory!,
+                                  categoryStatus == CategoryStatus.presse? NavbarState.magazineCategoryGetAllActive!.response![i].name!: NavbarState.ebooks!.response()![i].title!,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
-                          ),
-                        if (value.response!.isNotEmpty && i == 0)
-                          ListMagazineCover(
-                            cover: bookmarks,
-                            heroTag: 'menu_bookmarks',
-                            scrollDirection: Axis.horizontal,
-                          ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            // padding: EdgeInsets.fromLTRB(25, NavbarState.getTopMagazines!.length != 0 ? 60 : 20, 25, 20),
-                            padding: EdgeInsets.fromLTRB(0, size.aspectRatio * 40, 0, size.aspectRatio * 20),
-
-                            child: Text(
-                              // 'Meistgelesene Artikel',
-                              //   element.idsMagazineCategory!,
-                              NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              textAlign: TextAlign.center,
+                            ListMagazineCover(
+                              cover: categoryStatus == CategoryStatus.presse? magazines:ebooks,
+                              heroTag: 'menu_$i',
+                              scrollDirection: Axis.horizontal,
                             ),
-                          ),
-                        ),
-                        ListMagazineCover(
-                          cover: items,
-                          heroTag: 'menu_$i',
-                          scrollDirection: Axis.horizontal,
-                        ),
-                        if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!-1)
-                          Container(
-                            height: size.height * 0.2,
-                            color: Colors.transparent,
-                          )
+                            if (i == NavbarState.magazineCategoryGetAllActive!.response!.length!-1)
+                              Container(
+                                height: size.height * 0.2,
+                                color: Colors.transparent,
+                              )
 
-                        //Add as padding
-                      ],
+                            //Add as padding
+                          ],
+                        );
+                      }
                     );
                   },
                 );

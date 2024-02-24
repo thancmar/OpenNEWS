@@ -1,16 +1,16 @@
-part of 'reader_bloc.dart';
+part of 'ebook_bloc.dart';
 
-abstract class ReaderEvent extends Equatable {
+abstract class EbookEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
 
 // When the user signing in with email and password this event is called and the [AuthRepository] is called to sign in the user
-// class Initialize extends ReaderEvent {
+// class Initialize extends EbookEvent {
 //   Initialize();
 // }
 
-// class OpenReader extends ReaderEvent {
+// class OpenReader extends EbookEvent {
 //   // final String idMagazinePublication;
 //   // final String dateofPublicazion;
 //   // final String pageNo;
@@ -18,7 +18,7 @@ abstract class ReaderEvent extends Equatable {
 //   OpenReader({required this.magazine});
 // }
 
-class DownloadPage extends ReaderEvent {
+class DownloadPage extends EbookEvent {
   // final String idMagazinePublication;
   // final String dateofPublicazion;
   // final String pageNo;
@@ -27,7 +27,7 @@ class DownloadPage extends ReaderEvent {
   DownloadPage({required this.magazine, required this.pageNo});
 }
 
-class DownloadThumbnail extends ReaderEvent {
+class DownloadThumbnail extends EbookEvent {
   // final String idMagazinePublication;
   // final String dateofPublicazion;
   // final String pageNo;
@@ -36,7 +36,7 @@ class DownloadThumbnail extends ReaderEvent {
   DownloadThumbnail({required this.magazine, required this.pageNo});
 }
 
-class CloseReader extends ReaderEvent {
+class CloseReader extends EbookEvent {
   CloseReader();
 }
 //

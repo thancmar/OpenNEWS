@@ -16,7 +16,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:sharemagazines_flutter/pdfreadermain.dart';
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
+import 'package:sharemagazines/src/blocs/ebook/ebook_bloc.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines/src/blocs/searchpage/search_bloc.dart';
 import 'package:sharemagazines/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
@@ -158,6 +160,8 @@ class MyApp extends StatelessWidget {
                   locationRepository: RepositoryProvider.of<LocationRepository>(context),
                   hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
           BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
+          BlocProvider<ReaderBloc>(create: (context) => ReaderBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
+          BlocProvider<EbookBloc>(create: (context) => EbookBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
           // BlocProvider<AuthBloc>(
           //   create: (context) => AuthBloc(
           //     //no need of Authbloc here

@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -10,6 +12,7 @@ import 'package:sharemagazines/src/models/location_model.dart';
 import '../../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
 import '../../../widgets/src/coversverticallist.dart';
+import '../ebookreader/ebookreader.dart';
 import '../map/offerpage.dart';
 
 class HomePage extends StatefulWidget {
@@ -74,7 +77,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     return BlocBuilder<NavbarBloc, NavbarState>(
       builder: (BuildContext context, state) {
         MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
-            response: NavbarState.magazinePublishedGetLastWithLimit.response!
+            response: NavbarState.magazinePublishedGetLastWithLimit.response()!
                 .where((element) => element.idsMagazineCategory?.contains('20') == true)
                 .toList());
         return state is NavbarLoaded
@@ -143,7 +146,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
                                     if (value == CategoryStatus.presse &&
                                         NavbarState.magazinePublishedGetTopLastByRange != null &&
-                                        NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
+                                        NavbarState.magazinePublishedGetTopLastByRange?.response()!.length != 0)
                                       SliverToBoxAdapter(child: News_aus_deiner_Region(state: state, categoryName: 'Top Titel')),
                                     if (value == CategoryStatus.presse)
                                       VerticalListCover(
@@ -158,14 +161,41 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                           Align(
                                               alignment: Alignment.center,
                                               child: Container(
+                                                // color: Colors.red,
                                                 height: size.height * 0.9,
                                                 child: ListView.builder(
-                                                  itemCount: NavbarState.ebooks.response!.length,
+                                                  itemCount: NavbarState.ebooks.response()!.length,
                                                   itemBuilder: (_, int index) => ListTile(
                                                     // leading: NavbarState.ebooks.response[index].leading,
-                                                    title: Text(
-                                                      NavbarState.ebooks.response![index].title!,
-                                                      style: Theme.of(context).textTheme.titleMedium,
+
+                                                    title: GestureDetector(
+                                                      onTap: () => {
+                                                        showModalBottomSheet(
+                                                          context: context,
+                                                          shape: const RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+                                                          ),
+                                                          isScrollControlled: true,
+                                                          constraints: BoxConstraints.tight(
+                                                              Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height * .8)),
+                                                          builder: (ctx) {
+                                                            return ebookDescription(context: ctx,index: index,);
+                                                          },
+                                                        )
+                                                      },
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            NavbarState.ebooks.response()![index].title!,
+                                                            style: Theme.of(context).textTheme.titleMedium,
+                                                          ),
+                                                          Text(
+                                                            NavbarState.ebooks.response()![index].dateOfPublication!,
+                                                            style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.grey),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                     // onTap: () => _pushPage(context, pages[index]),
                                                   ),
@@ -193,6 +223,349 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   }
 }
 
+class ebookDescription extends StatelessWidget {
+  final BuildContext context;
+  final int index;
+  const ebookDescription({
+    Key? key, required this.index, required this.context
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context); // This will close the modal bottom sheet
+              },
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.black54,
+                  size: 40,
+                ),
+              ),
+            )
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Text(
+                        NavbarState.ebooks.response()![index].title!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(color: Colors.black,fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.center,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Text(
+                          NavbarState.ebooks.response()![index].author!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        NavbarState.ebooks.response()![index].description!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: Colors.black),
+                        textAlign: TextAlign.left,
+                      ),
+                      // Divider(
+                      //   color: Colors.black,
+                      // ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     Expanded(
+                      //       child: Padding(
+                      //         padding:  EdgeInsets.all(8.0),
+                      //         child: Align(
+                      //           alignment: Alignment.center,
+                      //           child: Column(
+                      //             children: [
+                      //               Text(
+                      //                 "No. of pages",
+                      //                 style: Theme.of(context)
+                      //                     .textTheme
+                      //                     .titleSmall!
+                      //                     .copyWith(color: Colors.grey),
+                      //                 textAlign: TextAlign.center,
+                      //               ),
+                      //               Text(
+                      //                 NavbarState.ebooks.response![index].pageMax!,
+                      //
+                      //                 style: Theme.of(context)
+                      //                     .textTheme
+                      //                     .titleMedium!
+                      //                     .copyWith(color: Colors.black,fontWeight: FontWeight.w800),
+                      //                 textAlign: TextAlign.center,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     Container(
+                      //       width: 1, // Adjust the width as needed
+                      //       height: 20, // Adjust the height as needed
+                      //       color: Colors.black,
+                      //     ),
+                      //     Expanded(
+                      //       child: Padding(
+                      //         padding:  EdgeInsets.all(8.0),
+                      //         child: Column(
+                      //           children: [
+                      //             Text(
+                      //               "Date",
+                      //               style: Theme.of(context)
+                      //                   .textTheme
+                      //                   .titleSmall!
+                      //                   .copyWith(color: Colors.grey),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //             Text(
+                      //                 DateFormat("yyyy").format(DateTime.parse(NavbarState.ebooks.response![index].dateOfPublication!)),
+                      //
+                      //               style: Theme.of(context)
+                      //                   .textTheme
+                      //                   .titleMedium!
+                      //                   .copyWith(color: Colors.black,fontWeight: FontWeight.w800),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     Container(
+                      //       width: 1, // Adjust the width as needed
+                      //       height: 20, // Adjust the height as needed
+                      //       color: Colors.black,
+                      //     ),
+                      //     Expanded(
+                      //       child: Padding(
+                      //         padding:  EdgeInsets.all(8.0),
+                      //         child: Column(
+                      //           children: [
+                      //             Text(
+                      //               "Language",
+                      //               style: Theme.of(context)
+                      //                   .textTheme
+                      //                   .titleSmall!
+                      //                   .copyWith(color: Colors.grey),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //             Text(
+                      //              NavbarState.ebooks.response![index].ebookLanguage!.toUpperCase(),
+                      //
+                      //               style: Theme.of(context)
+                      //                   .textTheme
+                      //                   .titleMedium!
+                      //                   .copyWith(color: Colors.black,fontWeight: FontWeight.w800),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     // Divider(
+                      //     //   color: Colors.black,
+                      //     // ),
+                      //     // Text(
+                      //     //   "No. of pages",
+                      //     //   style: Theme.of(context)
+                      //     //       .textTheme
+                      //     //       .headlineSmall!
+                      //     //       .copyWith(color: Colors.black),
+                      //     //   textAlign: TextAlign.center,
+                      //     // ),
+                      //   ],
+                      // ),
+                    ],
+                  )),
+            ),
+          ),
+        ),
+        Divider(
+          color: Colors.black,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Text(
+                        "No. of pages",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        NavbarState.ebooks.response()![index].pageMax!,
+
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Colors.black,fontWeight: FontWeight.w800),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: 1, // Adjust the width as needed
+              height: 40, // Adjust the height as needed
+              color: Colors.black,
+            ),
+            Expanded(
+              child: Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "Date",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      DateFormat("yyyy").format(DateTime.parse(NavbarState.ebooks.response()![index].dateOfPublication!)),
+
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Colors.black,fontWeight: FontWeight.w800),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: 1, // Adjust the width as needed
+              height: 40, // Adjust the height as needed
+              color: Colors.black,
+            ),
+            Expanded(
+              child: Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "Language",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      NavbarState.ebooks.response()![index].ebookLanguage!.toUpperCase(),
+
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Colors.black,fontWeight: FontWeight.w800),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Divider(
+            //   color: Colors.black,
+            // ),
+            // Text(
+            //   "No. of pages",
+            //   style: Theme.of(context)
+            //       .textTheme
+            //       .headlineSmall!
+            //       .copyWith(color: Colors.black),
+            //   textAlign: TextAlign.center,
+            // ),
+          ],
+        ),
+        SafeArea(
+          child: Padding(
+            padding:  EdgeInsets.fromLTRB(20.0, 20, 20.0, 10.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => Ebookreader(
+                      // magazine: widget.items.response![index],
+                      // heroTag: "toptitle${index}",
+
+                      // noofpages: 5,
+                    ),
+                  ),
+                );
+                // FirebaseAuth.instance
+                //     .authStateChanges()
+                //     .listen((User? user) {
+                //   if (user == null) {
+                //     print('User is currently signed out!');
+                //   } else {
+                //     print('User is signed in!');
+                //   }
+                // });
+                // _authenticateWithEmailAndPassword(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                // onPrimary: Colors.white,
+                shadowColor: Colors.blueAccent,
+                elevation: 3,
+                // side: BorderSide(width: 0.10, color: Colors.white),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+                minimumSize: Size(300, 60), //////// HERE
+              ),
+              child: Text(
+                "Jetzt Lesen".toLowerCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                  //fontStyle: FontStyle.,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class LocationOffersWidget extends StatelessWidget {
   const LocationOffersWidget({
     Key? key,
@@ -208,7 +581,8 @@ class LocationOffersWidget extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
               child: Column(children: <Widget>[
                 SizedBox(
-                  height: MediaQuery.of(context).size.width * 0.09,
+                  // height: MediaQuery.of(context).size.aspectRatio * 060.09,
+                  height: 38,
 
                   // width: 20,
                   // color: Colors.blue,

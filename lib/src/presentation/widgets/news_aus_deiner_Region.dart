@@ -40,6 +40,17 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
     );
   }
 
+  bool isTablet(BuildContext context) {
+    // Get the device's physical screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Arbitrary cutoff for device width that differentiates between phones and tablets
+    // This can be adjusted based on your needs or specific device metrics
+    const double deviceWidthCutoff = 600;
+
+    return screenSize.width > deviceWidthCutoff;
+  }
+
   @override
   void dispose() {
     _spinKitController?.dispose();
@@ -50,17 +61,18 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    bool tablet = isTablet(context);
     Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         Align(
-          alignment: Alignment.centerLeft,
+          alignment:tablet?Alignment.center: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
             child: Text(
               ("regionalTitle").tr(),
               style:  Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.right,
+              textAlign: tablet?TextAlign.center: TextAlign.right,
             ),
           ),
         ),
@@ -71,7 +83,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
           // height: double.infinity,
           // width: 30,
           child: PageView.builder(
-            itemCount: NavbarState.magazinePublishedGetTopLastByRange!.response!.length,
+            itemCount: NavbarState.magazinePublishedGetTopLastByRange!.response()!.length,
             // padEnds: true,
 
             controller: PageController(viewportFraction: 0.6807),
@@ -115,13 +127,14 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                           onTap: () => {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (context) => StartReader(
-                                  magazine: NavbarState.magazinePublishedGetTopLastByRange!.response![i],
-
-                                  heroTag: 'News_aus_deiner_Region_$i',
-
-                                  // noofpages: 5,
-                                ),
+                                builder: (context) => Reader(magazine: NavbarState.magazinePublishedGetTopLastByRange!.response()![i], heroTag: 'News_aus_deiner_Region_$i')
+                                //     StartReader(
+                                //   magazine: NavbarState.magazinePublishedGetTopLastByRange!.response![i],
+                                //
+                                //   heroTag: 'News_aus_deiner_Region_$i',
+                                //
+                                //   // noofpages: 5,
+                                // ),
                               ),
                             )
                           },
@@ -134,9 +147,9 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                               // ),
                               CachedNetworkImage(
                                 // key: ValueKey(_networklHasErrorNotifier[i].value),
-                                  imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response![i].idMagazinePublication! +
+                                  imageUrl: NavbarState.magazinePublishedGetTopLastByRange!.response()![i].idMagazinePublication! +
                                       "_" +
-                                      NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication! +
+                                      NavbarState.magazinePublishedGetTopLastByRange!.response()![i].dateOfPublication! +
                                       "_0",
                                   imageBuilder: (context, imageProvider) => Container(
                                     // decoration: BoxDecoration(
@@ -237,7 +250,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                                     // crossAxisAlignment: CrossAxisAlignment.start,
                                     child: Text(
                                       // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                      NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!
+                                      NavbarState.magazinePublishedGetTopLastByRange!.response()![i].title!
                                       // + "NavbarState.magazinePublishedGetTopLastByRange!.response![i].name!"
                                       ,
                                       // " asd",
@@ -268,7 +281,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
                                     child: Text(
                                       // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
                                       DateFormat("d. MMMM yyyy").format(
-                                          DateTime.parse(NavbarState.magazinePublishedGetTopLastByRange!.response![i].dateOfPublication!)),
+                                          DateTime.parse(NavbarState.magazinePublishedGetTopLastByRange!.response()![i].dateOfPublication!)),
                                       // " asd",
                                       // "Card ${i + 1}",
                                       textAlign: TextAlign.center,
@@ -295,14 +308,14 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
           ),
         ),
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: tablet?Alignment.center: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(25, 8, 25, 20),
             child: Text(
               // ("Top-title").tr(),
               widget.categoryName,
               style:  Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.right,
+              textAlign:tablet?TextAlign.center: TextAlign.right,
             ),
           ),
         ),

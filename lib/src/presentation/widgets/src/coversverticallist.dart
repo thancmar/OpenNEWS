@@ -13,7 +13,8 @@ import '../marquee.dart';
 import 'customCover.dart';
 
 class VerticalListCover extends StatefulWidget {
-  final MagazinePublishedGetAllLastByHotspotId items;
+  // final MagazinePublishedGetAllLastByHotspotId items;
+  final BaseResponse items;
   final ScrollController scrollController;
   final double height_News_aus_deiner_Region;
 
@@ -44,6 +45,17 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
     // BlocProvider.of<searchBloc.SearchBloc>(context).add(searchBloc.Initialize(context));
   }
 
+  bool isTablet(BuildContext context) {
+    // Get the device's physical screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Arbitrary cutoff for device width that differentiates between phones and tablets
+    // This can be adjusted based on your needs or specific device metrics
+    const double deviceWidthCutoff = 600;
+
+    return screenSize.width > deviceWidthCutoff;
+  }
+
   @override
   void dispose() {
     // _networklHasErrorNotifier.forEach((element) {
@@ -58,10 +70,10 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
+    bool tablet = isTablet(context);
     return SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Number of items in a row
+          crossAxisCount: tablet?5:2, // Number of items in a row
           mainAxisSpacing: 45.0,
           crossAxisSpacing: 15.0,
           childAspectRatio: 0.7, // Ratio of item width to item height
@@ -105,13 +117,17 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                         behavior: HitTestBehavior.translucent,
                         onTap: () => {
                           // To open Reader
-                          if(widget.items.response![index].idMagazineType == "7"){
+
+                          if(widget.items.response()![index].idMagazineType == "7"){
+
                             Navigator.of(context).push(
                               CupertinoPageRoute(
                                 builder: (context) =>
-                                    WebViewExample(
-                                  // puzzleID: widget.items.response![index].puzzleIdMobile!,
-                                  // gameType: widget.items.response![index].gametypeMobile!,
+                                    // Puzzle()
+                                    Puzzle(
+                                      title:  widget.items.response()![index].title!,
+                                  puzzleID: widget.items.response()![index].puzzleIdMobile!,
+                                  gameType: widget.items.response()![index].gametypeMobile!,
 
                                   // noofpages: 5,
                                 ),
@@ -121,12 +137,13 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                           }else{
                           Navigator.of(context).push(
                             CupertinoPageRoute(
-                              builder: (context) => StartReader(
-                                magazine: widget.items.response![index],
-                                heroTag: "toptitle${index}",
-
-                                // noofpages: 5,
-                              ),
+                              builder: (context) =>Reader(magazine: widget.items.response()![index], heroTag: "toptitle${index}")
+                              //     StartReader(
+                              //   magazine: widget.items.response![index],
+                              //   heroTag: "toptitle${index}",
+                              //
+                              //   // noofpages: 5,
+                              // ),
                             ),
                           )}
                         },
@@ -135,23 +152,17 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                           alignment: Alignment.center,
                           children: [
                             CustomCachedNetworkImage(
-                              reader: false,
-                              mag: widget.items.response![index],
+
+                              mag: widget.items.response()![index],
                               pageNo: 0,
                               thumbnail: true,
                               // covers: widget.items,
                               heroTag: "toptitle${index}",
                               spinKitController: _spinKitController,
-                              // imageOffset: imageOffset,
-                              verticalScroll: true,
-                              // upperWidget: this.widget,
-                              // scrollController: widget.scrollController,
                               height_News_aus_deiner_Region: widget.height_News_aus_deiner_Region,
-                              // size: MediaQuery.of(context).size,
-                              // widget: widget, widget: widget, widget: widget, widget: widget, widget: widget, widget: widget
-                            ),
+                               ),
                             // Spacer(),
-                            widget.items.response![index].dateOfPublication !=null? Positioned(
+                            widget.items.response()![index].dateOfPublication !=null? Positioned(
                               // top: -50,
                               bottom: -35,
                               // height: -50,
@@ -161,7 +172,7 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                                 child: MarqueeWidget(
                                   child: Text(
                                     // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.items.response![index].dateOfPublication!)),
+                                    DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.items.response()![index].dateOfPublication!)),
                                     // " asd",
                                     // "Card ${i + 1}",
                                     textAlign: TextAlign.center,
@@ -183,10 +194,9 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                               child: Align(
                                 alignment: Alignment.center,
                                 child: MarqueeWidget(
-                                  // crossAxisAlignment: CrossAxisAlignment.start,
                                   child: Text(
                                     // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    widget.items.response![index].name!,
+                                    widget.items.response()![index].title!,
                                     // " asd",
                                     // "Card ${i + 1}",
                                     textAlign: TextAlign.center,
@@ -283,7 +293,7 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
               ],
             );
           },
-          childCount: widget.items.response?.length,
+          childCount: widget.items.response()?.length,
           // addAutomaticKeepAlives: true // Number of grid items,
         ));
   }

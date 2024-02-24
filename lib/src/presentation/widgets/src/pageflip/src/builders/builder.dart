@@ -22,13 +22,17 @@ class PageFlipBuilder extends StatefulWidget {
     required this.child,
     required this.pageIndex,
     required this.isRightSwipe,
+    required this.orientation,
+    required this.imageDataCache,
   }) : super(key: key);
 
   final Animation<double> amount;
   final int pageIndex;
   final Color? backgroundColor;
-  final ReaderPage child;
+  final Widget child;
   final bool isRightSwipe;
+  final Orientation orientation;
+  final List<Uint8List?> imageDataCache;
 
   @override
   State<PageFlipBuilder> createState() => PageFlipBuilderState();
@@ -37,64 +41,14 @@ class PageFlipBuilder extends StatefulWidget {
 class PageFlipBuilderState extends State<PageFlipBuilder> with SingleTickerProviderStateMixin {
   final _boundaryKey = GlobalKey();
 
-  // void _captureImage(Duration timeStamp, int index) async {
-  //   // widget.child.repaintBoundaryKey.
-  //   // _
-  //
-  //   if (widget.child.repaintBoundaryKey.currentContext == null) return;
-  //   await Future.delayed(const Duration(milliseconds: 100));
-  //   if (mounted) {
-  //     final boundary = widget.child.repaintBoundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-  //     final image = await boundary.toImage();
-  //     setState(() {
-  //       imageData[index] = image.clone();
-  //     });
-  //   }
-  // }
-  Future<ui.Image> resizeImage(ui.Image originalImage, Size newSize) async {
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder);
-    final paint = Paint()..filterQuality = FilterQuality.high;
-    final src = Rect.fromLTWH(0, 0, originalImage.width.toDouble(), originalImage.height.toDouble());
-    final dst = Rect.fromLTWH(0, 0, newSize.width, newSize.height);
-    canvas.drawImageRect(originalImage, src, dst, paint);
-    final picture = recorder.endRecording();
-    return picture.toImage(newSize.width.toInt(), newSize.height.toInt());
-  }
-
   void _captureImage(Duration timeStamp, int index) async {
-    // if (_boundaryKey.currentContext == null) return;
-    // await Future.delayed(const Duration(milliseconds: 100));
-    // if (mounted) {
-    //   // final boundary = _boundaryKey.currentContext!.findRenderObject()!
-    //   final boundary = widget.child.reader.allImagekey[widget.pageIndex].currentContext!.findRenderObject()!
-    //   as RenderRepaintBoundary;
-    //   final image = await boundary.toImage();
-    //   setState(() {
-    //     imageData[index] = image.clone();
-    //   });
-    // }
 
-    // return picture.toImage(newSize.width.toInt(), newSize.height.toInt());
-
-    // if (_boundaryKey.currentContext == null) return;
-    // if (widget.child.reader.allImagekey[widget.pageIndex].currentContext == null) return;
-    if (widget.child.reader.allImageData![index] == null) return;
+    if (widget.imageDataCache[index] == null) return;
     // await Future.delayed(const Duration(milliseconds: 100));
-    ui.Codec codec = await ui.instantiateImageCodec(widget.child.reader.allImageData![index]!);
+    ui.Codec codec = await ui.instantiateImageCodec(widget.imageDataCache[index]!);
     ui.FrameInfo frameInfo = await codec.getNextFrame();
     ui.Image image = frameInfo.image;
     if (mounted) {
-      // final RenderRepaintBoundary boundary = _boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      // final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-      // final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
-      // final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      // final Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-      // final RenderBox renderBox =  widget.child.reader.allImagekey[widget.pageIndex].currentContext?.findRenderObject() as RenderBox;
-      // print("image is ${renderBox.size}");
-
-      // ui.Image resizedImage = await resizeImage(image , Size(800,800));
 
       setState(() {
         if (imageData != null) {
@@ -114,14 +68,13 @@ class PageFlipBuilderState extends State<PageFlipBuilder> with SingleTickerProvi
       builder: (context, value, child) {
 
         if (imageData[widget.pageIndex] != null ) {
-          final bool isLandscape = (widget.child.reader.currentOrientation.value==Orientation.landscape);
+          final bool isLandscape = (widget.orientation==Orientation.landscape);
           return CustomPaint(
             painter: PageFlipEffect(
               amount: widget.amount,
               image: imageData[widget.pageIndex]!,
               backgroundColor: widget.backgroundColor,
               isRightSwipe: widget.isRightSwipe,
-              reader: widget.child.reader,
               isLanscape:isLandscape,
             ),
             size: Size.infinite,

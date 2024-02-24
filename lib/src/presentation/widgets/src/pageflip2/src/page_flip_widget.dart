@@ -213,17 +213,6 @@ class PageFlipWidget2State extends State<PageFlipWidget2> with TickerProviderSta
   }
 
   Future _onTap() async {
-    if (widget.reader.pageScrollEnabled == false) return;
-    Navigator.push(
-        context,
-        ReaderOptionRoute(
-            widget: ReaderOptionsPage(
-          reader: widget.reader,
-          bloc: BlocProvider.of<ReaderBloc>(context),
-          // currentPage:  widget.reader.currentPage,
-        )));
-
-    // _controllers[pageNumber].
     if (_isForward != null) {
       if (_isForward == true) {
         if (!_isLastPage && _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {

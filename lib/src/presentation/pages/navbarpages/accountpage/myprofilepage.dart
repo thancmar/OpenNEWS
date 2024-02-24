@@ -60,6 +60,8 @@ class _MyProfileState extends State<MyProfile> {
                   width: 35,
                   color: Colors.transparent,
                   child: InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                     onTap: () {
                       // BlocProvider.of<SearchBloc>(context).add(OpenSearch());
                       Navigator.pop(context);

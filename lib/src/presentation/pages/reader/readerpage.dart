@@ -3,54 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/page.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/readeroptionspage.dart';
 import 'package:sharemagazines/src/presentation/widgets/routes/toreaderoption.dart';
 import 'package:sharemagazines/src/resources/magazine_repository.dart';
-
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
-
-// import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 import '../../widgets/src/pageflip/src/page_flip_widget.dart';
-
-class StartReader extends StatelessWidget {
-  final model.ResponseMagazine magazine;
-  final String heroTag;
-
-  StartReader({Key? key, required this.magazine, required this.heroTag}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (BuildContext context) => ReaderBloc(
-              magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
-            ),
-        child: Reader(
-          magazine: this.magazine,
-          // currentPage: ValueNotifier<double>(0.0),
-          heroTag: this.heroTag,
-        ));
-  }
-//   return Container();
-}
 
 class Reader extends StatefulWidget {
   final model.ResponseMagazine magazine;
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
-  // late Orientation currentOrientation ;
   ValueNotifier<Orientation> currentOrientation = ValueNotifier<Orientation>(Orientation.portrait);
-  List<Uint8List?> allImageData = [];
+  List<Uint8List?> pagesDataCache = [];
   List<GlobalKey> allImagekey = [];
   TransformationController transformationController = TransformationController(Matrix4.identity());
-  // List<Uint8List?> allImageData = List<Uint8List?>.filled(widget.magazine.pageMax!, null, growable: false);
-  // ValueNotifier<double> currentPage;
-  static Matrix4 matrix4 = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-  // List<TransformationController> transformationController = [];
-  // List<TransformationController transformationController = [TransformationController(matrix4)];
-  bool pageScrollEnabled = true;
 
   Reader({Key? key, required this.magazine, required this.heroTag}) : super(key: key);
 
@@ -59,48 +27,35 @@ class Reader extends StatefulWidget {
 }
 
 class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Reader> {
-  // late final CustumPdfControllerPinch pdfPinchController;
-  late List<ReaderPage> pages = [];
-  List<int> visitedPages = [];
-
-  late AnimationController? _spinKitController;
-
 
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
-
-    widget.allImageData = List<Uint8List?>.filled(int.parse(widget.magazine.pageMax!), null, growable: false);
+    super.initState();
+    widget.pagesDataCache = List<Uint8List?>.filled(int.parse(widget.magazine.pageMax!), null, growable: false);
     widget.allImagekey = List<GlobalKey>.filled(int.parse(widget.magazine.pageMax!), GlobalKey(), growable: false);
 
-    BlocProvider.of<ReaderBloc>(context).add(
-      // OpenReader(idMagazinePublication: widget.magazine.idMagazinePublication!, dateofPublicazion: widget.magazine.dateOfPublication!, pageNo: widget.magazine.pageMax!),
-      OpenReader(magazine: widget.magazine),
-    );
+    // BlocProvider.of<ReaderBloc>(context).add(
+    //   // OpenReader(idMagazinePublication: widget.magazine.idMagazinePublication!, dateofPublicazion: widget.magazine.dateOfPublication!, pageNo: widget.magazine.pageMax!),
+    //   OpenReader(magazine: widget.magazine),
+    // );
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    _spinKitController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 800),
-    );
-    super.initState();
-
   }
 
   @override
   void dispose() {
-    _spinKitController?.dispose();
-    super.dispose();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    super.dispose();
   }
 
   @override
@@ -122,7 +77,7 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                     Navigator.push(
                         context,
                         ReaderOptionRoute(
-                            widget: ReaderOptionsPage(
+                            widget: ReaderOverlayPage(
                           reader: this.widget,
                           bloc: BlocProvider.of<ReaderBloc>(context),
                           // currentPage: widget.currentPage,
@@ -171,59 +126,22 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
               //       // }),
               //       // });
               //     },
-              child: BlocListener<ReaderBloc, ReaderState>(
-                listener: (context, state) {
-                  if (state is ReaderClosed) {
-                    print("state.ReaderClosed");
-                    setState(() {
-                      widget.controllerflip.currentState!.goToPage(0);
-                       Future<dynamic>.delayed(const Duration(seconds: 1));
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
-                        int count = 0;
-                        Navigator.popUntil(context, (route) {
-                          return count++ == 2;
-                        });
-                      });
-                    });
-                    // Navigator.of(context).popUntil((route) => route.isFirst);
-//                     setState(() {
-//
-//                         print("gotopage 0");
-//                         widget.controllerflip.currentState!. goToPage(0).then((value) => null);
-// // widget.reader.transformationController.value== Matrix4.identity();
-//                         // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
-//
-//                       // widget.pageController.jumpToPage(0) ;
-//                       // widget.controllerflip.currentState!.pageNumber = 0;
-//                       // widget.transformationController.value = Matrix4.identity();
-//                       // widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.ease);
-//                     });
-//                     WidgetsBinding.instance!.addPostFrameCallback((_) {
-//                       int count = 0;
-//                       Navigator.popUntil(context, (route) {
-//                         return count++ == 2;
-//                       });
-//                     });
-                    // int count = 0;
-                    // Navigator.popUntil(context, (route) {
-                    //   return count++ == 2;
-                    // });
-                  }
-                },
-                child: Container(
-                  color: Colors.transparent,
-                  child: PageFlipWidget(
-                    key: widget.controllerflip,
-                    backgroundColor: Colors.transparent,
-                    reader: this.widget,
-                    children: <ReaderPage>[
-                      for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
-                        ReaderPage(
-                          reader: this.widget,
-                          pageNumber: index,
-                        ),
-                    ],
-                  ),
+              child: Container(
+                color: Colors.transparent,
+                child: PageFlipWidget(
+                  key: widget.controllerflip,
+                  orientation: widget.currentOrientation.value,
+                  backgroundColor: Colors.transparent,
+                  transformationController: widget.transformationController,
+                  imageDataCache: widget.pagesDataCache,
+                  // reader: this.widget,
+                  children: <ReaderPage>[
+                    for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                      ReaderPage(
+                        reader: this.widget,
+                        pageNumber: index,
+                      ),
+                  ],
                 ),
               ));
         }),

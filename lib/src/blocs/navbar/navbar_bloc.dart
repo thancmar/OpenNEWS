@@ -60,7 +60,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   // late Future<HotspotsGetAllActive> hotspotList;
   NavbarState? previousState;
 
-  bool statechanged = false;
+
   late List<Future<Uint8List>> getTop = List.empty(growable: true);
 
   // Position? position = null;
@@ -168,7 +168,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                         .then((value) async => {
                               NavbarState.magazinePublishedGetTopLastByRange = value,
                               // magazinePublishedGetLastWithLimitdata_navbarBloc = value,
-                              for (var i = 0; i < value.response!.length; i++)
+                              for (var i = 0; i < value. response()!.length; i++)
                                 {
                                   // for (var k = 1; k < int.parse(value.response![i].pageMax!); k++)
                                   //   {
@@ -200,15 +200,15 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                                   //   },
                                   DefaultCacheManager()
                                       .getFileFromCache(
-                                          value.response![i].idMagazinePublication! + "_" + value.response![i].dateOfPublication! + "_" + "0")
+                                          value.response()![i].idMagazinePublication! + "_" + value.response()![i].dateOfPublication! + "_" + "0")
                                       .then((valueCache) async => {
                                             if (valueCache?.file.lengthSync() == null)
                                               {
                                                 // print("page does not exist1 ${NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication!} ${value?.file.lengthSync()}"),
                                                 magazineRepository.GetPage(
                                                     page: '0',
-                                                    id_mag_pub: value.response![i].idMagazinePublication!,
-                                                    date_of_publication: value.response![i].dateOfPublication!)
+                                                    id_mag_pub: value.response()![i].idMagazinePublication!,
+                                                    date_of_publication: value.response()![i].dateOfPublication!)
                                               }
                                           }),
                                 },
@@ -292,13 +292,13 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                   NavbarState.magazinePublishedGetLastWithLimit = data;
                   // dioClient.secureStorage.write(key: "allmagazines", value: data);
 
-                  for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response!.length; i++) {
+                  for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response()!.length; i++) {
                     //To show on the searchpage
                     // After every 50 iterations, delay for 1 second
                     if ((i + 1) % 100 == 0) {
                       Future.delayed(Duration(seconds: 1));
                     }
-                    switch (NavbarState.magazinePublishedGetLastWithLimit!.response![i].magazineLanguage) {
+                    switch (NavbarState.magazinePublishedGetLastWithLimit!.response()![i].magazineLanguage) {
                       case "de":
                         NavbarState.counterDE = NavbarState.counterDE + 1;
                         break;
@@ -390,7 +390,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       // emit(Loading());
       // event.timer?.cancel();
       await EasyLoading.show(
-        status: 'loading...',
+        status: 'Verifying QR Code...',
         maskType: EasyLoadingMaskType.black,
       );
       await locationRepository.checklocation(null, null, null, code, fingerprint).then((value) async => {
@@ -414,14 +414,10 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
       print('EasyLoading dismiss qr');
       await EasyLoading.dismiss();
       return true;
-
-      await EasyLoading.dismiss();
     } catch (e) {
-      // statechanged = false;
       await EasyLoading.dismiss();
       // emit(NavbarError(e.toString()));
       return false;
-      // emit(NavbarLoaded());
     }
   }
 
@@ -436,7 +432,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           maskType: EasyLoadingMaskType.black,
         );
         Timer.periodic(Duration(seconds: 100), (Timer t) => checkLocationService());
-        Timer.periodic(Duration(seconds: 100), (Timer t) => checkLocation(state.appbarlocation));
+        // Timer.periodic(Duration(seconds: 100), (Timer t) => checkLocation(state.appbarlocation));
 
         (await dioClient.secureStorage.read(key: "allmagazines").then((value) => {
               if (value != null) {NavbarState.magazinePublishedGetLastWithLimit = MagazinePublishedGetLastWithLimitFromJson(value)}
@@ -484,7 +480,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
             NavbarState.allMapMarkers.add(temp);
           }
         });
-        print("Position lat");
+        // print("Position lat");
         LocationPermission? permission = await Geolocator.checkPermission();
         print("Position lat");
         if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
@@ -638,6 +634,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         if (event.currentLocation!.idLocation != event.selectedLocation!.idLocation) {
           await GetAllMagazinesCover(int.parse(event.selectedLocation!.idLocation ?? "0")).then((valueGetAllMagazinesCover) async => {
                 await EasyLoading.dismiss(),
+            { GetAllEbookAudiobooks(int.parse(SplashState.allNearbyLocations[0].idLocation!))},
                 emit(NavbarLoaded(event.selectedLocation!)),
               });
         } else {

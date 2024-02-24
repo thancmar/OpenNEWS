@@ -13,7 +13,7 @@ import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
 CupertinoPageRoute createStartReaderRoute(ResponseMagazine magazine,
  String heroTag) {
   return CupertinoPageRoute(
-    builder: (context) => StartReader(
+    builder: (context) => Reader(
       magazine: magazine,
       heroTag: heroTag,
     ),

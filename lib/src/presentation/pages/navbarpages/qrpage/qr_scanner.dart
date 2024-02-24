@@ -19,7 +19,7 @@ class QRViewExample extends StatefulWidget {
   late String? fingerprint;
 
   // bool hideCamera = false;
-  ValueNotifier<bool> hideCamera = ValueNotifier<bool>(false);
+  ValueNotifier<bool> hideCameraToShowOnlyTextField = ValueNotifier<bool>(false);
   TextEditingController textEditingController = TextEditingController();
 
   QRViewExample({Key? key}) : super(key: key);
@@ -41,17 +41,17 @@ class _QRViewExampleState extends State<QRViewExample> {
   // String? fingerprint;
   ValueNotifier<bool> errorQR = ValueNotifier<bool>(false);
 
-  // In order to get hot reload to work we need to pause the camera if the platform
-  // is android, or resume the camera if the platform is iOS.
-  @override
-  void reassemble() {
-    super.reassemble();
-    if (Platform.isAndroid) {
-      controller!.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller!.resumeCamera();
-    }
-  }
+  // // In order to get hot reload to work we need to pause the camera if the platform
+  // // is android, or resume the camera if the platform is iOS.
+  // @override
+  // void reassemble() {
+  //   super.reassemble();
+  //   if (Platform.isAndroid) {
+  //     controller!.pauseCamera();
+  //   } else if (Platform.isIOS) {
+  //     controller!.resumeCamera();
+  //   }
+  // }
 
   @override
   void initState() {
@@ -99,10 +99,10 @@ class _QRViewExampleState extends State<QRViewExample> {
     return digest.toString();
   }
 
-  void _onQRViewCreated(QRViewController controller) async {
-    this.controller = controller;
+  void _onQRViewCreated(QRViewController controller1) async {
+    // this.controller = controller1;
 
-    controller.scannedDataStream.listen((scanData) {
+    controller?.scannedDataStream.listen((scanData) {
       // Find the index of the last occurrence of '=' in the string
       controller!.pauseCamera();
       int startIndex = scanData.code!.lastIndexOf('=');
@@ -139,27 +139,28 @@ class _QRViewExampleState extends State<QRViewExample> {
     if (status.isGranted) {
       // Camera permission is granted
 
-      //   setState(() {
-      //     cameraActive = true;
-      //   });
-      // } else {
-      //   // Camera permission is not granted
-      //   PermissionStatus status = await Permission.camera.request();
-      //   if (status != PermissionStatus.granted) {
-      //     setState(() {
-      //       cameraActive = false;
-      //     });
-      //   } else {
-      //     setState(() {
-      //       cameraActive = true;
-      //     });
-      //   }
-      cameraActive = false;
+      setState(() {
+        cameraActive = true;
+      });
+    } else {
+      // Camera permission is not granted
+      PermissionStatus status = await Permission.camera.request();
+      if (status != PermissionStatus.granted) {
+        setState(() {
+          cameraActive = false;
+        });
+      } else {
+        setState(() {
+          cameraActive = true;
+        });
+      }
+      // cameraActive = true;
     }
   }
 
   @override
   void dispose() {
+    cameraActive = false;
     controller?.dispose();
     super.dispose();
   }
@@ -174,14 +175,13 @@ class _QRViewExampleState extends State<QRViewExample> {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            // bottomOpacity: 1.0,
-
-            leading: GestureDetector(
-                // splashColor: Colors.transparent,
-                // highlightColor: Colors.transparent,
+            leading: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () => {
                       // setState(() {
                       //   BlocProvider.of<NavbarBloc>(context).add(Map());
+                  controller?.dispose(),
                       Navigator.pop(context)
                       // })
                     },
@@ -193,7 +193,6 @@ class _QRViewExampleState extends State<QRViewExample> {
                     ))),
             //HeroTag performance issue
             title: Text("QR Scanner", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300)),
-
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
@@ -203,19 +202,19 @@ class _QRViewExampleState extends State<QRViewExample> {
                 builder: (BuildContext context, bool counterValue, Widget? child) {
                   return counterValue
                       ? AlertDialog(
+                    backgroundColor: Colors.white,
                           title: Text(
                             ('error').tr(),
-                            style: TextStyle(fontSize: 16.0, color: Colors.grey, fontWeight: FontWeight.w500),
-                          ),
-                          content: Text('QR code is not valid'),
+                            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black), ),
+                          content: Text('QR code is not valid',style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey),),
                           actions: <Widget>[
                             // TextButton(
                             //   onPressed: () => Navigator.pop(context, 'Cancel'),
                             //   child: const Text('Cancel'),
                             // ),
                             TextButton(
-                              onPressed: () => {errorQR.value = false,widget.hideCamera.value=false},
-                              child: Text('OK'),
+                              onPressed: () => {errorQR.value = false, widget.hideCameraToShowOnlyTextField.value = false},
+                              child: Text('OK',style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),),
                             ),
                           ],
                         )
@@ -228,150 +227,74 @@ class _QRViewExampleState extends State<QRViewExample> {
                           child: Column(
                             children: <Widget>[
                               ValueListenableBuilder<bool>(
-                                valueListenable: widget.hideCamera,
-                                builder: (BuildContext context, bool currentPageNo, Widget? child) {
-                                  return !currentPageNo
+                                valueListenable: widget.hideCameraToShowOnlyTextField,
+                                builder: (BuildContext context, bool hideCamera, Widget? child) {
+                                  return !hideCamera
                                       ? Expanded(
                                           flex: 3,
-                                          child:
-                                              cameraActive == false
-                                                  ?
-                                              Container(
-                                                      margin: EdgeInsets.all(8.0),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(color: Colors.blue, width: 1.10),
-                                                        borderRadius: new BorderRadius.circular(20.0),
+                                          child: Container(
+                                            margin: EdgeInsets.all(8.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.blue, width: 1.10),
+                                              borderRadius: new BorderRadius.circular(20.0),
 
-                                                        // color: Colors.red,
+                                              // color: Colors.red,
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20.0),
+                                              child: cameraActive == true
+                                                  ? QRView(
+                                                      key: qrKey,
+
+                                                      overlay: QrScannerOverlayShape(
+                                                        borderColor: Colors.blue,
+                                                        borderRadius: 10.0,
+                                                        borderLength: 30.0,
+                                                        borderWidth: 4.0,
+                                                        cutOutSize: MediaQuery.of(context).size.width * 0.8,
                                                       ),
-                                                      child: ClipRRect(
-                                                        borderRadius: BorderRadius.circular(20.0),
-                                                        child: QRView(
-                                                          key: qrKey,
-                                                          overlay: QrScannerOverlayShape(
-                                                            borderColor: Colors.blue,
-                                                            borderRadius: 10.0,
-                                                            borderLength: 30.0,
-                                                            borderWidth: 4.0,
-                                                            cutOutSize: MediaQuery.of(context).size.width * 0.8,
-                                                          ),
-                                                          // overlayMargin: EdgeInsets.all(80),
-                                                          onQRViewCreated: _onQRViewCreated,
-                                                        ),
-                                                      ),
+                                                      // overlayMargin: EdgeInsets.all(80),
+                                                      onQRViewCreated: _onQRViewCreated,
                                                     )
-                                                  :
-                                              Container(
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            color: Colors.grey.withOpacity(0.4),
-                                            child: Align(
-                                                alignment: Alignment.center,
-                                                child: Center(
-                                                    child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.no_photography_outlined,
-                                                      color: Colors.white,
-                                                      size: 60,
+                                                  : Container(
+                                                      width: double.infinity,
+                                                      height: double.infinity,
+                                                      color: Colors.grey.withOpacity(0.4),
+                                                      child: Align(
+                                                          alignment: Alignment.center,
+                                                          child: Center(
+                                                              child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Icon(
+                                                                Icons.no_photography_outlined,
+                                                                color: Colors.white,
+                                                                size: 60,
+                                                              ),
+                                                              Text("No camera access",
+                                                                  style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300)),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  openAppSettings();
+                                                                },
+                                                                child: Text(
+                                                                  "Open Settings",
+                                                                  style: TextStyle(
+                                                                    color: Colors.blue,
+                                                                    fontWeight: FontWeight.w300,
+                                                                    fontSize: 18,
+                                                                    //fontStyle: FontStyle.,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ))),
                                                     ),
-                                                    Text("No camera access",
-                                                        style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300)),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        openAppSettings();
-                                                      },
-                                                      child: Text(
-                                                        "Open Settings",
-                                                        style: TextStyle(
-                                                          color: Colors.blue,
-                                                          fontWeight: FontWeight.w300,
-                                                          fontSize: 18,
-                                                          //fontStyle: FontStyle.,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ))),
-                                          ),
-                                        )
+                                            ),
+                                          ))
                                       : Container();
                                 },
                               ),
-                              // widget.hideCamera == false
-                              //     ? Container(
-                              //         color: Colors.red,
-                              //         height: 100,
-                              //       )
-                              //     : Container(),
-                              // widget.hideCamera.value == false
-                              //     ? Expanded(
-                              //         flex: 3,
-                              //         child:
-                              //             // cameraActive == false
-                              //             //     ?
-                              //             // Container(
-                              //             //         margin: EdgeInsets.all(8.0),
-                              //             //         decoration: BoxDecoration(
-                              //             //           border: Border.all(color: Colors.blue, width: 1.10),
-                              //             //           borderRadius: new BorderRadius.circular(20.0),
-                              //             //
-                              //             //           // color: Colors.red,
-                              //             //         ),
-                              //             //         child: ClipRRect(
-                              //             //           borderRadius: BorderRadius.circular(20.0),
-                              //             //           child: QRView(
-                              //             //             key: qrKey,
-                              //             //             overlay: QrScannerOverlayShape(
-                              //             //               borderColor: Colors.blue,
-                              //             //               borderRadius: 10.0,
-                              //             //               borderLength: 30.0,
-                              //             //               borderWidth: 4.0,
-                              //             //               cutOutSize: MediaQuery.of(context).size.width * 0.8,
-                              //             //             ),
-                              //             //             // overlayMargin: EdgeInsets.all(80),
-                              //             //             onQRViewCreated: _onQRViewCreated,
-                              //             //           ),
-                              //             //         ),
-                              //             //       )
-                              //             //     :
-                              //             Container(
-                              //           width: double.infinity,
-                              //           height: double.infinity,
-                              //           color: Colors.grey.withOpacity(0.4),
-                              //           child: Align(
-                              //               alignment: Alignment.center,
-                              //               child: Center(
-                              //                   child: Column(
-                              //                 mainAxisAlignment: MainAxisAlignment.center,
-                              //                 children: [
-                              //                   Icon(
-                              //                     Icons.no_photography_outlined,
-                              //                     color: Colors.white,
-                              //                     size: 60,
-                              //                   ),
-                              //                   Text("No camera access",
-                              //                       style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w300)),
-                              //                   GestureDetector(
-                              //                     onTap: () {
-                              //                       openAppSettings();
-                              //                     },
-                              //                     child: Text(
-                              //                       "Open Settings",
-                              //                       style: TextStyle(
-                              //                         color: Colors.blue,
-                              //                         fontWeight: FontWeight.w300,
-                              //                         fontSize: 18,
-                              //                         //fontStyle: FontStyle.,
-                              //                       ),
-                              //                     ),
-                              //                   ),
-                              //                 ],
-                              //               ))),
-                              //         ),
-                              //       )
-                              //     : Container(),
                               Expanded(
                                 flex: 1,
                                 child: Center(

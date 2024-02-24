@@ -18,12 +18,12 @@ import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId
 import '../../constants.dart';
 import '../navbar/navbar_bloc.dart';
 
-part 'reader_event.dart';
-part 'reader_state.dart';
+part 'ebook_event.dart';
+part 'ebook_state.dart';
 
 // enum NavbarItems { Home, Menu, Map, Account }
 
-class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
+class EbookBloc extends Bloc<EbookEvent, EbookState> {
   final MagazineRepository magazineRepository;
   // final MagazineRepository magazineRepository;
   // late ReaderState currentState;
@@ -40,7 +40,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   CancelToken cancelToken = CancelToken();
   // final dio = Dio();
   // late List<Future<Uint8List>> futureFunc = List.empty(growable: true);
-  ReaderBloc({required this.magazineRepository}) : super(ReaderOpened()) {
+  EbookBloc({required this.magazineRepository}) : super(EbookOpened()) {
     // on<Initialize>((event, emit) async {
     //   emit(Initialized());
     // });
@@ -169,7 +169,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     });
 
     on<CloseReader>((event, emit) async {
-      print("cancelToken.cancel() ");
+      print("cancelToken.cancel();");
       cancelToken.cancel();
       emit(ReaderClosed(futureFuncAllPages));
     });

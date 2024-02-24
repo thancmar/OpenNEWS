@@ -16,6 +16,7 @@ import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/splash/splash_bloc.dart';
 import '../../../../models/location_model.dart';
 import '../../startpage.dart';
+import '../qrpage/qr_scanner.dart';
 
 enum ResetType {
   email,
@@ -62,13 +63,25 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
     print("Build Number: $buildNumber");
   }
 
+  bool isTablet(BuildContext context) {
+    // Get the device's physical screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Arbitrary cutoff for device width that differentiates between phones and tablets
+    // This can be adjusted based on your needs or specific device metrics
+    const double deviceWidthCutoff = 600;
+
+    return screenSize.width > deviceWidthCutoff;
+  }
+
   @override
   Widget build(BuildContext context) {
     suporttedLanguages = EasyLocalization.of(context)!.supportedLocales;
     Size size = MediaQuery.of(context).size;
+    bool tablet = isTablet(context);
     return ListView(
       // shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
+      padding: EdgeInsets.fromLTRB(20, tablet?20:0, 20, 30),
       children: <Widget>[
         BlocProvider.of<AuthBloc>(context).state is Authenticated
             // AuthState.userDetails?.response?.email?.isEmpty == false
@@ -304,6 +317,65 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+          child: AnimatedOpacity(
+            opacity: 1,
+            duration: const Duration(milliseconds: 850),
+            child: Container(
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 0,
+                      // offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                  color: Colors.transparent,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 0.25,
+                  ),
+                  borderRadius: BorderRadius.circular(10)),
+              // color: Colors.blue,
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: ListTileTheme(
+                minLeadingWidth: 0,
+                child: ExpansionTile(
+                  maintainState: true,
+                  controlAffinity: ListTileControlAffinity.platform,
+                  // textColor: Colors.red,
+
+                  backgroundColor: Colors.transparent,
+                  //
+                  onExpansionChanged: (isExpanded) {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                      builder: (context) => QRViewExample(),
+                    ));
+                    //     .whenComplete(() => {
+                    //   // if (showLocationPage.value == false)
+                    //   //   backdropState!.currentState!.fling()
+                    // });
+                  },
+                  leading: Icon(
+                    Icons.qr_code,
+                    color: Colors.white,
+                  ),
+                  trailing: Icon(
+                    Icons.qr_code,
+                    color: Colors.transparent,
+                  ),
+                  title: Text(
+                    ("QR Scaner").tr(),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
           child: Container(
             decoration: BoxDecoration(
                 boxShadow: [
@@ -328,7 +400,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               minLeadingWidth: 0,
               child: ExpansionTile(
                 // textColor: Colors.red,
-                initiallyExpanded: true,
+                initiallyExpanded: false,
+                collapsedIconColor: Colors.white,
                 leading: const Icon(
                   Icons.settings,
                   color: Colors.white,
@@ -482,9 +555,9 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
               // horizontalTitleGap: 0.0,
               minLeadingWidth: 0,
               child: ExpansionTile(
-                initiallyExpanded: true,
+                initiallyExpanded: false,
                 // textColor: Colors.red,
-
+                collapsedIconColor: Colors.white,
                 leading: const Icon(
                   Icons.info_outline,
                   color: Colors.white,

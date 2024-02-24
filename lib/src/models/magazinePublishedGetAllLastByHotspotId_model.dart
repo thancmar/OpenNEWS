@@ -1,19 +1,29 @@
 import 'dart:convert';
+abstract class BaseResponse {
+  // Define a method that subclasses need to implement.
+  List<dynamic>? response();
+}
 
 MagazinePublishedGetAllLastByHotspotId
     MagazinePublishedGetLastWithLimitFromJson(String str) =>
         MagazinePublishedGetAllLastByHotspotId.fromJson(json.decode(str));
 
-class MagazinePublishedGetAllLastByHotspotId {
-  List<ResponseMagazine>? response;
+class MagazinePublishedGetAllLastByHotspotId extends BaseResponse {
+  List<ResponseMagazine>? _response;
 
-  MagazinePublishedGetAllLastByHotspotId({required this.response});
+  MagazinePublishedGetAllLastByHotspotId({List<ResponseMagazine>? response})
+      : _response = response;
+
+  @override
+  List<ResponseMagazine>? response() {
+    return _response;
+  }
 
   MagazinePublishedGetAllLastByHotspotId.fromJson(Map<String, dynamic> json) {
     if (json['response'] != null) {
-      response = <ResponseMagazine>[];
+      _response = <ResponseMagazine>[];
       json!['response'].forEach((v) {
-        response!.add(ResponseMagazine.fromJson(v));
+        _response!.add(ResponseMagazine.fromJson(v));
       });
     } else {
       null;
@@ -24,15 +34,15 @@ class MagazinePublishedGetAllLastByHotspotId {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
 
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    if (this._response != null) {
+      data['response'] = this._response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
   class ResponseMagazine {
-  String? name;
+  String? title;
   String? idPublisher;
   String? idMagazineType;
   bool? singlePageOnly;
@@ -50,7 +60,7 @@ class MagazinePublishedGetAllLastByHotspotId {
   String? puzzleIdMobile;
 
   ResponseMagazine(
-      {this.name,
+      {this.title,
       this.idPublisher,
       this.idMagazineType,
       this.singlePageOnly,
@@ -69,7 +79,7 @@ class MagazinePublishedGetAllLastByHotspotId {
       });
 
   ResponseMagazine.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
+    title = json['name'];
     idPublisher = json['id_publisher'];
     idMagazineType = json['id_magazine_type'];
     singlePageOnly = json['single_page_only'];
@@ -105,7 +115,7 @@ class MagazinePublishedGetAllLastByHotspotId {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
+    data['name'] = this.title;
     data['id_publisher'] = this.idPublisher;
     data['id_magazine_type'] = this.idMagazineType;
     data['single_page_only'] = this.singlePageOnly;

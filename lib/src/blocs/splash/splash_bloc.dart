@@ -3,27 +3,16 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-
-// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines/src/presentation/widgets/loading.dart';
 import 'package:sharemagazines/src/resources/auth_repository.dart';
-import 'package:sharemagazines/src/resources/hotspot_repository.dart';
 
-import '../../models/hotspots_model.dart';
 import '../../models/location_model.dart';
-import '../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../resources/dioClient.dart';
 import '../../resources/location_repository.dart';
 
@@ -48,8 +37,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         Position? currentPosition;
 
         // Uncomment to debug - this will delete all cache
-        // await DefaultCacheManager().emptyCache();
-        // dioClient.secureStorage.deleteAll();
+        await DefaultCacheManager().emptyCache();
+        dioClient.secureStorage.deleteAll();
 
         // To have only one instance of ApiClient
         if (!getIt.isRegistered<ApiClient>()) {
@@ -130,7 +119,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         }
 
         await locationRepository.checklocation(null, currentPosition?.latitude, currentPosition?.longitude).then((value) async => {
-          print("debug"),
           if (value!.data!.length != 0)
             {
               // SplashState.appbarlocation = value?.data?[0],

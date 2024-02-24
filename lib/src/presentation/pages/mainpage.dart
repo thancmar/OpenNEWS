@@ -10,6 +10,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -19,7 +20,7 @@ import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/models/locationOffers_model.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/menupage.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage/searchpage.dart';
 
 import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/accountpage.dart';
 import 'package:sharemagazines/src/presentation/pages/startpage.dart';
@@ -60,6 +61,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   bool isLoadingOnTop = false;
   final fabKey = GlobalKey();
   ValueNotifier<bool> isDialOpen = ValueNotifier(true);
+
+  // late List<AnimationController> _controllers;
+  // late List<Animation<double>> _animations;
 
   var items = [
     FloatingActionButtonLocation.startFloat,
@@ -106,6 +110,17 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   bool get wantKeepAlive => true;
+
+  bool isTablet(BuildContext context) {
+    // Get the device's physical screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Arbitrary cutoff for device width that differentiates between phones and tablets
+    // This can be adjusted based on your needs or specific device metrics
+    const double deviceWidthCutoff = 600;
+
+    return screenSize.width > deviceWidthCutoff;
+  }
 
   late List<Widget> _pages = [
     HomePage(),
@@ -158,14 +173,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    RenderBox? renderBoxNavbar;
-    // if (_keyheight.currentContext != null) renderBoxNavbar = _keyheight.currentContext?.findRenderObject() as RenderBox;
+    bool tablet = isTablet(context);
+    // if(tablet) _keyheight
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<NavbarBloc, NavbarState>(builder: (context, state) {
         if (state is NavbarLoaded) {
           isLoadingOnTop = false;
+
         } else {
           isLoadingOnTop = true;
         }
@@ -203,6 +219,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           // );
         }
 
+
         return Stack(
           children: <Widget>[
             Positioned.fill(
@@ -215,14 +232,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               child: IgnorePointer(
                 ignoring: isLoadingOnTop,
                 child: BackdropScaffold(
-                  extendBodyBehindAppBar: true,
+                  extendBodyBehindAppBar: tablet ? false : true,
                   resizeToAvoidBottomInset: false,
                   // extendBody: true,
                   appBar: SlidingAppBar(
                     controller: _controller,
-                    visible: currentIndex == 0 || currentIndex == 1 ? true : false,
+                    visible: tablet ? true : (currentIndex == 0 || currentIndex == 1 ? true : false),
+                    // visible: true,
                     child: PreferredSize(
-                      preferredSize: ((currentIndex == 0 || currentIndex == 1) && !showSearchPage)
+                      preferredSize: (((currentIndex == 0 || currentIndex == 1) || tablet) && !showSearchPage)
                           ? Size.fromHeight(size.height * 0.16)
                           : Size.fromHeight(size.height * 0.0),
                       child: BackdropAppBar(
@@ -265,11 +283,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                             builder: (context, snapshot) {
                                                               return (snapshot.hasData)
                                                                   ? Padding(
-                                                                      padding: EdgeInsets.all(8.0),
+                                                                      padding: EdgeInsets.all(tablet ? 24 : 8.0),
                                                                       child: Container(
-                                                                        height: size.width * 0.25,
+                                                                        height: 100,
                                                                         // width: size.height * 0.095,
-                                                                        width: size.width * 0.25,
+                                                                        width: 100,
                                                                         decoration: BoxDecoration(
                                                                             boxShadow: <BoxShadow>[
                                                                               BoxShadow(
@@ -371,8 +389,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                                           builder: (context) => QRViewExample(),
                                                                         ))
                                                                         .whenComplete(() => {
-                                                                              if (showLocationPage.value == false)
-                                                                                backdropState!.currentState!.fling()
+                                                                              // if (showLocationPage.value == false)
+                                                                              //   backdropState!.currentState!.fling()
                                                                             });
                                                                   },
                                                                   child: Padding(
@@ -387,6 +405,85 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                               : Container();
                                                     }),
                                               ),
+                                              tablet
+                                                  ? Container(
+                                                      color: Colors.transparent,
+                                                      child: ValueListenableBuilder(
+                                                          valueListenable: showLocationPage,
+                                                          builder: (BuildContext context, bool counterValue, Widget? child) {
+                                                            return !counterValue
+                                                                ? Row(
+                                                                    children: [
+                                                                      GestureDetector(
+                                                                        onTap: () => {
+                                                                          if (!counterValue) {onClicked(0)} else Backdrop.of(context).fling()
+                                                                        },
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(left: 10),
+                                                                          child: Hero(
+                                                                            tag: "search button",
+                                                                            child: Icon(
+                                                                              Icons.home,
+                                                                              color: Colors.white,
+                                                                              size: 40,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      GestureDetector(
+                                                                        onTap: () => {
+                                                                          if (!counterValue) {onClicked(1)} else Backdrop.of(context).fling()
+                                                                        },
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(left: 10),
+                                                                          child: Hero(
+                                                                            tag: "search button",
+                                                                            child: Icon(
+                                                                              Icons.menu,
+                                                                              color: Colors.white,
+                                                                              size: 40,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      GestureDetector(
+                                                                        onTap: () => {
+                                                                          if (!counterValue) {onClicked(2)} else Backdrop.of(context).fling()
+                                                                        },
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(left: 10),
+                                                                          child: Hero(
+                                                                            tag: "search button",
+                                                                            child: Icon(
+                                                                              Icons.pin_drop_outlined,
+                                                                              color: Colors.white,
+                                                                              size: 40,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      GestureDetector(
+                                                                        onTap: () => {
+                                                                          if (!counterValue) {onClicked(3)} else Backdrop.of(context).fling()
+                                                                        },
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(left: 10),
+                                                                          child: Hero(
+                                                                            tag: "search button",
+                                                                            child: Icon(
+                                                                              Icons.account_circle_outlined,
+                                                                              color: Colors.white,
+                                                                              size: 40,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                : Container();
+                                                          }),
+                                                    )
+                                                  : Container(),
                                               Container(
                                                 color: Colors.transparent,
                                                 child: ValueListenableBuilder(
@@ -452,7 +549,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   frontLayerElevation: 0,
                   revealBackLayerAtStart: false,
                   key: backdropState,
-                  frontLayerScrim: Colors.transparent,
+
+                  // frontLayerScrim: Colors.blue,
+                  // backLayerScrim: Colors.red,
                   // stickyFrontLayer: true,
                   onBackLayerRevealed: () => showLocationPage.value = false,
                   onBackLayerConcealed: () => showLocationPage.value = true,
@@ -468,540 +567,557 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                       ),
                       if (NavbarState.locationheader != null)
                         SafeArea(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                flex: 2,
-                                child: FutureBuilder<LocationGetHeader>(
-                                    future: NavbarState.locationheader,
-                                    builder: (context, snapshotInfo) {
-                                      if (snapshotInfo.hasData) {
-                                        LineSplitter ls = new LineSplitter();
-                                        _masForUsing = ls.convert(snapshotInfo.data!.text!);
-                                        return ShaderMask(
-                                          shaderCallback: (Rect bounds) {
-                                            return LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: <Color>[Colors.white, Colors.transparent],
-                                              stops: [0.85, 1.0], // Adjust these stops for more or less fade
-                                            ).createShader(bounds);
-                                          },
-                                          blendMode: BlendMode.dstIn,
-                                          child: Container(
-                                            height: double.infinity,
-                                            // constraints: BoxConstraints(maxHeight:500),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  for (int a = 0; a < _masForUsing.length; a++)
-                                                    Padding(
-                                                      padding: EdgeInsets.fromLTRB(size.width * 0.07, size.height * 0.001, size.width * 0.07,
-                                                          a == _masForUsing.length - 1 ? size.height * 0.001 : size.height * 0.01),
-                                                      child: Text(
-                                                        _masForUsing[a],
-                                                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                                            fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
-                                                            fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
-                                                            color: Colors.white),
-                                                        maxLines: 10, // Adjust the number of lines accordingly
-                                                        overflow: TextOverflow.clip, // Use clip instead of fade
+                          child: Container(
+                            clipBehavior: Clip.antiAlias,
+
+                            decoration: BoxDecoration(
+
+                                // color: Colors.green.withOpacity(0.901),
+                                // border: Border.all(color: Colors.blue, width: 2.0), // Outer border
+                                // borderRadius: BorderRadius.circular(25.0),
+                                // gradient: LinearGradient(
+                                //   begin: Alignment.topCenter,
+                                //   end: Alignment.bottomCenter,
+                                //   colors: [Colors.blue, Colors.blue.withOpacity(0.0)], // Use transparent color to create the fill effect
+                                // ),
+                                ),
+
+                            // color: Colors.redAccent,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  flex: 2,
+                                  child: FutureBuilder<LocationGetHeader>(
+                                      future: NavbarState.locationheader,
+                                      builder: (context, snapshotInfo) {
+                                        if (snapshotInfo.hasData) {
+                                          LineSplitter ls = new LineSplitter();
+                                          _masForUsing = ls.convert(snapshotInfo.data!.text!);
+                                          return ShaderMask(
+                                            shaderCallback: (Rect bounds) {
+                                              return LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                colors: <Color>[Colors.white, Colors.transparent],
+                                                stops: [0.85, 1.0], // Adjust these stops for more or less fade
+                                              ).createShader(bounds);
+                                            },
+                                            blendMode: BlendMode.dstIn,
+                                            child: Container(
+                                              height: double.infinity,
+                                              // constraints: BoxConstraints(maxHeight:500),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    for (int a = 0; a < _masForUsing.length; a++)
+                                                      Padding(
+                                                        padding: EdgeInsets.fromLTRB(size.width * 0.07, size.height * 0.001, size.width * 0.07,
+                                                            a == _masForUsing.length - 1 ? size.height * 0.001 : size.height * 0.01),
+                                                        child: Text(
+                                                          _masForUsing[a],
+                                                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                                              fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
+                                                              fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
+                                                              color: Colors.white),
+                                                          maxLines: 10, // Adjust the number of lines accordingly
+                                                          overflow: TextOverflow.clip, // Use clip instead of fade
+                                                        ),
+                                                        // child: ConstrainedBox(
+                                                        //   constraints: BoxConstraints(maxHeight: size.height * 0.20),
+                                                        //   child: ExpandablePanel(
+                                                        //     header: Text("Header"),
+                                                        //     collapsed: Text(
+                                                        //           _masForUsing[a],
+                                                        //           // textScaleFactor: ScaleSize.textScaleFactor(context),
+                                                        //           // maxLines: 3,
+                                                        //           // softWrap: false,
+                                                        //           overflow: TextOverflow.fade,
+                                                        //           style: TextStyle(
+                                                        //               fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
+                                                        //               fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
+                                                        //               color: Colors.white),
+                                                        //         ),
+                                                        //     expanded: Text("Wil", softWrap: true),
+                                                        //   ),
+                                                        //   // child: SingleChildScrollView(
+                                                        //   //   child: Text(
+                                                        //   //     _masForUsing[a],
+                                                        //   //     // textScaleFactor: ScaleSize.textScaleFactor(context),
+                                                        //   //     // maxLines: 3,
+                                                        //   //     // softWrap: false,
+                                                        //   //     overflow: TextOverflow.fade,
+                                                        //   //     style: TextStyle(
+                                                        //   //         fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
+                                                        //   //         fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
+                                                        //   //         color: Colors.white),
+                                                        //   //   ),
+                                                        //   // ),
+                                                        // ),
                                                       ),
-                                                      // child: ConstrainedBox(
-                                                      //   constraints: BoxConstraints(maxHeight: size.height * 0.20),
-                                                      //   child: ExpandablePanel(
-                                                      //     header: Text("Header"),
-                                                      //     collapsed: Text(
-                                                      //           _masForUsing[a],
-                                                      //           // textScaleFactor: ScaleSize.textScaleFactor(context),
-                                                      //           // maxLines: 3,
-                                                      //           // softWrap: false,
-                                                      //           overflow: TextOverflow.fade,
-                                                      //           style: TextStyle(
-                                                      //               fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
-                                                      //               fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
-                                                      //               color: Colors.white),
-                                                      //         ),
-                                                      //     expanded: Text("Wil", softWrap: true),
-                                                      //   ),
-                                                      //   // child: SingleChildScrollView(
-                                                      //   //   child: Text(
-                                                      //   //     _masForUsing[a],
-                                                      //   //     // textScaleFactor: ScaleSize.textScaleFactor(context),
-                                                      //   //     // maxLines: 3,
-                                                      //   //     // softWrap: false,
-                                                      //   //     overflow: TextOverflow.fade,
-                                                      //   //     style: TextStyle(
-                                                      //   //         fontSize: a == 0 ? size.aspectRatio * 50 : size.aspectRatio * 40,
-                                                      //   //         fontWeight: a == 0 ? FontWeight.w500 : FontWeight.w300,
-                                                      //   //         color: Colors.white),
-                                                      //   //   ),
-                                                      //   // ),
-                                                      // ),
-                                                    ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      }
-                                      return Container();
-                                      // return SpinKitFadingCircle(
-                                      //   color: Colors.red,
-                                      //   size: 50.0,
-                                      // );
-                                    }),
-                              ),
-                              // NavbarState.locationoffersVideos != null?  Expanded(
-                              //     flex: 5,
-                              //     // fit: FlexFit.loose,
-                              //     child: CarouselSlider.builder(
-                              //         itemCount: NavbarState.locationoffersVideos!.length,
-                              //         options: CarouselOptions(
-                              //           // height: double.infinity,
-                              //           // height: MediaQuery.of(context).size.height * 0.4,
-                              //           // aspectRatio: 16 / 9,
-                              //           // viewportFraction: 0.7,
-                              //           initialPage: 0,
-                              //           enableInfiniteScroll: false,
-                              //           height: double.infinity,
-                              //           // reverse: false,
-                              //           // autoPlay: true,
-                              //           // autoPlayInterval: Duration(seconds: 3),
-                              //           // autoPlayAnimationDuration: Duration(milliseconds: 800),
-                              //           // autoPlayCurve: Curves.fastOutSlowIn,
-                              //           enlargeCenterPage: true,
-                              //           enlargeFactor: 0.7,
-                              //           // // onPageChanged: callbackFunction,
-                              //           scrollDirection: Axis.horizontal,
-                              //         ),
-                              //         itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => FutureBuilder<File>(
-                              //             future: NavbarState.locationoffersVideos![itemIndex],
-                              //             builder: (context, snapshotImage) {
-                              //               print("snapshot has data $itemIndex  ${snapshotImage.hasData}");
-                              //               if (snapshotImage.hasData) {
-                              //                 VideoPlayerController? _videocontroller =null;
-                              //                 return FutureBuilder<LocationOffers>(
-                              //                     future: NavbarState.locationoffers,
-                              //                     builder: (context, snapshotOfferDetails) {
-                              //                       VideoPlayerController? _videocontroller =  VideoPlayerController.file(
-                              //                         snapshotImage.data! ,
-                              //                         videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
-                              //                       );
-                              //                       _videocontroller!.setLooping(true);
-                              //                        _videocontroller!.initialize().then((_) {
-                              //                       setState(() {});
-                              //                       });
-                              //                       _videocontroller!.play();
-                              //                       if (snapshotOfferDetails. hasData) {
-                              //
-                              //                         // WidgetsBinding.instance.addPostFrameCallback((_) {
-                              //                         //
-                              //                         //   _videocontroller = VideoPlayerController.file(
-                              //                         //     value,
-                              //                         //     videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
-                              //                         //   ),
-                              //                         //
-                              //                         //
-                              //                         // });
-                              //                          return GestureDetector(
-                              //                           onTap: () => {
-                              //                             Navigator.of(context).push(
-                              //                               CupertinoPageRoute(
-                              //                                 builder: (context) => OfferPage(
-                              //                                   locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
-                              //                                   // heroTag: itemIndex,
-                              //                                 ),
-                              //                               ),
-                              //                             )
-                              //                             // Navigator.push(
-                              //                             //   context,
-                              //                             //   PageRouteBuilder(
-                              //                             //     pageBuilder: (_, __, ___) => OfferPage(
-                              //                             //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
-                              //                             //       // heroTag: itemIndex,
-                              //                             //     ),
-                              //                             //   ),
-                              //                             // )
-                              //                           },
-                              //                           child: Column(
-                              //                             mainAxisSize: MainAxisSize.min,
-                              //                             mainAxisAlignment: MainAxisAlignment.center,
-                              //                             crossAxisAlignment: CrossAxisAlignment.center,
-                              //                             children: [
-                              //                               // Flexible(
-                              //                               //   flex: 8,
-                              //                               //   child: ClipRRect(
-                              //                               //     borderRadius: BorderRadius.circular(5.0),
-                              //                               //     child:  AspectRatio(
-                              //                               //       aspectRatio: _videocontroller != null ? _videocontroller!.value.aspectRatio : 16 / 9,
-                              //                               //       child: _videocontroller != null
-                              //                               //           ? VideoPlayer(_videocontroller!)
-                              //                               //           : SpinKitFadingCircle(
-                              //                               //         color: Colors.white,
-                              //                               //         size: 50.0,
-                              //                               //       ),
-                              //                               //     )
-                              //                               //   ),),
-                              //                               // Expanded(
-                              //                               //   flex: 1,
-                              //                               //   child: Align(
-                              //                               //       alignment: Alignment.centerLeft,
-                              //                               //       child: Text(
-                              //                               //         snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].title!,
-                              //                               //         // "dsf",
-                              //                               //         maxLines: 1,
-                              //                               //         style: TextStyle(
-                              //                               //             fontSize: size.width * 0.05,
-                              //                               //             color: Colors.white,
-                              //                               //             fontWeight: FontWeight.w900),
-                              //                               //         textAlign: TextAlign.left,
-                              //                               //       )),
-                              //                               // ),
-                              //                               // Expanded(
-                              //                               //   flex: 1,
-                              //                               //   child: Align(
-                              //                               //       alignment: Alignment.centerLeft,
-                              //                               //       child: Text(
-                              //                               //         snapshotOfferDetails
-                              //                               //             .data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
-                              //                               //         // "dsf",
-                              //                               //         style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
-                              //                               //         textAlign: TextAlign.left,
-                              //                               //       )),
-                              //                               // ),
-                              //                             ],
-                              //                           ),
-                              //                         );
-                              //                       }
-                              //                       return SpinKitFadingCircle(
-                              //                         color: Colors.white,
-                              //                         size: 50.0,
-                              //                       );
-                              //                     });
-                              //               }
-                              //               return SpinKitFadingCircle(
-                              //                 color: Colors.white,
-                              //                 size: 50.0,
-                              //               );
-                              //             })
-                              //     ))
-                              //     : SpinKitFadingCircle(
-                              //   color: Colors.white,
-                              //   size: 50.0,
-                              // ),
-                              Expanded(
-                                  flex: 5,
-                                  // fit: FlexFit.loose,
-                                  child:
-                                      // FutureBuilder<List<dynamic>?>(
-                                      //                             future: fetchCombinedData(), // Use the method here
-                                      //                             builder: (context, snapshot) {
-                                      //                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                      //                                       // Return loading widget or placeholder
-                                      //                                       return CircularProgressIndicator();
-                                      //                                     }
-                                      //
-                                      //                                     if (snapshot.hasError) {
-                                      //                                       // Handle error scenario
-                                      //                                       return Text('Error: ${snapshot.error}');
-                                      //                                     }
-                                      //
-                                      //                                     if (!snapshot.hasData || snapshot.data == 2) {
-                                      //                                       // Handle no data scenario
-                                      //                                       // return Text('No data available');
-                                      //                                       return Container(
-                                      //                                         color: Colors.grey, // Choose a suitable background color
-                                      //                                         alignment: Alignment.center,
-                                      //                                         child: Text(
-                                      //                                           'Error loading image', // Custom error message
-                                      //                                           style: TextStyle(color: Colors.white), // Optional: style your text
-                                      //                                         ),
-                                      //                                       );
-                                      //                                     }
-                                      //
-                                      //                                     // Extracting data from the combined futures
-                                      //                                     // Extract the data
-                                      //                                     List<Uint8List> images = snapshot.data![0];
-                                      //                                     LocationOffers offers = snapshot.data![1];
-                                      //                                     return CardSwiper(
-                                      //                                         cardsCount: images.length,
-                                      //
-                                      //                                         cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                                      //                                         return ClipRRect(
-                                      //                                           borderRadius: BorderRadius.circular(10.0),
-                                      //                                           child: BackdropFilter(
-                                      //                                             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                                      //                                             // Adjust the blur amount with sigmaX and sigmaY
-                                      //
-                                      //                                             child: ConstrainedBox(
-                                      //                                               constraints: BoxConstraints(maxHeight: double.infinity),
-                                      //                                               child: GestureDetector(
-                                      //                                                 onTap: () => {
-                                      //                                                   Navigator.of(context).push(
-                                      //                                                     CupertinoPageRoute(
-                                      //                                                       builder: (context) => OfferPage(
-                                      //                                                         locOffer: offers.locationOffer![index],
-                                      //                                                         // heroTag: itemIndex,
-                                      //                                                       ),
-                                      //                                                     ),
-                                      //                                                   )
-                                      //                                                   // Navigator.push(
-                                      //                                                   //   context,
-                                      //                                                   //   PageRouteBuilder(
-                                      //                                                   //     pageBuilder: (_, __, ___) => OfferPage(
-                                      //                                                   //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
-                                      //                                                   //       // heroTag: itemIndex,
-                                      //                                                   //     ),
-                                      //                                                   //   ),
-                                      //                                                   // )
-                                      //                                                 },
-                                      //                                                 child: Column(
-                                      //                                                   mainAxisSize: MainAxisSize.max,
-                                      //                                                   mainAxisAlignment: MainAxisAlignment.center,
-                                      //                                                   // crossAxisAlignment: CrossAxisAlignment.center,
-                                      //                                                   children: <Widget>[
-                                      //                                                     Flexible(
-                                      //                                                       flex: 8,
-                                      //                                                       child: ClipRRect(
-                                      //                                                           borderRadius: BorderRadius.circular(5.0),
-                                      //                                                           child: Image.memory(
-                                      //                                                             // state.bytes![i],
-                                      //                                                             images[index],
-                                      //                                                             // snapshot.data![0].,
-                                      //                                                             fit: BoxFit.fill,
-                                      //                                                             alignment: Alignment.center,
-                                      //                                                             // errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                      //                                                             //   // Return a widget to display in case of an error
-                                      //                                                             //   return Container(
-                                      //                                                             //     color: Colors.grey, // Choose a suitable background color
-                                      //                                                             //     alignment: Alignment.center,
-                                      //                                                             //     child: Text(
-                                      //                                                             //       'Error loading image', // Custom error message
-                                      //                                                             //       style: TextStyle(color: Colors.white), // Optional: style your text
-                                      //                                                             //     ),
-                                      //                                                             //   );
-                                      //                                                             // },
-                                      //                                                             gaplessPlayback: true,
-                                      //                                                           )
-                                      //                                                           // : Align(
-                                      //                                                           //     alignment: Alignment.center,
-                                      //                                                           //     child: Container(
-                                      //                                                           //       width: double.infinity,
-                                      //                                                           //       height: double.infinity,
-                                      //                                                           //       color: Colors.grey.withOpacity(0.5),
-                                      //                                                           //       child: Icon(
-                                      //                                                           //         Icons.slow_motion_video_outlined,
-                                      //                                                           //         size: 100,
-                                      //                                                           //         color: Colors.white,
-                                      //                                                           //       ),
-                                      //                                                           //     ),
-                                      //                                                           //   ),
-                                      //                                                           // :Container(color: Colors.red,)
-                                      //                                                           ),
-                                      //                                                     ),
-                                      //                                                     Expanded(
-                                      //                                                       flex: 1,
-                                      //                                                       child: Align(
-                                      //                                                           alignment: Alignment.bottomLeft,
-                                      //                                                           child: Text(
-                                      //                                                             offers.locationOffer![index].shm2Offer![0].title!,
-                                      //                                                             // "dsf",
-                                      //                                                             maxLines: 1,
-                                      //                                                             style: TextStyle(
-                                      //                                                                 fontSize: size.width * 0.05, color: Colors.white, fontWeight: FontWeight.w900),
-                                      //                                                             textAlign: TextAlign.left,
-                                      //                                                           )),
-                                      //                                                     ),
-                                      //                                                     // Expanded(
-                                      //                                                     //   flex: 1,
-                                      //                                                     //   child: Visibility(
-                                      //                                                     //     visible: currentLocationOfferIndex == itemIndex,
-                                      //                                                     //     child: Align(
-                                      //                                                     //         alignment: Alignment.bottomLeft,
-                                      //                                                     //         child: Text(
-                                      //                                                     //           snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
-                                      //                                                     //           // "dsf",
-                                      //                                                     //           style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
-                                      //                                                     //           textAlign: TextAlign.left,
-                                      //                                                     //         )),
-                                      //                                                     //   ),
-                                      //                                                     // ),
-                                      //                                                     // Container(color: Colors.red,width: 200  ,height: 200,)
-                                      //                                                   ],
-                                      //                                                 ),
-                                      //                                               ),
-                                      //                                             ),
-                                      //                                           ),
-                                      //                                         );
-                                      //                                       }
-                                      //                                     );
-                                      //                                     // Now use `image` and `offers` to build your widget
-                                      //                                     // ...
-                                      //
-                                      //                                     // Return your widget here
-                                      //                                   },
-                                      //                                 )
+                                          );
+                                        }
+                                        return Container();
+                                        // return SpinKitFadingCircle(
+                                        //   color: Colors.red,
+                                        //   size: 50.0,
+                                        // );
+                                      }),
+                                ),
+                                // NavbarState.locationoffersVideos != null?  Expanded(
+                                //     flex: 5,
+                                //     // fit: FlexFit.loose,
+                                //     child: CarouselSlider.builder(
+                                //         itemCount: NavbarState.locationoffersVideos!.length,
+                                //         options: CarouselOptions(
+                                //           // height: double.infinity,
+                                //           // height: MediaQuery.of(context).size.height * 0.4,
+                                //           // aspectRatio: 16 / 9,
+                                //           // viewportFraction: 0.7,
+                                //           initialPage: 0,
+                                //           enableInfiniteScroll: false,
+                                //           height: double.infinity,
+                                //           // reverse: false,
+                                //           // autoPlay: true,
+                                //           // autoPlayInterval: Duration(seconds: 3),
+                                //           // autoPlayAnimationDuration: Duration(milliseconds: 800),
+                                //           // autoPlayCurve: Curves.fastOutSlowIn,
+                                //           enlargeCenterPage: true,
+                                //           enlargeFactor: 0.7,
+                                //           // // onPageChanged: callbackFunction,
+                                //           scrollDirection: Axis.horizontal,
+                                //         ),
+                                //         itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => FutureBuilder<File>(
+                                //             future: NavbarState.locationoffersVideos![itemIndex],
+                                //             builder: (context, snapshotImage) {
+                                //               print("snapshot has data $itemIndex  ${snapshotImage.hasData}");
+                                //               if (snapshotImage.hasData) {
+                                //                 VideoPlayerController? _videocontroller =null;
+                                //                 return FutureBuilder<LocationOffers>(
+                                //                     future: NavbarState.locationoffers,
+                                //                     builder: (context, snapshotOfferDetails) {
+                                //                       VideoPlayerController? _videocontroller =  VideoPlayerController.file(
+                                //                         snapshotImage.data! ,
+                                //                         videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
+                                //                       );
+                                //                       _videocontroller!.setLooping(true);
+                                //                        _videocontroller!.initialize().then((_) {
+                                //                       setState(() {});
+                                //                       });
+                                //                       _videocontroller!.play();
+                                //                       if (snapshotOfferDetails. hasData) {
+                                //
+                                //                         // WidgetsBinding.instance.addPostFrameCallback((_) {
+                                //                         //
+                                //                         //   _videocontroller = VideoPlayerController.file(
+                                //                         //     value,
+                                //                         //     videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true, allowBackgroundPlayback: false),
+                                //                         //   ),
+                                //                         //
+                                //                         //
+                                //                         // });
+                                //                          return GestureDetector(
+                                //                           onTap: () => {
+                                //                             Navigator.of(context).push(
+                                //                               CupertinoPageRoute(
+                                //                                 builder: (context) => OfferPage(
+                                //                                   locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
+                                //                                   // heroTag: itemIndex,
+                                //                                 ),
+                                //                               ),
+                                //                             )
+                                //                             // Navigator.push(
+                                //                             //   context,
+                                //                             //   PageRouteBuilder(
+                                //                             //     pageBuilder: (_, __, ___) => OfferPage(
+                                //                             //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
+                                //                             //       // heroTag: itemIndex,
+                                //                             //     ),
+                                //                             //   ),
+                                //                             // )
+                                //                           },
+                                //                           child: Column(
+                                //                             mainAxisSize: MainAxisSize.min,
+                                //                             mainAxisAlignment: MainAxisAlignment.center,
+                                //                             crossAxisAlignment: CrossAxisAlignment.center,
+                                //                             children: [
+                                //                               // Flexible(
+                                //                               //   flex: 8,
+                                //                               //   child: ClipRRect(
+                                //                               //     borderRadius: BorderRadius.circular(5.0),
+                                //                               //     child:  AspectRatio(
+                                //                               //       aspectRatio: _videocontroller != null ? _videocontroller!.value.aspectRatio : 16 / 9,
+                                //                               //       child: _videocontroller != null
+                                //                               //           ? VideoPlayer(_videocontroller!)
+                                //                               //           : SpinKitFadingCircle(
+                                //                               //         color: Colors.white,
+                                //                               //         size: 50.0,
+                                //                               //       ),
+                                //                               //     )
+                                //                               //   ),),
+                                //                               // Expanded(
+                                //                               //   flex: 1,
+                                //                               //   child: Align(
+                                //                               //       alignment: Alignment.centerLeft,
+                                //                               //       child: Text(
+                                //                               //         snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].title!,
+                                //                               //         // "dsf",
+                                //                               //         maxLines: 1,
+                                //                               //         style: TextStyle(
+                                //                               //             fontSize: size.width * 0.05,
+                                //                               //             color: Colors.white,
+                                //                               //             fontWeight: FontWeight.w900),
+                                //                               //         textAlign: TextAlign.left,
+                                //                               //       )),
+                                //                               // ),
+                                //                               // Expanded(
+                                //                               //   flex: 1,
+                                //                               //   child: Align(
+                                //                               //       alignment: Alignment.centerLeft,
+                                //                               //       child: Text(
+                                //                               //         snapshotOfferDetails
+                                //                               //             .data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
+                                //                               //         // "dsf",
+                                //                               //         style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
+                                //                               //         textAlign: TextAlign.left,
+                                //                               //       )),
+                                //                               // ),
+                                //                             ],
+                                //                           ),
+                                //                         );
+                                //                       }
+                                //                       return SpinKitFadingCircle(
+                                //                         color: Colors.white,
+                                //                         size: 50.0,
+                                //                       );
+                                //                     });
+                                //               }
+                                //               return SpinKitFadingCircle(
+                                //                 color: Colors.white,
+                                //                 size: 50.0,
+                                //               );
+                                //             })
+                                //     ))
+                                //     : SpinKitFadingCircle(
+                                //   color: Colors.white,
+                                //   size: 50.0,
+                                // ),
+                                Expanded(
+                                    flex: 5,
+                                    // fit: FlexFit.loose,
+                                    child:
+                                        // FutureBuilder<List<dynamic>?>(
+                                        //                             future: fetchCombinedData(), // Use the method here
+                                        //                             builder: (context, snapshot) {
+                                        //                                     if (snapshot.connectionState == ConnectionState.waiting) {
+                                        //                                       // Return loading widget or placeholder
+                                        //                                       return CircularProgressIndicator();
+                                        //                                     }
+                                        //
+                                        //                                     if (snapshot.hasError) {
+                                        //                                       // Handle error scenario
+                                        //                                       return Text('Error: ${snapshot.error}');
+                                        //                                     }
+                                        //
+                                        //                                     if (!snapshot.hasData || snapshot.data == 2) {
+                                        //                                       // Handle no data scenario
+                                        //                                       // return Text('No data available');
+                                        //                                       return Container(
+                                        //                                         color: Colors.grey, // Choose a suitable background color
+                                        //                                         alignment: Alignment.center,
+                                        //                                         child: Text(
+                                        //                                           'Error loading image', // Custom error message
+                                        //                                           style: TextStyle(color: Colors.white), // Optional: style your text
+                                        //                                         ),
+                                        //                                       );
+                                        //                                     }
+                                        //
+                                        //                                     // Extracting data from the combined futures
+                                        //                                     // Extract the data
+                                        //                                     List<Uint8List> images = snapshot.data![0];
+                                        //                                     LocationOffers offers = snapshot.data![1];
+                                        //                                     return CardSwiper(
+                                        //                                         cardsCount: images.length,
+                                        //
+                                        //                                         cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                        //                                         return ClipRRect(
+                                        //                                           borderRadius: BorderRadius.circular(10.0),
+                                        //                                           child: BackdropFilter(
+                                        //                                             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                        //                                             // Adjust the blur amount with sigmaX and sigmaY
+                                        //
+                                        //                                             child: ConstrainedBox(
+                                        //                                               constraints: BoxConstraints(maxHeight: double.infinity),
+                                        //                                               child: GestureDetector(
+                                        //                                                 onTap: () => {
+                                        //                                                   Navigator.of(context).push(
+                                        //                                                     CupertinoPageRoute(
+                                        //                                                       builder: (context) => OfferPage(
+                                        //                                                         locOffer: offers.locationOffer![index],
+                                        //                                                         // heroTag: itemIndex,
+                                        //                                                       ),
+                                        //                                                     ),
+                                        //                                                   )
+                                        //                                                   // Navigator.push(
+                                        //                                                   //   context,
+                                        //                                                   //   PageRouteBuilder(
+                                        //                                                   //     pageBuilder: (_, __, ___) => OfferPage(
+                                        //                                                   //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
+                                        //                                                   //       // heroTag: itemIndex,
+                                        //                                                   //     ),
+                                        //                                                   //   ),
+                                        //                                                   // )
+                                        //                                                 },
+                                        //                                                 child: Column(
+                                        //                                                   mainAxisSize: MainAxisSize.max,
+                                        //                                                   mainAxisAlignment: MainAxisAlignment.center,
+                                        //                                                   // crossAxisAlignment: CrossAxisAlignment.center,
+                                        //                                                   children: <Widget>[
+                                        //                                                     Flexible(
+                                        //                                                       flex: 8,
+                                        //                                                       child: ClipRRect(
+                                        //                                                           borderRadius: BorderRadius.circular(5.0),
+                                        //                                                           child: Image.memory(
+                                        //                                                             // state.bytes![i],
+                                        //                                                             images[index],
+                                        //                                                             // snapshot.data![0].,
+                                        //                                                             fit: BoxFit.fill,
+                                        //                                                             alignment: Alignment.center,
+                                        //                                                             // errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                        //                                                             //   // Return a widget to display in case of an error
+                                        //                                                             //   return Container(
+                                        //                                                             //     color: Colors.grey, // Choose a suitable background color
+                                        //                                                             //     alignment: Alignment.center,
+                                        //                                                             //     child: Text(
+                                        //                                                             //       'Error loading image', // Custom error message
+                                        //                                                             //       style: TextStyle(color: Colors.white), // Optional: style your text
+                                        //                                                             //     ),
+                                        //                                                             //   );
+                                        //                                                             // },
+                                        //                                                             gaplessPlayback: true,
+                                        //                                                           )
+                                        //                                                           // : Align(
+                                        //                                                           //     alignment: Alignment.center,
+                                        //                                                           //     child: Container(
+                                        //                                                           //       width: double.infinity,
+                                        //                                                           //       height: double.infinity,
+                                        //                                                           //       color: Colors.grey.withOpacity(0.5),
+                                        //                                                           //       child: Icon(
+                                        //                                                           //         Icons.slow_motion_video_outlined,
+                                        //                                                           //         size: 100,
+                                        //                                                           //         color: Colors.white,
+                                        //                                                           //       ),
+                                        //                                                           //     ),
+                                        //                                                           //   ),
+                                        //                                                           // :Container(color: Colors.red,)
+                                        //                                                           ),
+                                        //                                                     ),
+                                        //                                                     Expanded(
+                                        //                                                       flex: 1,
+                                        //                                                       child: Align(
+                                        //                                                           alignment: Alignment.bottomLeft,
+                                        //                                                           child: Text(
+                                        //                                                             offers.locationOffer![index].shm2Offer![0].title!,
+                                        //                                                             // "dsf",
+                                        //                                                             maxLines: 1,
+                                        //                                                             style: TextStyle(
+                                        //                                                                 fontSize: size.width * 0.05, color: Colors.white, fontWeight: FontWeight.w900),
+                                        //                                                             textAlign: TextAlign.left,
+                                        //                                                           )),
+                                        //                                                     ),
+                                        //                                                     // Expanded(
+                                        //                                                     //   flex: 1,
+                                        //                                                     //   child: Visibility(
+                                        //                                                     //     visible: currentLocationOfferIndex == itemIndex,
+                                        //                                                     //     child: Align(
+                                        //                                                     //         alignment: Alignment.bottomLeft,
+                                        //                                                     //         child: Text(
+                                        //                                                     //           snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
+                                        //                                                     //           // "dsf",
+                                        //                                                     //           style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
+                                        //                                                     //           textAlign: TextAlign.left,
+                                        //                                                     //         )),
+                                        //                                                     //   ),
+                                        //                                                     // ),
+                                        //                                                     // Container(color: Colors.red,width: 200  ,height: 200,)
+                                        //                                                   ],
+                                        //                                                 ),
+                                        //                                               ),
+                                        //                                             ),
+                                        //                                           ),
+                                        //                                         );
+                                        //                                       }
+                                        //                                     );
+                                        //                                     // Now use `image` and `offers` to build your widget
+                                        //                                     // ...
+                                        //
+                                        //                                     // Return your widget here
+                                        //                                   },
+                                        //                                 )
 
-                                      // int reversedIndex = NavbarState.locationoffersImages!.length - index - 1;
+                                        // int reversedIndex = NavbarState.locationoffersImages!.length - index - 1;
 
-                                      FutureBuilder<LocationOffers>(
-                                          future: NavbarState.locationoffers,
-                                          builder: (context, snapshotOfferDetails) {
-                                            VideoPlayerController? _videocontroller = null;
-                                            if (snapshotOfferDetails.hasData && NavbarState.locationoffersImages.isNotEmpty) {
-                                              //&& !snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].type!.contains("MOV")) {
+                                        FutureBuilder<LocationOffers>(
+                                            future: NavbarState.locationoffers,
+                                            builder: (context, snapshotOfferDetails) {
+                                              VideoPlayerController? _videocontroller = null;
+                                              if (snapshotOfferDetails.hasData && NavbarState.locationoffersImages.isNotEmpty) {
+                                                //&& !snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].type!.contains("MOV")) {
 
-                                              return CardSwiper(
-                                                  cardsCount: snapshotOfferDetails.data!.locationOffer!.length,
-                                                  numberOfCardsDisplayed: snapshotOfferDetails.data!.locationOffer!.length,
-                                                  // cardsCount:  NavbarState.locationoffersImages.length,
-                                                  cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                                                    return ClipRRect(
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                      child: BackdropFilter(
-                                                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                                                        // Adjust the blur amount with sigmaX and sigmaY
+                                                return CardSwiper(
+                                                    cardsCount: snapshotOfferDetails.data!.locationOffer!.length,
+                                                    numberOfCardsDisplayed: snapshotOfferDetails.data!.locationOffer!.length,
+                                                    // cardsCount:  NavbarState.locationoffersImages.length,
+                                                    cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                                      return ClipRRect(
+                                                        borderRadius: BorderRadius.circular(10.0),
+                                                        child: BackdropFilter(
+                                                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                                          // Adjust the blur amount with sigmaX and sigmaY
 
-                                                        child: ConstrainedBox(
-                                                          constraints: BoxConstraints(maxHeight: double.infinity),
-                                                          child: GestureDetector(
-                                                            onTap: () => {
-                                                              Navigator.of(context).push(
-                                                                CupertinoPageRoute(
-                                                                  builder: (context) => OfferPage(
-                                                                    locOffer: snapshotOfferDetails.data!.locationOffer![index],
-                                                                    imageData: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
-                                                                            .contains("MOV")
-                                                                        ? NavbarState.locationoffersImages
-                                                                            .singleWhere((element) =>
-                                                                                element.offer.idOffer ==
-                                                                                snapshotOfferDetails.data!.locationOffer![index].idOffer)
-                                                                            .mediaContent
-                                                                        : null,
-                                                                    // heroTag: itemIndex,
+                                                          child: ConstrainedBox(
+                                                            constraints: BoxConstraints(maxHeight: double.infinity),
+                                                            child: GestureDetector(
+                                                              onTap: () => {
+                                                                Navigator.of(context).push(
+                                                                  CupertinoPageRoute(
+                                                                    builder: (context) => OfferPage(
+                                                                      locOffer: snapshotOfferDetails.data!.locationOffer![index],
+                                                                      imageData: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
+                                                                              .contains("MOV")
+                                                                          ? NavbarState.locationoffersImages
+                                                                              .singleWhere((element) =>
+                                                                                  element.offer.idOffer ==
+                                                                                  snapshotOfferDetails.data!.locationOffer![index].idOffer)
+                                                                              .mediaContent
+                                                                          : null,
+                                                                      // heroTag: itemIndex,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              )
-                                                              // Navigator.push(
-                                                              //   context,
-                                                              //   PageRouteBuilder(
-                                                              //     pageBuilder: (_, __, ___) => OfferPage(
-                                                              //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
-                                                              //         // heroTag: itemIndex,
-                                                              //     ),
-                                                              //   ),
-                                                              // )
-                                                            },
-                                                            child: Column(
-                                                              mainAxisSize: MainAxisSize.max,
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              // crossAxisAlignment: CrossAxisAlignment.center,
-                                                              children: <Widget>[
-                                                                Flexible(
-                                                                  flex: 8,
-                                                                  child: ClipRRect(
-                                                                    borderRadius: BorderRadius.circular(5.0),
-                                                                    child: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
-                                                                            .contains("MOV")
-                                                                        // || !NavbarState.locationoffersImages.any((element) => (element.offer.idOffer==snapshotOfferDetails!.data!.locationOffer![index].idOffer && element.offer !=null))
-                                                                        ? Hero(
-                                                                            tag: snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].id
-                                                                                .toString(),
-                                                                            child: Image.memory(
-                                                                              // state.bytes![i],
-                                                                              NavbarState.locationoffersImages
-                                                                                  .firstWhere((element) =>
-                                                                                          element.offer.idOffer ==
-                                                                                          snapshotOfferDetails.data!.locationOffer![index]
-                                                                                              .idOffer // Provide a default OfferImage or handle it accordingly
-                                                                                      )
-                                                                                  .mediaContent,
-                                                                              fit: BoxFit.fill,
-                                                                              alignment: Alignment.center,
+                                                                )
+                                                                // Navigator.push(
+                                                                //   context,
+                                                                //   PageRouteBuilder(
+                                                                //     pageBuilder: (_, __, ___) => OfferPage(
+                                                                //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
+                                                                //         // heroTag: itemIndex,
+                                                                //     ),
+                                                                //   ),
+                                                                // )
+                                                              },
+                                                              child: Column(
+                                                                mainAxisSize: MainAxisSize.max,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                // crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: <Widget>[
+                                                                  Flexible(
+                                                                    flex: 8,
+                                                                    child: ClipRRect(
+                                                                      borderRadius: BorderRadius.circular(5.0),
+                                                                      child: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
+                                                                              .contains("MOV")
+                                                                          // || !NavbarState.locationoffersImages.any((element) => (element.offer.idOffer==snapshotOfferDetails!.data!.locationOffer![index].idOffer && element.offer !=null))
+                                                                          ? Hero(
+                                                                              tag: snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].id
+                                                                                  .toString(),
+                                                                              child: Image.memory(
+                                                                                // state.bytes![i],
+                                                                                NavbarState.locationoffersImages
+                                                                                    .firstWhere((element) =>
+                                                                                            element.offer.idOffer ==
+                                                                                            snapshotOfferDetails.data!.locationOffer![index]
+                                                                                                .idOffer // Provide a default OfferImage or handle it accordingly
+                                                                                        )
+                                                                                    .mediaContent,
+                                                                                fit: BoxFit.fill,
+                                                                                alignment: Alignment.center,
 
-                                                                              gaplessPlayback: true,
-                                                                            ),
-                                                                          )
-                                                                        // : snapshotvideo.hasData? AspectRatio(
-                                                                        //   aspectRatio:
-                                                                        //       // _controller != null ? _controller!.value.aspectRatio :
-                                                                        //       16 / 9,
-                                                                        //   child:
-                                                                        //   // VideoPlayer(snapshotvideo.data)
-                                                                        //   Container()
-                                                                        // ):
-                                                                        // :SpinKitFadingCircle(
-                                                                        //       color: Colors.white,
-                                                                        //       size: 50.0,
-                                                                        //     )
-                                                                        // : Co
-                                                                        : Align(
-                                                                            alignment: Alignment.center,
-                                                                            child: Container(
-                                                                              width: double.infinity,
-                                                                              height: double.infinity,
-                                                                              color: Colors.grey.withOpacity(0.5),
-                                                                              child: Icon(
-                                                                                Icons.slow_motion_video_outlined,
-                                                                                size: 100,
-                                                                                color: Colors.white,
+                                                                                gaplessPlayback: true,
+                                                                              ),
+                                                                            )
+                                                                          // : snapshotvideo.hasData? AspectRatio(
+                                                                          //   aspectRatio:
+                                                                          //       // _controller != null ? _controller!.value.aspectRatio :
+                                                                          //       16 / 9,
+                                                                          //   child:
+                                                                          //   // VideoPlayer(snapshotvideo.data)
+                                                                          //   Container()
+                                                                          // ):
+                                                                          // :SpinKitFadingCircle(
+                                                                          //       color: Colors.white,
+                                                                          //       size: 50.0,
+                                                                          //     )
+                                                                          // : Co
+                                                                          : Align(
+                                                                              alignment: Alignment.center,
+                                                                              child: Container(
+                                                                                width: double.infinity,
+                                                                                height: double.infinity,
+                                                                                color: Colors.grey.withOpacity(0.5),
+                                                                                child: Icon(
+                                                                                  Icons.slow_motion_video_outlined,
+                                                                                  size: 100,
+                                                                                  color: Colors.white,
+                                                                                ),
                                                                               ),
                                                                             ),
-                                                                          ),
 
-                                                                    // :Container(height: double.infinity,width: double.infinity, color: Colors.grey.withOpacity(0.3), child: Icon(Icons.slow_motion_video_outlined, size: 80,),
-                                                                    // )
+                                                                      // :Container(height: double.infinity,width: double.infinity, color: Colors.grey.withOpacity(0.3), child: Icon(Icons.slow_motion_video_outlined, size: 80,),
+                                                                      // )
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 1,
-                                                                  child: Align(
-                                                                      alignment: Alignment.bottomLeft,
-                                                                      child: Text(
-                                                                        snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].title!,
-                                                                        // "dsf",
-                                                                        maxLines: 1,
-                                                                        style: TextStyle(
-                                                                            fontSize: size.width * 0.05,
-                                                                            color: Colors.white,
-                                                                            fontWeight: FontWeight.w900),
-                                                                        textAlign: TextAlign.left,
-                                                                      )),
-                                                                ),
-                                                                // Expanded(
-                                                                //   flex: 1,
-                                                                //   child: Visibility(
-                                                                //     visible: currentLocationOfferIndex == itemIndex,
-                                                                //     child: Align(
-                                                                //         alignment: Alignment.bottomLeft,
-                                                                //         child: Text(
-                                                                //           snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
-                                                                //           // "dsf",
-                                                                //           style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
-                                                                //           textAlign: TextAlign.left,
-                                                                //         )),
-                                                                //   ),
-                                                                // ),
-                                                                // Container(color: Colors.red,width: 200  ,height: 200,)
-                                                              ],
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child: Align(
+                                                                        alignment: Alignment.bottomLeft,
+                                                                        child: Text(
+                                                                          snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].title!,
+                                                                          // "dsf",
+                                                                          maxLines: 1,
+                                                                          style: TextStyle(
+                                                                              fontSize: size.width * 0.05,
+                                                                              color: Colors.white,
+                                                                              fontWeight: FontWeight.w900),
+                                                                          textAlign: TextAlign.left,
+                                                                        )),
+                                                                  ),
+                                                                  // Expanded(
+                                                                  //   flex: 1,
+                                                                  //   child: Visibility(
+                                                                  //     visible: currentLocationOfferIndex == itemIndex,
+                                                                  //     child: Align(
+                                                                  //         alignment: Alignment.bottomLeft,
+                                                                  //         child: Text(
+                                                                  //           snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
+                                                                  //           // "dsf",
+                                                                  //           style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
+                                                                  //           textAlign: TextAlign.left,
+                                                                  //         )),
+                                                                  //   ),
+                                                                  // ),
+                                                                  // Container(color: Colors.red,width: 200  ,height: 200,)
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    );
-                                                    // :Container(color: Colors.red,);
-                                                  });
-                                            }
-                                            // continue;
-                                            return SpinKitFadingCircle(
-                                              color: Colors.white,
-                                              size: 50.0,
-                                            );
-                                          }))
-                            ],
+                                                      );
+                                                      // :Container(color: Colors.red,);
+                                                    });
+                                              }
+                                              // continue;
+                                              return SpinKitFadingCircle(
+                                                color: Colors.white,
+                                                size: 50.0,
+                                              );
+                                            }))
+                              ],
+                            ),
                           ),
                         )
                       else
@@ -1021,7 +1137,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   //   // overlayOpacity: 0.9,
                   //
                   //   // mini: mini,
-                    // openCloseDial: isDialOpen,
+                  // openCloseDial: isDialOpen,
                   //   childPadding: const EdgeInsets.all(5),
                   //   spaceBetweenChildren: 4,
                   //    // childMargin: EdgeInsets.all(25) ,
@@ -1163,162 +1279,299 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                               // physics: AlwaysScrollableScrollPhysics(),
                               itemBuilder: (context, index) => _pages[index],
                             ),
-                            currentIndex==0 || currentIndex==1?Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, size.height * 0.1),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(28.0),
-                                  child: SpeedDial(
-                                    // animatedIcon: AnimatedIcons.menu_close,
-                                    // animatedIconTheme: IconThemeData(size: 22.0),
-                                    // / This is ignored if animatedIcon is non null
-                                    // child: Text("open"),
-                                    // activeChild: Text("close"),
-                                    icon: Icons.add,
-                                    activeIcon: Icons.close,
-                                    spacing: 3,
+                            if (currentIndex == 0 || currentIndex == 1)
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, size.height * 0.1),
+                                child: Align(
+                                  // alignment: Alignment.bottomRight,
+                                  alignment: Alignment.bottomCenter,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(28.0),
+                                    // child: SpeedDial(
+                                    //   // animatedIcon: AnimatedIcons.menu_close,
+                                    //   // animatedIconTheme: IconThemeData(size: 22.0),
+                                    //   // / This is ignored if animatedIcon is non null
+                                    //   // child: Text("open"),
+                                    //   // activeChild: Text("close"),
+                                    //   icon: Icons.add,
+                                    //   activeIcon: Icons.close,
+                                    //   spacing: 3,
+                                    //
+                                    //   // backgroundColor: Colors.redAccent,
+                                    //   // overlayOpacity: 0.9,
+                                    //
+                                    //   // mini: mini,
+                                    //   // openCloseDial: false,
+                                    //   childPadding: const EdgeInsets.all(5),
+                                    //   spaceBetweenChildren: 4,
+                                    //   // childMargin: EdgeInsets.all(25) ,
+                                    //
+                                    //   dialRoot: (ctx, open, toggleChildren) {
+                                    //     return ElevatedButton(
+                                    //       onPressed: toggleChildren,
+                                    //
+                                    //       style: ElevatedButton.styleFrom(
+                                    //         backgroundColor: Colors.blue, //.withOpacity(0.693),
+                                    //         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                                    //         // alignment: Alignment(100, 500)
+                                    //       ),
+                                    //       child: Icon(
+                                    //         open ? Icons.close_fullscreen : Icons.open_with,
+                                    //         color: Colors.white,
+                                    //       ),
+                                    //       // child: Text(
+                                    //       //   "Category",
+                                    //       //   style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+                                    //       // ),
+                                    //     );
+                                    //   },
+                                    //   iconTheme: IconThemeData(
+                                    //     size: 50,
+                                    //   ),
+                                    //   buttonSize: Size(40, 40),
+                                    //   // it's the SpeedDial size which defaults to 56 itself
+                                    //   // iconTheme: IconThemeData(size: 22),
+                                    //   label: Text("Open"),
+                                    //   // The label of the main button.
+                                    //   /// The active label of the main button, Defaults to label if not specified.
+                                    //   activeLabel: Text("Close"),
+                                    //
+                                    //   /// Transition Builder between label and activeLabel, defaults to FadeTransition.
+                                    //   // labelTransitionBuilder: (widget, animation) => ScaleTransition(scale: animation,child: widget),
+                                    //   /// The below button size defaults to 56 itself, its the SpeedDial childrens size
+                                    //   // childrenButtonSize: childrenButtonSize,
+                                    //   // visible: visible,
+                                    //   direction: SpeedDialDirection.up,
+                                    //   // switchLabelPosition: switchLabelPosition,
+                                    //
+                                    //   /// If true user is forced to close dial manually
+                                    //   // closeManually: closeManually,
+                                    //
+                                    //   /// If false, backgroundOverlay will not be rendered.
+                                    //   // renderOverlay: renderOverlay,
+                                    //   overlayOpacity: 0.35,
+                                    //   overlayColor: Colors.black,
+                                    //   // overlayOpacity: 0.5,
+                                    //   // onOpen: () => debugPrint('OPENING DIAL'),
+                                    //   // onClose: () => debugPrint('DIAL CLOSED'),
+                                    //   // useRotationAnimation: useRAnimation,
+                                    //   tooltip: 'Open Speed Dial',
+                                    //   heroTag: 'speed-dial-hero-tag',
+                                    //   foregroundColor: Colors.blue,
+                                    //   backgroundColor: Colors.green,
+                                    //   activeForegroundColor: Colors.redAccent,
+                                    //   activeBackgroundColor: Colors.pink,
+                                    //   elevation: 8.0,
+                                    //   animationCurve: Curves.elasticInOut,
+                                    //   isOpenOnStart: false,
+                                    //   shape: StadiumBorder(),
+                                    //   // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    //   children: [
+                                    //     SpeedDialChild(
+                                    //       child: Icon(Icons.newspaper),
+                                    //       backgroundColor: Colors.blue,
+                                    //       foregroundColor: Colors.white,
+                                    //       label: 'Presse',
+                                    //       labelStyle: Theme.of(context).textTheme.titleMedium,
+                                    //       labelBackgroundColor: Colors.black.withOpacity(0.5),
+                                    //       shape: StadiumBorder(),
+                                    //       onTap: () => BlocProvider.of<NavbarBloc>(context)
+                                    //           .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.presse)),
+                                    //       onLongPress: () => debugPrint('FIRST CHILD LONG PRESS'),
+                                    //     ),
+                                    //     SpeedDialChild(
+                                    //       child: Icon(Icons.book_online_outlined),
+                                    //       backgroundColor: Colors.blue,
+                                    //       foregroundColor: Colors.white,
+                                    //       label: 'E-Books',
+                                    //       labelStyle: Theme.of(context).textTheme.titleMedium,
+                                    //       labelBackgroundColor: Colors.black.withOpacity(0.5),
+                                    //       shape: StadiumBorder(),
+                                    //       onTap: () => {
+                                    //         BlocProvider.of<NavbarBloc>(context)
+                                    //             .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.ebooks))
+                                    //       },
+                                    //     ),
+                                    //     SpeedDialChild(
+                                    //       child: Icon(Icons.podcasts),
+                                    //       backgroundColor: Colors.blue,
+                                    //       foregroundColor: Colors.white,
+                                    //       label: 'Hörbücher',
+                                    //       labelStyle: Theme.of(context).textTheme.titleMedium,
+                                    //       labelBackgroundColor: Colors.black.withOpacity(0.5),
+                                    //       shape: StadiumBorder(),
+                                    //       visible: true,
+                                    //       onTap: () => {
+                                    //         BlocProvider.of<NavbarBloc>(context)
+                                    //             .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.hoerbuecher))
+                                    //       },
+                                    //       onLongPress: () => debugPrint('THIRD CHILD LONG PRESS'),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    child: ValueListenableBuilder<CategoryStatus>(
+                                      valueListenable: NavbarState.categoryStatus,
+                                      builder: (context, value, child) {
+                                        return ClipRRect(
+                                          borderRadius: BorderRadius.all(Radius.circular(25.0)), // Match the container's border radius
 
-                                    // backgroundColor: Colors.redAccent,
-                                    // overlayOpacity: 0.9,
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), // Adjust the blur amount
 
-                                    // mini: mini,
-                                    // openCloseDial: false,
-                                    childPadding: const EdgeInsets.all(5),
-                                    spaceBetweenChildren: 4,
-                                    // childMargin: EdgeInsets.all(25) ,
+                                            child: Container(
+                                              // color: Colors.redAccent,
+                                              height: 45,
+                                              // width: 280,
+                                              decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                                                  color: Colors.grey.withOpacity(0.1),
+                                                  // boxShadow: [
+                                                  //   BoxShadow(
+                                                  //     color: Colors.grey.withOpacity(0.1),
+                                                  //     spreadRadius: 1,
+                                                  //     blurRadius: 0,
+                                                  //     // offset: Offset(0, 3), // changes position of shadow
+                                                  //   ),
+                                                  // ],
+                                                  backgroundBlendMode: BlendMode.luminosity,
+                                                  border: Border.all(color: Colors.grey, width: 0.5)),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: InkWell(
+                                                      splashColor: Colors.transparent,
+                                                      highlightColor: Colors.transparent,
+                                                      onTap: () => {
+                                                        BlocProvider.of<NavbarBloc>(context).add(
+                                                            SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.presse))
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(100),
+                                                          color: value == CategoryStatus.presse ? Colors.blue : Colors.transparent,),
+                                                        // color: value == CategoryStatus.presse ? Colors.blue : Colors.transparent,
+                                                        child: Padding(
+                                                          padding: EdgeInsets.all(8.0),
+                                                          child: Align(
+                                                            alignment: Alignment.center,
+                                                            child: Text(
+                                                              "Presse",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .titleSmall!
+                                                                  .copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                                                              textAlign: TextAlign.center,
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.fade,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                    dialRoot: (ctx, open, toggleChildren) {
-                                      return ElevatedButton(
-                                        onPressed: toggleChildren,
+                                                  Expanded(
+                                                    child: InkWell(
+                                                      splashColor: Colors.transparent,
+                                                      highlightColor: Colors.transparent,
+                                                      onTap: () => {
+                                                        BlocProvider.of<NavbarBloc>(context).add(
+                                                            SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.ebooks))
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(100),
+                                                            color: value == CategoryStatus.ebooks ? Colors.blue : Colors.transparent,),
+                                                        // color: value == CategoryStatus.ebooks ? Colors.blue : Colors.transparent,
+                                                        child: Padding(
+                                                          padding: EdgeInsets.all(8.0),
+                                                          child: Align(
+                                                            alignment: Alignment.center,
+                                                            child: Text(
+                                                              "Ebooks",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .titleSmall!
+                                                                  .copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                                                              textAlign: TextAlign.center,
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.fade,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue, //.withOpacity(0.693),
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-                                          // alignment: Alignment(100, 500)
-                                        ),
-                                        child: Icon(
-                                          open ?  Icons.close_fullscreen:Icons.open_with,
-                                          color: Colors.white,
-                                        ),
-                                        // child: Text(
-                                        //   "Category",
-                                        //   style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
-                                        // ),
-                                      );
-                                    },
-                                    iconTheme: IconThemeData(
-                                      size: 50,
+                                                  Expanded(
+                                                    child: InkWell(
+                                                      splashColor: Colors.transparent,
+                                                      highlightColor: Colors.transparent,
+                                                      onTap: () => {
+                                                        BlocProvider.of<NavbarBloc>(context).add(SelectCategory(
+                                                            currentLocation: state.appbarlocation, catStatus: CategoryStatus.hoerbuecher))
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(100),
+                                                          color: value == CategoryStatus.hoerbuecher ? Colors.blue : Colors.transparent,),
+                                                        child: Padding(
+                                                          padding: EdgeInsets.all(8.0),
+                                                          child: Align(
+                                                            alignment: Alignment.center,
+                                                            child: Text(
+                                                              "Hörbücher",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .titleSmall!
+                                                                  .copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                                                              textAlign: TextAlign.center,
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.fade,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    buttonSize: Size(40, 40),
-                                    // it's the SpeedDial size which defaults to 56 itself
-                                    // iconTheme: IconThemeData(size: 22),
-                                    label: Text("Open"),
-                                    // The label of the main button.
-                                    /// The active label of the main button, Defaults to label if not specified.
-                                    activeLabel: Text("Close"),
-
-                                    /// Transition Builder between label and activeLabel, defaults to FadeTransition.
-                                    // labelTransitionBuilder: (widget, animation) => ScaleTransition(scale: animation,child: widget),
-                                    /// The below button size defaults to 56 itself, its the SpeedDial childrens size
-                                    // childrenButtonSize: childrenButtonSize,
-                                    // visible: visible,
-                                    direction: SpeedDialDirection.up,
-                                    // switchLabelPosition: switchLabelPosition,
-
-                                    /// If true user is forced to close dial manually
-                                    // closeManually: closeManually,
-
-                                    /// If false, backgroundOverlay will not be rendered.
-                                    // renderOverlay: renderOverlay,
-                                    overlayOpacity: 0.35,
-                                    overlayColor: Colors.black,
-                                    // overlayOpacity: 0.5,
-                                    // onOpen: () => debugPrint('OPENING DIAL'),
-                                    // onClose: () => debugPrint('DIAL CLOSED'),
-                                    // useRotationAnimation: useRAnimation,
-                                    tooltip: 'Open Speed Dial',
-                                    heroTag: 'speed-dial-hero-tag',
-                                    foregroundColor: Colors.blue,
-                                    backgroundColor: Colors.green,
-                                    activeForegroundColor: Colors.redAccent,
-                                    activeBackgroundColor: Colors.pink,
-                                    elevation: 8.0,
-                                    animationCurve: Curves.elasticInOut,
-                                    isOpenOnStart: false,
-                                    shape: StadiumBorder(),
-                                    // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    children: [
-                                      SpeedDialChild(
-                                        child: Icon(Icons.newspaper),
-                                        backgroundColor: Colors.blue,
-                                        foregroundColor: Colors.white,
-                                        label: 'Presse',
-                                        labelStyle: Theme.of(context).textTheme.titleMedium,
-                                        labelBackgroundColor: Colors.black.withOpacity(0.5),
-                                        shape: StadiumBorder(),
-                                        onTap: () => BlocProvider.of<NavbarBloc>(context)
-                                            .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.presse)),
-                                        onLongPress: () => debugPrint('FIRST CHILD LONG PRESS'),
-                                      ),
-                                      SpeedDialChild(
-                                        child: Icon(Icons.book_online_outlined),
-                                        backgroundColor: Colors.blue,
-                                        foregroundColor: Colors.white,
-                                        label: 'E-Books',
-                                        labelStyle: Theme.of(context).textTheme.titleMedium,
-                                        labelBackgroundColor: Colors.black.withOpacity(0.5),
-                                        shape: StadiumBorder(),
-                                        onTap: () => {
-                                          BlocProvider.of<NavbarBloc>(context)
-                                              .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.ebooks))
-                                        },
-                                      ),
-                                      SpeedDialChild(
-                                        child: Icon(Icons.podcasts),
-                                        backgroundColor: Colors.blue,
-                                        foregroundColor: Colors.white,
-                                        label: 'Hörbücher',
-                                        labelStyle: Theme.of(context).textTheme.titleMedium,
-                                        labelBackgroundColor: Colors.black.withOpacity(0.5),
-                                        shape: StadiumBorder(),
-                                        visible: true,
-                                        onTap: () => {
-                                          BlocProvider.of<NavbarBloc>(context)
-                                              .add(SelectCategory(currentLocation: state.appbarlocation, catStatus: CategoryStatus.hoerbuecher))
-                                        },
-                                        onLongPress: () => debugPrint('THIRD CHILD LONG PRESS'),
-                                      ),
-                                    ],
                                   ),
                                 ),
-                              ),
-                            ):Container()
-
+                              )
+                            else
+                              Container()
                           ],
                         ),
                       ),
                       // currentIndex != 4
-                      Container(
-                          alignment: Alignment.bottomCenter,
-                          // key: _keyheight,
-                          child: ClipPath(
-                              key: _keyheight,
-                              // clipper: NavbarQRClipper(currentIndex,_keyheight,fabKey),
-                              clipper: NavbarClipper(currentIndex),
-                              child: CustomPaint(
-                                // painter: NavbarQRPainter(
-                                //   currentIndex,
-                                //   fabKey,
-                                //   context,
-                                //   _keyheight,
-                                // ),
-                                painter: NavbarPainter(currentIndex),
-                                child: CustomNavbar(
-                                  onClicked: onClicked,
-                                  selectedIndex: currentIndex,
-                                ),
-                              ))),
+                      tablet
+                          ? Container()
+                          : Container(
+                              alignment: Alignment.bottomCenter,
+                              // key: _keyheight,
+                              child: ClipPath(
+                                  key: _keyheight,
+                                  // clipper: NavbarQRClipper(currentIndex,_keyheight,fabKey),
+                                  clipper: NavbarClipper(currentIndex),
+                                  child: CustomPaint(
+                                    // painter: NavbarQRPainter(
+                                    //   currentIndex,
+                                    //   fabKey,
+                                    //   context,
+                                    //   _keyheight,
+                                    // ),
+                                    painter: NavbarPainter(currentIndex),
+                                    child: CustomNavbar(
+                                      onClicked: onClicked,
+                                      selectedIndex: currentIndex,
+                                    ),
+                                  ))),
                       // DirectSelectContainer(child: Container(color: Colors.grey,),),
                       // Container(color: Colors.grey,height: 100,width: 100,)
                     ],

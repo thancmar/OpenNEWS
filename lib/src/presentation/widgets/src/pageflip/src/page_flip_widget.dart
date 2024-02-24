@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,19 +22,26 @@ class PageFlipWidget extends StatefulWidget {
       this.initialIndex = 0,
       this.lastPage,
       this.isRightSwipe = false,
-      required this.reader})
+        required this.transformationController,
+        required this.orientation,
+        required this.imageDataCache,
+      // required this.reader
+      })
       : assert(initialIndex < children.length, 'initialIndex cannot be greater than children length'),
         super(key: key);
 
   final Color backgroundColor;
-  final List<ReaderPage> children;
+  final List<Widget> children;
   final Duration duration;
   final int initialIndex;
-  final ReaderPage? lastPage;
+  final Widget? lastPage;
   final double cutoffForward;
   final double cutoffPrevious;
   final bool isRightSwipe;
-  final Reader reader;
+  // final Widget reader;
+  final Orientation orientation;
+  final TransformationController transformationController;
+  final List<Uint8List?> imageDataCache;
 
   @override
   PageFlipWidgetState createState() => PageFlipWidgetState();
@@ -44,7 +52,6 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
 
   List<Widget> pages = [];
 
-  // List<ReaderPage> pages = [];
   final List<AnimationController> _controllers = [];
   bool? _isForward;
   double _scale = 1.0;
@@ -105,6 +112,8 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
         isRightSwipe: widget.isRightSwipe,
         pageIndex: i,
         key: Key('item$i'),
+        orientation: widget.orientation,
+        imageDataCache: widget.imageDataCache,
         // child: widget.children[i],
         child: widget.children[i],
       );
@@ -133,8 +142,8 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
 
   bool get _isZoomedIn {
     // Extract the scale values from the matrix
-    final double scaleX = widget.reader.transformationController.value.getRow(0).x;
-    final double scaleY = widget.reader.transformationController.value.getRow(1).y;
+    final double scaleX = widget.transformationController.value.getRow(0).x;
+    final double scaleY = widget.transformationController.value.getRow(1).y;
 
     // Check if the scale values are approximately 1.0 (considering some tolerance for floating-point precision issues)
     const double tolerance = 0.01;
@@ -191,48 +200,6 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
             await _controllers[pageNumber - 1].reverse();
             if (!_isFirstPage) {
               // print("_isFirstPage");
-              await previousPage();
-            }
-          }
-        }
-      }
-    }
-
-    _isForward = null;
-    currentPage.value = -1;
-  }
-
-  Future _onTap() async {
-    // if(widget.reader.pageScrollEnabled == false) return;
-    // if(_isZoomedIn) return;
-    Navigator.push(
-        context,
-        ReaderOptionRoute(
-            widget: ReaderOptionsPage(
-          reader: widget.reader,
-          bloc: BlocProvider.of<ReaderBloc>(context),
-          // currentPage:  widget.reader.currentPage,
-        )));
-
-    // _controllers[pageNumber].
-    if (_isForward != null) {
-      if (_isForward == true) {
-        if (!_isLastPage && _controllers[pageNumber].value <= (widget.cutoffForward + 0.15)) {
-          await nextPage();
-        } else {
-          if (!_isLastPage) {
-            await _controllers[pageNumber].forward();
-          }
-        }
-      } else {
-        if (!_isFirstPage && _controllers[pageNumber - 1].value >= widget.cutoffPrevious) {
-          await previousPage();
-        } else {
-          if (_isFirstPage) {
-            await _controllers[pageNumber].forward();
-          } else {
-            await _controllers[pageNumber - 1].reverse();
-            if (!_isFirstPage) {
               await previousPage();
             }
           }
@@ -332,7 +299,7 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
     return LayoutBuilder(
       builder: (context, dimens) => InteractiveViewer(
         // alignPanAxis: true,
-        transformationController: widget.reader.transformationController,
+        transformationController: widget.transformationController,
         minScale: 0.01,
         maxScale: 3.5,
         // behavior: HitTestBehavior.opaque,

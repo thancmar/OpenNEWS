@@ -9,14 +9,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/categoriepage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage/categoriepage.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
-import '../../../../blocs/navbar/navbar_bloc.dart';
-import '../../../../blocs/searchpage/search_bloc.dart';
-import '../../../widgets/marquee.dart';
-import '../../../widgets/src/coversverticallist.dart';
-import '../../reader/readerpage.dart';
+import '../../../../../blocs/navbar/navbar_bloc.dart';
+import '../../../../../blocs/searchpage/search_bloc.dart';
+import '../../../../widgets/marquee.dart';
+import '../../../../widgets/src/coversverticallist.dart';
+import '../../../reader/readerpage.dart';
 import 'languagepage.dart';
 
 class SearchPage extends StatefulWidget {
@@ -41,6 +41,17 @@ class _SearchPageState extends State<SearchPage>
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
+  bool isTablet(BuildContext context) {
+    // Get the device's physical screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Arbitrary cutoff for device width that differentiates between phones and tablets
+    // This can be adjusted based on your needs or specific device metrics
+    const double deviceWidthCutoff = 600;
+
+    return screenSize.width > deviceWidthCutoff;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +70,7 @@ class _SearchPageState extends State<SearchPage>
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
-
+    bool tablet = isTablet(context);
     return Stack(
       children: [
         Positioned.fill(
@@ -97,7 +108,8 @@ class _SearchPageState extends State<SearchPage>
                       child: Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
-                        size: size.width * 0.1,
+                        size: 40,
+                        // size: size.width * 0.1,
                       ),
                     ),
                   ),
@@ -190,7 +202,8 @@ class _SearchPageState extends State<SearchPage>
                       child: Icon(
                         state is GoToSearchResults ? Icons.close_rounded : Icons.search,
                         color: Colors.white,
-                        size: size.width * 0.1,
+                        // size: size.width * 0.1,
+                        size: 40,
                       ),
                       // child: ImageIcon(
                       //   AssetImage(
@@ -319,14 +332,14 @@ class _SearchPageState extends State<SearchPage>
                             // if (SearchState.oldSearchResults?.length != 0) {Container()},
 
                             Align(
-                              alignment: Alignment.topLeft,
+                              alignment: tablet?Alignment.center:Alignment.topLeft,
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
                                 child: Text(
                                   'Choose a language',
                                   // style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                   style: Theme.of(context).textTheme.headlineSmall,
-                                  textAlign: TextAlign.right,
+                                  textAlign: tablet?TextAlign.center:TextAlign.right,
                                 ),
                               ),
                             ),
@@ -340,19 +353,19 @@ class _SearchPageState extends State<SearchPage>
                                     padding: const EdgeInsets.fromLTRB(20, 0, 10, 5),
                                     child: Container(
                                       // width: MediaQuery.of(context).size.width * 0.40,
-                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      height: MediaQuery.of(context).size.aspectRatio * 75,
 
                                       child: FloatingActionButton.extended(
                                         // heroTag: 'location_offers',
                                         key: UniqueKey(),
-                                        heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                        heroTag: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response()!.length})',
                                         splashColor: Colors.white,
                                         elevation: 1,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
 
                                         label: Text(
-                                          'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                          'All(${NavbarState.magazinePublishedGetLastWithLimit!.response()!.length})',
                                           // 'All($counterALL)',
                                           // BlocProvider.of<NavbarBloc>(context).state.magazinePublishedGetLastWithLimit!.response!.length.toString(),
                                           style:Theme.of(context).textTheme.titleSmall,
@@ -371,7 +384,7 @@ class _SearchPageState extends State<SearchPage>
                                           Navigator.of(context).push(
                                             CupertinoPageRoute(
                                               builder: (context) => LanguagePage(
-                                                titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response!.length})',
+                                                titleText: 'All(${NavbarState.magazinePublishedGetLastWithLimit!.response()!.length})',
                                                 language: "all",
                                               ),
                                             ),
@@ -400,7 +413,7 @@ class _SearchPageState extends State<SearchPage>
                                     padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
                                     child: Container(
                                       // width: MediaQuery.of(context).size.width * 0.40,
-                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      height: MediaQuery.of(context).size.aspectRatio * 75,
                                       child: FloatingActionButton.extended(
                                         // heroTag: 'location_offers',
                                         key: UniqueKey(),
@@ -465,7 +478,7 @@ class _SearchPageState extends State<SearchPage>
                                     padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
                                     child: Container(
                                       // width: MediaQuery.of(context).size.width * 0.40,
-                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      height: MediaQuery.of(context).size.aspectRatio * 75,
                                       child: FloatingActionButton.extended(
                                         // heroTag: 'location_offers',
                                         key: UniqueKey(),
@@ -517,7 +530,7 @@ class _SearchPageState extends State<SearchPage>
                                     padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
                                     child: Container(
                                       // width: MediaQuery.of(context).size.width * 0.40,
-                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      height: MediaQuery.of(context).size.aspectRatio * 75,
                                       child: FloatingActionButton.extended(
                                         // heroTag: 'location_offers',
                                         key: UniqueKey(),
@@ -569,7 +582,7 @@ class _SearchPageState extends State<SearchPage>
                                     padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
                                     child: Container(
                                       // width: MediaQuery.of(context).size.width * 0.40,
-                                      height: MediaQuery.of(context).size.width * 0.1,
+                                      height: MediaQuery.of(context).size.aspectRatio * 75,
                                       child: FloatingActionButton.extended(
                                         // heroTag: 'location_offers',
                                         key: UniqueKey(),
@@ -997,94 +1010,103 @@ class _CategoryImagesState extends State<CategoryImages> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.17,
-      child: PageView.builder(
+      height: 150,
+      // height: 250,
+
+      child: ListView.builder(
         controller: widget.controller,
 
         itemCount: NavbarState.magazineCategoryGetAllActive?.response!.length,
-        allowImplicitScrolling: false,
+        // allowImplicitScrolling: false,
         // pageSnapping: false,
         scrollDirection: Axis.horizontal,
         dragStartBehavior: DragStartBehavior.start,
-        pageSnapping: false,
-        padEnds: false,
+        // pageSnapping: false,
+        // padEnds: false,
 // scrollBehavior: ScrollBehavior.,
 
         itemBuilder: (context, i) {
-          return Transform.scale(
-            scale: 0.95,
-            alignment: Alignment.center,
-            child: GestureDetector(
-              onTap: () => {
-                // print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
-// print ("category name ${NavbarState.magazineCategoryGetAllActive!.response![i].name!}"),
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => CategoryPage(
-                      titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                      categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
-                    ),
-                  ),
-                )
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.13,
-                    // width: 100,
-                    // color: Colors.green,
-                    child: Card(
-                      color: Colors.transparent,
-
-                      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
-                      shape: CircleBorder(
-                        side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
-                        // borderRadius: BorderRadius.circular(100),
+          return Padding(
+            padding: EdgeInsets.all(16),
+            child: AspectRatio(
+              aspectRatio: 9 / 5,
+              child: GestureDetector(
+                onTap: () => {
+                  // print(NavbarState.magazineCategoryGetAllActive!.response![i].id),
+              // print ("category name ${NavbarState.magazineCategoryGetAllActive!.response![i].name!}"),
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => CategoryPage(
+                        titleText: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                        categoryID: NavbarState.magazineCategoryGetAllActive!.response![i].id!,
                       ),
+                    ),
+                  )
+                },
+                child: Column(
+                  children: [
+                    Container(
+                      // height: MediaQuery.of(context).size.height * 0.13,
+                      // height: MediaQuery.of(context).size.height * 0.13,
+                      // width: 100,
+                      // color: Colors.green,
+                      child: Card(
+                        color: Colors.transparent,
 
-                      clipBehavior: Clip.hardEdge,
-                      // margin: EdgeInsets.all(10.0),
-                      child: ClipRRect(
-                        // borderRadius: BorderRadius.circular(11.0),
+                        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
+                        // shape: CircleBorder(
+                        //   side: BorderSide(color: Colors.transparent, width: 0,style: BorderStyle.none),
+                        //   // borderRadius: BorderRadius.circular(100),
+                        //
+                        // ),
+                        // shape: StadiumBorder(),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.0)),
 
-                        child: Image.memory(
-                          // state.bytes![i],
+                        clipBehavior: Clip.hardEdge,
+                        // margin: EdgeInsets.all(10.0),
+                        child: ClipRRect(
+                          // borderRadius: BorderRadius.circular(11.0),
 
-                          decodedImages[i],
-                          key: ValueKey(NavbarState.magazineCategoryGetAllActive!.response![i].id!), // assuming id is unique
+                          child: Image.memory(
+                            // state.bytes![i],
 
-                          fit: BoxFit.cover,
-                          alignment: Alignment.center,
+                            decodedImages[i],
+                            key: ValueKey(NavbarState.magazineCategoryGetAllActive!.response![i].id!), // assuming id is unique
 
-                          // scale: 0.001,
-                          // filterQuality: FilterQuality.high,
-                          // colorBlendMode: BlendMode.colorBurn,
-                          // height: MediaQuery.of(context).size.height * 0.1,
-                          // width: MediaQuery.of(context).size.width * 0.9,
-                          // height: 20,
+                            fit: BoxFit.fitHeight,
+                            alignment: Alignment.center,
+
+                            // scale: 0.001,
+                            // filterQuality: FilterQuality.high,
+                            // colorBlendMode: BlendMode.colorBurn,
+                            // height: MediaQuery.of(context).size.height * 0.1,
+                            // width: MediaQuery.of(context).size.width * 0.9,
+                            // height: 20,
+                          ),
                         ),
+                        // child: Icon(
+                        //   Icons.ac_unit,
+                        //   size: 50,
+                        //   color: Colors.amber,
+                        // ),
                       ),
-                      // child: Icon(
-                      //   Icons.ac_unit,
-                      //   size: 50,
-                      //   color: Colors.amber,
-                      // ),
                     ),
-                  ),
-                  // Spacer(),
-                  Hero(
-                    tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
-                    child: Text(
-                      NavbarState.magazineCategoryGetAllActive!.response![i].name!
-                      // +                                    " " +
-                      // NavbarState.magazineCategoryGetAllActive!.response![i].id!
-                      ,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ), // Spacer()
-                ],
+                    // Spacer(),
+                    Hero(
+                      tag: NavbarState.magazineCategoryGetAllActive!.response![i].name!,
+                      child: Text(
+                        NavbarState.magazineCategoryGetAllActive!.response![i].name!
+                        // +                                    " " +
+                        // NavbarState.magazineCategoryGetAllActive!.response![i].id!
+                        ,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ), // Spacer()
+                  ],
+                ),
               ),
             ),
           );
