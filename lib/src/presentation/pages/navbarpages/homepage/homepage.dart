@@ -1,17 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // import 'package:rive/rive.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
+import 'package:sharemagazines/src/models/audioBooksForLocationGetAllActive.dart';
 import 'package:sharemagazines/src/models/locationOffers_model.dart';
 import 'package:sharemagazines/src/models/location_model.dart';
+import '../../../../models/ebooksForLocationGetAllActive.dart';
 import '../../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../../widgets/news_aus_deiner_Region.dart';
 import '../../../widgets/src/coversverticallist.dart';
+import '../../../widgets/src/customCover.dart';
 import '../ebookreader/ebookreader.dart';
 import '../map/offerpage.dart';
 
@@ -34,28 +39,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     _refreshController.refreshCompleted();
   }
 
-  // void _onLoading() async {
-  //   // monitor network fetch
-  //   await Future.delayed(Duration(milliseconds: 10000));
-  //   // if failed,use loadFailed(),if no data return,use LoadNodata()
-  //   // items.add((items.length + 1).toString());
-  //   // if (mounted) setState(() {});
-  //   // _refreshController.loadComplete();
-  // }
-
-  // final Stream<int> _bids = (() {
-  //   late final StreamController<int> controller;
-  //   controller = StreamController<int>(
-  //     onListen: () async {
-  //       await Future<void>.delayed(const Duration(seconds: 1));
-  //       controller.add(1);
-  //       await Future<void>.delayed(const Duration(seconds: 1));
-  //       await controller.close();
-  //     },
-  //   );
-  //   return controller.stream;
-  // })();
-
   @override
   void initState() {
     super.initState();
@@ -66,6 +49,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   void dispose() {
     _refreshController.dispose();
+
     super.dispose();
   }
 
@@ -74,148 +58,118 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     Size size = MediaQuery.of(context).size;
 
     super.build(context);
+
     return BlocBuilder<NavbarBloc, NavbarState>(
       builder: (BuildContext context, state) {
-        MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
-            response: NavbarState.magazinePublishedGetLastWithLimit.response()!
-                .where((element) => element.idsMagazineCategory?.contains('20') == true)
-                .toList());
+        // MagazinePublishedGetAllLastByHotspotId items = MagazinePublishedGetAllLastByHotspotId(
+        //     response: NavbarState.magazinePublishedGetLastWithLimit.response()!
+        //         .where((element) => element.idsMagazineCategory?.contains('20') == true)
+        //         .toList());
         return state is NavbarLoaded
             ? SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ValueListenableBuilder<CategoryStatus>(
-                          valueListenable: NavbarState.categoryStatus,
-                          builder: (context, value, child) {
-                            return SmartRefresher(
-                                enablePullDown: true,
-                                header: ClassicHeader(
-                                  // Customize your header's appearance here
-                                  refreshingIcon: CircularProgressIndicator(
-                                    strokeWidth: 2.0,
-                                    color: Colors.grey,
-                                  ),
-                                  completeIcon: Icon(Icons.done, color: Colors.grey),
-                                  idleIcon: Icon(Icons.arrow_downward, color: Colors.grey),
-                                  releaseIcon: Icon(Icons.refresh, color: Colors.grey),
+                child: ValueListenableBuilder<CategoryStatus>(
+                    valueListenable: NavbarState.categoryStatus,
+                    builder: (context, categoryStatus, child) {
 
-                                  idleText: 'Pull down to refresh',
-                                  refreshingText: 'Loading...',
-                                  completeText: 'Refresh Completed',
-                                  failedText: 'Refresh Failed',
-                                  textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey),
-                                  refreshStyle: RefreshStyle.Follow,
+                      // _scrollController.animateTo(1.0, duration: Duration(milliseconds: 250), curve: Curves.easeInOut);
+                      MagazinePublishedGetAllLastByHotspotId magazines = MagazinePublishedGetAllLastByHotspotId(response: []);
+                      MagazinePublishedGetAllLastByHotspotId bookmarks;
 
-                                  // Add a BoxDecoration to give a grey background
-                                  // decoration: BoxDecoration(
-                                  //   color: Colors.grey[300], // Choose the shade of grey you want
-                                  // ),
-                                ),
-                                controller: _refreshController,
-                                // enableTwoLevel: ,
-                                onRefresh: () => _onRefresh(state.appbarlocation),
-                                child: CustomScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  // clipBehavior: Clip.hardEdge,
-                                  controller: _scrollController,
-                                  slivers: <Widget>[
-                                    // You can add a SliverAppBar here if needed
-                                    // SliverAppBar(
-                                    //   title: Text('Sliver App Bar'),
-                                    //   floating: true,
-                                    //   pinned: true,
-                                    //   expandedHeight: 200.0,
-                                    //   flexibleSpace: FlexibleSpaceBar(
-                                    //     background: Image.network("URL_TO_YOUR_IMAGE", fit: BoxFit.cover),
-                                    //   ),
-                                    // ),
-                                    // if (NavbarState.magazinePublishedGetTopLastByRange != null &&
-                                    //     NavbarState.magazinePublishedGetTopLastByRange?.response!.length != 0)
-                                    // Align(
-                                    //   alignment: Alignment.centerLeft,
-                                    //   child: Padding(
-                                    //     padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
-                                    //     child: Text(
-                                    //       ("regionalTitle").tr(),
-                                    //       style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                    //       textAlign: TextAlign.right,
-                                    //     ),
-                                    //   ),
-                                    // ),
+                      EbooksForLocationGetAllActive ebooks = EbooksForLocationGetAllActive(response: []);
+                      AudioBooksForLocationGetAllActive audiobooks = AudioBooksForLocationGetAllActive(response: []);
 
-                                    if (value == CategoryStatus.presse &&
-                                        NavbarState.magazinePublishedGetTopLastByRange != null &&
-                                        NavbarState.magazinePublishedGetTopLastByRange?.response()!.length != 0)
-                                      SliverToBoxAdapter(child: News_aus_deiner_Region(state: state, categoryName: 'Top Titel')),
-                                    if (value == CategoryStatus.presse)
-                                      VerticalListCover(
-                                          items: items,
-                                          scrollController: _scrollController,
-                                          height_News_aus_deiner_Region: MediaQuery.of(context).size.aspectRatio * 1000),
+                      if (categoryStatus == CategoryStatus.presse)
+                        magazines = MagazinePublishedGetAllLastByHotspotId(
+                            response: NavbarState.magazinePublishedGetLastWithLimit.response()!
+                                .where((element) => element.idsMagazineCategory?.contains('20') == true)
+                                .toList());
+                      if (categoryStatus == CategoryStatus.ebooks)
+                        ebooks = EbooksForLocationGetAllActive(
+                            response: NavbarState.ebooks
+                                .response()!
+                                .where((element) =>
+                            element.idsEbookCategory?.contains(NavbarState.ebookCategoryGetAllActiveByLocale!.response![1].id!) == true)
+                            // .toSet()
+                                .toList());
+                      if (categoryStatus == CategoryStatus.hoerbuecher)
+                        audiobooks = AudioBooksForLocationGetAllActive(
+                            response: NavbarState.audiobooks
+                                .response()!
+                                .where((element) =>
+                            element.idsAudiobookCategory?.contains(NavbarState.audioBooksCategoryGetAllActiveByLocale!.response![1].id!) == true)
+                            // .toSet()
+                                .toList());
+                      // print(NavbarState.audioBooksCategoryGetAllActiveByLocale!.response![9].name);
+                      return SmartRefresher(
+                          enablePullDown: true,
+                          header: ClassicHeader(
+                            // Customize your header's appearance here
+                            refreshingIcon: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              color: Colors.grey,
+                            ),
+                            completeIcon: Icon(Icons.done, color: Colors.grey),
+                            idleIcon: Icon(Icons.arrow_downward, color: Colors.grey),
+                            releaseIcon: Icon(Icons.refresh, color: Colors.grey),
 
-                                    if (value == CategoryStatus.ebooks)
-                                      SliverToBoxAdapter(
-                                          child: Column(
-                                        children: [
-                                          Align(
-                                              alignment: Alignment.center,
-                                              child: Container(
-                                                // color: Colors.red,
-                                                height: size.height * 0.9,
-                                                child: ListView.builder(
-                                                  itemCount: NavbarState.ebooks.response()!.length,
-                                                  itemBuilder: (_, int index) => ListTile(
-                                                    // leading: NavbarState.ebooks.response[index].leading,
+                            idleText: 'Pull down to refresh',
+                            refreshingText: 'Loading...',
+                            completeText: 'Refresh Completed',
+                            failedText: 'Refresh Failed',
+                            textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey),
+                            refreshStyle: RefreshStyle.Follow,
 
-                                                    title: GestureDetector(
-                                                      onTap: () => {
-                                                        showModalBottomSheet(
-                                                          context: context,
-                                                          shape: const RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-                                                          ),
-                                                          isScrollControlled: true,
-                                                          constraints: BoxConstraints.tight(
-                                                              Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height * .8)),
-                                                          builder: (ctx) {
-                                                            return ebookDescription(context: ctx,index: index,);
-                                                          },
-                                                        )
-                                                      },
-                                                      child: Column(
-                                                        children: [
-                                                          Text(
-                                                            NavbarState.ebooks.response()![index].title!,
-                                                            style: Theme.of(context).textTheme.titleMedium,
-                                                          ),
-                                                          Text(
-                                                            NavbarState.ebooks.response()![index].dateOfPublication!,
-                                                            style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.grey),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    // onTap: () => _pushPage(context, pages[index]),
-                                                  ),
-                                                ),
-                                              )),
-                                        ],
-                                      )),
-
-                                    SliverToBoxAdapter(
-                                      child: Container(
-                                        height: size.height * 0.2, // Adjust the height as needed
-                                        color: Colors.transparent, // Set any color if needed
+                            // Add a BoxDecoration to give a grey background
+                            // decoration: BoxDecoration(
+                            //   color: Colors.grey[300], // Choose the shade of grey you want
+                            // ),
+                          ),
+                          controller: _refreshController,
+                          // enableTwoLevel: ,
+                          onRefresh: () => _onRefresh(state.appbarlocation),
+                          child: CustomScrollView(
+                            scrollDirection: Axis.vertical,
+                            // clipBehavior: Clip.hardEdge,
+                            controller: _scrollController,
+                            slivers: <Widget>[
+                              if (
+                              categoryStatus == CategoryStatus.presse &&
+                                  NavbarState.magazinePublishedGetTopLastByRange != null &&
+                                  NavbarState.magazinePublishedGetTopLastByRange?.response()!.length != 0)
+                                SliverToBoxAdapter(child: News_aus_deiner_Region(state: state)),
+                              // if (value == CategoryStatus.presse)
+                              SliverToBoxAdapter(
+                                child: Container(
+                                  // height: size.height * 0.12, // Adjust the height as needed
+                                  color: Colors.transparent, // Set any color if needed
+                                  child:  Align(
+                                    alignment: Alignment.centerLeft,
+                                    // alignment: tablet?Alignment.center: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
+                                      child: Text(
+                                        // ("Top-title").tr(),
+                                        ("Top Titel"),
+                                        style:  Theme.of(context).textTheme.bodyLarge,
+                                        // textAlign:tablet?TextAlign.center: TextAlign.right,
                                       ),
                                     ),
-                                  ],
-                                ));
-                          }),
-                    ),
-                  ],
-                ),
+                                  ),
+                                ),
+                              ),
+                                VerticalListCover(
+                                    items:categoryStatus==CategoryStatus.ebooks? ebooks:categoryStatus==CategoryStatus.hoerbuecher?audiobooks:magazines,
+                                    scrollController: _scrollController,
+                                    height_News_aus_deiner_Region: MediaQuery.of(context).size.aspectRatio * 1000),
+                              SliverToBoxAdapter(
+                                child: Container(
+                                  height: size.height * 0.2, // Adjust the height as needed
+                                  color: Colors.transparent, // Set any color if needed
+                                ),
+                              ),
+                            ],
+                          ));
+                    }),
               )
             : Container();
       },
@@ -225,9 +179,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 class ebookDescription extends StatelessWidget {
   final BuildContext context;
-  final int index;
+  // final int index;
+  final ResponseEbook? ebook;
+  final ResponseAudioBook? audiobook;
+  final AnimationController? spinKitController;
   const ebookDescription({
-    Key? key, required this.index, required this.context
+    Key? key, this.audiobook, this.ebook, required this.context,required this.spinKitController
   }) : super(key: key);
 
   @override
@@ -238,6 +195,17 @@ class ebookDescription extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+
+            // CustomCachedNetworkImage(
+            //   mag:res,
+            //
+            //   thumbnail: true,
+            //   // covers: widget.cover,
+            //   heroTag: "dasd",
+            //   pageNo: 0,
+            //   spinKitController: spinKitController,
+            //   height_News_aus_deiner_Region: 0,
+            // ),
             GestureDetector(
               onTap: () {
                 Navigator.pop(context); // This will close the modal bottom sheet
@@ -253,6 +221,7 @@ class ebookDescription extends StatelessWidget {
             )
           ],
         ),
+
         Expanded(
           child: SingleChildScrollView(
             child: Padding(
@@ -261,8 +230,109 @@ class ebookDescription extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Column(
                     children: [
+                      Container(height: ebook!=null?250:200,width: 200,child: CachedNetworkImage(
+                        // key: ValueKey(
+                        //     // widget._networklHasErrorNotifier != null && widget.index < widget._networklHasErrorNotifier.length
+                        //     // ?
+                        //     widget._networklHasErrorNotifier[widget.index].value
+                        //     // :
+                        //     // 'defaultKey'
+                        //     ),
+                        imageUrl: (ebook?.id! ?? audiobook?.id)! + // idMagazinePublication! +
+                            "_" +
+                            (ebook?.dateOfPublication!?? audiobook?.dateOfPublication)!+(ebook!=null?"ebook":"audiobook")
+                        //+ '_thumbnail',
+                        ,
+                        // imageUrl: NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].idMagazinePublication! +
+                        //     "_" +
+                        //     NavbarState.magazinePublishedGetLastWithLimit!.response!.where((i) => i.magazineLanguage == "de").toList()[index].dateOfPublication!,
+                        // progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+                        //   // color: Colors.grey.withOpacity(0.1),
+                        //   decoration: BoxDecoration(
+                        //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                        //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        //     color: Colors.grey.withOpacity(0.1),
+                        //   ),
+                        //   child: SpinKitFadingCircle(
+                        //     color: Colors.white,
+                        //     size: 50.0,
+                        //   ),
+                        // ),
+                        // imageRenderMethodForWeb: ,
+                        imageBuilder: (context, imageProvider) => Container(
+                          // decoration: BoxDecoration(
+                          //   // border: Border.all(color: Colors.black, width: 2.0), // Outer border
+                          //   borderRadius: BorderRadius.circular(5.0),
+                          // ),
+                          child: ClipRRect(
+                            // This will clip any child widget going outside its bounds
+                            borderRadius: BorderRadius.circular(8.0), // Same rounded corners as the outer border
+                            child: Transform.translate(
+                              offset: Offset(0, 0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  // border: Border.all(color: Colors.black, width: 2.0), // Outer border
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.fill,
+                                  ),
+                                  // borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // filterQuality: widget.reader ? FilterQuality.high : FilterQuality.low,
+                        filterQuality: FilterQuality.low,
+                        // useOldImageOnUrlChange: true,
+                        // very important: keep both placeholder and errorWidget
+                        // placeholder: (context, url) => Container(
+                        //   // color: Colors.grey.withOpacity(0.1),
+                        //   decoration: BoxDecoration(
+                        //     // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                        //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        //     // color: Colors.grey.withOpacity(0.05),
+                        //     color: Colors.grey.withOpacity(0.1),
+                        //   ),
+                        //   child: SpinKitFadingCircle(
+                        //     color: Colors.white,
+                        //     size: 50.0,
+                        //     controller: widget.spinKitController,
+                        //   ),
+                        // ),
+                        placeholder: (context, url) => ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                          child: Container(
+                            // color: Colors.grey.withOpacity(0.1),
+
+                            decoration: BoxDecoration(
+                              // image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              // color: Colors.grey.withOpacity(0.1),
+                            ),
+                            child: SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 50.0,
+                              controller: spinKitController,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              color: Colors.grey.withOpacity(0.1),
+                            ),
+                            child: Icon(
+                              Icons.error,
+                              color: Colors.red.withOpacity(0.8),
+                            )),
+                      )),
+
                       Text(
-                        NavbarState.ebooks.response()![index].title!,
+                       ( ebook?.title!?? audiobook?.title)!,
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall!
@@ -272,7 +342,7 @@ class ebookDescription extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 15),
                         child: Text(
-                          NavbarState.ebooks.response()![index].author!,
+                          (ebook?.author!?? audiobook?.author)!,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
@@ -281,10 +351,10 @@ class ebookDescription extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        NavbarState.ebooks.response()![index].description!,
+                       ( ebook?.description!?? audiobook?.description)!,
                         style: Theme.of(context)
                             .textTheme
-                            .titleLarge!
+                            .bodyLarge!
                             .copyWith(color: Colors.black),
                         textAlign: TextAlign.left,
                       ),
@@ -417,7 +487,7 @@ class ebookDescription extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        "No. of pages",
+                        ebook!=null?"No. of pages":"Runtime",
                         style: Theme.of(context)
                             .textTheme
                             .titleSmall!
@@ -425,7 +495,7 @@ class ebookDescription extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        NavbarState.ebooks.response()![index].pageMax!,
+                        ( ebook?.pageMax!?? audiobook?.runtime)!,
 
                         style: Theme.of(context)
                             .textTheme
@@ -457,7 +527,7 @@ class ebookDescription extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      DateFormat("yyyy").format(DateTime.parse(NavbarState.ebooks.response()![index].dateOfPublication!)),
+                      DateFormat("yyyy").format(DateTime.parse(( ebook?.dateOfPublication!?? audiobook?.dateOfPublication)!)),
 
                       style: Theme.of(context)
                           .textTheme
@@ -488,7 +558,7 @@ class ebookDescription extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      NavbarState.ebooks.response()![index].ebookLanguage!.toUpperCase(),
+                      ( ebook?.ebookLanguage!?? audiobook?.audiobookLanguage)!,
 
                       style: Theme.of(context)
                           .textTheme
@@ -519,16 +589,33 @@ class ebookDescription extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
+                if(ebook !=null){
                 Navigator.of(context).push(
                   CupertinoPageRoute(
-                    builder: (context) => Ebookreader(
+                    builder: (context) =>
+                        // Ebookreader1(ebook: res,)
+                        Ebookreader(
+                      ebook: ebook!,
                       // magazine: widget.items.response![index],
                       // heroTag: "toptitle${index}",
 
                       // noofpages: 5,
                     ),
                   ),
-                );
+                );}else{
+                  // Navigator.of(context).push(
+                  //     CupertinoPageRoute(
+                  //       builder: (context) =>
+                  //       // Ebookreader1(ebook: res,)
+                  //       Ebookreader(
+                  //         ebook: ebook!,
+                  //         // magazine: widget.items.response![index],
+                  //         // heroTag: "toptitle${index}",
+                  //
+                  //         // noofpages: 5,
+                  //       ),
+                  //     ));
+                }
                 // FirebaseAuth.instance
                 //     .authStateChanges()
                 //     .listen((User? user) {
@@ -550,13 +637,8 @@ class ebookDescription extends StatelessWidget {
                 minimumSize: Size(300, 60), //////// HERE
               ),
               child: Text(
-                "Jetzt Lesen".toLowerCase(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18,
-                  //fontStyle: FontStyle.,
-                ),
+    (ebook!=null?"Jetzt Lesen":"jetzt Hören").toUpperCase(),
+                style:  Theme.of(context).textTheme.titleMedium,
               ),
             ),
           ),
@@ -601,20 +683,20 @@ class LocationOffersWidget extends StatelessWidget {
                           // width: MediaQuery.of(context).size.width * 0.40,
                           // height: MediaQuery.of(context).size.width * 0.1,
                           color: Colors.transparent,
-                          elevation: 0,
+                          elevation: 2,
 
                           child: FloatingActionButton.extended(
                             // heroTag: 'offer_title$i',
                             heroTag: snapshot.data!.locationOffer![i].shm2Offer![0].title!,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)), side: BorderSide(color: Colors.white, width: 0.2)),
                             label: Text(
                               snapshot.data!.locationOffer![i].shm2Offer![0].title!,
                               // 'Speisekarte',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             // <-- Text
-                            backgroundColor: Colors.grey.withOpacity(0.1),
+                            backgroundColor: Colors.grey.withOpacity(0.15),
 
                             onPressed: () => {
                               Navigator.of(context).push(

@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
 
 import 'package:sharemagazines/src/blocs/splash/splash_bloc.dart';
-import 'package:sharemagazines/src/presentation/pages/mainpage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/mainpage.dart';
 import 'package:sharemagazines/src/presentation/widgets/splash_widget.dart';
 
 import '../../blocs/navbar/navbar_bloc.dart';
 import '../../models/location_model.dart';
-import 'startpage.dart';
+import 'startpage/startpage.dart';
 
 // This the widget where the BLoC states and events are handled.
 class SplashScreen extends StatelessWidget {

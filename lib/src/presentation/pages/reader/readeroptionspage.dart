@@ -15,23 +15,10 @@ import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../widgets/routes/toreaderoption.dart';
 
 class ReaderOverlayPage extends StatefulWidget {
-  // final model.Response magazine;
-  final ReaderBloc bloc;
-
   final Reader reader;
-
-  // final TransformationController controller;
-  // Function callback;
-  // bool isOnPageTurning;
-  // print("dsfs");
-  // int current = 0;
-  // ValueNotifier<double> currentPage;
 
   ReaderOverlayPage({
     required this.reader,
-    required this.bloc,
-    // required this.currentPage,
-    // required this.controller
   }) : super();
 
   @override
@@ -49,11 +36,6 @@ class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKee
   @override
   void initState() {
     super.initState();
-
-    // Future(() {
-    //   Navigator.of(context).push(PageRouteBuilder(
-    //       pageBuilder: (BuildContext context, _, __) => Reader()));
-    // });
   }
 
   @override
@@ -69,61 +51,45 @@ class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKee
             // size: 30,
           ),
           onPressed: () => {
-            // Navigator.of(context).pop(),
-            // dispose(),
-            // Navigator.of(context).popUntil((route) => route.isFirst),
-            // widget.bloc.add(CloseReader()),
-            // widget.bloc.close(),
-            // setState(() {
-            //   pageScale = _controller.value.getMaxScaleOnAxis();
-            // }),
-            if(mounted){
-            setState(() {
-              // widget.reader.currentPage == i;
-              print("gotopage 0");
-              widget.reader.transformationController.value = Matrix4.identity();
-              widget.reader.controllerflip.currentState!.goToPage(0);//.whenComplete(() => widget.bloc.add(CloseReader()));
+            if (mounted)
+              {
+                setState(() {
+                  // widget.reader.currentPage == i;
+                  print("gotopage 0");
+                  widget.reader.transformationController.value = Matrix4.identity();
+                  widget.reader.controllerflip.currentState!.goToPage(0); //.whenComplete(() => widget.bloc.add(CloseReader()));
 // widget.reader.transformationController.value== Matrix4.identity();
-              // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
-            }),},
-            // widget.reader.transformationController.value = Matrix4.identity(), //To resize the loading icon
-
-            // widget.bloc.add(CloseReader()),
-            // if(widget.reader.controllerflip.currentState!.pageNumber==0){
-            // widget.bloc.add(CloseReader())}
-            // BlocProvider.of<ReaderBloc>(context).add(CloseReader()),
-            // BlocProvider
+                  // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                }),
+              },
             Navigator.of(context).popUntil((route) => route.isFirst),
-            // widget.bloc.add(CloseReader()),
           },
         ),
         title: MarqueeWidget(
           // child: Text("sfd"),
-          child: Text(widget.reader.magazine.title! ?? "Title",style: Theme.of(context).textTheme.titleLarge,),
+          child: Text(
+            widget.reader.magazine.title! ?? "Title",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           direction: Axis.horizontal,
-          // pauseDuration: Duration(milliseconds: 100),
-          // animationDuration: Duration(seconds: 2),
-          // backDuration: Duration(seconds: 1),
         ),
         actionsIconTheme: IconThemeData(
           color: Colors.white,
           size: 25,
         ),
         actions: [
-          // Padding(
-          //   padding: EdgeInsets.all(10.0),
-          //   child: Icon(Icons.menu_outlined),
-          // ),
           Padding(
             padding: EdgeInsets.all(10.0),
             child: GestureDetector(
               onTap: () => {
                 setState(() {
-                  if (NavbarState.bookmarks.value.response()!
+                  if (NavbarState.bookmarks.value
+                      .response()!
                       .any((element) => element.idMagazinePublication == widget.reader.magazine.idMagazinePublication)) {
                     // Removing the item from the list
                     NavbarState.bookmarks.value = MagazinePublishedGetAllLastByHotspotId(
-                        response: NavbarState.bookmarks.value.response()!
+                        response: NavbarState.bookmarks.value
+                            .response()!
                             .where((element) => element.idMagazinePublication != widget.reader.magazine.idMagazinePublication)
                             .toList());
                   } else {
@@ -134,28 +100,15 @@ class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKee
                   BlocProvider.of<NavbarBloc>(context).add(Bookmark());
                 })
               },
-              child: Icon(NavbarState.bookmarks.value.response()!
+              child: Icon(NavbarState.bookmarks.value
+                      .response()!
                       .any((element) => element.idMagazinePublication == widget.reader.magazine.idMagazinePublication)
                   ? Icons.bookmark
                   : Icons.bookmark_outline),
             ),
           ),
           GestureDetector(
-            // onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            //   settings: RouteSettings(),
-            //   builder: (context) => ReaderOptionsPageInformation(
-            //     reader: this.widget.reader,
-            //     currentPage: widget.currentPage,
-            //   ),
-            // )),
             onTap: () => {showMagazineDetails.value = !showMagazineDetails.value},
-            // onTap: () => Navigator.pushReplacement(
-            //     context,
-            //     ReaderOptionRoute(
-            //         widget: ReaderOptionsPageInformation(
-            //       reader: this.widget.reader,
-            //       currentPage: widget.currentPage,
-            //     ))),
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: Icon(Icons.info_outline),
@@ -167,7 +120,7 @@ class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKee
         elevation: 0,
       ),
       body: Stack(
-        //mainAxisAlignment: MainAxisAlignment.end,
+
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -225,31 +178,32 @@ class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKee
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
-                //   child: Align(
-                //     alignment: Alignment.bottomRight,
-                //     child: FloatingActionButton(
-                //       heroTag: "FAB",
-                //       onPressed: () => {},
-                //       backgroundColor: Colors.white.withOpacity(0.2),
-                //       child: Icon(
-                //         Icons.chrome_reader_mode_outlined,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // Text(
-                //   "adscxdsa",
-                //   style: TextStyle(color: Colors.red),
-                // )
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton(
+                      heroTag: "FAB",
+                      shape: CircleBorder(
+                        side: BorderSide(color: Colors.grey, width: 0.50,style: BorderStyle.none),
+                      ),
+                      onPressed: () => {setState(() {
+                        widget.reader.darkMode.value = !widget.reader.darkMode.value;
+                      })},
+                      backgroundColor: widget.reader.darkMode.value ==false?Colors.blue:Colors.white.withOpacity(0.2),
+                      child: Icon(
+                        widget.reader.darkMode.value ==true?Icons.dark_mode:Icons.light_mode,
+                      ),
+                    ),
+                  ),
+                ),
+
 
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: ReaderScrollPages(
-                      isOnPageTurning: isOnPageTurning,
                       reader: widget.reader,
-                      bloc: widget.bloc,
+
                       // currentPage: widget.currentPage,
                     )),
               ],

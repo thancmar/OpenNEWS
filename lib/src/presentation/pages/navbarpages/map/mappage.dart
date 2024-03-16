@@ -318,6 +318,7 @@ highlightColor: Colors.white,
         children: <Widget>[
           ListTile(
             // leading: Icon(Icons.album),
+            splashColor: Colors.transparent,
             title: Padding(
               padding: EdgeInsets.fromLTRB(10, 20, 10, 5),
               child: Hero(
@@ -363,6 +364,7 @@ highlightColor: Colors.white,
                     // ),
                   ),
                   child: TextButton(
+
                     child: Text(
                         // ("offers").tr(),
                         "offers",

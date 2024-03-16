@@ -25,7 +25,9 @@ import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
 import 'package:sharemagazines/src/presentation/pages/splash.dart';
 import 'package:sharemagazines/src/presentation/widgets/customloading.dart';
 import 'package:sharemagazines/src/presentation/widgets/src/easy_loading.dart';
+import 'package:sharemagazines/src/resources/audiobook_repository.dart';
 import 'package:sharemagazines/src/resources/auth_repository.dart';
+import 'package:sharemagazines/src/resources/ebook_repository.dart';
 import 'package:sharemagazines/src/resources/hotspot_repository.dart';
 import 'package:sharemagazines/src/resources/location_repository.dart';
 import 'package:sharemagazines/src/resources/magazine_repository.dart';
@@ -139,6 +141,14 @@ class MyApp extends StatelessWidget {
           create: (context) => MagazineRepository(),
           lazy: false,
         ),
+        RepositoryProvider<EbookRepository>(
+          create: (context) => EbookRepository(),
+          lazy: false,
+        ),
+        RepositoryProvider<AudioBookRepository>(
+          create: (context) => AudioBookRepository(),
+          lazy: false,
+        ),
         RepositoryProvider<LocationRepository>(create: (context) => LocationRepository()),
       ],
       child: MultiBlocProvider(
@@ -157,8 +167,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<NavbarBloc>(
               create: (context) => NavbarBloc(
                   magazineRepository: RepositoryProvider.of<MagazineRepository>(context),
+                  ebookRepository: RepositoryProvider.of<EbookRepository>(context),
+                  audioBookRepository: RepositoryProvider.of<AudioBookRepository>(context),
                   locationRepository: RepositoryProvider.of<LocationRepository>(context),
                   hotspotRepository: RepositoryProvider.of<HotspotRepository>(context))),
+
           BlocProvider<SearchBloc>(create: (context) => SearchBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
           BlocProvider<ReaderBloc>(create: (context) => ReaderBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
           BlocProvider<EbookBloc>(create: (context) => EbookBloc(magazineRepository: RepositoryProvider.of<MagazineRepository>(context))),
@@ -184,11 +197,11 @@ class MyApp extends StatelessWidget {
           locale: context.locale,
 
           theme: ThemeData(
-              primarySwatch: Colors.blue, // Your primary color for the app
+              primarySwatch: Colors.blue,
+              // Your primary color for the app
               colorScheme: ColorScheme.fromSwatch(
                 primarySwatch: Colors.blue, // This sets the main color for the scheme
                 accentColor: Colors.blueAccent, // This sets the accent color in the scheme
-
               ).copyWith(
                 secondary: Colors.blueAccent, // Used for elements like floating action buttons
                 // Define other colors like surface, background, error, etc., as needed
@@ -201,7 +214,6 @@ class MyApp extends StatelessWidget {
               primaryIconTheme: IconThemeData(
                 color: Colors.white, // Set the color for primary icons
               ),
-
               inputDecorationTheme: InputDecorationTheme(
                 floatingLabelStyle: TextStyle(color: Colors.blue),
                 // Focused border color
@@ -219,7 +231,6 @@ class MyApp extends StatelessWidget {
               textSelectionTheme: TextSelectionThemeData(
                 cursorColor: Colors.blue, // Change this to your desired cursor color
               ),
-
               pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.android: CupertinoPageTransitionsBuilder(),
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),

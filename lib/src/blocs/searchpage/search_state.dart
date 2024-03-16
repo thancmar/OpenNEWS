@@ -21,11 +21,13 @@ class GoToSearchPage extends SearchState {
 }
 
 class GoToSearchResults extends SearchState {
-  final MagazinePublishedGetAllLastByHotspotId searchResults;
-  GoToSearchResults({required this.searchResults}) : super();
+  final MagazinePublishedGetAllLastByHotspotId searchResultsMagazines;
+  final EbooksForLocationGetAllActive searchResultsEbooks;
+  final AudioBooksForLocationGetAllActive searchResultsAudiobooks;
+  GoToSearchResults({required this.searchResultsMagazines, required this.searchResultsEbooks,required this.searchResultsAudiobooks}) : super();
 
   @override
-  List<MagazinePublishedGetAllLastByHotspotId> get props => [searchResults];
+  List<BaseResponse> get props => [searchResultsMagazines];
 }
 
 class GoToLanguageResults extends SearchState {
@@ -37,7 +39,7 @@ class GoToLanguageResults extends SearchState {
 }
 
 class GoToCategoryPage extends SearchState {
-  late MagazinePublishedGetAllLastByHotspotId? selectedCategory;
+  late BaseResponse? selectedCategory;
   GoToCategoryPage({required this.selectedCategory}) : super();
 
   @override

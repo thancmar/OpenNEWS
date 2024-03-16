@@ -16,6 +16,7 @@ class Reader extends StatefulWidget {
   final String heroTag;
   final controllerflip = GlobalKey<PageFlipWidgetState>();
   ValueNotifier<Orientation> currentOrientation = ValueNotifier<Orientation>(Orientation.portrait);
+  ValueNotifier<bool> darkMode = ValueNotifier<bool>(true);
   List<Uint8List?> pagesDataCache = [];
   List<GlobalKey> allImagekey = [];
   TransformationController transformationController = TransformationController(Matrix4.identity());
@@ -79,7 +80,6 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
                         ReaderOptionRoute(
                             widget: ReaderOverlayPage(
                           reader: this.widget,
-                          bloc: BlocProvider.of<ReaderBloc>(context),
                           // currentPage: widget.currentPage,
                         ))),
                   },
@@ -126,23 +126,51 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
               //       // }),
               //       // });
               //     },
-              child: Container(
-                color: Colors.transparent,
-                child: PageFlipWidget(
-                  key: widget.controllerflip,
-                  orientation: widget.currentOrientation.value,
-                  backgroundColor: Colors.transparent,
-                  transformationController: widget.transformationController,
-                  imageDataCache: widget.pagesDataCache,
-                  // reader: this.widget,
-                  children: <ReaderPage>[
-                    for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
-                      ReaderPage(
-                        reader: this.widget,
-                        pageNumber: index,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: widget.darkMode,
+                builder: (_, darkModeValue, child) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        color: darkModeValue?Colors.transparent:Colors.white,
+                        child: PageFlipWidget(
+                          key: widget.controllerflip,
+                          orientation: widget.currentOrientation.value,
+                          backgroundColor: Colors.transparent,
+                          transformationController: widget.transformationController,
+                          imageDataCache: widget.pagesDataCache,
+                          // reader: this.widget,
+                          children: <ReaderPage>[
+                            for (var index = 0; index < int.parse(widget.magazine.pageMax!); index++)
+                              ReaderPage(
+                                reader: this.widget,
+                                pageNumber: index,
+                              ),
+                          ],
+                        ),
                       ),
-                  ],
-                ),
+                      Positioned(
+                          bottom: 40,
+                          right: 20,
+                          child: FloatingActionButton(
+                            shape: CircleBorder(
+                              side: BorderSide(color: Colors.grey, width: 0.50,style: BorderStyle.none),
+                            ),
+                            key: UniqueKey(),
+                            heroTag: "FAB",
+
+                            onPressed: () => {widget.darkMode.value = !widget.darkMode.value},
+                            backgroundColor: !darkModeValue?Colors.blue:Colors.white.withOpacity(0.2),
+
+                            child: Icon(
+                              widget.darkMode.value?Icons.dark_mode:Icons.light_mode,
+
+                            ),
+                          )),
+                    ],
+                  );
+                }
               ));
         }),
       ],

@@ -37,8 +37,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         Position? currentPosition;
 
         // Uncomment to debug - this will delete all cache
-        await DefaultCacheManager().emptyCache();
-        dioClient.secureStorage.deleteAll();
+        // await DefaultCacheManager().emptyCache();
+        // dioClient.secureStorage.deleteAll();
 
         // To have only one instance of ApiClient
         if (!getIt.isRegistered<ApiClient>()) {

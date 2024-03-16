@@ -42,14 +42,17 @@ class OpenLanguageResults extends SearchEvent {
 
   OpenLanguageResults(this.context, this.languageText);
 }
-
-class OpenCategoryPage extends SearchEvent {
+class OpenCategory extends SearchEvent {
   // final String idMagazinePublication;
   // final String pageNo;
-  final BuildContext context;
-  final String categoryID;
-  OpenCategoryPage(this.context, this.categoryID);
+  final String categoryName;
+  // final String categoryID;
+  final CategoryStatus? categoryType;
+
+  OpenCategory( this.categoryName, this.categoryType);
 }
+
+
 //
 // class Menu extends ReaderEvent {
 //   Menu();

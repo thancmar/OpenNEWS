@@ -12,7 +12,7 @@ import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:get_it/get_it.dart';
 
-import '../models/getebook.dart';
+import '../models/ebooksForLocationGetAllActive.dart';
 import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
@@ -54,7 +54,7 @@ class MagazineRepository {
       //   return MagazinePublishedGetLastWithLimitFromJson(response.data);
       // }
       // ;
-      print(response.data);
+      // print(response.data);
       // print(response!.data);
       // dioClient.secureStorage.write(key: "allmagazines", value: response.data);
       return MagazinePublishedGetLastWithLimitFromJson(response.data);
@@ -140,77 +140,7 @@ class MagazineRepository {
     }
   }
 
-  Future<MagazineCategoryGetAllActive> ebooksCategoryGetAllActive() async {
-    final getIt = GetIt.instance;
-    Map<String, dynamic> data = {'f': 'magazineCategoryGetAllActive'};
-    print(data);
-    var queryString = Uri(queryParameters: data).query;
 
-    // var response = await getIt<ApiClient>().dio.post(
-    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
-    //       data: data,
-    //     );
-    var response = await getIt<ApiClient>().diofordata.post(
-      ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
-      data: data,
-    );
-
-    if (response.statusCode == 200) {
-      print("magazineCategoryGetAllActive sucess");
-      // for (int i = 0; i < MagazineCategoryGetAllActiveFromJson(response.data).response!.length; i++) {
-      //   await DefaultCacheManager().putFile(
-      //       MagazineCategoryGetAllActiveFromJson(response.data).response![i].id! + "_" + MagazineCategoryGetAllActiveFromJson(response.data).response![i].name!,
-      //       Uint8List.fromList(
-      //         base64Decode(MagazineCategoryGetAllActiveFromJson(response.data).response![i].image!),
-      //       ),
-      //       fileExtension: "jpeg");
-      // }
-      // print(response.data);
-      // print(response.data);
-      return MagazineCategoryGetAllActiveFromJson(response.data);
-    } else {
-      print("Failed magazineCategoryGetAllActive");
-      throw Exception("Failed magazineCategoryGetAllActive");
-    }
-  }
-
-  Future<EbooksForLocationGetAllActive> ebooksForLocationGetAllActive({required String? id_hotspot}) async {
-    final getIt = GetIt.instance;
-    Map<String, dynamic> data = {
-      'f': 'getAllActiveEbooksForLocation',
-      'json': '{"id_location": "$id_hotspot"}'
-    };
-
-    print(data);
-    var queryString = Uri(queryParameters: data).query;
-
-    // var response = await getIt<ApiClient>().dio.post(
-    //       ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
-    //       data: data,
-    //     );
-    var response = await getIt<ApiClient>().diofordata.post(
-      ApiConstants.baseUrl + ApiConstants.usersEndpoint + '?' + queryString,
-      data: data,
-    );
-
-    if (response.statusCode == 200) {
-      print("getAllActiveEbooksForLocation sucess ${response.data}");
-      // for (int i = 0; i < MagazineCategoryGetAllActiveFromJson(response.data).response!.length; i++) {
-      //   await DefaultCacheManager().putFile(
-      //       MagazineCategoryGetAllActiveFromJson(response.data).response![i].id! + "_" + MagazineCategoryGetAllActiveFromJson(response.data).response![i].name!,
-      //       Uint8List.fromList(
-      //         base64Decode(MagazineCategoryGetAllActiveFromJson(response.data).response![i].image!),
-      //       ),
-      //       fileExtension: "jpeg");
-      // }
-      // print(response.data);
-      // print(response.data);
-      return EbooksForLocationGetAllActiveFromJson(response.data);
-    } else {
-      print("Failed magazineCategoryGetAllActive");
-      throw Exception("Failed magazineCategoryGetAllActive");
-    }
-  }
 
   Future<Uint8List> GetPage(
       {required String? page,

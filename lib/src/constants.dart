@@ -4,6 +4,8 @@ class ApiConstants {
   static String usersEndpoint = '/sharemagazines/interface/json_main.php';
   static String getCoverJPEG = '/sharemagazines/interface/file.php';
   static String getPageJPEG = '/sharemagazines/interface/file_page.php';
+  static String getebook = '/sharemagazines/interface/file_ebook.php';
+  static String getaudiobook = '/sharemagazines/interface/file_audiobook.php';
   static String localization = '/sharemagazines/interface/localization.php';
 
   static String baseUrlLocations = 'https://location.sharemagazines.de/';

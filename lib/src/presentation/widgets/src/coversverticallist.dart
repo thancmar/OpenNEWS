@@ -1,11 +1,12 @@
-
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../models/audioBooksForLocationGetAllActive.dart';
+import '../../../models/ebooksForLocationGetAllActive.dart';
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
 import '../../pages/navbarpages/homepage/homepage.dart';
+
 // import '../../pages/navbarpages/homepage/puzzlepage.dart';
 import '../../pages/navbarpages/homepage/puzzle.dart';
 import '../../pages/reader/readerpage.dart';
@@ -17,10 +18,11 @@ class VerticalListCover extends StatefulWidget {
   final BaseResponse items;
   final ScrollController scrollController;
   final double height_News_aus_deiner_Region;
+  final String? title;
 
   // late List<double> imageOffsets;
 
-  VerticalListCover({Key? key, required this.items, required this.scrollController, required this.height_News_aus_deiner_Region}) : super(key: key);
+  VerticalListCover({Key? key, required this.items, required this.scrollController, required this.height_News_aus_deiner_Region, this.title}) : super(key: key);
 
   @override
   State<VerticalListCover> createState() => _VerticalListCoverState();
@@ -71,15 +73,17 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
   Widget build(BuildContext context) {
     super.build(context);
     bool tablet = isTablet(context);
+    Size size = MediaQuery.of(context).size;
     return SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: tablet?5:2, // Number of items in a row
-          mainAxisSpacing: 45.0,
+          crossAxisCount: tablet ? 5 : 2, // Number of items in a row
+          mainAxisSpacing: 15.0,
           crossAxisSpacing: 15.0,
-          childAspectRatio: 0.7, // Ratio of item width to item height
+          childAspectRatio: widget.items.runtimeType == AudioBooksForLocationGetAllActive ? 0.8 : 0.65, // Ratio of item width to item height
         ),
+
         delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
+          (BuildContext context, int index) {
 //             double itemWidth = (MediaQuery.of(context).size.width / 2);
 //             itemWidth -= (15.0 / 2); // Adjust for the cross axis spacing.
 //             double itemHeight = itemWidth * 0.7; // Calculate item height from aspect ratio.
@@ -100,7 +104,10 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
 //             double imageOffset = relativePosition * baseParallaxAmount;
 
             return Column(
+              mainAxisSize: MainAxisSize.min,
+              // mainAxisAlignment: MainAxisAlignment.end,
               children: [
+
                 Expanded(
                   child: Card(
                       color: Colors.transparent,
@@ -118,41 +125,43 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                         onTap: () => {
                           // To open Reader
 
-                          if(widget.items.response()![index].idMagazineType == "7"){
+                          if (widget.items.response()![index].idMagazineType == "7")
+                            {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) =>
+                                      // Puzzle()
+                                      Puzzle(
+                                    title: widget.items.response()![index].title!,
+                                    puzzleID: widget.items.response()![index].puzzleIdMobile!,
+                                    gameType: widget.items.response()![index].gametypeMobile!,
 
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) =>
-                                    // Puzzle()
-                                    Puzzle(
-                                      title:  widget.items.response()![index].title!,
-                                  puzzleID: widget.items.response()![index].puzzleIdMobile!,
-                                  gameType: widget.items.response()![index].gametypeMobile!,
-
-                                  // noofpages: 5,
+                                    // noofpages: 5,
+                                  ),
+                                  // WebViewXPage()
                                 ),
-                                // WebViewXPage()
-                              ),
-                            )
-                          }else{
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (context) =>Reader(magazine: widget.items.response()![index], heroTag: "toptitle${index}")
-                              //     StartReader(
-                              //   magazine: widget.items.response![index],
-                              //   heroTag: "toptitle${index}",
-                              //
-                              //   // noofpages: 5,
-                              // ),
-                            ),
-                          )}
+                              )
+                            }
+                          else
+                            {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                    builder: (context) => Reader(magazine: widget.items.response()![index], heroTag: "toptitle${index}")
+                                    //     StartReader(
+                                    //   magazine: widget.items.response![index],
+                                    //   heroTag: "toptitle${index}",
+                                    //
+                                    //   // noofpages: 5,
+                                    // ),
+                                    ),
+                              )
+                            }
                         },
                         child: Stack(
                           clipBehavior: Clip.none,
                           alignment: Alignment.center,
                           children: [
                             CustomCachedNetworkImage(
-
                               mag: widget.items.response()![index],
                               pageNo: 0,
                               thumbnail: true,
@@ -160,136 +169,102 @@ class _VerticalListCoverState extends State<VerticalListCover> with SingleTicker
                               heroTag: "toptitle${index}",
                               spinKitController: _spinKitController,
                               height_News_aus_deiner_Region: widget.height_News_aus_deiner_Region,
-                               ),
-                            // Spacer(),
-                            widget.items.response()![index].dateOfPublication !=null? Positioned(
-                              // top: -50,
-                              bottom: -35,
-                              // height: -50,
-                              width: MediaQuery.of(context).size.width / 2 - 20,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: MarqueeWidget(
-                                  child: Text(
-                                    // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    DateFormat("d. MMMM yyyy").format(DateTime.parse(widget.items.response()![index].dateOfPublication!)),
-                                    // " asd",
-                                    // "Card ${i + 1}",
-                                    textAlign: TextAlign.center,
-                                    style:  Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey),
-                                    // style: TextStyle(
-                                    //   fontSize: 14,
-                                    //   color: Colors.grey,
-                                    //   backgroundColor: Colors.transparent,
-                                    // ),
-                                  ),
-                                ),
-                              ),
-                            ):Container(),
-                            Positioned(
-                              // top: -50,
-                              bottom: -20,
-                              // height: -50,
-                              width: MediaQuery.of(context).size.width / 2 - 20,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: MarqueeWidget(
-                                  child: Text(
-                                    // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                                    widget.items.response()![index].title!,
-                                    // " asd",
-                                    // "Card ${i + 1}",
-                                    textAlign: TextAlign.center,
-                                    style:  Theme.of(context).textTheme.bodyMedium,
-                                    // style: TextStyle(
-                                    //   fontSize: 14,
-                                    //   color: Colors.white,
-                                    //   backgroundColor: Colors.transparent,
-                                    // ),
-                                  ),
-                                ),
-                              ),
                             ),
-
-                            // return GestureDetector(
-                            //   behavior: HitTestBehavior.translucent,
-                            //   onTap: () => {
-                            //     // Navigator.push(
-                            //     //     context,
-                            //     //     new ReaderRoute(
-                            //     //         widget: StartReader(
-                            //     //       id: state
-                            //     //           .magazinePublishedGetLastWithLimit
-                            //     //           .response![i + 1]
-                            //     //           .idMagazinePublication!,
-                            //     //       tagindex: i,
-                            //     //       cover: state.bytes[i],
-                            //     //     ))),
-                            //     // print('Asf'),
-                            //     Navigator.push(
-                            //       context,
-                            //       PageRouteBuilder(
-                            //         // transitionDuration:
-                            //         // Duration(seconds: 2),
-                            //         pageBuilder: (_, __, ___) => StartReader(
-                            //           id: state.magazinePublishedGetLastWithLimit.response![i + 1].idMagazinePublication!,
-                            //
-                            //           index: i.toString(),
-                            //           cover: state.bytes![i],
-                            //           noofpages: state.magazinePublishedGetLastWithLimit.response![i + 1].pageMax!,
-                            //           readerTitle: state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                            //
-                            //           // noofpages: 5,
-                            //         ),
-                            //       ),
-                            //     )
-                            //     // Navigator.push(context,
-                            //     //     MaterialPageRoute(
-                            //     //         builder: (context) {
-                            //     //   return StartReader(
-                            //     //     id: state
-                            //     //         .magazinePublishedGetLastWithLimit
-                            //     //         .response![i + 1]
-                            //     //         .idMagazinePublication!,
-                            //     //     index: i,
-                            //     //   );
-                            //     // }))
-                            //   },
-                            //   child: Image.memory(
-                            //       // state.bytes![i],
-                            //       snapshot.data!
-                            //       // fit: BoxFit.fill,
-                            //       // frameBuilder: ((context, child, frame, wasSynchronouslyLoaded) {
-                            //       //   if (wasSynchronouslyLoaded) return child;
-                            //       //   return AnimatedSwitcher(
-                            //       //     duration: const Duration(milliseconds: 200),
-                            //       //     child: frame != null
-                            //       //         ? child
-                            //       //         : SizedBox(
-                            //       //             height: 60,
-                            //       //             width: 60,
-                            //       //             child: CircularProgressIndicator(strokeWidth: 6),
-                            //       //           ),
-                            //       //   );
-                            //       // }),
-                            //       ),
-                            // );
-
-                            // Align(
-                            //   alignment: Alignment.bottomCenter,
-                            //   child: Text(
-                            //     state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
-                            //     // " asd",
-                            //     // "Card ${i + 1}",
-                            //     textAlign: TextAlign.center,
-                            //
-                            //     style: TextStyle(fontSize: 32, color: Colors.white, backgroundColor: Colors.transparent),
-                            //   ),
-                            // ),
                           ],
                         ),
                       )),
                 ),
+                widget.items.runtimeType != AudioBooksForLocationGetAllActive
+                    ? AbsorbPointer(
+                        absorbing: true,
+                        child: MarqueeWidget(
+                          child: Text(
+                            widget.items.response()![index].title!,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                        widget.items.response()![index].title!,
+maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                widget.items.response()![index].dateOfPublication != null
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: MarqueeWidget(
+                              child: Text(
+                                // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                ((widget.items.runtimeType == EbooksForLocationGetAllActive ||
+                                            widget.items.runtimeType == AudioBooksForLocationGetAllActive)
+                                        ? DateFormat("yyyy")
+                                        : DateFormat("d. MMMM yyyy"))
+                                    .format(DateTime.parse(widget.items.response()![index].dateOfPublication!)),
+                                // " asd",
+                                // "Card ${i + 1}",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(height: 0.8, color: Colors.grey, fontWeight: FontWeight.w300),
+
+                                // style: TextStyle(
+                                //   fontSize: 14,
+                                //   color: Colors.grey,
+                                //   backgroundColor: Colors.transparent,
+                                // ),
+                              ),
+                            ),
+                          ),
+                          widget.items.runtimeType != MagazinePublishedGetAllLastByHotspotId
+                              ? Padding(
+                                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                  child: Container(
+                                    width: 1, // Adjust the width as needed
+                                    height: 12, // Adjust the height as needed
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Container(),
+                          widget.items.runtimeType != MagazinePublishedGetAllLastByHotspotId
+                              ? Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: AbsorbPointer(
+                                      absorbing: true,
+                                      child: MarqueeWidget(
+                                        direction: Axis.vertical,
+                                        child: Text(
+                                          // state.magazinePublishedGetLastWithLimit.response![i + 1].name!,
+                                          // ((widget.cover.runtimeType == EbooksForLocationGetAllActive ||widget.cover.runtimeType == AudioBooksForLocationGetAllActive)? DateFormat("yyyy"): DateFormat("d. MMMM yyyy")).format(DateTime.parse(widget.cover.response()![i].dateOfPublication!)),
+                                          (widget.items.runtimeType == EbooksForLocationGetAllActive
+                                                  ? widget.items.response()![index].ebookLanguage!
+                                                  : widget.items.response()![index].audiobookLanguage)
+                                              .toString()
+                                              .toUpperCase(),
+                                          // " asd",
+                                          // "Card ${i + 1}",
+                                          textAlign: TextAlign.left,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(height: 0.8, color: Colors.white, fontWeight: FontWeight.w300),
+                                          // style: TextStyle(
+                                          //   fontSize: 12,
+                                          //   color: Colors.grey,
+                                          //   backgroundColor: Colors.transparent,
+                                          // ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container()
+                        ],
+                      )
+                    : Container(),
               ],
             );
           },

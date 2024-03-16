@@ -12,7 +12,13 @@ abstract class NavbarState extends Equatable {
   static ValueNotifier<CategoryStatus>  categoryStatus =ValueNotifier(CategoryStatus.presse);
   // static CategoryStatus categoryStatus = CategoryStatus.presse;
   static MagazinePublishedGetAllLastByHotspotId magazinePublishedGetLastWithLimit = MagazinePublishedGetAllLastByHotspotId(response: []);
+
   static EbooksForLocationGetAllActive ebooks = EbooksForLocationGetAllActive(response: []);
+  static EbookCategoryGetAllActiveByLocale ebookCategoryGetAllActiveByLocale = EbookCategoryGetAllActiveByLocale(response: []);
+
+  static AudioBooksForLocationGetAllActive audiobooks = AudioBooksForLocationGetAllActive(response: []);
+  static AudiobookCategoryGetAllActiveByLocale audioBooksCategoryGetAllActiveByLocale = AudiobookCategoryGetAllActiveByLocale(response: []);
+
   static ValueNotifier<MagazinePublishedGetAllLastByHotspotId> bookmarks =ValueNotifier<MagazinePublishedGetAllLastByHotspotId>(MagazinePublishedGetAllLastByHotspotId(response: []));
 
   static MagazinePublishedGetAllLastByHotspotId? magazinePublishedGetTopLastByRange = null;
@@ -20,10 +26,6 @@ abstract class NavbarState extends Equatable {
   static late MagazineCategoryGetAllActive? magazineCategoryGetAllActive;
   // static EbooksForLocationGetAllActive ebooks = EbooksForLocationGetAllActive(response: []);
   static late Position? currentPosition = null;
-  static int counterDE = 0;
-  static int counterEN = 0;
-  static int counterFR = 0;
-  static int counterES = 0;
   static late HotspotsGetAllActive hotspotList;
   static late List<Place> allMapMarkers = <Place>[];
   static late List<Future<Uint8List>>? languageResultsALL = List.empty(growable: true);

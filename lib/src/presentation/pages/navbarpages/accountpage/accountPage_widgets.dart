@@ -7,7 +7,7 @@ import 'package:open_store/open_store.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
 import 'package:sharemagazines/src/models/login_model.dart';
-import 'package:sharemagazines/src/presentation/pages/mainpage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/mainpage.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/emalpwdreset.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/myprofilepage.dart';
 import 'package:sharemagazines/src/resources/auth_repository.dart';
@@ -15,7 +15,7 @@ import 'package:sharemagazines/src/resources/auth_repository.dart';
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../blocs/splash/splash_bloc.dart';
 import '../../../../models/location_model.dart';
-import '../../startpage.dart';
+import '../../startpage/startpage.dart';
 import '../qrpage/qr_scanner.dart';
 
 enum ResetType {
@@ -111,8 +111,8 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 0,
+                            spreadRadius: 0,
+                            blurRadius: 1,
                             // offset: Offset(0, 3), // changes position of shadow
                           ),
                         ],
@@ -180,15 +180,15 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 1,
-                            blurRadius: 0,
+                            spreadRadius: 0,
+                            blurRadius: 1,
 
                             // offset: Offset(0, 3), // changes position of shadow
                           ),
                         ],
                         color: Colors.transparent,
                         border: Border.all(
-                          color: Colors.white,
+                          color: Colors.grey,
                           width: 0.25,
                         ),
                         borderRadius: BorderRadius.circular(10)),
@@ -270,14 +270,14 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 0,
+                      spreadRadius: 0,
+                      blurRadius: 1,
                       // offset: Offset(0, 3), // changes position of shadow
                     ),
                   ],
                   color: Colors.transparent,
                   border: Border.all(
-                    color: Colors.white,
+                    color: Colors.grey,
                     width: 0.25,
                   ),
                   borderRadius: BorderRadius.circular(10)),
@@ -325,14 +325,14 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 0,
+                      spreadRadius: 0,
+                      blurRadius: 1,
                       // offset: Offset(0, 3), // changes position of shadow
                     ),
                   ],
                   color: Colors.transparent,
                   border: Border.all(
-                    color: Colors.white,
+                    color: Colors.grey,
                     width: 0.25,
                   ),
                   borderRadius: BorderRadius.circular(10)),
@@ -381,14 +381,15 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 0,
+                    spreadRadius: 0,
+                    blurRadius: 1,
                     // offset: Offset(0, 3), // changes position of shadow
                   ),
                 ],
                 color: Colors.transparent,
+                // color: Colors.grey.withOpacity(0.2),
                 border: Border.all(
-                  color: Colors.white,
+                  color: Colors.grey,
                   width: 0.25,
                 ),
                 borderRadius: BorderRadius.circular(10)),
@@ -397,18 +398,26 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
             child: ListTileTheme(
               contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               // horizontalTitleGap: 0.0,
+              selectedColor: Colors.transparent,
+              selectedTileColor: Colors.transparent,
               minLeadingWidth: 0,
+              enableFeedback: false,
               child: ExpansionTile(
                 // textColor: Colors.red,
+
                 initiallyExpanded: false,
-                collapsedIconColor: Colors.white,
+
+                maintainState: true,
                 leading: const Icon(
                   Icons.settings,
                   color: Colors.white,
                 ),
                 tilePadding: EdgeInsets.only(left: 0),
-
+collapsedIconColor: Colors.white,
+collapsedBackgroundColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
+                enableFeedback: false,
+                enabled: true,
                 title: Text(
                   ("settings").tr(),
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w400),
@@ -419,6 +428,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                       ? Padding(
                           padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                           child: ListTile(
+                            splashColor: Colors.transparent,
                               leading: const Icon(
                                 Icons.lock,
                                 color: Colors.white,
@@ -469,7 +479,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   // :Container(),
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                    child: ListTile(
+                    child: ListTile( splashColor: Colors.transparent,
                         onTap: () => {},
                         leading: const Icon(
                           Icons.add_alert,
@@ -537,14 +547,14 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 0,
+                    spreadRadius: 0,
+                    blurRadius:1,
                     // offset: Offset(0, 3), // changes position of shadow
                   ),
                 ],
                 color: Colors.transparent,
                 border: Border.all(
-                  color: Colors.white,
+                  color: Colors.grey,
                   width: 0.25,
                 ),
                 borderRadius: BorderRadius.circular(10)),
@@ -717,15 +727,15 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 1,
-                            blurRadius: 0,
+                            spreadRadius: 0,
+                            blurRadius: 1,
 
                             // offset: Offset(0, 3), // changes position of shadow
                           ),
                         ],
                         color: Colors.transparent,
                         border: Border.all(
-                          color: Colors.white,
+                          color: Colors.grey,
                           width: 0.25,
                         ),
                         borderRadius: BorderRadius.circular(10)),

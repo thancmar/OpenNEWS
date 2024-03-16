@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math' as math;
 
-import 'package:sharemagazines/src/presentation/pages/mainpage.dart';
+import 'package:sharemagazines/src/presentation/pages/navbarpages/mainpage.dart';
 
 class PlayerBottomNavBarImp extends StatelessWidget {
   // const BottomNavBarImp({
