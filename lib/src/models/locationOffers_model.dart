@@ -26,16 +26,11 @@ class LocationOffers {
 
   // LocationOffers.fromJson(Map<String, dynamic> json) {
   LocationOffers.fromJson(List<dynamic> json) {
-    if (json != null) {
-      locationOffer = <LocationOffer>[];
-      json!.forEach((v) {
-        locationOffer!.add(LocationOffer.fromJson(v));
-      });
-    } else {
-      null;
-      // "fdgsbfsdbv ";
+    locationOffer = <LocationOffer>[];
+    json.forEach((v) {
+      locationOffer!.add(LocationOffer.fromJson(v));
+    });
     }
-  }
 
   // Map<String, dynamic> toJson() {
   //   final Map<String, dynamic> data = new Map<String, dynamic>();

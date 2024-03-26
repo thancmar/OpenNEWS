@@ -2,14 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharemagazines/src/presentation/widgets/src/pageflip/src/builders/builder.dart';
 
-import '../../../../../blocs/reader/reader_bloc.dart';
-import '../../../../pages/reader/page.dart';
-import '../../../../pages/reader/readeroptionspage.dart';
-import '../../../../pages/reader/readerpage.dart';
-import '../../../routes/toreaderoption.dart';
 
 class PageFlipWidget extends StatefulWidget {
   const PageFlipWidget(

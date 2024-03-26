@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 
 // import 'package:direct_select_flutter/direct_select_container.dart';
@@ -10,11 +9,9 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/models/locationOffers_model.dart';
@@ -29,10 +26,8 @@ import 'package:sharemagazines/src/presentation/widgets/navbar/custom_navbar.dar
 import 'package:sharemagazines/src/presentation/widgets/sliding_AppBar.dart';
 import 'package:sharemagazines/src/presentation/widgets/marquee.dart';
 import 'package:sharemagazines/src/presentation/widgets/navbar/navbar_painter_clipper.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../blocs/auth/auth_bloc.dart';
-import '../../../models/ebooksForLocationGetAllActive.dart';
 import '../../../models/locationGetHeader_model.dart';
 import '../../../models/location_model.dart';
 import '../../widgets/backdrop/backdrop.dart';
@@ -339,16 +334,16 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                           children: <Widget>[
                                                             MarqueeWidget(
                                                               child: Text(
-                                                                state.appbarlocation!.nameApp ?? ("notAtLocation").tr(),
+                                                                state.appbarlocation.nameApp ?? ("notAtLocation").tr(),
                                                                 // ("notAtLocation").tr(),
                                                                 style: Theme.of(context).textTheme.headlineLarge,
                                                                 textAlign: TextAlign.center,
                                                               ),
                                                             ),
-                                                            state.appbarlocation!.expiration != '' && state.appbarlocation!.expiration != null
+                                                            state.appbarlocation.expiration != '' && state.appbarlocation.expiration != null
                                                                 ? MarqueeWidget(
                                                                     child: CountdownTimer(
-                                                                    futureTime: state.appbarlocation!.expiration!,
+                                                                    futureTime: state.appbarlocation.expiration!,
                                                                   ))
                                                                 : Container(),
                                                             Row(
@@ -395,13 +390,13 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                                     builder: (BuildContext context, bool counterValue, Widget? child) {
                                                       return
                                                           // !counterValue &&
-                                                          state.appbarlocation?.nameApp == null
+                                                          state.appbarlocation.nameApp == null
                                                               ? GestureDetector(
                                                                   onTap: () {
                                                                     // FAB onPressed logic
                                                                     Navigator.of(context)
                                                                         .push(MaterialPageRoute(
-                                                                          builder: (context) => QRViewExample(),
+                                                                          builder: (context) => QRCodeScanner(),
                                                                         ))
                                                                         .whenComplete(() => {
                                                                               // if (showLocationPage.value == false)
@@ -983,156 +978,169 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                         FutureBuilder<LocationOffers>(
                                             future: NavbarState.locationoffers,
                                             builder: (context, snapshotOfferDetails) {
-                                              VideoPlayerController? _videocontroller = null;
-                                              if (snapshotOfferDetails.hasData && NavbarState.locationoffersImages.isNotEmpty) {
-                                                //&& !snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].type!.contains("MOV")) {
 
-                                                return CardSwiper(
-                                                    cardsCount: snapshotOfferDetails.data!.locationOffer!.length,
-                                                    numberOfCardsDisplayed: snapshotOfferDetails.data!.locationOffer!.length,
-                                                    // cardsCount:  NavbarState.locationoffersImages.length,
-                                                    cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                                                      return ClipRRect(
-                                                        borderRadius: BorderRadius.circular(10.0),
-                                                        child: BackdropFilter(
-                                                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                                                          // Adjust the blur amount with sigmaX and sigmaY
+                                              switch (snapshotOfferDetails.connectionState) {
+                                                case ConnectionState.none:
+                                                case ConnectionState.waiting:
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                      color: Colors.grey.withOpacity(0.1),
+                                                    ),
+                                                    child: SpinKitFadingCircle(
+                                                      color: Colors.white,
+                                                      size: 50.0,
+                                                      // controller: widget.spinKitController,
+                                                    ),
+                                                  );
+                                                case ConnectionState.active:
+                                                case ConnectionState.done:
+                                                  if (snapshotOfferDetails.hasError) {
+                                                    return Text('Error: ${snapshotOfferDetails.error}');
+                                                  }else{
+                                                  return CardSwiper(
+                                                      cardsCount: snapshotOfferDetails.data!.locationOffer!.length,
+                                                      numberOfCardsDisplayed: snapshotOfferDetails.data!.locationOffer!.length,
+                                                      // cardsCount:  NavbarState.locationoffersImages.length,
+                                                      cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                                        return ClipRRect(
+                                                          borderRadius: BorderRadius.circular(10.0),
+                                                          child: BackdropFilter(
+                                                            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                                            // Adjust the blur amount with sigmaX and sigmaY
 
-                                                          child: ConstrainedBox(
-                                                            constraints: BoxConstraints(maxHeight: double.infinity),
-                                                            child: GestureDetector(
-                                                              onTap: () => {
-                                                                Navigator.of(context).push(
-                                                                  CupertinoPageRoute(
-                                                                    builder: (context) => OfferPage(
-                                                                      locOffer: snapshotOfferDetails.data!.locationOffer![index],
-                                                                      imageData: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
-                                                                              .contains("MOV")
-                                                                          ? NavbarState.locationoffersImages
-                                                                              .singleWhere((element) =>
-                                                                                  element.offer.idOffer ==
-                                                                                  snapshotOfferDetails.data!.locationOffer![index].idOffer)
-                                                                              .mediaContent
-                                                                          : null,
-                                                                      // heroTag: itemIndex,
+                                                            child: ConstrainedBox(
+                                                              constraints: BoxConstraints(maxHeight: double.infinity),
+                                                              child: GestureDetector(
+                                                                onTap: () => {
+                                                                  Navigator.of(context).push(
+                                                                    CupertinoPageRoute(
+                                                                      builder: (context) => OfferPage(
+                                                                        locOffer: snapshotOfferDetails.data!.locationOffer![index],
+                                                                        imageData: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
+                                                                            .contains("MOV")
+                                                                            ? NavbarState.locationoffersImages
+                                                                            .singleWhere((element) =>
+                                                                        element.offer.idOffer ==
+                                                                            snapshotOfferDetails.data!.locationOffer![index].idOffer)
+                                                                            .mediaContent
+                                                                            : null,
+                                                                        // heroTag: itemIndex,
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                )
-                                                                // Navigator.push(
-                                                                //   context,
-                                                                //   PageRouteBuilder(
-                                                                //     pageBuilder: (_, __, ___) => OfferPage(
-                                                                //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
-                                                                //         // heroTag: itemIndex,
-                                                                //     ),
-                                                                //   ),
-                                                                // )
-                                                              },
-                                                              child: Column(
-                                                                mainAxisSize: MainAxisSize.max,
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                // crossAxisAlignment: CrossAxisAlignment.center,
-                                                                children: <Widget>[
-                                                                  Flexible(
-                                                                    flex: 8,
-                                                                    child: ClipRRect(
-                                                                      borderRadius: BorderRadius.circular(5.0),
-                                                                      child: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
-                                                                              .contains("MOV")
-                                                                          // || !NavbarState.locationoffersImages.any((element) => (element.offer.idOffer==snapshotOfferDetails!.data!.locationOffer![index].idOffer && element.offer !=null))
-                                                                          ? Hero(
-                                                                              tag: snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].id
-                                                                                  .toString(),
-                                                                              child: Image.memory(
-                                                                                // state.bytes![i],
-                                                                                NavbarState.locationoffersImages
-                                                                                    .firstWhere((element) =>
-                                                                                            element.offer.idOffer ==
-                                                                                            snapshotOfferDetails.data!.locationOffer![index]
-                                                                                                .idOffer // Provide a default OfferImage or handle it accordingly
-                                                                                        )
-                                                                                    .mediaContent,
-                                                                                fit: BoxFit.fill,
-                                                                                alignment: Alignment.center,
-
-                                                                                gaplessPlayback: true,
-                                                                              ),
-                                                                            )
-                                                                          // : snapshotvideo.hasData? AspectRatio(
-                                                                          //   aspectRatio:
-                                                                          //       // _controller != null ? _controller!.value.aspectRatio :
-                                                                          //       16 / 9,
-                                                                          //   child:
-                                                                          //   // VideoPlayer(snapshotvideo.data)
-                                                                          //   Container()
-                                                                          // ):
-                                                                          // :SpinKitFadingCircle(
-                                                                          //       color: Colors.white,
-                                                                          //       size: 50.0,
-                                                                          //     )
-                                                                          // : Co
-                                                                          : Align(
-                                                                              alignment: Alignment.center,
-                                                                              child: Container(
-                                                                                width: double.infinity,
-                                                                                height: double.infinity,
-                                                                                color: Colors.grey.withOpacity(0.5),
-                                                                                child: Icon(
-                                                                                  Icons.slow_motion_video_outlined,
-                                                                                  size: 100,
-                                                                                  color: Colors.white,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-
-                                                                      // :Container(height: double.infinity,width: double.infinity, color: Colors.grey.withOpacity(0.3), child: Icon(Icons.slow_motion_video_outlined, size: 80,),
-                                                                      // )
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    flex: 1,
-                                                                    child: Align(
-                                                                        alignment: Alignment.bottomLeft,
-                                                                        child: Text(
-                                                                          snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].title!,
-                                                                          // "dsf",
-                                                                          maxLines: 1,
-                                                                          style: TextStyle(
-                                                                              fontSize: size.width * 0.05,
-                                                                              color: Colors.white,
-                                                                              fontWeight: FontWeight.w900),
-                                                                          textAlign: TextAlign.left,
-                                                                        )),
-                                                                  ),
-                                                                  // Expanded(
-                                                                  //   flex: 1,
-                                                                  //   child: Visibility(
-                                                                  //     visible: currentLocationOfferIndex == itemIndex,
-                                                                  //     child: Align(
-                                                                  //         alignment: Alignment.bottomLeft,
-                                                                  //         child: Text(
-                                                                  //           snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
-                                                                  //           // "dsf",
-                                                                  //           style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
-                                                                  //           textAlign: TextAlign.left,
-                                                                  //         )),
+                                                                  )
+                                                                  // Navigator.push(
+                                                                  //   context,
+                                                                  //   PageRouteBuilder(
+                                                                  //     pageBuilder: (_, __, ___) => OfferPage(
+                                                                  //       locOffer: snapshotOfferDetails.data!.locationOffer![itemIndex],
+                                                                  //         // heroTag: itemIndex,
+                                                                  //     ),
                                                                   //   ),
-                                                                  // ),
-                                                                  // Container(color: Colors.red,width: 200  ,height: 200,)
-                                                                ],
+                                                                  // )
+                                                                },
+                                                                child: Column(
+                                                                  mainAxisSize: MainAxisSize.max,
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  // crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: <Widget>[
+                                                                    Flexible(
+                                                                      flex: 8,
+                                                                      child: ClipRRect(
+                                                                        borderRadius: BorderRadius.circular(5.0),
+                                                                        child: !snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].type!
+                                                                            .contains("MOV")
+                                                                        // || !NavbarState.locationoffersImages.any((element) => (element.offer.idOffer==snapshotOfferDetails!.data!.locationOffer![index].idOffer && element.offer !=null))
+                                                                            ? Hero(
+                                                                          tag: snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].id
+                                                                              .toString(),
+                                                                          child: Image.memory(
+                                                                            // state.bytes![i],
+                                                                            NavbarState.locationoffersImages
+                                                                                .firstWhere((element) =>
+                                                                            element.offer.idOffer ==
+                                                                                snapshotOfferDetails.data!.locationOffer![index]
+                                                                                    .idOffer // Provide a default OfferImage or handle it accordingly
+                                                                            )
+                                                                                .mediaContent,
+                                                                            fit: BoxFit.fill,
+                                                                            alignment: Alignment.center,
+
+                                                                            gaplessPlayback: true,
+                                                                          ),
+                                                                        )
+                                                                        // : snapshotvideo.hasData? AspectRatio(
+                                                                        //   aspectRatio:
+                                                                        //       // _controller != null ? _controller!.value.aspectRatio :
+                                                                        //       16 / 9,
+                                                                        //   child:
+                                                                        //   // VideoPlayer(snapshotvideo.data)
+                                                                        //   Container()
+                                                                        // ):
+                                                                        // :SpinKitFadingCircle(
+                                                                        //       color: Colors.white,
+                                                                        //       size: 50.0,
+                                                                        //     )
+                                                                        // : Co
+                                                                            : Align(
+                                                                          alignment: Alignment.center,
+                                                                          child: Container(
+                                                                            width: double.infinity,
+                                                                            height: double.infinity,
+                                                                            color: Colors.grey.withOpacity(0.5),
+                                                                            child: Icon(
+                                                                              Icons.slow_motion_video_outlined,
+                                                                              size: 100,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+
+                                                                        // :Container(height: double.infinity,width: double.infinity, color: Colors.grey.withOpacity(0.3), child: Icon(Icons.slow_motion_video_outlined, size: 80,),
+                                                                        // )
+                                                                      ),
+                                                                    ),
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child: Align(
+                                                                          alignment: Alignment.bottomLeft,
+                                                                          child: Text(
+                                                                            snapshotOfferDetails.data!.locationOffer![index].shm2Offer![0].title!,
+                                                                            // "dsf",
+                                                                            maxLines: 1,
+                                                                            style: TextStyle(
+                                                                                fontSize: size.width * 0.05,
+                                                                                color: Colors.white,
+                                                                                fontWeight: FontWeight.w900),
+                                                                            textAlign: TextAlign.left,
+                                                                          )),
+                                                                    ),
+                                                                    // Expanded(
+                                                                    //   flex: 1,
+                                                                    //   child: Visibility(
+                                                                    //     visible: currentLocationOfferIndex == itemIndex,
+                                                                    //     child: Align(
+                                                                    //         alignment: Alignment.bottomLeft,
+                                                                    //         child: Text(
+                                                                    //           snapshotOfferDetails.data!.locationOffer![itemIndex].shm2Offer![0].shortDesc!,
+                                                                    //           // "dsf",
+                                                                    //           style: TextStyle(fontSize: size.width * 0.045, color: Colors.white),
+                                                                    //           textAlign: TextAlign.left,
+                                                                    //         )),
+                                                                    //   ),
+                                                                    // ),
+                                                                    // Container(color: Colors.red,width: 200  ,height: 200,)
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      );
-                                                      // :Container(color: Colors.red,);
-                                                    });
+                                                        );
+                                                        // :Container(color: Colors.red,);
+                                                      });}
                                               }
-                                              // continue;
-                                              return SpinKitFadingCircle(
-                                                color: Colors.white,
-                                                size: 50.0,
-                                              );
+
+return Container();
                                             }))
                               ],
                             ),
@@ -1770,12 +1778,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                     ),
                                     actions: <Widget>[
                                       ...List.generate(
-                                        state.languageOptions!.length,
+                                        state.languageOptions.length,
                                         (index) => GestureDetector(
                                           // onTap: () => setState(() => _selectedIndex = index),
                                           child: CupertinoActionSheetAction(
                                             child: Text(
-                                              state.languageOptions![index].languageCode!,
+                                              state.languageOptions[index].languageCode,
                                               // "$index",
                                               style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.black),
                                             ),
@@ -1786,9 +1794,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
                                               // setState(() {
                                               BlocProvider.of<NavbarBloc>(context).add(
-                                                  LanguageSelected(language: state.languageOptions![index], currentLocation: state.appbarlocation));
+                                                  LanguageSelected(language: state.languageOptions[index], currentLocation: state.appbarlocation));
                                               await Future.delayed(Duration(milliseconds: 700), () {});
-                                              await EasyLocalization.of(context)!.setLocale(Locale(state.languageOptions![index].languageCode!));
+                                              await EasyLocalization.of(context)!.setLocale(Locale(state.languageOptions[index].languageCode));
                                               // });
                                             },
                                           ),

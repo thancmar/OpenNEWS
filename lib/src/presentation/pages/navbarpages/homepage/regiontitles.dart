@@ -1,22 +1,17 @@
 import 'dart:typed_data';
 
-import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
-import 'package:sharemagazines/src/presentation/widgets/src/customCover.dart';
 
-import '../pages/navbarpages/homepage/puzzle.dart';
-import '../pages/reader/readerpage.dart';
-import 'marquee.dart';
+import 'puzzle.dart';
+import '../../reader/readerpage.dart';
+import '../../../widgets/marquee.dart';
 
 class News_aus_deiner_Region extends StatefulWidget {
   final NavbarState state;
@@ -33,7 +28,7 @@ class News_aus_deiner_RegionState extends State<News_aus_deiner_Region>
 
   // static late List<ValueNotifier<int>> _networklHasErrorNotifier;
   late AnimationController? _spinKitController;
-  List<ResponseMagazine> covers = NavbarState.magazinePublishedGetLastWithLimit!.response()!.where((i) => i.magazineLanguage == "de").toList();
+  List<ResponseMagazine> covers = NavbarState.magazinePublishedGetLastWithLimit.response()!.where((i) => i.magazineLanguage == "de").toList();
 
   @override
   bool get wantKeepAlive => true;

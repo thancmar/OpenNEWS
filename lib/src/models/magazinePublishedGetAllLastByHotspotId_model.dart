@@ -22,7 +22,7 @@ class MagazinePublishedGetAllLastByHotspotId extends BaseResponse {
   MagazinePublishedGetAllLastByHotspotId.fromJson(Map<String, dynamic> json) {
     if (json['response'] != null) {
       _response = <ResponseMagazine>[];
-      json!['response'].forEach((v) {
+      json['response'].forEach((v) {
         _response!.add(ResponseMagazine.fromJson(v));
       });
     } else {

@@ -1,13 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 // import 'package:firebase_auth/firebase_auth.dart';
-import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharemagazines/src/constants.dart';
-import 'package:http/http.dart' as http;
 import 'package:sharemagazines/src/models/hotspots_model.dart';
-import 'package:sharemagazines/src/models/login_model.dart';
 import 'package:get_it/get_it.dart';
 
 import 'dioClient.dart';
@@ -37,7 +32,7 @@ class HotspotRepository {
     } on TypeError catch (e) {
       print('An Error Occurred $e');
       throw Exception("Failed to parse the response");
-    } on SocketException catch (e) {
+    } on SocketException {
       rethrow;
     } catch (e) {
       print('An Error Occurred $e');

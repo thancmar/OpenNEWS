@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharemagazines/src/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:sharemagazines/src/models/incomplete_login_model.dart';
@@ -80,7 +79,7 @@ class AuthRepository {
     } on TypeError catch (e) {
       print('An Error Occurred $e');
       throw Exception("Failed to parse the response");
-    } on SocketException catch (e) {
+    } on SocketException {
       rethrow;
     } catch (e) {
       print('An Error Occurred $e');
@@ -173,7 +172,7 @@ class AuthRepository {
     } on TypeError catch (e) {
       print('An Error Occurred $e');
       throw Exception("Failed to parse the response");
-    } on SocketException catch (e) {
+    } on SocketException {
       rethrow;
     } catch (e) {
       print('An Error Occurred $e');
@@ -202,7 +201,7 @@ class AuthRepository {
         default:
           throw Exception(response.data);
       }
-    } on SocketException catch (e) {
+    } on SocketException {
       rethrow;
     }
   }

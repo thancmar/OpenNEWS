@@ -1,12 +1,8 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
-import '../../../../../pages/reader/page.dart';
 import '../effects/flip_effect.dart';
 
 Map<int, ui.Image?> imageData = {};
@@ -51,12 +47,10 @@ class PageFlipBuilderState extends State<PageFlipBuilder> with SingleTickerProvi
     if (mounted) {
 
       setState(() {
-        if (imageData != null) {
-          // imageData[index] = image;
+        // imageData[index] = image;
 
-          imageData[index] = image;
-        }
-        // Convert the Uint8List to an Image widget
+        imageData[index] = image;
+              // Convert the Uint8List to an Image widget
       });
     }
   }

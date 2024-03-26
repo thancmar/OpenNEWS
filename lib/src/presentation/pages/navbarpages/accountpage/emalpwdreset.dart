@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 

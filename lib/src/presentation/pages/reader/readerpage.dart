@@ -1,13 +1,11 @@
 // import 'package:flip_widget/flip_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/page.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/readeroptionspage.dart';
 import 'package:sharemagazines/src/presentation/widgets/routes/toreaderoption.dart';
-import 'package:sharemagazines/src/resources/magazine_repository.dart';
+import '../../../blocs/navbar/navbar_bloc.dart';
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 import '../../widgets/src/pageflip/src/page_flip_widget.dart';
 
@@ -34,6 +32,8 @@ class _ReaderState extends State<Reader> with SingleTickerProviderStateMixin, Au
 
   @override
   void initState() {
+    // BlocProvider.of<NavbarBloc>(context).getCover(
+    //     widget.magazine.idMagazinePublication!, widget.magazine.dateOfPublication!,"0", false, true);
     super.initState();
     widget.pagesDataCache = List<Uint8List?>.filled(int.parse(widget.magazine.pageMax!), null, growable: false);
     widget.allImagekey = List<GlobalKey>.filled(int.parse(widget.magazine.pageMax!), GlobalKey(), growable: false);

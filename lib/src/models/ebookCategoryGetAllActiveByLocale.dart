@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'magazinePublishedGetAllLastByHotspotId_model.dart';
 
 
 EbookCategoryGetAllActiveByLocale EbookCategoryGetAllActiveByLocaleFromJson(String str) =>

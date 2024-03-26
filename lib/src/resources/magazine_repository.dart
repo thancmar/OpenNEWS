@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:core';
@@ -12,7 +11,6 @@ import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:get_it/get_it.dart';
 
-import '../models/ebooksForLocationGetAllActive.dart';
 import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
@@ -150,7 +148,7 @@ class MagazineRepository {
     final getIt = GetIt.instance;
     Map<String, dynamic> queryParame = {
       'page': page!,
-      'id_mag_pub': id_mag_pub!,
+      'id_mag_pub': id_mag_pub,
     };
     var queryString = Uri(queryParameters: queryParame).query;
     // var file = await DefaultCacheManager().getSingleFile(id_mag_pub + "_" + date_of_publication!);
@@ -182,7 +180,7 @@ class MagazineRepository {
     try {
       final getIt = GetIt.instance;
       Map<String, dynamic> queryParame = {
-        'page': page!.toString(),
+        'page': page.toString(),
         'id_mag_pub': id_mag_pub!,
       };
       var queryString = Uri(queryParameters: queryParame).query;
@@ -214,7 +212,7 @@ class MagazineRepository {
       }
 
       // return Uint8List.fromList(response.data);
-    } on SocketException catch (e) {
+    } on SocketException {
       // TODO
       print("exception no internet");
       rethrow;
@@ -231,7 +229,7 @@ class MagazineRepository {
     try {
       final getIt = GetIt.instance;
       Map<String, dynamic> queryParame = {
-        'page': page!.toString(),
+        'page': page.toString(),
         'id_mag_pub': id_mag_pub!,
       };
       var queryString = Uri(queryParameters: queryParame).query;
@@ -269,7 +267,7 @@ class MagazineRepository {
       }
 
       // return Uint8List.fromList(response.data);
-    } on SocketException catch (e) {
+    } on SocketException {
       // TODO
       print("exception no internet");
       rethrow;

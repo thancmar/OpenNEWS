@@ -1,24 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
 import 'package:sharemagazines/src/models/registrierung_model.dart';
 import 'package:sharemagazines/src/resources/auth_repository.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
+// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../models/userDetails_model.dart';
-import '../../presentation/widgets/src/easy_loading.dart';
+import '../../presentation/widgets/src/easyloading/easy_loading.dart';
 import '../../resources/dioClient.dart';
 
 part 'auth_event.dart';
@@ -58,8 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   // credential = EmailAuthProvider.credential(email: event.email, password: event.password),
                   // AuthState.userDetails = await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email),
                   await authRepository.getUserDetails(userID: value.response!.id, email: value.response!.email).then((value) => {
-                        AuthState.userDetails = value!,
-
+                        AuthState.userDetails = value,
                         if (state is IncompleteAuthenticated) {emit(IncompleteAuthenticated())} else {emit(Authenticated())}
                       }),
                 });
@@ -163,7 +154,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<DeleteAccount>((event, emit) async {
       try {
-
         AuthState.savedPWD = await dioClient.secureStorage.read(key: "pwd");
         await authRepository.deleteUser(event.user_details, AuthState.savedPWD).then((value) => emit(UnAuthenticated()));
         // emit(UnAuthenticated());
@@ -197,22 +187,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //   // emit(GoToLoginPage());
     // });
 
-    on<SignUpWithApple>((event, emit) async {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      print(credential);
-      // if (response) {
-      //   // emit(AuthenticatedWithGoogle());
-      // } else {
-      //   // emit(UnAuthenticated());
-      // }
-      // emit(GoToLoginPage());
-    });
+    // on<SignUpWithApple>((event, emit) async {
+    //   final credential = await SignInWithApple.getAppleIDCredential(
+    //     scopes: [
+    //       AppleIDAuthorizationScopes.email,
+    //       AppleIDAuthorizationScopes.fullName,
+    //     ],
+    //   );
+    //
+    //   print(credential);
+    //   // if (response) {
+    //   //   // emit(AuthenticatedWithGoogle());
+    //   // } else {
+    //   //   // emit(UnAuthenticated());
+    //   // }
+    //   // emit(GoToLoginPage());
+    // });
 
     //IMPORTANT: delete the "emailGuest", "email" and passwords from cache
     // When User Presses the SignOut Button, we will send the SignOutRequested Event to the AuthBloc to handle it and emit the UnAuthenticated State
@@ -223,8 +213,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // AuthState.userDetails = GetUserDetails();
       emit(UnAuthenticated());
     });
-  }
-
-  dispose() {
   }
 }

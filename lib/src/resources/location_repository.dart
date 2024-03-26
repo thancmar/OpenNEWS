@@ -5,11 +5,8 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pdf_render/pdf_render.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharemagazines/src/models/location_model.dart';
-import 'package:http/http.dart' as http;
 
-import '../blocs/navbar/navbar_bloc.dart';
 import '../constants.dart';
 import '../models/locationGetHeader_model.dart';
 import '../models/locationOffers_model.dart';
@@ -25,7 +22,13 @@ class LocationRepository {
     // };
     final getIt = GetIt.instance;
     Map<String, dynamic> data;
-    if (lat != null && long != null) {
+    if(locationID =="0"){
+      data = {
+        'f': 'Localization.check',
+        'json': '{"id_location":"0"}}',
+        // 'json': '{"id_location":"0","gps":{"latitude":"$lat","longitude":"$long"}}',
+      };
+    }else    if (lat != null && long != null) {
       if (locationID != null) {
         data = {
           'f': 'Localization.check',
@@ -34,7 +37,8 @@ class LocationRepository {
       } else {
         data = {
           'f': 'Localization.check',
-          'json': '{"gps":{"latitude":"$lat","longitude":"$long"}}',
+          // 'json': '{"id_location":"0"}}',
+          'json': '{"id_location":"0","gps":{"latitude":"$lat","longitude":"$long"}}',
         };
       }
     } else {

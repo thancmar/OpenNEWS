@@ -24,6 +24,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+
 import '../theme.dart';
 
 class EasyLoadingProgress extends StatefulWidget {

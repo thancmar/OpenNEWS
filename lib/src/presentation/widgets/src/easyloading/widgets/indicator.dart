@@ -23,7 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../spinkitshmg.dart';
+import '../../../spinkitshmg.dart';
 import '../easy_loading.dart';
 import '../theme.dart';
 

@@ -24,14 +24,15 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/easyloading/widgets/container.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/easyloading/widgets/indicator.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/easyloading/widgets/loading.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/easyloading/widgets/overlay_entry.dart';
+import 'package:sharemagazines/src/presentation/widgets/src/easyloading/widgets/progress.dart';
 
-import './widgets/container.dart';
-import './widgets/progress.dart';
-import './widgets/indicator.dart';
-import './widgets/overlay_entry.dart';
-import './widgets/loading.dart';
-import './animations/animation.dart';
-import './theme.dart';
+
+import 'animations/animation.dart';
+import 'theme.dart';
 
 /// loading style
 enum EasyLoadingStyle {

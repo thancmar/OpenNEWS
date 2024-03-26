@@ -9,7 +9,6 @@ import 'package:get_it/get_it.dart';
 import '../constants.dart';
 import '../models/ebookCategoryGetAllActiveByLocale.dart';
 import '../models/ebooksForLocationGetAllActive.dart';
-import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
 class EbookRepository {

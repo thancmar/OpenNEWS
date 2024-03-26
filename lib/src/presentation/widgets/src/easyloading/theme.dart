@@ -22,11 +22,11 @@
 
 import 'package:flutter/material.dart';
 
-import './easy_loading.dart';
-import './animations/animation.dart';
-import './animations/opacity_animation.dart';
-import './animations/offset_animation.dart';
-import './animations/scale_animation.dart';
+import 'animations/animation.dart';
+import 'animations/offset_animation.dart';
+import 'animations/opacity_animation.dart';
+import 'animations/scale_animation.dart';
+import 'easy_loading.dart';
 
 class EasyLoadingTheme {
   /// color of indicator

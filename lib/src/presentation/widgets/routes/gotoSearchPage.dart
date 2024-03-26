@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shaky_animated_listview/animators/grid_animator.dart';
 
 class CupertinoRoute extends PageRouteBuilder {
   final Widget enterPage;

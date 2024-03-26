@@ -1,16 +1,11 @@
-import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sharemagazines/src/models/audioBooksForLocationGetAllActive.dart';
 
 import '../../../models/ebooksForLocationGetAllActive.dart';
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import '../../pages/navbarpages/homepage/homepage.dart';
-import '../../pages/navbarpages/homepage/puzzle.dart';
-import '../../pages/reader/readerpage.dart';
 import '../marquee.dart';
 import 'customCover.dart';
 

@@ -12,7 +12,7 @@ class QRCodeInputField extends StatefulWidget {
   bool cameraActive;
   // bool hideCamera;
   ValueNotifier<bool> error;
-  final QRViewExample camera;
+  final QRCodeScanner camera;
 
 
   QRCodeInputField({Key? key, required this.cameraActive, required this.error, required this.camera}) : super(key: key);

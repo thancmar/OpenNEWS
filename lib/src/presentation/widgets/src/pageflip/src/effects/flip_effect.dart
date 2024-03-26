@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../pages/reader/readerpage.dart';
 
 class PageFlipEffect extends CustomPainter {
   PageFlipEffect({

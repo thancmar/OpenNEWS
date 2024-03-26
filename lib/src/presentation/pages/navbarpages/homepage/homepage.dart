@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -14,9 +13,8 @@ import 'package:sharemagazines/src/models/locationOffers_model.dart';
 import 'package:sharemagazines/src/models/location_model.dart';
 import '../../../../models/ebooksForLocationGetAllActive.dart';
 import '../../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import '../../../widgets/news_aus_deiner_Region.dart';
+import 'regiontitles.dart';
 import '../../../widgets/src/coversverticallist.dart';
-import '../../../widgets/src/customCover.dart';
 import '../ebookreader/ebookreader.dart';
 import '../map/offerpage.dart';
 
@@ -82,24 +80,25 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         magazines = MagazinePublishedGetAllLastByHotspotId(
                             response: NavbarState.magazinePublishedGetLastWithLimit.response()!
                                 .where((element) => element.idsMagazineCategory?.contains('20') == true)
-                                .toList());
+                                .toList()..shuffle());
                       if (categoryStatus == CategoryStatus.ebooks)
                         ebooks = EbooksForLocationGetAllActive(
                             response: NavbarState.ebooks
                                 .response()!
                                 .where((element) =>
-                            element.idsEbookCategory?.contains(NavbarState.ebookCategoryGetAllActiveByLocale!.response![1].id!) == true)
+                            element.idsEbookCategory?.contains(NavbarState.ebookCategoryGetAllActiveByLocale.response![1].id!) == true)
                             // .toSet()
-                                .toList());
+                                .toList()..shuffle());
                       if (categoryStatus == CategoryStatus.hoerbuecher)
                         audiobooks = AudioBooksForLocationGetAllActive(
                             response: NavbarState.audiobooks
                                 .response()!
                                 .where((element) =>
-                            element.idsAudiobookCategory?.contains(NavbarState.audioBooksCategoryGetAllActiveByLocale!.response![1].id!) == true)
+                            element.idsAudiobookCategory?.contains(NavbarState.audioBooksCategoryGetAllActiveByLocale.response![1].id!) == true)
                             // .toSet()
-                                .toList());
+                                .toList()..shuffle());
                       // print(NavbarState.audioBooksCategoryGetAllActiveByLocale!.response![9].name);
+
                       return SmartRefresher(
                           enablePullDown: true,
                           header: ClassicHeader(

@@ -41,6 +41,8 @@ abstract class NavbarState extends Equatable {
 
   static late String? token = null;
   static late String? fingerprint = null;
+  static late List<LocationData> allNearbyLocations =
+  []; //This is list of all location nearby(if any)
 
   static late Future<LocationOffers>? maplocationoffers = null;
 
