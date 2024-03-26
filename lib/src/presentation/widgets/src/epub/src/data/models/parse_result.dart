@@ -1,6 +1,5 @@
 // import 'package:epub_view/src/data/epub_parser.dart';
 
-import 'package:epubx/epubx.dart';
 
 import '../epub_parser.dart';
 

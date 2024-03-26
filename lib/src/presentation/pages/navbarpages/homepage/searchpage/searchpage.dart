@@ -2,27 +2,16 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart';
-import 'package:overlapped_carousel/overlapped_carousel.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/searchpage/categoriepage.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 import 'package:sharemagazines/src/presentation/widgets/src/covershorizontallist.dart';
 
 import '../../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../../blocs/searchpage/search_bloc.dart';
-import '../../../../widgets/marquee.dart';
-import '../../../../widgets/src/coversverticallist.dart';
-import '../../../reader/readerpage.dart';
-import 'languagepage.dart';
 
 class SearchPage extends StatefulWidget {
   final bool hasEbooksAudiobooks;
@@ -40,10 +29,10 @@ class _SearchPageState extends State<SearchPage>
         AutomaticKeepAliveClientMixin<SearchPage> {
   TextEditingController _searchController = TextEditingController();
   static late PageController controller = PageController(viewportFraction: 0.30, keepPage: true);
-  int counterDE = NavbarState.magazinePublishedGetLastWithLimit!.response()!.where((element) => element.magazineLanguage == "de").length;
-  int counterEN = NavbarState.magazinePublishedGetLastWithLimit!.response()!.where((element) => element.magazineLanguage == "en").length;
-  int counterFR = NavbarState.magazinePublishedGetLastWithLimit!.response()!.where((element) => element.magazineLanguage == "fr").length;
-  int counterES = NavbarState.magazinePublishedGetLastWithLimit!.response()!.where((element) => element.magazineLanguage == "es").length;
+  int counterDE = NavbarState.magazinePublishedGetLastWithLimit.response()!.where((element) => element.magazineLanguage == "de").length;
+  int counterEN = NavbarState.magazinePublishedGetLastWithLimit.response()!.where((element) => element.magazineLanguage == "en").length;
+  int counterFR = NavbarState.magazinePublishedGetLastWithLimit.response()!.where((element) => element.magazineLanguage == "fr").length;
+  int counterES = NavbarState.magazinePublishedGetLastWithLimit.response()!.where((element) => element.magazineLanguage == "es").length;
 
   @override
   bool get wantKeepAlive => true;
@@ -94,6 +83,34 @@ class _SearchPageState extends State<SearchPage>
           // print(BlocProvider.of<NavbarBloc>(context).state);
           // print("rebuild $state");
           // print("search bloc state $state");
+          if(state is SearchError){return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              ('error').tr(),
+              // 'Navbarerror',
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.grey),
+            ),
+            content: Text(state.error.toString(), style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey)),
+            actions: <Widget>[
+              // TextButton(
+              //   onPressed: () => Navigator.pop(context, 'Cancel'),
+              //   child: const Text('Cancel'),
+              // ),
+              TextButton(
+                onPressed: () async {
+                  BlocProvider.of<SearchBloc>(context).add(OpenSearch());
+                  // var result = await Navigator.of(context).push(
+                  //   CupertinoPageRoute(
+                  //     builder: (context) => const StartPage(
+                  //       title: "notitle",
+                  //     ),
+                  //   ),
+                  // );
+                },
+                child: Text('OK', style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue)),
+              ),
+            ],
+          );}
           return Scaffold(
             // extendBodyBehindAppBar: true,
             backgroundColor: Colors.transparent,
@@ -234,22 +251,13 @@ class _SearchPageState extends State<SearchPage>
               // )),
             ),
 
-            body: SingleChildScrollView(
+            body:SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: state is GoToSearchResults
                     ? <Widget>[SearchResults(context, state, MediaQuery.of(context).size.height * 0.12)]
-                    : state is SearchError
-                        ? <Widget>[
-                            Container(
-                              child: Text(state.error,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                  )),
-                            )
-                          ]
-                        : <Widget>[
+                    :
+                         <Widget>[
                             Align(
                               alignment: Alignment.topLeft,
                               child: Padding(
@@ -286,8 +294,8 @@ class _SearchPageState extends State<SearchPage>
                                       ),
                                       // for (var i = 0; i < SearchState.oldSearchResults.length; i++)
                                       // if (SearchState.oldSearchResults?.length != 0)
-                                      for (var i = SearchState.oldSearchResults!.length - 1;
-                                          i >= max(0, SearchState.oldSearchResults!.length! - 5);
+                                      for (var i = SearchState.oldSearchResults.length - 1;
+                                          i >= max(0, SearchState.oldSearchResults.length - 5);
                                           i--)
                                         Container(
                                           child: Padding(
@@ -303,8 +311,8 @@ class _SearchPageState extends State<SearchPage>
                                                   child: GestureDetector(
                                                     onTap: () {
                                                       // Navigator.pop(context);
-                                                      handleSearchClick(SearchState.oldSearchResults?[i], state, false, false);
-                                                      _searchController.text = SearchState.oldSearchResults?[i];
+                                                      handleSearchClick(SearchState.oldSearchResults[i], state, false, false);
+                                                      _searchController.text = SearchState.oldSearchResults[i];
                                                     },
                                                     child: Container(
                                                       child: Padding(
@@ -312,7 +320,7 @@ class _SearchPageState extends State<SearchPage>
                                                         child: Text(
                                                           // 'hamburg',
                                                           // state.searchResults!.isNotEmpty ? state.searchResults![i] : "",
-                                                          SearchState.oldSearchResults?[i],
+                                                          SearchState.oldSearchResults[i],
                                                           style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w200),
                                                           textAlign: TextAlign.left,
                                                         ),
@@ -326,8 +334,8 @@ class _SearchPageState extends State<SearchPage>
                                                 InkWell(
                                                   onTap: () {
                                                     // state.searchResults?.removeAt(i);
-                                                    BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
-                                                    // setState(() {});
+                                                     setState(() {BlocProvider.of<SearchBloc>(context).add(DeleteSearchResult(i));
+                                                     });
                                                   },
                                                   child: Align(
                                                     alignment: Alignment.centerRight,
@@ -382,7 +390,7 @@ class _SearchPageState extends State<SearchPage>
                             ):Container(),
                             // ShowCategoryList(counterDE: counterDE, counterEN: counterEN, counterFR: counterFR, counterES: counterES),
                   widget.hasEbooksAudiobooks?ShowCategoryList(
-                              listItems: NavbarState.ebookCategoryGetAllActiveByLocale!.response!.map((category) => category.name!).toList(),
+                              listItems: NavbarState.ebookCategoryGetAllActiveByLocale.response!.map((category) => category.name!).toList(),
                               isAudioBook: false,
                               categoryType: CategoryStatus.ebooks,
                             ):Container(),
@@ -400,7 +408,7 @@ class _SearchPageState extends State<SearchPage>
                             ):Container(),
                             // ShowCategoryList(counterDE: counterDE, counterEN: counterEN, counterFR: counterFR, counterES: counterES),
                   widget.hasEbooksAudiobooks?ShowCategoryList(
-                              listItems: NavbarState.audioBooksCategoryGetAllActiveByLocale!.response!.map((category) => category.name!).toList(),
+                              listItems: NavbarState.audioBooksCategoryGetAllActiveByLocale.response!.map((category) => category.name!).toList(),
                               isAudioBook: true,
                               categoryType: CategoryStatus.hoerbuecher,
                             ):Container(),

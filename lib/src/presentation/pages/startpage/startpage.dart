@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_svg/parser.dart';
 
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines/src/presentation/clip.dart';
+import 'package:sharemagazines/src/presentation/widgets/clip.dart';
 import 'package:sharemagazines/src/presentation/pages/startpage/coveranimmation.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/mainpage.dart';
 import 'package:sharemagazines/src/presentation/pages/startpage/registrationpage.dart';
@@ -33,17 +33,13 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
   );
   TextEditingController _emailController = TextEditingController(text: AuthState.savedEmail);
   TextEditingController _passwordController = TextEditingController(text: AuthState.savedPWD);
-  var focusUserID = false;
+
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController(text: AuthState.savedEmail);
-
-    _passwordController = TextEditingController(text: AuthState.savedPWD
-      // text:  BlocProvider.of<AuthBloc>(context).state.userDetails.response?.firstname
-      // text: AuthState.userDetails?.response?.firstname
-    );
+    _passwordController = TextEditingController(text: AuthState.savedPWD    );
   }
 
   bool isTablet(BuildContext context) {

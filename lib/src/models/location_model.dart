@@ -1,4 +1,4 @@
-import 'dart:convert';
+ import 'dart:convert';
 
 Localization LocalizationFromJson(String str) =>
     Localization.fromJson(json.decode(str));

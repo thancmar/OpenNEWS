@@ -1,6 +1,5 @@
 // import 'package:epub_view/epub_view.dart' as ebook;
 import 'dart:async';
-import 'dart:io';
 
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sharemagazines/src/models/ebooksForLocationGetAllActive.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
-import '../../../widgets/src/lib/epub_view.dart' as ebook;
+import '../../../widgets/src/epub/epub_view.dart' as ebook;
 
 class FontSizeNotifier extends ValueNotifier<double> {
   final double min;
@@ -45,18 +43,7 @@ class _EbookreaderState extends State<Ebookreader> {
   @override
   void initState() {
     super.initState();
-    // BlocProvider.of<NavbarBloc>(context).getEbookFile(widget.ebook.id!, widget.ebook.dateOfPublication!).then((value) => _epubReaderController.document=ebook.EpubDocument.openData(value)) ;
-    //
-    // _epubReaderController = ebook.EpubController(
-    //   document:
-    //       // EpubDocument.openAsset('assets/New-Findings-on-Shirdi-Sai-Baba.epub'),
-    //       ebook.EpubDocument.openData(BlocProvider.of<NavbarBloc>(context).getEbookFile(widget.ebook.id!, widget.ebook.dateOfPublication!)),
-    //   // ebook.EpubDocument.openAsset('assets/epub30-spec.epub'),
-    //   // epubCfi:
-    //   //     'epubcfi(/6/26[id4]!/4/2/2[id4]/22)', // book.epub Chapter 3 paragraph 10
-    //   // epubCfi:
-    //   //     'epubcfi(/6/6[chapter-2]!/4/2/1612)', // book_2.epub Chapter 16 paragraph 3
-    // );
+
     loadDataAsync();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,

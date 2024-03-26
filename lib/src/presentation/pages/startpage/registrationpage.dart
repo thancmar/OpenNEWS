@@ -5,10 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines/src/presentation/pages/startpage/startpage.dart';
 import 'package:sharemagazines/src/presentation/validators/emailvalidator.dart';
 import 'package:sharemagazines/src/presentation/validators/passwordvalidator.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class Registration extends StatefulWidget {
   const Registration({Key? key}) : super(key: key);

@@ -1,20 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_store/open_store.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sharemagazines/src/blocs/auth/auth_bloc.dart';
-import 'package:sharemagazines/src/models/login_model.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/mainpage.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/emalpwdreset.dart';
 import 'package:sharemagazines/src/presentation/pages/navbarpages/accountpage/myprofilepage.dart';
-import 'package:sharemagazines/src/resources/auth_repository.dart';
 
 import '../../../../blocs/navbar/navbar_bloc.dart';
-import '../../../../blocs/splash/splash_bloc.dart';
-import '../../../../models/location_model.dart';
 import '../../startpage/startpage.dart';
 import '../qrpage/qr_scanner.dart';
 
@@ -350,7 +344,7 @@ class _AccountPageWidgetsState extends State<AccountPageWidgets> {
                   onExpansionChanged: (isExpanded) {
                     Navigator.of(context)
                         .push(MaterialPageRoute(
-                      builder: (context) => QRViewExample(),
+                      builder: (context) => QRCodeScanner(),
                     ));
                     //     .whenComplete(() => {
                     //   // if (showLocationPage.value == false)

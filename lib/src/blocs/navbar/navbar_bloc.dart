@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +19,6 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sharemagazines/src/blocs/splash/splash_bloc.dart';
 import 'package:sharemagazines/src/models/location_model.dart';
 import 'package:sharemagazines/src/models/magazineCategoryGetAllActive.dart';
 import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart';
@@ -39,7 +37,7 @@ import '../../models/hotspots_model.dart';
 import '../../models/locationGetHeader_model.dart';
 import '../../models/locationOffers_model.dart';
 import '../../models/place_map.dart';
-import '../../presentation/widgets/src/easy_loading.dart';
+import '../../presentation/widgets/src/easyloading/easy_loading.dart';
 import '../../resources/dioClient.dart';
 
 part 'navbar_event.dart';
@@ -151,27 +149,27 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           });
         }
         //Have to change this(remove splashstate)
-        if (SplashState.allNearbyLocations.length > 1) {
+        if (NavbarState.allNearbyLocations.length > 1) {
           await EasyLoading.dismiss();
-          emit(GoToLocationSelection(SplashState.allNearbyLocations, LocationData()));
-        } else if (SplashState.allNearbyLocations.length == 1) {
+          emit(GoToLocationSelection(NavbarState.allNearbyLocations, LocationData()));
+        } else if (NavbarState.allNearbyLocations.length == 1) {
           // SplashState.appbarlocation = SplashState.allNearbyLocations[0];
           // state.appbarlocation = SplashState.allNearbyLocations[0];
           await EasyLoading.show(
-            status: 'Entering ${SplashState.allNearbyLocations[0].nameApp}',
+            status: 'Entering ${NavbarState.allNearbyLocations[0].nameApp}',
             maskType: EasyLoadingMaskType.black,
           );
-          print("ebooks2 counter ${SplashState.allNearbyLocations[0].hasEbooksAudiobooks}");
-          await GetAllMagazinesCover(int.parse(SplashState.allNearbyLocations[0].idLocation!)).then((valueGetAllMagazinesCover) async => {
-            if (SplashState.allNearbyLocations[0].hasEbooksAudiobooks == "1")
+          print("ebooks2 counter ${NavbarState.allNearbyLocations[0].hasEbooksAudiobooks}");
+          await GetAllMagazinesCover(int.parse(NavbarState.allNearbyLocations[0].idLocation!)).then((valueGetAllMagazinesCover) async => {
+            if (NavbarState.allNearbyLocations[0].hasEbooksAudiobooks == "1")
               {
-                await GetAllEbookAudiobooks(int.parse(SplashState.allNearbyLocations[0].idLocation!))
+                await GetAllEbookAudiobooks(int.parse(NavbarState.allNearbyLocations[0].idLocation!))
               },
             // add(Menu()),
             // add(Home(event.currentPosition)),
             // event.timer?.cancel(),
             await EasyLoading.dismiss(),
-            emit(NavbarLoaded(SplashState.allNearbyLocations[0])), //(navbarData)),
+            emit(NavbarLoaded(NavbarState.allNearbyLocations[0])), //(navbarData)),
             // emit(GoToHome(currentLocation: appbarlocation!)),
             print('EasyLoading dismiss 1 location'),
           });
@@ -198,7 +196,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     on<BackFromLocationPermission>((event, emit) async {
       try {
         await EasyLoading.dismiss();
-        emit(NavbarLoaded(LocationData()));
+        emit(NavbarLoaded(state.appbarlocation));
       } catch (error) {
         print("GetMapOffer error - $error");
         emit(NavbarError(error.toString()));
@@ -257,7 +255,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
           maskType: EasyLoadingMaskType.black,
         );
 
-        emit(LoadingNavbar(event.currentLocation!));
+        emit(LoadingNavbar(event.currentLocation));
         // if (NavbarState.appbarlocation.idLocation != event.location!.idLocation) {
         //   await GetAllMagazinesCover(int.parse(event.location!.idLocation!), event).then((valueGetAllMagazinesCover) async => {
         //     await EasyLoading.dismiss(),
@@ -267,7 +265,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
         // await Future.delayed(Duration(milliseconds: 700), () {});
 
         await EasyLoading.dismiss();
-        emit(NavbarLoaded(event.currentLocation!));
+        emit(NavbarLoaded(event.currentLocation));
         // }
       } on Exception catch (e) {
         await EasyLoading.dismiss();
@@ -313,7 +311,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
           await GetAllMagazinesCover(int.parse(event.selectedLocation!.idLocation ?? "0")).then((valueGetAllMagazinesCover) async => {
             await EasyLoading.dismiss(),
-            {GetAllEbookAudiobooks(int.parse(SplashState.allNearbyLocations[0].idLocation!))},
+            {GetAllEbookAudiobooks(int.parse(NavbarState.allNearbyLocations[0].idLocation!))},
             emit(NavbarLoaded(event.selectedLocation!)),
           });
 
@@ -385,6 +383,9 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     //   maskType: EasyLoadingMaskType.black,
     // );
     try {
+      ///Clear everything for loading Information for the new location and
+      ///go back to magazines Category, since the new location could possibly has no ebooks
+      NavbarState.categoryStatus.value=CategoryStatus.presse;
       NavbarState.locationheader = null;
       NavbarState.locationoffers = null;
       // NavbarState.locationoffersImages;
@@ -414,10 +415,10 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 if (locationID == 0)
                   {
                     NavbarState.locationheader = locationRepository.GetLocationHeader(locationID: "1"),
-                    NavbarState.locationheader?.then((value) => {
+                    await NavbarState.locationheader?.then((value) => {
                           // NavbarStaprint('filepath ${value.filePath}'),
                           if (value.filePath != "")
-                            {NavbarState.locationImage = locationRepository.GetLocationImage(locationID: '1', filePath: value.filePath.toString())}
+                            { NavbarState.locationImage = locationRepository.GetLocationImage(locationID: '1', filePath: value.filePath.toString())}
                         }),
                     // NavbarState.locationoffers = locationRepository.GetLocationOffers(locationID: locationID.toString()),
                     // NavbarState.locationoffers?.then((value) => {
@@ -447,7 +448,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
                           if (value.filePath != "")
                             {
-                              NavbarState.locationImage =
+                                NavbarState.locationImage =
                                   locationRepository.GetLocationImage(locationID: locationID.toString(), filePath: value.filePath.toString())
                             }else{
                             NavbarState.locationImage=null
@@ -599,7 +600,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                   NavbarState.magazinePublishedGetLastWithLimit = data;
                   // dioClient.secureStorage.write(key: "allmagazines", value: data);
 
-                  for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit!.response()!.length; i++) {
+                  for (var i = 0; i < NavbarState.magazinePublishedGetLastWithLimit.response()!.length; i++) {
                     // if (NavbarState.magazinePublishedGetLastWithLimit!.response![i].idsMagazineCategory!.contains('35')==true)
                     //   DefaultCacheManager()
                     //     .getFileFromCache(NavbarState.magazinePublishedGetLastWithLimit!.response![i].idMagazinePublication! +
@@ -627,7 +628,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
     } on TypeError catch (e) {
       print('An Error Occurred $e');
       emit(NavbarError(e.toString()));
-    } on SocketException catch (e) {
+    } on SocketException {
       rethrow;
     } catch (e) {
       print('An Error Occurred $e');
@@ -638,15 +639,15 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
   Future<void> GetAllEbookAudiobooks(int locationID) async {
     try {
       print("GetAllEbookAudiobooks");
-       ebookRepository.ebooksCategoryGetAllActive().then((value) async => {NavbarState.ebookCategoryGetAllActiveByLocale = value});
+       await ebookRepository.ebooksCategoryGetAllActive().then((value) async => {NavbarState.ebookCategoryGetAllActiveByLocale = value});
       print("ebooksCategoryGetAllActive ${NavbarState.currentPosition?.latitude}");
-       ebookRepository.ebooksForLocationGetAllActive(id_hotspot: locationID.toString()).then((value) => NavbarState.ebooks = value);
+      await ebookRepository.ebooksForLocationGetAllActive(id_hotspot: locationID.toString()).then((value) => NavbarState.ebooks = value);
       // print("audioBooksCategoryGetAllActive ${NavbarState.currentPosition?.latitude}");
-       audioBookRepository.audioBooksCategoryGetAllActive().then((value) => NavbarState.audioBooksCategoryGetAllActiveByLocale = value);
+      await  audioBookRepository.audioBooksCategoryGetAllActive().then((value) => NavbarState.audioBooksCategoryGetAllActiveByLocale = value);
        // print("audioBooksForLocationGetAllActive");
-        audioBookRepository.audioBooksForLocationGetAllActive(id_hotspot: locationID.toString()).then((value) async => {NavbarState.audiobooks = value});
+      await  audioBookRepository.audioBooksForLocationGetAllActive(id_hotspot: locationID.toString()).then((value) async => {NavbarState.audiobooks = value});
 
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
       // emit(NavbarError(e.toString()));
     } on TypeError catch (e) {
@@ -687,7 +688,7 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 NavbarState.token = code,
                 NavbarState.fingerprint = fingerprint,
                 await GetAllMagazinesCover(int.parse(value!.data![0].idLocation!)).then((valueGetAllMagazinesCover) async => {
-                      emit(NavbarLoaded(value!.data![0])),
+                      emit(NavbarLoaded(value.data![0])),
                     })
               }
           });
@@ -811,13 +812,13 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
                 {
                   if (currentLocation.idLocation == null) {updateLocation = false} else {updateLocation = true}
                 }
-              else if (value!.data!.length == 1)
+              else if (value.data!.length == 1)
                 {
                   if (currentLocation.idLocation != value.data![0].idLocation)
                     {
                       // state.appbarlocation = Data(),
                       print(currentLocation.idLocation),
-                      SplashState.allNearbyLocations = value.data!,
+                      NavbarState.allNearbyLocations = value.data!,
                       add(InitializeNavbar(currentPosition: value.data![0])),
                     }
                 }
@@ -826,25 +827,25 @@ class NavbarBloc extends Bloc<NavbarEvent, NavbarState> {
 
               if (updateLocation == true)
                 {
-                  if (value!.data!.length == 0)
+                  if (value.data!.length == 0)
                     {
                       currentLocation = LocationData(),
-                      SplashState.allNearbyLocations = value.data!,
+                      NavbarState.allNearbyLocations = value.data!,
                       add(InitializeNavbar(currentPosition: LocationData())),
                     }
-                  else if (value!.data!.length == 1)
+                  else if (value.data!.length == 1)
                     {
                       // NavbarState.appbarlocation = value?.data?[0],
-                      SplashState.allNearbyLocations = value.data!,
-                      add(InitializeNavbar(currentPosition: value!.data![0])),
+                      NavbarState.allNearbyLocations = value.data!,
+                      add(InitializeNavbar(currentPosition: value.data![0])),
                     }
-                  else if (value!.data!.length > 1)
+                  else if (value.data!.length > 1)
                     {
                       //       {
                       //         SplashState.appbarlocation = Data(),
-                      SplashState.allNearbyLocations = value.data!,
+                      NavbarState.allNearbyLocations = value.data!,
                       // await EasyLoading.dismiss(),
-                      emit(GoToLocationSelection(SplashState.allNearbyLocations, currentLocation)),
+                      emit(GoToLocationSelection(NavbarState.allNearbyLocations, currentLocation)),
                       // add(Initialize123(currentPosition: Data())),
                       // },
                       // await EasyLoading.dismiss(),

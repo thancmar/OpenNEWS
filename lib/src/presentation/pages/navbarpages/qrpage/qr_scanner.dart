@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:backdrop/backdrop.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,25 +13,25 @@ import 'package:sharemagazines/src/presentation/pages/navbarpages/qrpage/qrCodeI
 import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/navbar/navbar_bloc.dart';
 
-class QRViewExample extends StatefulWidget {
+class QRCodeScanner extends StatefulWidget {
   late String? fingerprint;
 
   // bool hideCamera = false;
   ValueNotifier<bool> hideCameraToShowOnlyTextField = ValueNotifier<bool>(false);
   TextEditingController textEditingController = TextEditingController();
 
-  QRViewExample({Key? key}) : super(key: key);
+  QRCodeScanner({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QRViewExampleState();
+  State<StatefulWidget> createState() => _QRCodeScannerState();
 }
 
-class _QRViewExampleState extends State<QRViewExample> {
+class _QRCodeScannerState extends State<QRCodeScanner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   // final TextEditingController textEditingController = TextEditingController();
   Barcode? result;
-  bool cameraActive = false;
+  bool cameraActive = true;
 
   // bool hideCamera = false;
   QRViewController? controller;
@@ -100,7 +98,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   void _onQRViewCreated(QRViewController controller1) async {
-    // this.controller = controller1;
+    this.controller = controller1;
 
     controller?.scannedDataStream.listen((scanData) {
       // Find the index of the last occurrence of '=' in the string

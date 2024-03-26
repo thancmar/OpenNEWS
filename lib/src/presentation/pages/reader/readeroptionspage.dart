@@ -1,18 +1,13 @@
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/readerpage.dart';
 import 'package:sharemagazines/src/presentation/pages/reader/readerscrollpages.dart';
 import 'package:sharemagazines/src/presentation/widgets/marquee.dart';
 
-import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart' as model;
 import '../../../models/magazinePublishedGetAllLastByHotspotId_model.dart';
-import '../../widgets/routes/toreaderoption.dart';
 
 class ReaderOverlayPage extends StatefulWidget {
   final Reader reader;
@@ -51,18 +46,19 @@ class _ReaderOverlayPageState extends State<ReaderOverlayPage> with AutomaticKee
             // size: 30,
           ),
           onPressed: () => {
-            if (mounted)
-              {
+            // if (mounted)
+            //   {
                 setState(() {
                   // widget.reader.currentPage == i;
                   print("gotopage 0");
                   widget.reader.transformationController.value = Matrix4.identity();
-                  widget.reader.controllerflip.currentState!.goToPage(0); //.whenComplete(() => widget.bloc.add(CloseReader()));
+                  // widget.reader.controllerflip.currentState!.pageNumber=0;//(0);
+                  widget.reader.controllerflip.currentState!.goToPage(0).whenComplete(() => Future.delayed(Duration(milliseconds: 200), () async {Navigator.of(context).popUntil((route) => route.isFirst);}));
 // widget.reader.transformationController.value== Matrix4.identity();
                   // widget.reader.pageController.animateToPage(i, duration: Duration(milliseconds: 200), curve: Curves.ease);
                 }),
-              },
-            Navigator.of(context).popUntil((route) => route.isFirst),
+            //   },
+            // Navigator.of(context).popUntil((route) => route.isFirst),
           },
         ),
         title: MarqueeWidget(

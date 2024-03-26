@@ -1,29 +1,15 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui';
 
 // import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-
-// import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_google_places/flutter_google_places.dart';
-
-// import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
+import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart'as clustermanager;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
-
-// import 'package:google_maps_webservice/places.dart';
 import 'package:map_launcher/map_launcher.dart';
-
-// import 'package:sharemagazines_flutter/src/blocs/navbar/navbar_bloc.dart';
-// import 'package:sharemagazines_flutter/src/models/hotspots_model.dart';
-//
-// import 'package:sharemagazines_flutter/src/models/place_map.dart';
-
 import '../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../models/hotspots_model.dart';
 import '../../../../models/place_map.dart';
@@ -46,7 +32,7 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   // late List<Place>? hpList = [];
   Set<Marker> markers = Set(); //markers for google map
   List<Marker> myMarkers = <Marker>[];
-  late ClusterManager manager;
+  late clustermanager.ClusterManager _manager;
   Completer<GoogleMapController> _controller = Completer();
   final FocusNode _focusNode = FocusNode();
 
@@ -71,23 +57,24 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   void initState() {
     print("_MapsState init");
 
-    super.initState();
+
     _focusNode.unfocus();
     _textController.addListener(() {
       if (mounted) {
         setState(() {});
       }
     });
-    manager = _initClusterManager();
+    _manager = _initClusterManager();
+    super.initState();
     // manager.updateMap.call();
   }
 
-  ClusterManager _initClusterManager() {
+  clustermanager.ClusterManager _initClusterManager() {
     print("_initClusterManager");
     List<Place> filteredMarkers = NavbarState.allMapMarkers.where((place) => place.type != "5").toList();
 
     // return ClusterManager<Place>(NavbarState.allMapMarkers, _updateMarkers,
-    return ClusterManager<Place>(filteredMarkers, _updateMarkers,
+    return clustermanager.ClusterManager<Place>(filteredMarkers, _updateMarkers,
         markerBuilder: _markerBuilder,
         // levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0],
         stopClusteringZoom: 12.0);
@@ -161,12 +148,12 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
           rotateGesturesEnabled: true,
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
-            manager.setMapId(controller.mapId);
+            _manager.setMapId(controller.mapId);
           },
-          onCameraMove: manager.onCameraMove,
+          onCameraMove: _manager.onCameraMove,
           // showlocationdetail = false,
 
-          onCameraIdle: manager.updateMap,
+          onCameraIdle: _manager.updateMap,
           initialCameraPosition: CameraPosition(
             target:
                 NavbarState.currentPosition != null ? LatLng(NavbarState.currentPosition!.latitude, NavbarState.currentPosition!.longitude) : _center,
@@ -192,8 +179,8 @@ class _MapsState extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
               alignment: Alignment.topCenter,
               child: InkWell(
                   // focusColor: Colors.red,
-focusColor: Colors.white,
-highlightColor: Colors.white,
+                  focusColor: Colors.white,
+                  highlightColor: Colors.white,
 // c: Colors.white,
                   onTap: () async {
                     if (mounted) {
@@ -364,7 +351,6 @@ highlightColor: Colors.white,
                     // ),
                   ),
                   child: TextButton(
-
                     child: Text(
                         // ("offers").tr(),
                         "offers",
@@ -421,7 +407,7 @@ highlightColor: Colors.white,
                       Icons.directions,
                       color: Colors.blue,
                     ),
-                    onPressed: () => openMapsSheet(context, locationmarker.nameApp!, locationmarker.latitude, locationmarker.longitude),
+                    onPressed: () => openMapsSheet(context, locationmarker.nameApp, locationmarker.latitude, locationmarker.longitude),
                   ),
                 ),
               ),
@@ -443,7 +429,7 @@ highlightColor: Colors.white,
     mapController.animateCamera(CameraUpdate.newCameraPosition(p));
   }
 
-  Future<Marker> Function(Cluster<Place>) get _markerBuilder => (cluster) async {
+  Future<Marker> Function(clustermanager.Cluster<Place>) get _markerBuilder => (cluster) async {
         mapController = await _controller.future;
         Completer<GoogleMapController> completer = Completer();
 
@@ -493,25 +479,23 @@ Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
   print("_getMarkerBitmap text");
   print(text);
   final Paint paint1 = Paint()..color = int.parse(text!) < 10 ? Colors.blue.withOpacity(0.4) : Colors.purple.withOpacity(0.4);
-  final Paint paint2 = Paint()..color = int.parse(text!) < 10 ? Colors.blue : Colors.purple;
+  final Paint paint2 = Paint()..color = int.parse(text) < 10 ? Colors.blue : Colors.purple;
 
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.6, paint2);
   // canvas.drawCircle(Offset(size / 2, size / 2), size / 2.8, paint1);
 
-  if (text != null) {
-    TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
-    // (textDirection: TextDirection.ltr);
-    painter.text = TextSpan(
-      text: text,
-      style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.normal),
-    );
-    painter.layout();
-    painter.paint(
-      canvas,
-      Offset(size / 2 - painter.width / 2, size / 2 - painter.height / 2),
-    );
-  }
+  TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+  // (textDirection: TextDirection.ltr);
+  painter.text = TextSpan(
+    text: text,
+    style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.normal),
+  );
+  painter.layout();
+  painter.paint(
+    canvas,
+    Offset(size / 2 - painter.width / 2, size / 2 - painter.height / 2),
+  );
 
   final img = await pictureRecorder.endRecording().toImage(size, size);
   final data = await img.toByteData(format: ImageByteFormat.png) as ByteData;

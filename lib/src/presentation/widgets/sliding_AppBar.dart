@@ -1,9 +1,4 @@
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sharemagazines/src/blocs/navbar/navbar_bloc.dart';
-import 'package:sharemagazines/src/blocs/reader/reader_bloc.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
 class SlidingAppBar extends StatelessWidget implements PreferredSizeWidget {
   SlidingAppBar({

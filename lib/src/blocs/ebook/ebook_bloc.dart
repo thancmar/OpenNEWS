@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'dart:typed_data';
 
@@ -6,7 +5,6 @@ import 'package:bloc/bloc.dart';
 // import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 // import 'package:printing/printing.dart';
@@ -15,8 +13,6 @@ import 'package:sharemagazines/src/resources/magazine_repository.dart';
 import 'package:sharemagazines/src/models/magazinePublishedGetAllLastByHotspotId_model.dart'
     as model;
 
-import '../../constants.dart';
-import '../navbar/navbar_bloc.dart';
 
 part 'ebook_event.dart';
 part 'ebook_state.dart';

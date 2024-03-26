@@ -1,19 +1,11 @@
-import 'dart:typed_data';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
 import 'package:sharemagazines/src/blocs/searchpage/search_bloc.dart';
-import 'package:sharemagazines/src/presentation/pages/navbarpages/homepage/homepage.dart';
 
-import '../../../../../blocs/navbar/navbar_bloc.dart';
 import '../../../../widgets/marquee.dart';
 import '../../../../widgets/src/coversverticallist.dart';
-import '../../../reader/readerpage.dart';
 
 class CategoryPage extends StatefulWidget {
   final String titleText;

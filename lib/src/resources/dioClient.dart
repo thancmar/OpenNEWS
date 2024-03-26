@@ -5,7 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import '../constants.dart';
 
 class ApiClient {
   ///Two clients to share the cookies
@@ -49,10 +48,12 @@ class ApiClient {
       // client.badCertificateCallback = (cert, host, port) => true;
 
       client.maxConnectionsPerHost=50;
+      return null;
     };
     (dioforImages.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
       // client.badCertificateCallback = (cert, host, port) => true;
       client.maxConnectionsPerHost=50;
+      return null;
     };
 
     // (dioforImages.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {

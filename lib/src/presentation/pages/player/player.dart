@@ -1,18 +1,12 @@
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharemagazines/src/presentation/pages/player/PlayerbottomnavbarImp.dart';
 import 'package:sharemagazines/src/presentation/pages/player/playerbodypainter.dart';
 import 'package:sharemagazines/src/presentation/pages/player/playernavbarclipper.dart';
 import 'package:sharemagazines/src/resources/hotspot_repository.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../blocs/player/player_bloc.dart';
-import '../../../blocs/reader/reader_bloc.dart';
-import '../../widgets/navbar/body_clipper.dart';
-import '../../widgets/navbar/custom_navbar.dart';
 import '../../widgets/marquee.dart';
-import '../../widgets/navbar/navbar_painter_clipper.dart';
 
 class StartPlayer extends StatelessWidget {
   const StartPlayer({Key? key}) : super(key: key);

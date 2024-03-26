@@ -8,7 +8,6 @@ import 'package:get_it/get_it.dart';
 import '../constants.dart';
 import '../models/audioBooksForLocationGetAllActive.dart';
 import '../models/audiobookCategoryGetAllActiveByLocale.dart';
-import '../models/magazineCategoryGetAllActive.dart';
 import 'dioClient.dart';
 
 class AudioBookRepository {
