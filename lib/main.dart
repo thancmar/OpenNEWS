@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           theme: buildTheme(context),
-          home: SplashScreen(),
+          home: JobDetailsPage(jobId: 654,),
           builder: EasyLoading.init(),
         ),
       ),

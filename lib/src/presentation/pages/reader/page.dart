@@ -44,6 +44,7 @@ class _ReaderPageState extends State<ReaderPage> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     print(widget.reader.heroTag);
+
     return Hero(
       tag: widget.pageNumber == 0 ? widget.reader.heroTag : "etwas_${widget.pageNumber}",
       child: FutureBuilder<Uint8List?>(
